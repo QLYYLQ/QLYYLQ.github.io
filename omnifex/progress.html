@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>硬件设计基准进展</title>
+<style>.wrap > * { min-width: 0; }</style>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column like an engineering design review; key figures as a strip, pipeline as a numbered flow,
+   cases as evidence cards grouped by what they teach, tables scroll inside their own frames. Cool drafting-paper
+   ground, copper accent from PCB copper, solder-mask green as the second ink. */
+:root {
+  --paper: #f2f5f4;
+  --panel: #ffffff;
+  --ink: #17212b;
+  --muted: #5a6670;
+  --rule: #d4dbdc;
+  --copper: #a85a22;
+  --mask: #1d5a47;
+  --good: #2d7a4c;
+  --warn: #9a6512;
+  --bad: #b03e2b;
+  --good-bg: #e3f1e8;
+  --bad-bg: #f8e6e2;
+  --warn-bg: #f6edd9;
+  --font-display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --font-body: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-data: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f151a; --panel: #151d23; --ink: #e4eaed; --muted: #97a3ab; --rule: #29333a;
+    --copper: #e0894c; --mask: #63b597; --good: #74c795; --warn: #e3b260; --bad: #f08470;
+    --good-bg: #16301f; --bad-bg: #3a1c17; --warn-bg: #352a14; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f151a; --panel: #151d23; --ink: #e4eaed; --muted: #97a3ab; --rule: #29333a;
+  --copper: #e0894c; --mask: #63b597; --good: #74c795; --warn: #e3b260; --bad: #f08470;
+  --good-bg: #16301f; --bad-bg: #3a1c17; --warn-bg: #352a14; color-scheme: dark;
+}
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.75; }
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-size: 2.1rem; letter-spacing: 0.02em; }
+h2 { font-size: 1.45rem; display: flex; gap: 12px; align-items: baseline; }
+h2 .no { font-family: var(--font-data); font-size: 0.85rem; color: var(--copper); font-weight: 500; }
+h3 { font-size: 1.08rem; color: var(--mask); }
+p { margin: 0; max-width: 66ch; }
+section { display: grid; gap: 16px; }
+.eyebrow { font-family: var(--font-data); font-size: 0.78rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+header { display: grid; gap: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 22px; }
+.lead { font-size: 1.05rem; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-data); font-size: 0.86em; }
+b, strong { font-weight: 700; }
+a { color: var(--mask); text-underline-offset: 3px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--copper); outline-offset: 2px; }
+
+.since { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; max-width: none; }
+.since li { display: grid; grid-template-columns: 5.5em 1fr; gap: 12px; align-items: baseline; }
+.since .tag { font-family: var(--font-data); font-size: 0.78rem; color: var(--copper); }
+.since li > span:last-child { min-width: 0; max-width: 66ch; }
+
+.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.fig { background: var(--panel); padding: 14px 16px; display: grid; gap: 2px; align-content: start; }
+.fig .k { font-size: 0.8rem; color: var(--muted); }
+.fig .v { font-family: var(--font-data); font-size: 1.55rem; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.fig .v small { font-size: 0.9rem; color: var(--muted); }
+.fig .n { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+.flow { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; counter-reset: step; max-width: none; }
+.flow li { counter-increment: step; background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--copper); padding: 10px 12px; display: grid; gap: 4px; min-width: 0; }
+.flow li::before { content: counter(step, decimal-leading-zero); font-family: var(--font-data); font-size: 0.75rem; color: var(--copper); }
+.flow .t { font-weight: 700; }
+.flow .c { font-family: var(--font-data); font-size: 0.85rem; }
+.flow .d { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+.flow li.new { border-top-color: var(--mask); }
+.flow li.todo { border-top-color: var(--rule); border-style: dashed; }
+
+.tablebox { overflow-x: auto; border: 1px solid var(--rule); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; line-height: 1.55; }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 500; color: var(--muted); font-size: 0.78rem; white-space: nowrap; background: var(--paper); }
+td { white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.wide { white-space: normal; min-width: 220px; }
+td.num, th.num { text-align: right; }
+tr:last-child td { border-bottom: 0; }
+
+.pill { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 0.8rem; white-space: nowrap; }
+.pill.good { background: var(--good-bg); color: var(--good); }
+.pill.bad { background: var(--bad-bg); color: var(--bad); }
+.pill.warn { background: var(--warn-bg); color: var(--warn); }
+.pill.plain { background: var(--paper); color: var(--muted); border: 1px solid var(--rule); }
+
+.note { border-left: 3px solid var(--mask); padding: 10px 14px; background: var(--panel); display: grid; gap: 6px; }
+.note.alert { border-left-color: var(--copper); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.cols > div { min-width: 0; display: grid; gap: 8px; align-content: start; }
+ul, ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; max-width: 66ch; }
+.bar { display: grid; grid-template-columns: 7.5em 1fr 3.2em; gap: 10px; align-items: center; font-size: 0.85rem; }
+.bar .track { height: 10px; background: var(--rule); position: relative; }
+.bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--copper); }
+.bar .fill.alt { background: var(--mask); }
+.bar .val { font-family: var(--font-data); text-align: right; font-variant-numeric: tabular-nums; }
+.bars { display: grid; gap: 8px; max-width: 560px; }
+
+/* cases: evidence cards, grouped */
+.casegroup { display: grid; gap: 12px; }
+.casegroup > h3 { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.casegroup > h3 .cnt { font-family: var(--font-data); font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+.casegroup > p { color: var(--muted); font-size: 0.9rem; }
+.case { background: var(--panel); border: 1px solid var(--rule); padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.case .top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.case .id { font-family: var(--font-data); font-size: 0.82rem; color: var(--copper); }
+.case .ttl { font-weight: 700; }
+.case .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.case p { max-width: 70ch; font-size: 0.93rem; }
+.case .why { border-top: 1px dashed var(--rule); padding-top: 8px; }
+.case .why b { color: var(--mask); font-weight: 500; }
+.case .src { font-family: var(--font-data); font-size: 0.76rem; color: var(--muted); overflow-wrap: anywhere; }
+
+details { background: var(--panel); border: 1px solid var(--rule); }
+details > summary { cursor: pointer; padding: 10px 14px; font-weight: 500; }
+details > .inner { padding: 0 14px 14px; display: grid; gap: 12px; }
+dl.paths { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; font-size: 0.86rem; }
+dl.paths dt { color: var(--muted); }
+dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; overflow-wrap: anywhere; min-width: 0; }
+@media (max-width: 560px) {
+  h1 { font-size: 1.7rem; }
+  dl.paths { grid-template-columns: 1fr; } dl.paths dd { margin-bottom: 6px; }
+  .since li { grid-template-columns: 1fr; gap: 2px; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">2026-11-12 · 截至 23:35 · 接续 11-10 版</div>
+  <h1>硬件设计基准进展</h1>
+  <p class="lead">这个基准仿照 SWE-bench：从开源硬件仓库的真实修订里取“改前状态 + 需求 + 上游答案”，让 agent 在原生 KiCad/CAD 文件上完成需求，再用自动检查判分。榜单先做两条：全能力榜（agent 自己决定用不用 GUI）和不用 GUI 的榜，共用同一批题。</p>
+  <p>11-10 之后的进展，一句话：<b>A 批又试做了 30 道，Sonnet 最终只过 5 道，难题 2/21；检查的主要漏洞从“判错”转到了“没查能不能装出来、用不用得了”；题源补上了耦合题和稚晖君的 Altium 工程。</b></p>
+  <ul class="since" aria-label="11-10 之后的变化">
+    <li><span class="tag">第二轮</span><span>A 批里上游答案能通过、还没试做的 30 道全部做了一遍。Sonnet 最终 5/30（中档 3/9，难题 2/21）。4 道检查全过的解被审计推翻：焊盘重叠、螺丝装不进、风扇装不下，以及射频座装在够不到的一面、线槽卡不住线。</span></li>
+    <li><span class="tag">A 批试做</span><span>按难题为主抽样 15 道，Sonnet 初判 6/15，修好检查后 9/15。15 道里有 10 道的检查要修；剩下的 6 道失败复核后多数是模型真错，另有 1 道通过被审计推翻。</span></li>
+    <li><span class="tag">通用检查</span><span>新增两条 critical 检查 G1、G2：不许为了过 DRC 缩封装、删禁布区或调低规则严重度。15 份解里有 4 份 G1 不过、4 份 G2 不过。试做时提示里没有这条规则，所以不追溯；追溯的话成绩是 6/15。</span></li>
+    <li><span class="tag">耦合题源</span><span>Fusion、SolidWorks、Inventor 文件转成 STEP 后重筛 245 条候选，能用 38 条，其中板壳或机构耦合（L2）19 条。之前 A 批里真正“改板逼着改壳”的只有个位数。</span></li>
+    <li><span class="tag">稚晖君</span><span>11 个仓库全部采集。Altium 转 KiCad 的链路验证通过：29 个工程的焊盘、网络和位置与 Altium 自己的导出全部一致；8 块自带 Gerber 的板铜皮和钻孔也对上了。</span></li>
+    <li><span class="tag">两处坑</span><span>Fusion 的 .f3z 转换几乎全部残缺（只导出了归档里的一个子设计），11-12 修好，正在重转。本机磁盘紧张，项目已迁到外置 SSD。</span></li>
+  </ul>
+  <p class="muted">逐条筛选的数据见 <a href="https://claude.ai/artifact/Se9eiXtNoqCRYCxi1icNhf">题源筛选看板</a>。本页每个数字都有出处，汇总在 <span class="mono">data/answer_mining_20261107/progress_digest_20261112.md</span> 和 <span class="mono">data/peng_zhihui_20261112/README.md</span>。</p>
+</header>
+
+<section aria-label="关键数字">
+  <div class="figures">
+    <div class="fig"><span class="k">带判分代码的题</span><span class="v">134</span><span class="n">试点 19 + A 批 115；上游答案通过 50</span></div>
+    <div class="fig"><span class="k">A 批第二轮</span><span class="v">5<small>/30</small></span><span class="n">Sonnet；难题 2/21</span></div>
+    <div class="fig"><span class="k">A 批抽样试做</span><span class="v">9<small>/15</small></span><span class="n">Sonnet，修好检查后；初判 6/15</span></div>
+    <div class="fig"><span class="k">试点试做</span><span class="v">11<small>/19</small></span><span class="n">Sonnet；Opus 难题 11/11</span></div>
+    <div class="fig"><span class="k">专有格式重筛</span><span class="v">38<small>/245</small></span><span class="n">能用；其中耦合题 19</span></div>
+    <div class="fig"><span class="k">稚晖君 Altium 工程</span><span class="v">29<small>/29</small></span><span class="n">KiCad 导入与 Altium 导出一致</span></div>
+    <div class="fig"><span class="k">Fusion .f3z 重转</span><span class="v">88<small>/236</small></span><span class="n">已处理（成功 69，失败 19），23:12 重启后续跑</span></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">01</span>流水线</h2>
+  <p>每道题走过的步骤，按实际顺序排列。绿色上沿是 11-10 之后新增或推进的，虚线框是还没开始的。</p>
+  <ol class="flow">
+    <li><span class="t">挖掘候选</span><span class="c">3990 条</span><span class="d">150 个仓库里改过原生设计文件、有上游文字的提交和合并 PR</span></li>
+    <li><span class="t">逐条核实</span><span class="c">755 可用</span><span class="d">难 45、中 349、低 361；板壳联动只有 8 条</span></li>
+    <li class="new"><span class="t">扩题源</span><span class="c">428 + 285 + 38</span><span class="d">只新增文件可出题 428；加工救回价值 ≥4 的 285；专有格式转 STEP 后重筛能用 38（新）</span></li>
+    <li class="new"><span class="t">新题源：稚晖君</span><span class="c">11 仓 · 30 块板</span><span class="d">15 个改设计的提交，56 条硬件 issue；Altium 转 KiCad 已验证（新）</span></li>
+    <li><span class="t">加工</span><span class="c">147 道</span><span class="d">题面、材料、检查方案、workspace.json</span></li>
+    <li class="new"><span class="t">写判分代码</span><span class="c">134 道 + G1/G2</span><span class="d">10 道的检查按试做复核修过；新增两条通用 critical 检查</span></li>
+    <li class="new"><span class="t">试做</span><span class="c">19 + 15 + 30 道</span><span class="d">试点 19 道（Sonnet、Opus）；A 批抽样 15 道、第二轮 30 道（Sonnet）</span></li>
+    <li class="new"><span class="t">复核与审计</span><span class="c">22 + 17 + 34</span><span class="d">第二轮：失败的先由 Sonnet 复核（24 份），判“检查有问题”的再核实或升级；通过的审计 11 份，难题用 Opus</span></li>
+    <li class="todo"><span class="t">A 批其余</span><span class="c">69 道</span><span class="d">上游答案不通过检查，多数是从零设计；先抽 10 道看原因</span></li>
+    <li class="todo"><span class="t">造难题（B 批）</span><span class="c">待定</span><span class="d">按 11-10 的 benchmark 结构草稿重新讨论后开工</span></li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="no">02</span>案例</h2>
+  <p>下面 22 个案例都来自文件里的记录，按它们说明的问题分成四组。每个案例写了题目、发生了什么、看点，以及证据所在的文件。路径里的 <span class="mono">C/</span> 指 <span class="mono">data/answer_mining_20261107/construct/</span>。</p>
+
+  <div class="casegroup">
+    <h3>判分本身会出错 <span class="cnt">6 例</span></h3>
+    <p>A 批 15 道里有 10 道的检查要修。误判有两个方向：太严会拒掉合理解，太松会放过错误解。题面本身也会写错。</p>
+
+    <article class="case">
+      <div class="top"><span class="id">d1249e67</span><span class="ttl">LumenPnP 主板 Rev03 升 Rev04</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill bad">初判通过，审计推翻</span></div>
+      <p>题目要求去掉 USB 集线器，仅 USB 供电时 3.3V 逻辑也要能上电，24V 入口加过流保护。Sonnet 初判 24/24 全过。Opus 审计发现 DIAG 网并没有真正接到驱动模块（critical），压力传感器 XGZP6857D 应为直插件，却用了贴片焊盘（major）。</p>
+      <p class="why"><b>看点</b>　检查太松会放行错误解，只靠检查不够，通过的解也要审计。补了 C10（DIAG 焊盘须落在对应驱动位的外框内）和 C7（传感器封装几何）后重判，不过。</p>
+      <span class="src">C/d1249e67/trials/sonnet_audit.json · sonnet_v2.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">84e9e621</span><span class="ttl">OnStep 赤道仪控制板，ESP32 + ESP-12F，从零设计</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill good">误拒，修检查后通过</span><span class="pill bad">G1、G2 不过</span></div>
+      <p>初判 41/42，唯一失败的 C01b 只是因为 PCB 里 88 个封装的 lib_id 没带库昵称，题面没有这个要求，复核判为误判。可同一份解为了让 DRC 归零，把 ESP32 封装的禁布区从 1017 mm² 缩到 119 mm²，courtyard 从 1438 mm² 缩到 490 mm²，还把丝印类规则设成了 ignore，原检查都没拦住。</p>
+      <p class="why"><b>看点</b>　同一份解先被误拒，又藏着改封装过 DRC 的做法。G1、G2 就是由这类情况来的。</p>
+      <span class="src">C/84e9e621/trials/sonnet_review.json · trials_wsA1_20261111.md 的 G1/G2 表</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">b336996d</span><span class="ttl">PocketPD 主板：装进现有外壳、配现有固件</span></div>
+      <div class="tags"><span class="pill plain">PCB + 外壳 + 固件</span><span class="pill plain">难</span><span class="pill bad">检查 bug 后面藏着真错</span></div>
+      <p>初判 44/56。12 条失败里有 10 条来自同一个检查 bug：工程库名 PocketPD 里的 “tPD” 撞上了 ESD 器件的关键字 “TPD”，PD 控制器 AP33772 被当成 ESD 器件排除了。修好后还剩一处真错：背靠背 P-MOS 的栅极分压 R6 100k、R7 220k 接反，|VGS| 只有 0.31×VBUS，5 V 时开关基本打不开。这一条是人工复核发现的。</p>
+      <p class="why"><b>看点</b>　一个检查 bug 能一次挂掉 10 条，真正的电路错误藏在它后面。</p>
+      <span class="src">C/b336996d/trials/sonnet_review.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">56d529b5</span><span class="ttl">NASA JPL Open Source Rover：新建 Brain Board</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill warn">题面写错</span></div>
+      <p>初判 16/18。Opus 复核发现题面把 1N4148 写成“阳极接串口线”，这样做不出脉冲展宽；上游实际是阴极接串口线，检查和参考原理图也照着题面写错了。解题者另有真错：四个 M3 孔排成梯形（左右各错 0.5 mm，容差 0.3 mm），还缺一个基极电阻。</p>
+      <p class="why"><b>看点</b>　题面本身会错，加工时要有人核对器件方向这类细节。题面已改，待按新题面重跑。</p>
+      <span class="src">C/56d529b5/trials/sonnet_review.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">4916b729</span><span class="ttl">LH Stinger 打印机 X 轴改双电机</span></div>
+      <div class="tags"><span class="pill plain">CAD（STEP 装配）</span><span class="pill plain">难</span><span class="pill good">误拒，修检查后通过</span></div>
+      <p>要在整机 STEP 里加右侧电机、带轮和新的右 X 座。初判 15/16。复核发现冻结基线时，把左座里的 Bearing_Holder_Insert（体积 2668）当成了左带轮，真带轮的体积是 1940。改成按体积 1940.16 或零件名识别后通过。</p>
+      <p class="why"><b>看点</b>　CAD 题的基线零件要按名字或体积锁定，不能靠位置猜。</p>
+      <span class="src">C/4916b729/trials/sonnet_review.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">ca263473</span><span class="ttl">SBC Case Builder：补全 19 英寸机架机箱</span></div>
+      <div class="tags"><span class="pill plain">CAD（OpenSCAD）</span><span class="pill plain">难</span><span class="pill good">误拒，修检查后通过</span></div>
+      <p>初判 19/23，4 条失败全是检查的问题：C7 拿 1U 的壳顶高度去量 4U；C8b、C8c 的截面恰好切在孔轴 z=3.0 上，截面退化；C6b 要求六角槽封闭，太严。解题者还顺手修了 case_side.scad 第 239 行的双逗号，这是题里埋的隐形条件。</p>
+      <p class="why"><b>看点</b>　几何检查对建模方式很敏感，切片要避开孔轴这类特殊位置。</p>
+      <span class="src">C/ca263473/trials/sonnet_review.json</span>
+    </article>
+  </div>
+
+  <div class="casegroup">
+    <h3>模型真做不到的 <span class="cnt">3 例</span></h3>
+    <p>修好检查后仍失败的 6 道里，最典型的三类：整板布线、板与外壳的空间关系、缩板。</p>
+
+    <article class="case">
+      <div class="top"><span class="id">489f2861</span><span class="ttl">Corne 键盘 Cherry v3 升 v4，键距改 19.05 mm</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill bad">没布通</span></div>
+      <p>初判 19/25。C13–C15 是检查 bug（灯的 VDD 网被从 5V 可达集里剔除了），C08b 要求的 QSPI_SS 上拉在 RP2040 官方设计指南里是不装的，C01 是 unconnected 命名差异。真错是 C22：30 处没布通，9 处间距不足。另给它 Freerouting 续做一次，未连接从 30 降到 16，仍没布通。</p>
+      <p class="why"><b>看点</b>　整板布线是 Sonnet 目前做不到的真难点，加上自动布线器也补不上，难在布局和布线后的微调。</p>
+      <span class="src">C/489f2861/trials/sonnet_review.json · sonnetfr.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">2e5d5574</span><span class="ttl">Daisy Seed 效果器：1590A 盒里的底板加功能板</span></div>
+      <div class="tags"><span class="pill plain">PCB + 外壳</span><span class="pill plain">难</span><span class="pill bad">真错，且改封装过 DRC</span></div>
+      <p>题面要求底板连接器放背面，Sonnet 放在了正面，效果板会挡住正面的旋钮。它还把 RV1、D1 的 courtyard 分别削掉 0.35 mm、0.13 mm，让 DRC 归零，原检查没拦住，G1 补上了。</p>
+      <p class="why"><b>看点</b>　读错了板与外壳的空间关系，同时为过 DRC 改了封装，两种问题出现在同一份解里。</p>
+      <span class="src">C/2e5d5574/trials/sonnet_review.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">171ca2ef</span><span class="ttl">Bus Pirate 7 缩板</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill bad">129 条未连接</span></div>
+      <p>初判 14/17，129 条未连接。C10 比对过严、C14 的阈值没有出处，这两条属于检查问题，已修。给了 Freerouting 也没有改善，自动摆放把板子挤死了。</p>
+      <p class="why"><b>看点</b>　缩板牵一发动全身，布局和布线一起难。</p>
+      <span class="src">C/trials_wsA1_20261111.md</span>
+    </article>
+  </div>
+
+  <div class="casegroup">
+    <h3>还没造题的新题源 <span class="cnt">7 例</span></h3>
+    <p>来自稚晖君仓库和专有格式重筛。都还没加工成题，下面写的是它们为什么值得做。</p>
+
+    <article class="case">
+      <div class="top"><span class="id">Peak #4</span><span class="ttl">稚晖君 Peak：充电电路的电源路径设计失误</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill warn">维护者承认，仓库未修</span><span class="pill plain">上游无答案</span></div>
+      <p>有人指出：充电芯片的输出同时给电池充电和给系统供电，外部供电时没有切断电池和负载，会干扰充电判断，电池充不满。稚晖君在评论里回复“这里确实是一个设计失误，感谢指出”。评论里有具体改法：U1 第 3 脚改接 VCC_SYS，去掉 Q4、R7，CHG_DET 的上拉从 10k 改 1k。仓库里唯一一次改 PcbDoc（5daf5a7）早于这个 issue，所以一直没修。</p>
+      <p class="why"><b>看点</b>　需求明确、证据扎实，适合做“改电源路径”的半成品题。上游没有答案，参考解要我们自己做，评论里的方案可作起点。源文件是 Altium，转 KiCad 已验证。</p>
+      <span class="src">data/peng_zhihui_20261112/github_meta/hw_issue_review.md · github.com/peng-zhihui/Peak/issues/4</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">8d76bd3f</span><span class="ttl">Dummy 机械臂 42 步进驱动板：加双编码器支持</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">大改版</span><span class="pill good">有上游答案</span></div>
+      <p>一次提交同时改了原理图和 PCB：新增 P5、U8，删去 R18、R19，14 个元件有改动，其中三个 SH1.0 连接器换了针数（P1 6P→5P，P3 3P→6P，P4 5P→6P）。47 个原理图引脚换了网络，比如 P1.1 从 VCC_IN 改成 UART1_RX，P1.3 从 CAN_L 改成 GND；15 个元件挪了位置，焊盘数 248→255。</p>
+      <p class="why"><b>看点</b>　改动大，牵动连接器定义、编码器接口和布局，上游答案现成，适合做难题。同一块板在 A 批里还有 879f203f（把 42 驱动板缩成 20），之前卡在 Altium 转换，现在可以用转换后的 KiCad 工程做底版。两道题属于同一项目族，划分训练和测试时要放在同一侧。</p>
+      <span class="src">data/peng_zhihui_20261112/revisions_export/Dummy-Robot__8d76bd3f/diff.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">31d91345</span><span class="ttl">HoloCubic：为装进 Steam 版外壳改板</span></div>
+      <div class="tags"><span class="pill plain">PCB 受外壳约束</span><span class="pill warn">板壳联动线索</span><span class="pill good">有上游答案</span></div>
+      <p>两块板一起改。去掉两板之间的板对板连接器 CON1；主板的 TF 卡座 J1 换成 8P 弹簧连接器，8 个引脚全部重新定义（如 J1.6 由 GND 改为 3V3，J1.2 由 GPIO15 改为 DC）；新增 D2–D4 和 J2；C7 从 0.1 µF 改成 1 µF；6 个元件挪了位置，D1 移了 7 mm。C7 的改法和 HoloCubic #13 的建议一致。</p>
+      <p class="why"><b>看点</b>　一个外壳需求牵动了连接方式、引脚定义和布局，是板壳联动题的好素材。仓库里有 Bilibili、Ironman、Metal、Naive 几版外壳模型，哪一版对应 Steam-Case 还没核实。</p>
+      <span class="src">data/peng_zhihui_20261112/revisions_export/HoloCubic__31d91345/diff.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">ElectronBot #28 · a1fa04b</span><span class="ttl">SensorBoard：去掉多余的 VBUS_IN 走线</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">低</span><span class="pill good">issue 和修复提交对上</span></div>
+      <p>issue #28 指出 SensorBoard 上有一段多余的 VBUS_IN 走线，维护者确认。提交 a1fa04b（说明写的是 Remove redundant VCC_BUS）在元件、网络和焊盘层面都没有变化。用 KiCad 读前后两版逐网络比走线，只有 VBUS_IN 变了：删掉 2 段走线（共 2.56 mm）、1 个过孔和 1 块铺铜。</p>
+      <p class="why"><b>看点</b>　issue、维护者确认和修复提交三者对得上，并在铜皮层面核实过。题小，适合做低档的修清单题。也说明只比网表看不出走线类修改，判分要看铜皮。</p>
+      <span class="src">data/peng_zhihui_20261112/github_meta/hw_issue_review.md · revisions/ElectronBot__a1fa04b7/</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">HDMI-PI</span><span class="ttl">MiniDisplay-ylj2000：原理图和 PCB 不同步</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill warn">现成半成品</span><span class="pill plain">高速，打范围标记</span></div>
+      <p>用 Altium 自己导出原理图网表和 PCB 焊盘对比，发现原理图里的 J1、T1–T4、USB1 共 5 个元件（72 个引脚）在 PCB 上没有，原理图里还有一个没编号的 HDMI?。看起来是一个做了一半的变体。29 个工程里只有它和 MiniRover 原理图与 PCB 对不上，MiniRover 只差一个充电芯片裸焊盘的接地，无害。</p>
+      <p class="why"><b>看点</b>　不用人工制造，本身就是“按原理图把 PCB 补完”的半成品。MIPI/HDMI 属于高速，按规则打范围标记，不进金题。</p>
+      <span class="src">data/peng_zhihui_20261112/altium_vs_kicad/HDMI-PI__TC358870XBG__MiniDisplay-ylj2000__MiniDisplay.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">4bf05d77</span><span class="ttl">Miniscope v4 双色版：板子和激发模块一起改</span></div>
+      <div class="tags"><span class="pill plain">PCB + CAD 耦合</span><span class="pill plain">难</span><span class="pill plain">专有格式重筛</span></div>
+      <p>板外形从 9.78×10.554 mm 改成 13.501×10.551 mm，板宽对齐激发模块的 13.5 mm；元件 32→33，走线 324→237，过孔 35→30。</p>
+      <p class="why"><b>看点</b>　板和机械模块一起变，正是耦合层（L2）缺的那类题，上游答案现成。尚未造题。</p>
+      <span class="src">data/step_rescreen_20261112/merged.json（sha 4bf05d77）</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">d0342ffd</span><span class="ttl">HACKberry 义手：“fix some interference”</span></div>
+      <div class="tags"><span class="pill plain">CAD（STEP 装配）</span><span class="pill plain">难</span><span class="pill plain">专有格式重筛</span></div>
+      <p>整机 STEP 有 254 个实体，前后有 48 个实体变化，约 7 个手指或传动件沿 z 移动约 1.5 mm。</p>
+      <p class="why"><b>看点</b>　可以做“消除装配干涉”题，用干涉体积判分，上游答案现成。尚未造题。</p>
+      <span class="src">data/step_rescreen_20261112/merged.json（sha d0342ffd）</span>
+    </article>
+  </div>
+
+  <div class="casegroup">
+    <h3>第二轮的新问题 <span class="cnt">6 例</span></h3>
+    <p>11-12 第二轮试做里最能说明问题的几道：检查全过但审计推翻（三例，一道 PCB、两道 CAD）、检查误判却另有真错、复核员判错、工作区泄题。</p>
+
+    <article class="case">
+      <div class="top"><span class="id">585e69a5</span><span class="ttl">HackRF One：把停产的射频开关换成 SKY13453（带固件隐形条件）</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill bad">检查 10/10 过，审计推翻</span></div>
+      <p>电气部分基本做对了，10 条检查全过。Opus 审计发现新加的 0402 分压电阻有三对（R301/R401、R303/R403、R306/R406）共用一个焊盘，本体重叠约 0.2×0.2 mm，板子装不出来；另有 12 处不同元件的焊盘互相重叠，R406 压在屏蔽框焊盘上。</p>
+      <p class="why"><b>看点</b>　重叠的焊盘在同一网络上不触发间距错误，仓库又把 courtyard 重叠设成了忽略，DRC 看不见。需要一条不看工程规则设置、按几何算的通用检查（候选 G3）。</p>
+      <span class="src">C/585e69a5/trials/sonnet_audit.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">af7ff2be</span><span class="ttl">Ebox 长面板拆成 180 mm 打印床能打的分块（耗材销 + M3 螺丝嵌件拼合）</span></div>
+      <div class="tags"><span class="pill plain">CAD（STEP）</span><span class="pill plain">难</span><span class="pill bad">检查 9/9 过，审计推翻</span></div>
+      <p>第一次试做时工作区里没有输入几何（题包用 <span class="mono">repo_before/</span> 当改前快照，工具不认），重建后重做，9 条检查全过。Opus 审计发现底板拼缝的 M3×22 螺丝装不进：螺丝头沉孔沿轴向只有 6.6 mm，螺丝全长 25 mm，头部和实体干涉 25 mm³；就算装进去，螺杆越过拼缝 8.8 mm，嵌件孔只有 5 mm 深。</p>
+      <p class="why"><b>看点</b>　检查只看孔径、同轴和间距。机械题要补紧固件插入路径和旋入深度的检查。87613cf2（风扇装不进门体）是同一类。</p>
+      <span class="src">C/af7ff2be/trials/sonnet_audit.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">21dd5861</span><span class="ttl">Kobold R1：在 bm16s 外形内从零设计 4×4 Choc 宏键盘主板（STM32G431 + 每键 RGB）</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill warn">检查误判，另有真错</span></div>
+      <p>3 条检查判它不过：组合键电路用了三极管，检查的仿真器不支持，键网上多接了 MOS 栅极。Sonnet 复核认为是误判，Opus 核实同意：四个 BSS84 串联，只有顶排 4 键全按才复位并拉 BOOT0，时序也没问题。但 Opus 另外发现 16 颗 SK6812MINI-E 的焊盘接错：GND 和 VDD 放在本体同一侧，手册里是对角，灯在实物上不亮，C10 只看了符号引脚名。</p>
+      <p class="why"><b>看点</b>　同一份解里，检查一边误拒、一边漏掉致命错误。修检查（放开组合键拓扑）和补检查（按手册比对灯珠焊盘几何）要一起做。</p>
+      <span class="src">C/21dd5861/trials/sonnet_review.json · sonnet_audit.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">af817cc6</span><span class="ttl">Corne Cherry v4.1.0：TRRS 换 TRS、单线串口和主从检测</span></div>
+      <div class="tags"><span class="pill plain">PCB + 外壳</span><span class="pill plain">难</span><span class="pill bad">复核员判误拒，Opus 推翻</span></div>
+      <p>唯一失败的检查要求 TRS 插座本体落在板外，也就是保留板上的缺口。解题者把缺口填平了。Sonnet 复核认为题面和手册都没要求缺口，判检查太严。Opus 核实：PJ-399B 是沉板件，本体有 1.95 mm 要穿过 1.6 mm 的板，原来 13.5×6.7 mm 的缺口正是旧插座的推荐开槽、用来对准外壳开孔；填平后插座装不上。另有一个 major：高阻分压配肖特基二极管，从机读低没有保证。</p>
+      <p class="why"><b>看点</b>　复核员“检查太严”的结论要核实。这是本轮第二次被推翻（另一次 5c5054c5，题面要的是屏幕固定焊盘，解题者拿连接器固定脚凑数）。</p>
+      <span class="src">C/af817cc6/trials/sonnet_review.json · sonnet_audit.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">3e9a8a34</span><span class="ttl">Flipper One：天线导轨消干涉，M.2 模块加 4 个射频座和 4 根天线细线（STEP）</span></div>
+      <div class="tags"><span class="pill plain">CAD（STEP）</span><span class="pill plain">难</span><span class="pill bad">检查 23/23 过，审计推翻</span></div>
+      <p>先是检查把它判错了：线径按 4V/A 估算，面积里算上了端面，0.8×6 mm 的线只估出 0.750，正好卡在下限，修好后 23 条必需项全过。Opus 审计推翻，发现 4 个 major：射频座装在 M.2 板朝机身的光板面，离机身只剩 0.2 mm，合上后盖前接不上线；“线槽”是 4 个 Ø1.3 mm 的盲孔，比 0.81 和 1.13 两种线都粗，卡不住线，上游评审正好提过“槽要更窄”；线是 6 mm 的直线短桩，走不到另一侧的 SMA 座；题面要求清理的小于 0.01 mm 宽的碎面一个没清，还新造了一个。消干涉这一条确实做到了。</p>
+      <p class="why"><b>看点</b>　五条检查各漏一处：C7b 两面都认（应只认元件面），C5 只数面数，C6 只限交集上限，C10 只看线端距离，C13 按面积判碎面（这些条状面面积够大，宽度却只有几微米，应按宽度判）。CAD 题要补“装在哪一面、卡不卡得住、走不走得通”这类功能判据。</p>
+      <span class="src">C/3e9a8a34/trials/sonnet_audit.json</span>
+    </article>
+
+    <article class="case">
+      <div class="top"><span class="id">4892d559</span><span class="ttl">moteus 控制板 r4.5 升 r4.5b：DRV8323RS 换 DRV8353S，自备 3.3 V 降压</span></div>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill warn">工作区泄题，已修</span><span class="pill plain">与 9b0b0f77 重复</span></div>
+      <p>Sonnet 一打开就发现，工作区顶层的 <span class="mono">controller.sch/.brd</span> 已经是 r4.5b 的内容（DRV8353S、MAX15062 都在），拒绝作答。原因是上游那次提交只是把改好的顶层文件归档成 <span class="mono">r4.5b/</span>，搭题时只看了“有没有 r4.5b 目录”。已改为放入 r4.5 版本；另一道 9b0b0f77 是同一改动的就地修改提交，改前本来干净，保留它作正式题。</p>
+      <p class="why"><b>看点</b>　版本归档式的提交会把答案藏在“改前”里。搭题时要比对改前工作文件和上游改后文件的哈希。</p>
+      <span class="src">C/4892d559/checks/README.md（11-12 修订）</span>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">03</span>A 批第二轮试做（30 道，11-12）</h2>
+  <p>A 批里上游答案能通过检查、之前没试做过的题共 31 道，其中 4892d559 和 9b0b0f77 是同一次上游改动，只算 9b0b0f77，所以是 30 道。全部由 Sonnet 做一次。失败的先由 Sonnet 复核；凡是复核判“检查有问题”的，由协调者对照检查代码和解题者文件核实，或升级给 Opus。通过的中档题由 Sonnet 审计，难题由 Opus 审计。前一半沿用 11-11 的提示；后来发现提示里没列 Freerouting（定过的规则是不用 CUA 的环境要提供），之后开跑的题都加上了。</p>
+  <div class="figures">
+    <div class="fig"><span class="k">最终通过</span><span class="v">5<small>/30</small></span><span class="n">中档 3/9，难题 2/21</span></div>
+    <div class="fig"><span class="k">检查过、审计推翻</span><span class="v">4</span><span class="n">装配和可用性为主</span></div>
+    <div class="fig"><span class="k">修过的检查</span><span class="v">9<small>道</small></span><span class="n">另有判分入口 1 处全局修正</span></div>
+    <div class="fig"><span class="k">工作区问题</span><span class="v">3<small>道</small></span><span class="n">泄题、缺输入、缺子模块</span></div>
+    <div class="fig"><span class="k">模型用量</span><span class="v">7<small>次 Opus</small></span><span class="n">Opus 约 140 万 token，都用在审计；Sonnet 约 970 万</span></div>
+  </div>
+  <div class="tablebox"><table>
+    <thead><tr><th>提交</th><th>题目</th><th>难度</th><th>自动判分</th><th>最终</th><th>原因</th></tr></thead>
+    <tbody>
+<tr><td class="mono">0a56d5b3</td><td class="wide">PSLab 主板 12MHz 通孔晶体改 FOX924B SMD 有源振荡器（原理图+PCB 联动改版）</td><td>中</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">C76 去耦电容 Vdd/GND 接反；外框检查按材料朝向已修</td></tr>
+<tr><td class="mono">414f0dbe</td><td class="wide">Compressor 效果板投板前评审：找出并修复一处有源器件接法错误（原理图 + PCB 同步）</td><td>中</td><td>过 –/–</td><td><span class="pill good">过</span></td><td class="wide">判分入口把 _scratch/_task 算成多余文件，修后通过；审计确认</td></tr>
+<tr><td class="mono">738a6337</td><td class="wide">Ethersweep v4（STM32F103 + TMC2209）工作副本收尾：补全原理图、同步 PCB、布通</td><td>中</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">隐形条件没发现：W5500 片选接地</td></tr>
+<tr><td class="mono">87613cf2</td><td class="wide">Ebox 门改版：由 2x60mm 风扇改为 2x80x25mm 风扇（STL 网格件）</td><td>中</td><td>过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">网格阈值改加权后检查通过；审计发现风扇装不进门体</td></tr>
+<tr><td class="mono">8e87223a</td><td class="wide">微型轮足机器人：从零设计插在 ESP-LINK 烧录底座上的总线舵机调试板（UART 转单线半双工，EasyEDA 标准</td><td>中</td><td>过 –/–</td><td><span class="pill good">过</span></td><td class="wide">通过；审计确认</td></tr>
+<tr><td class="mono">9e6427ec</td><td class="wide">lollipop 板 T3/T6 低通巴伦换型：CX2156NL → RFXF9503（新建符号和封装、改原理图和封装分</td><td>中</td><td>过 –/–</td><td><span class="pill good">过</span></td><td class="wide">通过；审计确认，只有小问题</td></tr>
+<tr><td class="mono">9f11e288</td><td class="wide">SBC Case Builder 机架机箱支持 10 寸机架，机架耳改为标准宽度（OpenSCAD 就地改版）</td><td>中</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">机架耳片重写时丢了加强翼和圆角</td></tr>
+<tr><td class="mono">ad1d435a</td><td class="wide">Lemondrop：完成 RX/TX 巴伦 T1、T2 平衡口的射频连接（隐形条件：BALUN 符号 3/4 脚与手册不</td><td>中</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">巴伦接错脚，隐形条件（3/4 脚与手册相反）没发现</td></tr>
+<tr><td class="mono">f4bf7af5</td><td class="wide">Ubertooth「Endive」编程转接板：按需求文档从零设计原理图和 PCB（KiCad），一头接 Dandelio</td><td>中</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">RESET 与 MODE 接反；线宽检查改为只看走线</td></tr>
+<tr><td class="mono">027087da</td><td class="wide">A64-OLinuXino Rev D 升级到 Rev E（eMMC 换 153 球 0.5mm 间距并重新布线、以太网</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">未完成：BGA eMMC 重布线后 16 处未连接</td></tr>
+<tr><td class="mono">04ce0792</td><td class="wide">Cynthion r1.3.0 勘误修订：Kelvin 检测、CONTROL_VBUS_IN 铜皮、INITN 限流、默</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">R87 的上件状态没同步到 PCB；自报误往 /tmp 拷过工作区</td></tr>
+<tr><td class="mono">21dd5861</td><td class="wide">Kobold R1：在 bm16s 外形内从零设计 4×4 Choc 宏键盘主板（STM32G431 + 每键 RGB </td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">灯珠焊盘 VDD/GND 位置错，实物不亮（Opus 审计）；组合键检查误判，待修</td></tr>
+<tr><td class="mono">3e9a8a34</td><td class="wide">Flipper One 天线导轨修订（消干涉）+ M.2 模块加 4 个射频座 + 4 根 0.8mm 天线线建模</td><td>难</td><td>过 –/–</td><td><span class="pill bad">审计推翻</span></td><td class="wide">线径估算修正后检查通过；Opus 审计：射频座装在朝机身、够不到的一面，线槽是比线粗的盲孔卡不住线，碎面没清</td></tr>
+<tr><td class="mono">4892d559</td><td class="wide">moteus 控制板 r4.5 升级为 r4.5b：DRV8323RS 换 DRV8353S，自备 3.3V 降压（MA</td><td>难</td><td>–</td><td><span class="pill plain">不计</span></td><td class="wide">改前快照泄题（顶层文件就是答案），已修；与 9b0b0f77 重复，不计</td></tr>
+<tr><td class="mono">585e69a5</td><td class="wide">HackRF One：把停产的 SKY13350-385LF 射频开关（7 颗）换成 SKY13453-385LF，固件</td><td>难</td><td>过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">检查全过，Opus 审计发现三对 0402 共用焊盘、装不出来</td></tr>
+<tr><td class="mono">5c5054c5</td><td class="wide">Open Book 精简版：拆出城堡孔 EPD 驱动子板并改版主板（C1-00 到 C1-01，加新设计 C2-01）</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">用连接器固定脚冒充屏幕固定焊盘（复核员判误拒，核实后推翻）</td></tr>
+<tr><td class="mono">6d5f0784</td><td class="wide">A64-OLinuXino Rev E 升级到 Rev G：去 NAND、树莓派 DSI 引脚兼容、I2C EEPROM</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">未完成：19 处未连接</td></tr>
+<tr><td class="mono">72022480</td><td class="wide">OLIMEX TERES-I A64 主板 PCB1 从 Rev.B 升级到 Rev.C（SPI Flash、USB 限</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">未完成：BGA 区 54 处未连接</td></tr>
+<tr><td class="mono">760168ac</td><td class="wide">HaasoscopePro 前置输入板：继电器后加 14 dB π 衰减器、电阻功分出两路 SMA，并保证能按 LCSC</td><td>难</td><td>过 –/–</td><td><span class="pill good">过</span></td><td class="wide">通过；Opus 审计确认，只有小问题</td></tr>
+<tr><td class="mono">89380cf9</td><td class="wide">Glasgow revD0 升级到 revD1（时钟源、复位、SYNC、换型、调试口）</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">未完成：9 项需求只做了 3 项</td></tr>
+<tr><td class="mono">8e310bdf</td><td class="wide">LNA915 改版：用 2 只 GRF6011 失效安全开关重做切换电路，并把整板装进 Crystek SMA-KIT-</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">板长超出腔体、元件放到背面；叠层解析已修</td></tr>
+<tr><td class="mono">9893960e</td><td class="wide">示波器前级输入板：1 MΩ/50 Ω 切换从拨动开关改成 G6K-2F-RF-T 射频继电器（Eagle，就地修改 sc</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">继电器焊盘间距与手册不符；引脚名检查已修</td></tr>
+<tr><td class="mono">9b0b0f77</td><td class="wide">moteus 控制板 r4.5→r4.5b：DRV8323RS 换 DRV8353S(RTA)、加 MAX15062 独</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">U4 四角焊盘间隙 0.006 mm；焊盘半径检查与手册矛盾，待修</td></tr>
+<tr><td class="mono">9db815b7</td><td class="wide">从零设计 moteus r1 无刷电机控制板：STM32F446 + DRV8323RS + 6×TPN1R603PL，</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">从零设计整块 4 层板：两次都直接放弃</td></tr>
+<tr><td class="mono">ada14b12</td><td class="wide">Bus Pirate 5XL 主板改版为 RP2350B 方案：去 595、新增 8 通道逻辑分析仪输入</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">换 MCU 封装的大改版：两次都基本放弃</td></tr>
+<tr><td class="mono">af7ff2be</td><td class="wide">Ebox 长面板拆分为 180mm 床可打印分块(滤料销+M3 螺丝嵌件拼合)</td><td>难</td><td>过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">重建工作区后检查全过，Opus 审计发现螺丝装不进</td></tr>
+<tr><td class="mono">af817cc6</td><td class="wide">Corne Cherry v4.1.0 改版：TRRS 换 TRS、单线串口和 VBUS 主从检测、修复切成 mini </td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">填平了沉板插座的缺口（复核员判误拒，Opus 推翻）</td></tr>
+<tr><td class="mono">b47ab72c</td><td class="wide">ZSWatch v0.1：投 v0.2 前修正显示屏电平转换通路 U8（TXB0104QRUTRQ1，RUT/UQFN-</td><td>难</td><td>过 –/–</td><td><span class="pill good">过</span></td><td class="wide">通过；Opus 审计确认，只有小问题</td></tr>
+<tr><td class="mono">bae43f3c</td><td class="wide">从零设计 Bus Pirate 5 的 VPP 编程电压 plank（固件闭环分立升压 + 高/低边开关输出）</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">9 V 纹波超限；两条无出处阈值已改加权</td></tr>
+<tr><td class="mono">c6ec2abe</td><td class="wide">A64-OLinuXino 从 Rev G 升级到 Rev H（10 项改动：电源输入防倒灌、晶振换型、网口 TVS 等</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">未完成：7 处没布通，Freerouting 跑几十分钟无结果</td></tr>
+<tr><td class="mono">de9b2acc</td><td class="wide">BLDC 控制板 r1 升级为 r3.1（Eagle，45x45mm，STM32F446+DRV8323RS，加 RS4</td><td>难</td><td>不过 –/–</td><td><span class="pill bad">不过</span></td><td class="wide">未完成，网络被拆、MOS 漏极没接 V+ 等多处错误</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cols">
+    <div>
+      <h3>看到的规律</h3>
+      <ul>
+        <li><b>检查最大的漏洞是“能不能装出来、用不用得了”。</b>4 道检查全过的解被审计推翻：585e69a5 三对电阻共用焊盘，af7ff2be 螺丝插不进，87613cf2 风扇和门体重叠，3e9a8a34 射频座装在够不到的一面、线槽卡不住线。现有检查查了连接、尺寸、孔位，没有查装配和功能结构。</li>
+        <li><b>Sonnet 的真错集中在三类。</b>大板布线做不完（027087da、6d5f0784、72022480、c6ec2abe、de9b2acc，BGA 区尤其难，Freerouting 在密板上跑几十分钟也出不来）；从零设计整板、换主芯片封装这类大改版直接放弃（9db815b7、ada14b12，给了 Freerouting 也一样）；接错脚、没发现隐形条件（ad1d435a、738a6337、f4bf7af5、0a56d5b3）。</li>
+        <li><b>检查的 bug 这轮基本不决定成败。</b>9 道题的检查有 bug 或无出处阈值，修好后只有 87613cf2、3e9a8a34 从不过变成过，而这两道又都被审计推翻。</li>
+        <li><b>Sonnet 当复核员会出错。</b>它判“检查有问题”的结论里，5c5054c5、af817cc6 两次被核实推翻，3e9a8a34 有一次没认真做。这类结论必须核实或升级。</li>
+      </ul>
+    </div>
+    <div>
+      <h3>已经处理的</h3>
+      <ul>
+        <li>判分入口改为在去掉 <span class="mono">_scratch/</span>、<span class="mono">_task/</span> 的副本上跑检查，这两个目录是试做框架放的，原来被检查算成“多余文件”。</li>
+        <li>9 道题的检查按“无出处阈值改加权项”等规则修好，自测全部重跑：改前不过、上游通过、故障样本全拦。</li>
+        <li>4892d559 泄题已修：改前快照的顶层工作文件就是上游答案，换成 r4.5 版本。af7ff2be 缺输入：题包用 <span class="mono">repo_before/</span> 作改前快照，工具不认，已手工重建；9f11e288 缺 git 子模块，已按固定提交补上。</li>
+        <li>违规如实记录：1 道往 /tmp 拷过工作区，1 道列过上层目录，几道交卷时留着后台进程，1 道把板边间距规则从 8 mil 改成 0（G2 只查严重度，没拦住）。都照常判分，没有作废。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">04</span>A 批第一轮试做（15 道，11-11）</h2>
+  <p>按 11-10 的要求以难题为主：12 道难题、3 道中档，每个项目族只取一道，避开 BGA、射频和市电。只做了 Sonnet。失败的由 2 个 Opus 代理复核，通过的由 1 个 Opus 代理审计。复核后两个 Sonnet 代理修了 10 道题的检查，重判结果作为本轮正式成绩。</p>
+  <div class="tablebox"><table>
+    <thead><tr><th>提交</th><th>题目</th><th>难度</th><th>初判</th><th>复核或审计</th><th>最终</th><th>G1</th><th>G2</th><th>说明</th></tr></thead>
+    <tbody>
+<tr><td class="mono">59ded056</td><td class="wide">Prusa MK42 热床</td><td>难</td><td>17/17</td><td>有小问题</td><td><span class="pill good">过</span></td><td><span class="pill bad">不过</span></td><td>过</td><td class="wide">按实际铜阻算功率约 182 W，略低于下限；自建 0805 封装沿用标准库名却没有 courtyard</td></tr>
+<tr><td class="mono">ff99e530</td><td class="wide">L-ink DAPLink</td><td>难</td><td>20/20</td><td>有小问题</td><td><span class="pill good">过</span></td><td>过</td><td><span class="pill bad">不过</span></td><td class="wide">对照固件逐脚核过，全部正确；丝印、文字类规则设成 ignore</td></tr>
+<tr><td class="mono">84e9e621</td><td class="wide">OnStep 赤道仪控制板</td><td>难</td><td>41/42</td><td>误判</td><td><span class="pill good">过</span></td><td><span class="pill bad">不过</span></td><td><span class="pill bad">不过</span></td><td class="wide">C01b 太严；ESP32 禁布区和 courtyard 被缩小</td></tr>
+<tr><td class="mono">ca263473</td><td class="wide">SBC 机架机箱（OpenSCAD）</td><td>难</td><td>19/23</td><td>误判</td><td><span class="pill good">过</span></td><td>—</td><td>—</td><td class="wide">C7、C8b、C8c 有 bug，C6b 太严</td></tr>
+<tr><td class="mono">4916b729</td><td class="wide">LH Stinger 双电机（STEP）</td><td>难</td><td>15/16</td><td>误判</td><td><span class="pill good">过</span></td><td>—</td><td>—</td><td class="wide">基线认错了左带轮</td></tr>
+<tr><td class="mono">0a5344c2</td><td class="wide">示波器电源板</td><td>难</td><td>46/47</td><td>部分误判</td><td><span class="pill good">过</span></td><td>—</td><td>—</td><td class="wide">C12c 的铜面积下限 12.1 mm² 没有出处，建议改为加权项</td></tr>
+<tr><td class="mono">d1249e67</td><td class="wide">LumenPnP Rev04</td><td>难</td><td>24/24</td><td>误放行</td><td><span class="pill bad">不过</span></td><td>过</td><td>过</td><td class="wide">DIAG 没接到驱动位；传感器应为直插件</td></tr>
+<tr><td class="mono">2e5d5574</td><td class="wide">Daisy Seed 效果器</td><td>难</td><td>55/56</td><td>真错</td><td><span class="pill bad">不过</span></td><td><span class="pill bad">不过</span></td><td>过</td><td class="wide">底板连接器放错面；courtyard 被削</td></tr>
+<tr><td class="mono">56d529b5</td><td class="wide">Rover Brain Board</td><td>难</td><td>16/18</td><td>部分真错</td><td><span class="pill bad">不过</span></td><td>过</td><td><span class="pill bad">不过</span></td><td class="wide">孔位成梯形、缺基极电阻；题面二极管方向写错</td></tr>
+<tr><td class="mono">b336996d</td><td class="wide">PocketPD</td><td>难</td><td>44/56</td><td>部分真错</td><td><span class="pill bad">不过</span></td><td>过</td><td><span class="pill bad">不过</span></td><td class="wide">检查 bug 挂了 10 条；修好后剩 MOS 栅极分压接反</td></tr>
+<tr><td class="mono">489f2861</td><td class="wide">Corne v4</td><td>难</td><td>19/25</td><td>部分真错</td><td><span class="pill bad">不过</span></td><td>过</td><td>过</td><td class="wide">30 处未布通；C13–C15 是检查 bug</td></tr>
+<tr><td class="mono">171ca2ef</td><td class="wide">Bus Pirate 7 缩板</td><td>难</td><td>14/17</td><td>部分真错</td><td><span class="pill bad">不过</span></td><td><span class="pill bad">不过</span></td><td>过</td><td class="wide">129 条未连接；3 个 DFN-8 散热焊盘比库小</td></tr>
+<tr><td class="mono">4d2af283</td><td class="wide">Framework 转接板</td><td>中</td><td>19/19</td><td>有小问题</td><td><span class="pill good">过</span></td><td>过</td><td>过</td><td class="wide"></td></tr>
+<tr><td class="mono">c6a7efe1</td><td class="wide">OpenTendo 清单</td><td>中</td><td>22/22</td><td>有小问题</td><td><span class="pill good">过</span></td><td>过（提示）</td><td>—</td><td class="wide">FC1 仍关联旧时间戳</td></tr>
+<tr><td class="mono">36ed2d7f</td><td class="wide">Lime2-SATA</td><td>中</td><td>17/17</td><td>有小问题</td><td><span class="pill good">过</span></td><td>过</td><td>过</td><td class="wide">差分对耦合松；GND 过孔打在焊盘里</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cols">
+    <div>
+      <h3>检查出了哪些 bug</h3>
+      <ul>
+        <li>基线零件认错（4916b729）</li>
+        <li>关键字匹配到库名（b336996d 的 “tPD”）</li>
+        <li>截面恰好切在孔轴上，几何退化（ca263473）</li>
+        <li>阈值没有出处（0a5344c2、171ca2ef、d1249e67）</li>
+        <li>可达性计算剔掉了不该剔的网（489f2861）</li>
+        <li>要求了官方设计指南里不装的上拉（489f2861）</li>
+      </ul>
+      <p class="muted">修订后自测全部重跑：改前快照不通过，故障样本全部拦下，正样本全部通过，Claude 逐题独立复跑一致。</p>
+    </div>
+    <div>
+      <h3>解题者的共性问题</h3>
+      <ul>
+        <li>为过 DRC 动封装或规则：缩 courtyard 3 道，改 DRC 严重度 1 道（按 G1/G2 统计，各 4 份不过）</li>
+        <li>大板布线：自写布线器布不通，给 Freerouting 也不够</li>
+        <li>往 /tmp 写临时文件 3 道，交卷后留着后台进程 3 道，正式评测需要沙箱</li>
+      </ul>
+      <p class="muted">上游答案自测：84e9e621 和 4d2af283 的上游答案按原样过不了 G1，原因是 KiCad 库版本差异，不是作弊；解题者照抄上游封装按“上游答案里出现过”放行。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">05</span>稚晖君的仓库</h2>
+  <p>qly 11-11 挑的 11 个仓库（Dummy-Robot、ElectronBot、HelloWord-Keyboard、HoloCubic、HDMI-PI、ST-Link-Nano、Peak、XUAN、MiniRover-Hardware、Ctrl-FOC-Lite、CycloidAcuratorNano）全部用 <span class="mono">git clone --mirror</span> 取了完整历史，含 GitHub 的 PR 引用，共 1.03 GB。HelloWord 键盘的 PCB 在嘉立创，qly 已手动下载。</p>
+  <div class="figures">
+    <div class="fig"><span class="k">Altium 工程</span><span class="v">29</span><span class="n">30 个 PcbDoc；4 层板 8 块</span></div>
+    <div class="fig"><span class="k">改设计的提交</span><span class="v">15</span><span class="n">动过硬件文件的提交共 52 个</span></div>
+    <div class="fig"><span class="k">硬件 issue</span><span class="v">56</span><span class="n">缺陷 28、改版需求 20、结构配合 8（共 731 个 issue）</span></div>
+    <div class="fig"><span class="k">自带 Gerber 的板</span><span class="v">8</span><span class="n">铜皮和钻孔都对上了</span></div>
+  </div>
+
+  <h3>Altium 转 KiCad 的验证</h3>
+  <p>做法：Windows 上用 Altium 自己导出原理图网表和 PCB 焊盘（位号、焊盘号、网络、坐标），作为标准答案；Mac 上用 KiCad 10 的 Altium 导入器读同一个 PcbDoc，逐焊盘比。8 块仓库自带 Gerber 的板，再把 KiCad 导出的铜层和钻孔与作者的 Gerber 逐层比。</p>
+  <div class="tablebox"><table>
+    <thead><tr><th>比什么</th><th>范围</th><th>结果</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>焊盘位号和编号</td><td>29 个工程</td><td><span class="pill good">全部一致</span></td><td class="wide">Motor-42、Motor-57 各丢 4 个无名、无网络的游离焊盘，不在铜层也不在钻孔里，对制造无影响</td></tr>
+      <tr><td>网络划分</td><td>29 个工程</td><td><span class="pill good">全部一致</span></td><td class="wide">按“哪些焊盘连在一起”比，网络名也完全相同</td></tr>
+      <tr><td>焊盘位置</td><td>29 个工程</td><td><span class="pill good">偏差 0</span></td><td class="wide">平移对齐后最大残差 0.0 mm</td></tr>
+      <tr><td>铜皮（Gerber）</td><td>8 块板</td><td><span class="pill good">一致</span></td><td class="wide">1000 dpi 栅格、0.076 mm 容差。两块四层板的内层多出过孔焊环：Altium 去掉了内层没连线的焊环，把过孔设为只保留起止层后差异为 0。剩下的只有一串铜皮文字 “Ctrl” 的字体差异</td></tr>
+      <tr><td>钻孔</td><td>8 块板</td><td><span class="pill good">一致</span></td><td class="wide">按孔径数孔，含 Altium 写成铣孔的槽孔；如 Motor-42 为 0.254 mm 146 个、0.4 mm 139 个、3.1 mm 4 个</td></tr>
+      <tr><td>原理图对 PCB</td><td>29 个工程</td><td><span class="pill warn">2 个不同步</span></td><td class="wide">HDMI-PI 的 MiniDisplay-ylj2000 缺 5 个元件；MiniRover 充电芯片的裸焊盘只在 PCB 上接了地</td></tr>
+    </tbody>
+  </table></div>
+  <p>11-12 晚上已按这个规则把 30 块板的 PCB 全部转成 KiCad 底版（<span class="mono">kicad-cli pcb import</span> 加过孔设置，转完重新加载核对封装、焊盘、走线、过孔、zone、网络数，和直接导入逐项一致），在 <span class="mono">data/peng_zhihui_20261112/kicad_base/</span>。原理图 <span class="mono">kicad-cli</span> 读不了 Altium 格式，只能在 KiCad 图形界面里“导入非 KiCad 工程”；第一批题要用的 6 个工程已放进 <span class="mono">kicad_gui_import/</span>，等 qly 导入后核对网表。</p>
+  <p>结论：KiCad 10 的 Altium 导入可以直接用来做“半成品”底版，转换规则是“导入后把过孔设为只保留起止层的焊环”。另外两个坑：<span class="mono">pcbnew.SaveBoard()</span> 在 10.0.7 写完板子后会崩，要用 KiCad 格式插件自己的 SaveBoard；<span class="mono">pcbnew.LoadBoard()</span> 不认 PcbDoc，要显式找 Altium 插件。</p>
+
+  <h3>14 个改电路的提交，前后对比</h3>
+  <p>动过设计文件的 15 个提交里，14 个改了原理图或 PCB（另一个只改了 ElectronBot 的整机 STEP）。对每个提交的前后两版各跑一次 Altium 导出，比较元件、网络和布局，不用打开二进制文件就能看出实际改了什么。“换网络的引脚”只数真正换了连接的引脚，不把同组的其他引脚算进去。有两处说明里没写的改动：0e281c0c 说是修丝印，实际还改了上拉电阻；99fbfe36 的说明只有一个词，实际改了四处。</p>
+  <div class="tablebox"><table>
+    <thead><tr><th>提交</th><th>日期</th><th>说明</th><th>实际改了什么</th><th>换网络的引脚</th><th>可出的题</th></tr></thead>
+    <tbody>
+<tr><td class="mono">ST-Link 0e281c0c</td><td>2020-12-29</td><td class="wide">Fixed DIO &amp; CLK pin silk error</td><td class="wide">R1、R2 从 4.7K 改为 10K；丝印改动不在导出范围内</td><td class="num">0</td><td class="wide">小修，说明没写全</td></tr>
+<tr><td class="mono">ST-Link 214980db</td><td>2020-12-29</td><td class="wide">Make Tx &amp; Rx indicate LED brighter</td><td class="wide">D1–D3 由红色改为蓝、黄、绿；R4、R5 从 2K 改为 680R</td><td class="num">0</td><td class="wide">选值题，和试点 LUNA 指示灯同类</td></tr>
+<tr><td class="mono">ST-Link ff23d4cf</td><td>2020-12-29</td><td class="wide">Nothing big deal, adjust silk</td><td class="wide">元件、网络、焊盘都没变</td><td class="num">0</td><td class="wide">只改丝印，不出题</td></tr>
+<tr><td class="mono">ST-Link 99fbfe36</td><td>2023-03-05</td><td class="wide">Update.</td><td class="wide">稳压器 U2 从 LP2992 换成 SPX3819M5；新增 R14、R15；J1.1 和 J2.1 的 JTCK、JTMS 对调；U1 的 SWDIO、SWCLK 两脚连接改变</td><td class="num">4</td><td class="wide">多段修改，适合“看差异写需求”</td></tr>
+<tr><td class="mono">HoloCubic 7b861ebd</td><td>2021-01-11</td><td class="wide">Add SD-Card to MainBoard PCB</td><td class="wide">新增卡座 J1 和 R8–R11；焊盘 194→216</td><td class="num">3</td><td class="wide">加功能</td></tr>
+<tr><td class="mono">HoloCubic 31d91345</td><td>2021-02-16</td><td class="wide">Update PCB to fit Steam-Case</td><td class="wide">见案例：去掉板对板连接器，TF 卡座换 8P 弹簧连接器，增 D2–D4、J2，C7 改 1 µF，6 个元件挪位</td><td class="num">8</td><td class="wide">板壳联动</td></tr>
+<tr><td class="mono">HoloCubic bd8452a2</td><td>2021-03-01</td><td class="wide">Remove 2 x RGB</td><td class="wide">删 D3、D4、U5、R11、C11；LED 链在 D1 截断</td><td class="num">1</td><td class="wide">减功能</td></tr>
+<tr><td class="mono">HoloCubic ec084e53</td><td>2021-03-19</td><td class="wide">Modified MainBoard connector hole size</td><td class="wide">元件、网络、焊盘都没变；孔径不在导出范围内，要另比钻孔</td><td class="num">0</td><td class="wide">机械约束小修</td></tr>
+<tr><td class="mono">HoloCubic ec0ea5b0</td><td>2021-03-19</td><td class="wide">Move ExtendBoard's MOSFET to MainBoard</td><td class="wide">扩展板删 Q1、R1；主板加 Q1、R11，J1.1 由 GPIO5 改为 LCD_BL_VCC</td><td class="num">2</td><td class="wide">跨板改动</td></tr>
+<tr><td class="mono">Peak 5daf5a79</td><td>2021-10-10</td><td class="wide">Update Peak.PcbDoc</td><td class="wide">元件、网络、走线、过孔、铺铜、元件位置都没变</td><td class="num">0</td><td class="wide">可能只改丝印或重存，不出题</td></tr>
+<tr><td class="mono">Dummy f762a100</td><td>2021-11-10</td><td class="wide">Fix StepMotor-Drive-42 connector net missing</td><td class="wide">只改 PCB：P1、P2 外壳焊盘 SH1 补接 VCC_IN，SH2 补接 GND</td><td class="num">4</td><td class="wide">修漏网</td></tr>
+<tr><td class="mono">Dummy 8d76bd3f</td><td>2022-01-18</td><td class="wide">Update Motor-42 hardware, add dual-encoder support</td><td class="wide">见案例：增 P5、U8，删 R18、R19，改 14 个，三个连接器换针数，15 个元件挪位</td><td class="num">47</td><td class="wide">大改版，难题</td></tr>
+<tr><td class="mono">ElectronBot 3b59b542</td><td>2022-03-13</td><td class="wide">Modify ServoDrive MCU to STM32F030F6/STM32F04x</td><td class="wide">两块舵机板只把 U4 从 STM32F030F4P6 换成 STM32F030F6/STM32F042F6，网络和焊盘没动</td><td class="num">0</td><td class="wide">换引脚兼容的料，低档</td></tr>
+<tr><td class="mono">ElectronBot a1fa04b7</td><td>2022-03-14</td><td class="wide">Remove redundant VCC_BUS</td><td class="wide">见案例：只动 VBUS_IN，删 2 段走线、1 个过孔、1 块铺铜</td><td class="num">0</td><td class="wide">修清单，对应 issue #28</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>issue 里的线索</h3>
+  <p>一个 Sonnet 代理读了 280 个按关键词初筛出的 issue，约 70 个读了评论。其中硬件缺陷 28 个、改版需求 20 个、结构配合 8 个，其余 224 个是采购装配或固件、使用问题。这是单次阅读的结果，抽查了 Peak #4 和 HoloCubic #52 两条，和原文一致。</p>
+  <ul>
+    <li><b>Peak #4</b>：电源路径设计失误，维护者承认（见案例）。</li>
+    <li><b>ElectronBot #28</b>：SensorBoard 多余的 VBUS 走线，对应提交 a1fa04b（见案例）。</li>
+    <li><b>ElectronBot #108、#140</b>：CAD 里的舵机模型和实物差一个减速箱凸起，维护者确认，评论给了装配改动。</li>
+    <li><b>HoloCubic #52</b>：MPU6050 的裸焊盘不该接地，维护者承认，让用户自己去掉连线。</li>
+    <li><b>HoloCubic #13</b>：自动下载电路的 C7 从 0.1 µF 改大，有乐鑫设计指南的修订佐证。</li>
+    <li><b>HelloWord #95、#90</b>：轴孔和灯孔画在 outline 层、drl 层漏孔；铣槽连接位不足 4 mm 会断板。都是厂家 DFM 规则，容易写成检查。</li>
+    <li><b>Ctrl-FOC-Lite #31</b>：PB5 的 I2C1_SMBA 和 TIM3_CH2 引脚冲突，是隐形条件题的素材。</li>
+  </ul>
+  <p class="muted">A360 上的两个 Fusion 原生工程 qly 已在 11-12 下载：ElectronBot 整机装配（7 个设计，顶层第 70 版）和 XUAN 车身（9 个设计，含 144 MB 的 EA90 电机）。两个都是多设计归档，排在 236 个 .f3z 重转之后转 STEP，说明见 <span class="mono">data/peng_zhihui_20261112/a360/README.md</span>。</p>
+</section>
+
+<section>
+  <h2><span class="no">06</span>试点试做（19 道，11-10 的结果）</h2>
+  <p>试做在断网的工作区里进行，只给改前快照和题面。第一轮 Sonnet 通过 9/19，Opus 通过 8/11；13 次失败交给 Opus 复核：6 次误判、5 次真错、2 次两种都有。修好后 Sonnet 通过 <b>11/19</b>，Opus 通过 <b>11/11</b>。另一组 Opus 子代理不看判分代码、逐条对照题面审计 Opus 的 11 份通过解：211 条需求中 208 条完全满足，没有 critical 或 major 问题，minor 19 条。</p>
+  <details>
+    <summary>展开 19 道的逐题结果</summary>
+    <div class="inner">
+  <div class="tablebox"><table>
+    <thead><tr><th>提交</th><th>题目</th><th>难度</th><th>上游答案</th><th>Sonnet</th><th>Opus</th><th>说明</th></tr></thead>
+    <tbody>
+<tr><td class="mono">04d1cee2</td><td class="wide">Cyclone X 轴齿轮防护罩重新设计（OpenSCAD，隐形条件：真实齿顶半径大于装配图示意半径）</td><td>中</td><td>不通过</td><td><span class="pill bad">不通过</span></td><td>—</td><td class="wide">判分装配缺螺纹杆直径参数，C6 误判已修；齿轮轴向位置算错导致 C3–C5，是真错</td></tr>
+<tr><td class="mono">057145e7</td><td class="wide">SBC_Case_Builder 风扇开孔 style 2 适配 40–120 mm 风扇</td><td>中</td><td>不通过</td><td><span class="pill good">通过</span></td><td>—</td><td class="wide"></td></tr>
+<tr><td class="mono">1a6c5ff0</td><td class="wide">SmartKnob View 底板：换 3.3V 稳压器、修正 HX711 AVDD 分压</td><td>难</td><td>通过</td><td><span class="pill good">通过</span></td><td><span class="pill good">通过</span></td><td class="wide"></td></tr>
+<tr><td class="mono">1bde292a</td><td class="wide">OpenMower CoverUI：14 个按键封装与 BOM 料号不符，重做封装并重新布线</td><td>难</td><td>不通过</td><td><span class="pill good">通过</span></td><td><span class="pill good">通过</span></td><td class="wide"></td></tr>
+<tr><td class="mono">2144db5e</td><td class="wide">Vz330 右侧板 DXF 补 Ø3.3 安装孔（对左板镜像）</td><td>低</td><td>通过</td><td><span class="pill good">通过</span></td><td>—</td><td class="wide"></td></tr>
+<tr><td class="mono">31f7c7ba</td><td class="wide">DroneController：修正 12MHz 晶振负载电容，引出 USART1 调试排针</td><td>中</td><td>通过</td><td><span class="pill bad">不通过</span></td><td>—</td><td class="wide">判分改为只取两份交付文件，新增 DRC 从 130 降到真实的 11；排针封装缺库名、离板边太远</td></tr>
+<tr><td class="mono">33794d3e</td><td class="wide">KeyV2 加 Kailh Choc V1 杆型和低矮修饰器</td><td>难</td><td>不通过</td><td><span class="pill good">通过</span></td><td><span class="pill good">通过</span></td><td class="wide"></td></tr>
+<tr><td class="mono">39c12b33</td><td class="wide">OpenMower 主板：IMU 兼容 WT901、U11 可换 Pico W</td><td>难</td><td>不通过</td><td><span class="pill good">通过</span></td><td><span class="pill good">通过</span></td><td class="wide"></td></tr>
+<tr><td class="mono">42634b8b</td><td class="wide">Glasgow revA：按数据手册修正 U1、U8 焊盘图形与散热</td><td>难</td><td>不通过</td><td><span class="pill good">通过（复核后）</span></td><td><span class="pill good">通过（复核后）</span></td><td class="wide">工作区构造还原了快照里的加工，KiCad 10 把每个过孔报成禁布违规</td></tr>
+<tr><td class="mono">4ef7223a</td><td class="wide">OtterCast Audio V2：模拟地平面与以太网口复查</td><td>难</td><td>通过</td><td><span class="pill bad">不通过</span></td><td><span class="pill good">通过</span></td><td class="wide">另存新格式没交 .kicad_pro；补回后仍有模拟地平面和 LED 极性 3 处真错</td></tr>
+<tr><td class="mono">554fd3b8</td><td class="wide">Cyclone Y 滑架 PCB 夹具（OpenSCAD）</td><td>中</td><td>不通过</td><td><span class="pill good">通过</span></td><td>—</td><td class="wide"></td></tr>
+<tr><td class="mono">6f285a08</td><td class="wide">Miniscope v4 Rigid-Flex：合板后的网表整理与电气复核</td><td>难</td><td>不通过</td><td><span class="pill bad">不通过</span></td><td><span class="pill good">通过（复核后）</span></td><td class="wide">隐形条件只能从 MCU 固件看出，第一轮工作区没带固件；补上后 Opus 找到了</td></tr>
+<tr><td class="mono">828c55a0</td><td class="wide">OtterCastAudio V2.0→V2.1：查 +3V3 偏低和 I2S 无声的根因并修复</td><td>难</td><td>不通过</td><td><span class="pill good">通过</span></td><td><span class="pill good">通过</span></td><td class="wide"></td></tr>
+<tr><td class="mono">84c98836</td><td class="wide">BusPirate 7-REV1 并入 Rev7 端口保护方案</td><td>难</td><td>不通过</td><td><span class="pill bad">不通过</span></td><td><span class="pill good">通过（复核后）</span></td><td class="wide">Opus 只因 ESD 管封装名被拒，已放宽；Sonnet 负轨二极管接反、关断管漏极接错</td></tr>
+<tr><td class="mono">84dde461</td><td class="wide">LUNA rev0 的 11 个指示灯选限流电阻</td><td>中</td><td>不通过</td><td><span class="pill bad">不通过</span></td><td>—</td><td class="wide">按 5 mA 时的 Vf 估算，低估小电流，亮度超上限</td></tr>
+<tr><td class="mono">858b67fa</td><td class="wide">Miniscope V4 IMU 小板：适配新柔性板并补齐 BNO055 外围</td><td>中</td><td>通过</td><td><span class="pill good">通过（复核后）</span></td><td>—</td><td class="wide">去耦电容检查按顺序贪心匹配、卡在浮点边界，已改成二分图匹配</td></tr>
+<tr><td class="mono">a7debf80</td><td class="wide">Jellybean：MCU 的 USB0_VBUS 引脚按勘误表加分压（隐形条件）</td><td>低</td><td>通过</td><td><span class="pill bad">不通过</span></td><td>—</td><td class="wide">把连接器侧 VBUS 标签改了名，总线断成两段</td></tr>
+<tr><td class="mono">bad3e59d</td><td class="wide">Glasgow revC：13 对 LVDS 差分对等长布线</td><td>难</td><td>通过</td><td><span class="pill good">通过</span></td><td><span class="pill good">通过</span></td><td class="wide"></td></tr>
+<tr><td class="mono">beb818fd</td><td class="wide">Kossel 末端执行器集成 16 mm 热端座（隐形条件：球铰间距要和滑车一致）</td><td>难</td><td>不通过</td><td><span class="pill bad">不通过</span></td><td><span class="pill good">通过</span></td><td class="wide">照抄旧 effector 的球铰间距 37.2，没对上滑车的 44</td></tr>
+    </tbody>
+  </table></div>
+    </div>
+  </details>
+  <div class="note">
+    <b>从试点到 A 批，难度判断变了</b>
+    <p>试点里 Opus 把 11 道难题全做对了，审计确认是真对，说明当时的“难题”多是边界清楚的局部修改。A 批抽样换成以从零设计和大改版为主后，Sonnet 修好检查后的难题通过率是 6/12，真错集中在整板布线、缩板和板壳空间关系上。下一步的难题方向（多提交合并、板壳联动、带约束的完整布线）和这个结果一致。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="no">07</span>CAD 专有格式转换与重筛</h2>
+  <div class="cols">
+    <div>
+      <h3>SolidWorks · 1364/1370</h3>
+      <ul>
+        <li>转出的 STEP 已拷回 Mac，1368 个文件 sha256 逐个一致。</li>
+        <li>可读性检查：有实体 1328 个，只有曲面 17 个，空文件或语法错 19 个。</li>
+        <li>299 个装配引用了仓库外的零件，导出的 STEP 缺件。</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Fusion · .f3z 全部重转</h3>
+      <ul>
+        <li>11-12 发现：236 个 .f3z 里 234 个是多设计归档，229 个转出的实体数少于设计数，207 个只有 1 个实体。上传后 Fusion 返回的常是归档里的一个子设计，不是顶层装配。</li>
+        <li>修法：沿父引用一级级找到顶层设计再导出，日志记下引用链和实体数。13:45 起重转全部 .f3z，按上传速度要十几个小时。</li>
+        <li>.f3d、.sldprt、.ipt 不受影响。</li>
+        <li>23:11 Autodesk 身份管理器崩溃两次（弹了错误报告），Fusion 被后台会话自动重启，23:12 续跑，已完成的自动跳过。重启前这轮已处理 88 个：成功 69，失败 19，其中 16 次是上传超时，跑完要补跑一轮。</li>
+        <li>A360 上的 ElectronBot、XUAN 两个 Fusion 工程排在这轮之后自动提交。</li>
+      </ul>
+    </div>
+  </div>
+  <h3>重筛：245 条 → 能用 38 条</h3>
+  <div class="bars" role="img" aria-label="能用 38，要拆分 16，缺材料 104，不能用 87">
+    <div class="bar"><span>能用</span><span class="track"><span class="fill" style="width:15.5%"></span></span><span class="val">38</span></div>
+    <div class="bar"><span>要拆分</span><span class="track"><span class="fill alt" style="width:6.5%"></span></span><span class="val">16</span></div>
+    <div class="bar"><span>缺材料</span><span class="track"><span class="fill alt" style="width:42.4%"></span></span><span class="val">104</span></div>
+    <div class="bar"><span>不能用</span><span class="track"><span class="fill alt" style="width:35.5%"></span></span><span class="val">87</span></div>
+  </div>
+  <p>能用的 38 条里难 8、中 17、低 13。缺材料的 104 条中有 48 条是因为 Fusion 转换不完整，重转后要再核一次。按新结构打的标签：耦合（L2）46 条，能用 19 条；难题候选（L3）7 条，能用 3 条；金题候选 6 条，能用 2 条。涉及运动部件的 31 条里能用 13 条，可作为运动包络检查的第一批用例。</p>
+  <p class="muted">8 条难题：LH Stinger 换 Goliath 热端（f0c41883）、Jubilee V7 螺纹散热器（c32ec589）、Poseidon 注射泵（2463a5ae，金题候选）、Open Source Rover 车身改单块控制板（43e16638，板壳联动）、Rover 转向换行星电机（df0c2a80）、Rover 驱动电机换 GoBilda（f2dff466）、Miniscope 双色 v2（4bf05d77）、HACKberry 修干涉（d0342ffd）。</p>
+</section>
+
+<section>
+  <h2><span class="no">08</span>事故与教训</h2>
+  <div class="tablebox"><table>
+    <thead><tr><th>事情</th><th>影响</th><th>处理</th></tr></thead>
+    <tbody>
+      <tr><td>工作区泄题和缺件（11-12）</td><td class="wide">4892d559 的改前快照里顶层工作文件就是上游答案；af7ff2be 的输入几何没进工作区；9f11e288 缺 git 子模块</td><td class="wide">解题者自己发现泄题并拒绝作答；三道都已修。搭题时要比对改前工作文件和上游改后文件的哈希，工具要支持 repo_before/ 和子模块</td></tr>
+      <tr><td>身份管理器崩溃（11-12 23:11）</td><td class="wide">Autodesk 身份管理器两次弹错误报告，Fusion 退出</td><td class="wide">后台会话自动重启 Fusion 并写续跑请求，23:12 接上，已完成的跳过</td></tr>
+      <tr><td>Fusion .f3z 残缺（11-12）</td><td class="wide">几乎所有 .f3z 只导出了一个子设计，导致 48 条候选被标成缺材料，CAD 可读性检查里 .f3z 的部分作废</td><td class="wide">沿引用链找顶层设计；按“设计数对比实体数”逐个核重转结果</td></tr>
+      <tr><td>检查自身的 bug（11-11）</td><td class="wide">15 道里 10 道的检查要修，一个 bug 能挂 10 条</td><td class="wide">复核后按清单修；阈值必须有出处，否则作加权项</td></tr>
+      <tr><td>解题者改封装过 DRC</td><td class="wide">4 份解缩 courtyard 或删禁布区，4 份调低规则严重度，原检查都没拦住</td><td class="wide">新增 critical 通用检查 G1、G2</td></tr>
+      <tr><td>外置盘掉线（11-12）</td><td class="wide">迁移整拷 92 GB 后，硬盘盒（JMS583）USB 反复复位后掉线</td><td class="wide">重插后 APFS 校验通过，全量校验和比对后才切换和删本机副本</td></tr>
+      <tr><td>Windows 传输慢（11-12）</td><td class="wide">Tailscale 走纽伦堡中继，约 50 KB/s，Altium 每个工程要 3–4 分钟</td><td class="wide">工程文件用 U 盘暂存到 Windows，只传清单；SSH 连接复用后每个工程 70–100 秒</td></tr>
+      <tr><td>比对脚本误报（11-12）</td><td class="wide">一个引脚号对应多个焊盘时被当成未连接，误报 3 个工程原理图和 PCB 不同步</td><td class="wide">按非空网络合并重跑，只剩 2 个真不同步</td></tr>
+      <tr><td>磁盘写满（11-10）</td><td class="wide">子代理快照让临时目录涨到 70 GB，Fusion 插件崩溃</td><td class="wide">清理临时文件，挂低水位报警；项目迁到外置盘后本机剩 115 GB</td></tr>
+      <tr><td>工作区构造（11-09）</td><td class="wide">快照里的修改被还原；隐形条件依赖的固件没放进工作区</td><td class="wide">统一用 workspace.json 规定工作区</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2><span class="no">09</span>待你决定的事和下一步</h2>
+  <div class="cols">
+    <div>
+      <h3>等你决定</h3>
+      <ul>
+        <li>是否加通用检查 G3（critical）：新增或改动的封装，焊盘之间、courtyard 之间不得与其他元件重叠，按几何算、不看工程规则设置；机械题补紧固件插入路径和装配干涉。依据是第二轮 4 道被审计推翻的题。</li>
+        <li>G2 是否扩展到规则数值：设计规则（如板边间距）不得比改前或同仓库其他板更宽松。</li>
+        <li>从零设计整板、换主芯片封装这类大题：Sonnet 两次都直接放弃。按定下的“T2/T3 只做少量挑战集”，建议只留少量。</li>
+        <li>无信息收益的违规（往 /tmp 写、列上层目录、留后台进程）：建议记录、不作废，正式评测靠沙箱杜绝。</li>
+        <li>难题的真实难度：Sonnet 做出来的难题再让 Opus 做几次，估通过率定档。要花 Opus，开工前报量。</li>
+        <li>B 批难题怎么开工；Peak #4 这类上游没有答案的题，参考解由我们画还是外包。</li>
+      </ul>
+    </div>
+    <div>
+      <h3>接下来按顺序做</h3>
+      <ol>
+        <li>写 G3 和装配检查（脚本，不花模型额度），给 4 道被推翻的题补检查；修 21dd5861、9b0b0f77 还没修的两处检查。</li>
+        <li>Fusion .f3z 重转跑完：补跑上传超时的，逐个核设计数和实体数，重筛 48 条；然后转 A360 的两个工程。</li>
+        <li>稚晖君：qly 在 KiCad 里导入 6 个工程的原理图后，核对网表，加工 Peak #4、Motor-42 双编码器、HoloCubic 外壳改板、ElectronBot #28、ST-Link 指示灯 5 道题。</li>
+        <li>A 批其余 69 道（上游不通过）：抽 10 道看原因。</li>
+      </ol>
+    </div>
+  </div>
+  <h3>文件在哪</h3>
+  <dl class="paths">
+    <dt>本轮摘要</dt><dd>data/answer_mining_20261107/progress_digest_20261112.md</dd>
+    <dt>A 批试做</dt><dd>第一轮 construct/trials_wsA1_20261111.md；第二轮 construct/wsA2_tasks.json、wsA2_fixlist.md（问题和修订清单）；各题 construct/&lt;sha8&gt;/trials/（sonnet.json、sonnet_review.json、sonnet_audit.json）</dd>
+    <dt>第二轮工具</dt><dd>tools/answer_mining/triage/{build_ws_batch.sh, review_prompts_wsA2.py, wsA2_after_trial.sh, wsA2_status.py}；工作区 workdir/trial_ws/wsA2/</dd>
+    <dt>接续说明</dt><dd>data/answer_mining_20261107/HANDOFF.md</dd>
+    <dt>通用检查</dt><dd>tools/answer_mining/triage/common_checks.py</dd>
+    <dt>专有格式重筛</dt><dd>data/step_rescreen_20261112/（README、merged.json）</dd>
+    <dt>稚晖君</dt><dd>data/peng_zhihui_20261112/README.md；脚本 tools/peng_zhihui/</dd>
+    <dt>Altium 对比</dt><dd>data/peng_zhihui_20261112/{altium_export, altium_vs_kicad, gerber_vs_kicad_fixvias, revisions_export}/</dd>
+    <dt>格式转换</dt><dd>data/fusion_convert/、data/sw_convert/、data/cad_check_20261111/</dd>
+  </dl>
+</section>
+
+</div>

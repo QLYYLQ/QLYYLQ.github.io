@@ -1,0 +1,1439 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>Omnifex 提案</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=Noto+Serif+SC:wght@700;900&display=swap">
+<style>
+/* Layout: a drawing sheet. Hero = statement + engineering title block; one reading column (~40 CJK chars);
+   figures and tables break out to sheet width. Green = solder mask (what exists / what we build), copper = gaps and unproven links. */
+:root{
+  --paper:#F1F4F1;
+  --sheet:#FAFBFA;
+  --ink:#16201B;
+  --ink-soft:#4B5852;
+  --rule:#CDD5D0;
+  --rule-strong:#97A49D;
+  --mask:#1C5D47;
+  --mask-wash:rgba(28,93,71,.09);
+  --copper:#A9581F;
+  --copper-wash:rgba(169,88,31,.10);
+  --on-accent:#F7F9F7;
+  --font-display:"Noto Serif SC","Songti SC","STSong","Source Han Serif SC",serif;
+  --font-body:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Source Han Sans SC",system-ui,sans-serif;
+  --font-label:"IBM Plex Sans Condensed","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1512; --sheet:#141D19; --ink:#E4EAE6; --ink-soft:#A2B0A9;
+    --rule:#2A3631; --rule-strong:#4C5A54;
+    --mask:#5BB590; --mask-wash:rgba(91,181,144,.12);
+    --copper:#E08A4E; --copper-wash:rgba(224,138,78,.13);
+    --on-accent:#0E1512;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1512; --sheet:#141D19; --ink:#E4EAE6; --ink-soft:#A2B0A9;
+  --rule:#2A3631; --rule-strong:#4C5A54;
+  --mask:#5BB590; --mask-wash:rgba(91,181,144,.12);
+  --copper:#E08A4E; --copper-wash:rgba(224,138,78,.13);
+  --on-accent:#0E1512;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16.5px;line-height:1.8}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--paper)}
+a{color:var(--mask);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+code{font-family:var(--font-mono);font-size:.86em;background:var(--mask-wash);padding:.05em .35em;border-radius:2px;overflow-wrap:anywhere}
+
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--paper);border-bottom:1px solid var(--rule)}
+.topbar-in{display:flex;align-items:center;gap:20px;min-height:48px}
+.brand{font-family:var(--font-label);font-weight:600;font-size:15px;letter-spacing:.02em;color:var(--ink);text-decoration:none;white-space:nowrap}
+.brand span{color:var(--ink-soft);font-weight:500;margin-left:.45em}
+.toc{display:flex;gap:16px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1;justify-content:flex-end}
+.toc::-webkit-scrollbar{display:none}
+.toc a{color:var(--ink-soft);text-decoration:none;font-size:14px;white-space:nowrap;padding-block:12px}
+.toc a:hover{color:var(--ink)}
+@media (max-width:860px){.toc{justify-content:flex-start;gap:14px}.brand span{display:none}}
+
+/* hero */
+.hero{border-bottom:1px solid var(--rule)}
+.hero-in{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:56px;padding-block:64px 56px;align-items:end}
+@media (max-width:880px){.hero-in{grid-template-columns:minmax(0,1fr);gap:36px;padding-block:40px}}
+.eyebrow{font-family:var(--font-label);font-size:13px;letter-spacing:.08em;color:var(--ink-soft);margin:0 0 18px}
+.pname{font-family:var(--font-label);font-weight:600;font-size:clamp(24px,2.8vw,30px);line-height:1;letter-spacing:.05em;color:var(--mask);margin:0 0 14px}
+h1{font-family:var(--font-display);font-weight:900;font-size:clamp(34px,5.6vw,56px);line-height:1.12;letter-spacing:-.01em;margin:0 0 26px;text-wrap:balance}
+.lede{font-size:18px;line-height:1.85;max-width:38em;margin:0 0 26px}
+.hero-links{display:flex;flex-wrap:wrap;gap:10px;margin:0}
+.hero-links a{font-family:var(--font-label);font-weight:600;font-size:14px;text-decoration:none;color:var(--mask);border:1px solid var(--mask);padding:7px 14px;border-radius:2px}
+.hero-links a:hover{background:var(--mask-wash)}
+
+.titleblock{margin:0;border:1.5px solid var(--ink);background:var(--sheet);font-size:14.5px}
+.titleblock .tb-cap{font-family:var(--font-label);font-size:12px;letter-spacing:.1em;color:var(--ink-soft);padding:6px 12px;border-bottom:1.5px solid var(--ink);margin:0}
+.titleblock dl{margin:0}
+.titleblock dl div{display:grid;grid-template-columns:5.6em minmax(0,1fr);border-top:1px solid var(--rule-strong)}
+.titleblock dl div:first-child{border-top:0}
+.titleblock dt{font-size:13px;color:var(--ink-soft);padding:9px 12px;border-right:1px solid var(--rule-strong)}
+.titleblock dd{margin:0;padding:9px 12px;line-height:1.55}
+.titleblock .tb-name dd{font-family:var(--font-display);font-weight:900;font-size:20px;line-height:1.3}
+
+/* summary */
+.summary{padding-block:44px 0}
+.points{margin:0;border-top:1px solid var(--rule);max-width:52rem}
+.points div{display:grid;grid-template-columns:4.5em minmax(0,1fr);gap:18px;padding-block:14px;border-bottom:1px solid var(--rule)}
+.points dt{font-family:var(--font-label);font-weight:600;font-size:14px;color:var(--ink-soft);padding-top:2px}
+.points dd{margin:0}
+
+/* sections */
+.sec{padding-block:80px 0;scroll-margin-top:60px}
+.sec-head{max-width:46rem;margin-bottom:30px}
+.sec-no{font-family:var(--font-mono);font-size:13px;color:var(--ink-soft);margin:0 0 10px}
+h2{font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.5vw,38px);line-height:1.3;margin:0 0 16px;text-wrap:balance}
+h3{font-size:19px;font-weight:700;line-height:1.45;margin:44px 0 12px;text-wrap:balance}
+h4{font-size:17px;font-weight:700;line-height:1.45;margin:0 0 8px;text-wrap:balance}
+.lede2{font-size:17.5px;margin:0}
+.prose{max-width:42rem}
+.prose p{margin:0 0 16px}
+.prose ul,.prose ol{padding-left:1.3em;margin:0 0 16px}
+.prose li{margin:0 0 9px}
+.prose li::marker{color:var(--ink-soft)}
+.small{font-size:14px;color:var(--ink-soft)}
+
+/* timeline */
+.timeline{list-style:none;margin:8px 0 22px;padding:0;border-left:1.5px solid var(--rule-strong);max-width:42rem}
+.timeline li{display:grid;grid-template-columns:4.6em minmax(0,1fr);gap:12px;padding:5px 0 5px 18px;position:relative}
+.timeline li::before{content:"";position:absolute;left:-5.5px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink-soft)}
+.timeline li.hot::before{background:var(--mask);border-color:var(--mask)}
+.timeline time{font-family:var(--font-mono);font-size:13.5px;color:var(--ink-soft);padding-top:2px}
+
+/* figures */
+figure{margin:34px 0 8px}
+.fig-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);background:var(--sheet);padding:18px}
+.fig-scroll svg{display:block;width:100%;height:auto}
+.fig1 svg{min-width:880px}
+.fig2{max-width:760px}
+.fig2 svg{min-width:540px}
+.fig3{max-width:940px}
+.fig3 svg{min-width:720px}
+.fig4 svg{min-width:760px}
+figcaption{font-size:14px;color:var(--ink-soft);line-height:1.75;margin-top:12px;max-width:48rem}
+figcaption b{color:var(--ink);font-weight:700}
+.scroll-hint{display:none;font-size:12.5px;color:var(--ink-soft);margin:8px 0 0}
+@media (max-width:760px){.scroll-hint{display:block}}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;list-style:none;padding:0;margin:12px 0 0;font-size:13.5px;color:var(--ink-soft)}
+.legend li{display:flex;align-items:center;gap:7px}
+.sw{display:inline-block;width:22px;height:11px;flex:none}
+.sw-old{background:var(--ink-soft);opacity:.45}
+.sw-new{background:var(--mask)}
+.sw-hatch{background:repeating-linear-gradient(45deg,var(--copper) 0 1.5px,transparent 1.5px 5px);opacity:.75;outline:1px solid var(--rule-strong)}
+.sw-copper{background:transparent;border:1.5px solid var(--copper);height:13px;width:13px}
+.sw-ln{height:0;width:24px;border-top:1.5px solid var(--ink-soft)}
+.sw-ln-copper{height:0;width:24px;border-top:1.5px dashed var(--copper)}
+
+/* svg */
+svg text{font-family:var(--font-body);fill:var(--ink)}
+svg .t-soft{fill:var(--ink-soft)}
+svg .t-mono{font-family:var(--font-mono)}
+svg .t-copper{fill:var(--copper)}
+svg .t-mask{fill:var(--mask)}
+svg .t-on{fill:var(--on-accent)}
+svg .t-b{font-weight:700}
+svg .ln{stroke:var(--rule);stroke-width:1}
+svg .ln-soft{stroke:var(--ink-soft);stroke-width:1.3;fill:none}
+svg .ln-dash{stroke:var(--ink-soft);stroke-width:1.3;fill:none;stroke-dasharray:5 4}
+svg .ln-mask{stroke:var(--mask);stroke-width:1.7;fill:none}
+svg .ln-mask-dash{stroke:var(--mask);stroke-width:1.7;fill:none;stroke-dasharray:6 5}
+svg .ln-copper{stroke:var(--copper);stroke-width:1.5;fill:none}
+svg .ln-copper-dash{stroke:var(--copper);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
+svg .bar-old{fill:var(--ink-soft);opacity:.45}
+svg .bar-new{fill:var(--mask)}
+svg .box{fill:var(--sheet);stroke:var(--rule-strong);stroke-width:1}
+svg .box-paper{fill:var(--paper);stroke:var(--rule-strong);stroke-width:1}
+svg .box-mask{fill:var(--mask-wash);stroke:var(--mask);stroke-width:1.8}
+svg .hatch-line{stroke:var(--copper);stroke-width:1.6;opacity:.42}
+svg .ah-soft{fill:var(--ink-soft)}
+svg .ah-mask{fill:var(--mask)}
+svg .ah-copper{fill:var(--copper)}
+svg .ms{fill:var(--ink)}
+
+/* gaps */
+.gaps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin:22px 0 10px}
+@media (max-width:900px){.gaps{grid-template-columns:minmax(0,1fr);gap:22px}}
+.gap{border-top:1.5px solid var(--ink);padding-top:14px;min-width:0}
+.gap .code{font-family:var(--font-mono);font-size:13px;color:var(--copper);margin:0 0 4px}
+.gap p{font-size:15.5px;margin:0}
+
+.minor{margin:18px 0 18px;max-width:52rem;border-top:1px solid var(--rule)}
+.minor div{display:grid;grid-template-columns:11em minmax(0,1fr);gap:18px;padding-block:12px;border-bottom:1px solid var(--rule)}
+@media (max-width:640px){.minor div{grid-template-columns:minmax(0,1fr);gap:4px}}
+.minor dt{font-weight:700;font-size:15px}
+.minor dt span{font-family:var(--font-mono);font-weight:500;color:var(--copper);margin-right:.4em}
+.minor dd{margin:0;font-size:15.5px}
+
+/* tables */
+.tbl{margin:26px 0 8px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.65}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--rule)}
+thead th{font-family:var(--font-label);font-weight:600;font-size:13px;letter-spacing:.03em;color:var(--ink-soft);border-bottom:1px solid var(--rule-strong);white-space:nowrap;background:var(--paper)}
+tbody tr:last-child td{border-bottom:0}
+td.l{white-space:nowrap;font-weight:700}
+td.l span{display:block;font-weight:400;font-size:13px;color:var(--ink-soft)}
+.tbl + .prose{margin-top:22px}
+.tbl-cap{font-size:14px;color:var(--ink-soft);margin:10px 0 0;max-width:48rem;line-height:1.75}
+.tbl-cap b{color:var(--ink)}
+.t-wide table{min-width:720px}
+.t-mid table{min-width:600px}
+.lay{font-family:var(--font-mono);font-size:13px;white-space:nowrap}
+
+.chip{display:inline-block;font-family:var(--font-label);font-size:12.5px;font-weight:600;letter-spacing:.03em;padding:0 7px;border-radius:2px;white-space:nowrap;margin-bottom:4px}
+.chip.have{color:var(--mask);background:var(--mask-wash)}
+.chip.gap{color:var(--copper);background:var(--copper-wash)}
+.chip.part{color:var(--ink-soft);box-shadow:inset 0 0 0 1px var(--rule-strong)}
+
+/* matrix */
+.matrix table{min-width:1040px;font-size:14px}
+.matrix td .st{float:left;margin:4px 7px 0 0}
+.matrix thead th:nth-child(-n+3),.matrix thead th:nth-child(8){width:13%}
+.matrix thead th:nth-child(n+4):nth-child(-n+7){width:12%}
+.nw{white-space:nowrap}
+.matrix td .nt{display:block;overflow:hidden}
+.matrix td.case,.matrix th.case{position:sticky;left:0;background:var(--paper);z-index:1;white-space:normal;min-width:10.5em;max-width:12em}
+.matrix td.case{font-weight:700}
+.matrix td.case a{color:var(--ink);text-decoration-color:var(--rule-strong)}
+.matrix td.case small{display:block;font-weight:400;font-size:12.5px;color:var(--ink-soft)}
+.st{display:inline-block;width:.74em;height:.74em;border-radius:50%;border:1.5px solid var(--rule-strong);vertical-align:-.06em;margin-right:6px}
+.st.y{background:var(--mask);border-color:var(--mask)}
+.st.p{background:linear-gradient(90deg,var(--ink-soft) 50%,transparent 50%);border-color:var(--ink-soft)}
+.st.n{background:transparent}
+.st.u{border-style:dashed;border-color:var(--ink-soft)}
+.nt{color:var(--ink-soft);font-size:12.5px}
+.flag{font-family:var(--font-label);font-size:11.5px;font-weight:600;color:var(--on-accent);background:var(--mask);padding:0 6px;border-radius:2px;margin-left:6px;vertical-align:1px}
+.keyline{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink-soft);margin:12px 0 0}
+.keyline span{white-space:nowrap}
+
+/* task cards */
+.tcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 34px;margin:22px 0 14px;max-width:68rem}
+@media (max-width:860px){.tcards{grid-template-columns:minmax(0,1fr);gap:26px}}
+.tcard{border-top:1.5px solid var(--ink);padding-top:12px;min-width:0}
+.tcard .code{font-family:var(--font-mono);font-size:13px;color:var(--ink-soft);margin:0 0 6px}
+.tcard .code .chip{margin:0 0 0 6px;vertical-align:1px}
+.tcard h4 a{color:var(--ink);text-decoration-color:var(--rule-strong)}
+.tcard dl{margin:10px 0 0}
+.tcard dl div{display:grid;grid-template-columns:4.6em minmax(0,1fr);gap:10px;padding-block:7px;border-top:1px solid var(--rule)}
+.tcard dt{font-size:13.5px;color:var(--ink-soft);padding-top:1px}
+.tcard dd{margin:0;font-size:15px;line-height:1.7}
+
+/* steps */
+.steps{list-style:none;counter-reset:s;padding:0;margin:16px 0 8px;max-width:46rem}
+.steps li{counter-increment:s;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:10px;padding-block:10px;border-top:1px solid var(--rule)}
+.steps li:last-child{border-bottom:1px solid var(--rule)}
+.steps li::before{content:counter(s);font-family:var(--font-mono);font-size:14px;color:var(--ink-soft);padding-top:2px}
+.steps strong{font-weight:700}
+
+/* pros/cons */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin:18px 0 8px;max-width:56rem}
+@media (max-width:760px){.two{grid-template-columns:minmax(0,1fr);gap:16px}}
+.two > div{min-width:0}
+.two h4{font-family:var(--font-label);font-size:14px;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;padding-bottom:6px;border-bottom:1px solid var(--rule-strong)}
+.two ul{padding-left:1.2em;margin:10px 0 0}
+.two li{margin:0 0 9px;font-size:15.5px}
+
+/* open items */
+.open{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 40px;max-width:68rem}
+@media (max-width:860px){.open{grid-template-columns:minmax(0,1fr)}}
+.open > div{min-width:0}
+.open h3{margin-top:28px}
+.open ul{padding-left:1.2em;margin:0}
+.open li{margin:0 0 9px;font-size:15.5px}
+
+/* glossary */
+.gloss{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 40px;margin:12px 0 0;max-width:68rem}
+@media (max-width:760px){.gloss{grid-template-columns:minmax(0,1fr)}}
+.gloss div{padding-block:9px;border-top:1px solid var(--rule);min-width:0}
+.gloss dt{font-weight:700;font-size:15px}
+.gloss dd{margin:2px 0 0;font-size:15px;color:var(--ink)}
+
+h3[id],dl[id]{scroll-margin-top:64px}
+footer{border-top:1px solid var(--rule);margin-top:80px;padding-block:26px 48px;color:var(--ink-soft);font-size:14px}
+</style>
+
+</head><body><header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#top">Omnifex<span>提案</span></a>
+    <nav class="toc" aria-label="章节">
+      <a href="#why">动机</a>
+      <a href="#gap">缺口</a>
+      <a href="#plan">方案</a>
+      <a href="#source">题源</a>
+      <a href="#bank">出题</a>
+      <a href="#score">判分</a>
+      <a href="#payoff">产出</a>
+      <a href="#roadmap">路线图</a>
+      <a href="#risks">风险</a>
+      <a href="#open">未核实</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap hero-in">
+    <div>
+      <p class="eyebrow">提案 · 第 2 版 · 2026-10-28</p>
+      <p class="pname" lang="en">Omnifex</p>
+      <h1><span class="nw">从 PCB 到 CAD，</span><span class="nw">让 agent</span> <span class="nw">把硬件做出来</span></h1>
+      <p class="lede">我们提议让 agent 走完从 PCB 设计到 CAD 设计的整条链：查手册、选有货的料、算元件参数、画原理图和 PCB、做出和板子配得上并留够装配余量的外壳，最后导出嘉立创下单要的整套文件。项目叫 Omnifex，用拉丁词根拼成：omni 是“一切”，-fex 是“制造者”（artifex“工匠”就带这个词尾），合起来就是“什么都能造”。交付分两部分：一是开源工具包，形态学 REA（把逆向分析软件打包给 AI agent 用的开源项目），一条命令装进 Claude Code、Codex 或 Gemini CLI；二是评测这条链的 gym，拿真实的开源硬件工程出题、自动判分，也能当强化学习环境。两部分共用一套比 DRC（PCB 的设计规则检查）更严的验证器。</p>
+      <p class="hero-links"><a href="#gap">缺口在哪</a><a href="#cad">CAD 怎么接</a><a href="#bank">题怎么出</a><a href="#rwe">借鉴 RWE-Bench</a><a href="#roadmap">前六周</a><a href="#gloss">术语表</a></p>
+    </div>
+    <aside class="titleblock" aria-label="提案概要">
+      <p class="tb-cap">标题栏</p>
+      <dl>
+        <div class="tb-name"><dt>项目</dt><dd lang="en">Omnifex</dd></div>
+        <div><dt>范围</dt><dd>从 PCB 设计到 CAD 设计的整条链，做到导出下单文件为止</dd></div>
+        <div><dt>交付</dt><dd>开源工具包，加一个评测整条链的 gym，两者共用验证器</dd></div>
+        <div><dt>首个案例</dt><dd>谐波赤道仪，参照开源的 HEMY v2</dd></div>
+        <div><dt>首批题源</dt><dd>OpenFlexure、splitflap、Corne；HEMY 的局部题等工程对齐后加</dd></div>
+        <div><dt>起步周期</dt><dd>6 周</dd></div>
+        <div><dt>依据</dt><dd>四轮调研：课题（10-22）、题源（10-24）、基准方法（10-24）、续调研（10-25）；10-28 补核 CAD 接口和 RWE-Bench</dd></div>
+        <div><dt>状态</dt><dd>提案，尚未开工；五张任务卡是草案</dd></div>
+      </dl>
+    </aside>
+  </div>
+</section>
+
+<section class="summary" aria-label="要点">
+  <div class="wrap">
+    <dl class="points">
+      <div><dt>缺口</dt><dd>基准方法调研读了约 60 个 PCB、电路和 CAD 基准与数据集，它们各管一两个环节；续调研又补读了其中 13 个核心基准的原文、代码和数据卡。查到的公开工作里，还没有一个对同一个可追溯项目的电路、机械配合、固件和制造文件一起做自动验收。验证大多停在 DRC，可真实的翻车多出在 DRC 查不到的地方。</dd></div>
+      <div><dt>做法</dt><dd>工具包冲影响力，gym 冲论文。验证器是两者共用的核心，第 1 周起写进工具包，第 3 周起 gym 直接拿来判分。</dd></div>
+      <div><dt>CAD</dt><dd>外壳和装配这一段，默认让 agent 写 build123d 代码建模，由 OpenCascade 内核生成精确实体；题源本身是 OpenSCAD 的，照旧写 OpenSCAD。只看截图、点 CAD 软件的屏幕操作不进主线，只留一组同题对照，原因之一是现在的分数太低：CADWorld 的 200 道 FreeCAD 屏幕操作题，最好的 agent 只做对 17.5%，人类专家单次参考是 87%。RWE-Bench 的曲轴例题也是用 CadQuery 写代码建模，再跑有限元判分。</dd></div>
+      <div><dt>题源</dt><dd>续调研把 25 条项目记录追到了板、机械、固件和制造包这一层，发现文件齐了也常常对不上：有的坐标文件是 0 字节，有的 BOM 只有表头，同名的板、壳、固件可能来自不同版本。所以先把每个项目存成按版本连起来的资源图，再从中截题。题以改需求为主，首批用 OpenFlexure、splitflap、Corne 出容易隔离的局部题；HEMY v2 的接口板和盖板题等它的工程对齐后再加。</dd></div>
+      <div><dt>判分</dt><dd>每条结论单独写清验证了什么、在什么条件下、用什么方法，项目整体不打笼统的“已验证”标签。一道题只有声明的必需检查全部通过才算做对，部分分只做诊断和训练奖励。判分器上线前先用参考解、替代解和故意做坏的样本体检，再请人盲审，公布误收和误拒。10 月底发布的 RWE-Bench 也是这样判：所有硬指标都满足才算通过，参考解用 agent 拿到的同一套工具做出来。它没公开判分器的体检结果，我们公开。</dd></div>
+      <div><dt>现状</dt><dd>调研做了四轮，五张任务卡已经落到具体文件和验收项，但都是草案：参考解还没跑过，题库里还没有一道正式题。</dd></div>
+      <div><dt>预期</dt><dd>学术上够撑一篇基准论文，首选 NeurIPS 的数据集和评测赛道。热度上，几千 star 比较现实，REA 的 36 万是特例。</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- §1 -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§1 动机</p>
+      <h2>REA 火在把成熟工具交给 agent，硬件缺的也是这一层</h2>
+      <p class="lede2">REA（<a href="https://github.com/morluto/rea">Reverse Engineer Anything</a>）里的反编译靠的是 Ghidra、IDA 这些现成的逆向软件。它做的是打包：把这些软件连同一套工作流和一条命令的安装体验，一起交给 AI agent 用。10 月 6 日它还不到 1 万 star，10 月 22 日已经是 36.3 万。硬件这边，KiCad、FreeCAD、嘉立创、立创商城都很成熟，缺的同样是把它们串起来交给 agent 的那一层。</p>
+    </div>
+    <div class="prose">
+      <h3>从 REA 搬过来的四条经验</h3>
+      <ul>
+        <li>新意在包装。成熟工具、工作流和安装体验打包在一起，不懂逆向的人也能用。包装的价值也会被质疑：MindStudio 实测，不装 REA 的普通 agent 反而先完成了任务。硬件工具包同样会被这样问，所以要拿数据说明下单前多拦住了多少错。</li>
+        <li>让模型做它擅长的事。REA 处理的是人看着头疼、模型不头疼的符号名和偏移量。硬件里这类活遍布整条链，PCB 只是其中一段：从几百页手册里查引脚表、寄存器和复用表，画原理图，算分压电阻、滤波电容和降额，核对料号后缀和 BOM 格式，写参数化的外壳 CAD，按加工工艺留够装配间隙和公差余量。</li>
+        <li>证据换信任。REA 的每个结论都附证据和局限。硬件出错要花钱、要等快递，更需要每条连接都能追到手册第几页。</li>
+        <li>star 不等于使用。硬件工具最后靠“照着做能点亮”攒口碑。</li>
+      </ul>
+
+      <h3>2026 年，硬件这条线已经在动</h3>
+      <ol class="timeline">
+        <li><time>03-18</time><span>HWE-Bench 发布。从需求生成板级原理图，论文报告最好的模型整体正确率 8.15%（测试台没有公开）。</span></li>
+        <li><time>07-13</time><span>挪威 Lyon Industries 的白皮书：agent 画的板 DRC 全过，仍被电气评审否决。</span></li>
+        <li><time>08-28</time><span>日本一位作者开卖“agent 画板加嘉立创下单”的技能包，19,800 日元。</span></li>
+        <li><time>09-03</time><span>OpenAI 在 GPT-6 Astra 的发布页上演示在 KiCad 里布局布线。</span></li>
+        <li class="hot"><time>09-04</time><span>atopile 发布电路设计基准 EEBench。同一天，有人公开了 Claude Fable 5 通过 KiCad MCP 做的墨水屏手表板，在嘉立创下单，第一次插 USB 就被识别。</span></li>
+        <li><time>10-06</time><span>REA 开始走红。</span></li>
+        <li><time>10-13</time><span>嘉立创官方博客：Claude Code 在嘉立创 EDA 专业版里画了一块 47 个器件的双层板。</span></li>
+      </ol>
+      <p>已经有人为这件事付钱，也有人把它完整做通过一次。还缺的是让普通人敢下单的那一步。Anthropic 的 Erik Schluntz 发帖说，用 Claude Code 2.5 小时就从装 KiCad 走到了嘉立创下单，感觉像 GPT-4 时代写代码，但还 “not yet fully agentic because it can't self verify”（这条只从搜索摘要看到原文）。本提案的验证器就是冲这句话去的。</p>
+
+      <h3>拿谐波赤道仪举例</h3>
+      <p>谐波赤道仪是用谐波减速器驱动的望远镜赤道仪，天文摄影爱好者常用。成品 ZWO AM5N 在美国标价 2,299 美元。开源的 <a href="https://github.com/polvinc/HEMY">HEMY v2</a> 总成本约 800 到 1,000 欧元，其中机加件不到 400 欧元，电路板发在立创开源平台上，固件用开源的 OnStepX。按这组数字，自制大约是成品价的一半。我们最早的估计是约 2 千元做出 1.2 万元的东西，也就是不到 1/5，这要靠国内零件和加工更便宜，还没核对。</p>
+      <p>省钱适合讲故事，用户更在意一次做对：打样失败一次，就要再等一周、再花一次钱。HEMY 的电路、机械和固件都开源了，上一代 v1.1 也有人照着装起来用过，难的是按自己的需求把三样改到一起，再变成能下单的文件。</p>
+
+      <h3>模型管信息和计算，工具管几何</h3>
+      <p>模型擅长信息搬运和套公式的计算：手册里用文字和表格写的引脚表、寄存器、复用表、降额参数，料号和封装后缀，嘉立创 BOM 和坐标文件的格式，还有阻容取值、降额核算、装配间隙和公差余量。算错的情况也有（表 1 的电容例子），所以电路上的计算要过验证器的 L4 核算，装配余量要过 L6 的干涉和间隙检查。信息这一层的作用有硬数据：PCBSchemaGen 去掉手册知识后，难题通过率从 47.1% 掉到 2.0%。几何是短板：让 GPT-4o 从手册的机械图读封装，IoU 只有 11.1%；OmniLayout 的结论是 LLM 做布局推理的能力很有限。所以分工上，模型负责信息、计算和决策；外壳由模型写参数化 CAD 代码，交给 build123d 这类几何内核生成实体；布线交给 Freerouting；对错交给规则检查。</p>
+    </div>
+  </div>
+</section>
+
+<!-- §2 -->
+<section class="sec" id="gap">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§2 缺口</p>
+      <h2>单个环节已经很挤，整条链还没人评</h2>
+      <p class="lede2">基准方法调研读了约 60 个 PCB、电路和 CAD 基准与数据集。图 1 把其中的代表工作摆到同一条链上，我们查到的没有一个从需求走到下单包。</p>
+    </div>
+
+    <figure class="fig1" id="fig1">
+      <div class="fig-scroll">
+        <svg viewBox="0 0 1080 512" font-size="14" role="img" aria-label="图 1：我们查到的基准各管链条上的一两段，没有一个评下单包，也没有一个把板子和外壳一起查；本提案的目标是沿整条链出题，每一段用对应类别的检查把关">
+          <defs>
+            <pattern id="f1-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="7" class="hatch-line"/>
+            </pattern>
+          </defs>
+          <!-- gap band: fab package column -->
+          <rect x="846" y="54" width="114" height="318" fill="url(#f1-hatch)"/>
+          <!-- column guides -->
+          <g>
+            <line x1="276" y1="54" x2="276" y2="372" class="ln"/>
+            <line x1="390" y1="54" x2="390" y2="372" class="ln"/>
+            <line x1="504" y1="54" x2="504" y2="372" class="ln"/>
+            <line x1="618" y1="54" x2="618" y2="372" class="ln"/>
+            <line x1="732" y1="54" x2="732" y2="372" class="ln"/>
+            <line x1="846" y1="54" x2="846" y2="372" class="ln"/>
+            <line x1="960" y1="54" x2="960" y2="372" class="ln"/>
+            <line x1="1074" y1="54" x2="1074" y2="372" class="ln"/>
+          </g>
+          <!-- stage headers -->
+          <g text-anchor="middle">
+            <text x="333" y="24" class="t-b">需求</text>
+            <text x="447" y="24" class="t-b">手册与选料</text>
+            <text x="561" y="24" class="t-b">原理图</text>
+            <text x="675" y="24" class="t-b">布局布线</text>
+            <text x="789" y="24" class="t-b">外壳</text>
+            <text x="903" y="24" class="t-b t-copper">下单包</text>
+            <text x="1017" y="24" class="t-b">实物</text>
+          </g>
+          <g text-anchor="middle" font-size="12" class="t-mono">
+            <text x="447" y="43" class="t-soft t-mono">T1</text>
+            <text x="561" y="43" class="t-soft t-mono">T2</text>
+            <text x="675" y="43" class="t-soft t-mono">T3</text>
+            <text x="789" y="43" class="t-soft t-mono">T4</text>
+            <text x="903" y="43" class="t-copper t-mono">T6</text>
+            <text x="1017" y="43" class="t-soft t-mono">T7</text>
+          </g>
+
+          <!-- row 0: datasheet QA -->
+          <text x="12" y="79" class="t-b">手册知识问答</text>
+          <text x="12" y="97" font-size="12" class="t-soft">PCB-QA · LLM4-IC8K · SFgen</text>
+          <rect x="396" y="74" width="102" height="16" class="bar-old"/>
+          <text x="510" y="87" font-size="12" class="t-soft">只读手册，不考选料</text>
+
+          <!-- row 1: schematic generation -->
+          <text x="12" y="123" class="t-b">原理图生成</text>
+          <text x="12" y="141" font-size="12" class="t-soft">HWE-Bench · PCBSchemaGen · SchGen 等</text>
+          <rect x="282" y="118" width="330" height="16" class="bar-old"/>
+          <text x="624" y="131" font-size="12" class="t-soft">EEBench V1 只到仿真</text>
+
+          <!-- row 2: layout -->
+          <text x="12" y="167" class="t-b">布局布线</text>
+          <text x="12" y="185" font-size="12" class="t-soft">PCBWorld · OmniLayout</text>
+          <rect x="624" y="162" width="102" height="16" class="bar-old"/>
+          <text x="738" y="175" font-size="12" class="t-soft">不连需求，不连外壳</text>
+
+          <!-- row 3: board rebuild -->
+          <text x="12" y="211" class="t-b">整板重建</text>
+          <text x="12" y="229" font-size="12" class="t-soft">EDA Bench（35 个开源项目）</text>
+          <rect x="510" y="206" width="216" height="16" class="bar-old"/>
+          <text x="738" y="219" font-size="12" class="t-soft">不验收制造文件</text>
+
+          <!-- row 4: end-to-end attempt -->
+          <text x="12" y="255" class="t-b">端到端尝试</text>
+          <text x="12" y="273" font-size="12" class="t-soft">IoTGen</text>
+          <rect x="282" y="250" width="330" height="16" class="bar-old"/>
+          <text x="624" y="263" font-size="12" class="t-soft">不评制造文件，不做外壳</text>
+          <circle cx="1017" cy="258" r="7" class="bar-old"/>
+          <text x="1017" y="242" font-size="12" text-anchor="middle" class="t-soft">打样 2 块</text>
+
+          <!-- row 5: CAD -->
+          <text x="12" y="299" class="t-b">CAD 与装配</text>
+          <text x="12" y="317" font-size="12" class="t-soft">CADTests · P3D · ASSEMBENCH 等</text>
+          <rect x="738" y="294" width="102" height="16" class="bar-old"/>
+          <text x="726" y="307" font-size="12" text-anchor="end" class="t-soft">通用零件，不配板子</text>
+
+          <!-- row 6: GUI operation -->
+          <text x="12" y="343" class="t-b">在软件里点鼠标</text>
+          <text x="12" y="361" font-size="12" class="t-soft">Cua-Bench · CADWorld</text>
+          <rect x="510" y="338" width="102" height="16" class="bar-old"/>
+          <rect x="738" y="338" width="102" height="16" class="bar-old"/>
+          <text x="561" y="368" font-size="11.5" text-anchor="middle" class="t-soft">KiCad 原理图</text>
+          <text x="789" y="368" font-size="11.5" text-anchor="middle" class="t-soft">FreeCAD 建模</text>
+
+          <text x="903" y="364" font-size="12" text-anchor="middle" class="t-copper t-b">没查到有人评</text>
+
+          <line x1="12" y1="382" x2="1074" y2="382" class="ln"/>
+
+          <!-- proposal row -->
+          <text x="12" y="407" class="t-b t-mask">本提案</text>
+          <text x="12" y="425" font-size="12" class="t-soft">工具包和 gym，共用验证器</text>
+          <rect x="282" y="399" width="786" height="22" class="bar-new"/>
+          <text x="675" y="415" font-size="13" text-anchor="middle" class="t-on">目标：从需求一路到下单包和实物，整条链一起评分（G1）</text>
+
+          <!-- verifier gates -->
+          <g font-size="12.5" text-anchor="middle">
+            <rect x="396" y="432" width="102" height="24" class="box-paper"/>
+            <text x="447" y="449" class="t-mono t-copper">L3</text>
+            <rect x="510" y="432" width="102" height="24" class="box-paper"/>
+            <text x="561" y="449" class="t-mono">L1 L2 L4</text>
+            <rect x="624" y="432" width="102" height="24" class="box-paper"/>
+            <text x="675" y="449" class="t-mono"><tspan>L1 </tspan><tspan class="t-copper">L4 L6</tspan></text>
+            <rect x="738" y="432" width="102" height="24" class="box-paper"/>
+            <text x="789" y="449" class="t-mono t-copper">L6</text>
+            <rect x="852" y="432" width="102" height="24" class="box-paper"/>
+            <text x="903" y="449" class="t-mono t-copper">L5</text>
+            <rect x="966" y="432" width="102" height="24" class="box-paper"/>
+            <text x="1017" y="449" class="t-soft">上电测试</text>
+          </g>
+          <text x="12" y="449" class="t-b">检查类别</text>
+          <text x="12" y="467" font-size="12" class="t-soft">铜色是现有基准基本没有的检查（G4）</text>
+          <!-- G2 bracket: board + enclosure checked together -->
+          <path d="M675 460 V468 H789 V460" class="ln-copper"/>
+          <text x="732" y="484" font-size="12" text-anchor="middle" class="t-copper">板子和外壳一起查（G2）</text>
+          <!-- L0 -->
+          <line x1="282" y1="499" x2="1068" y2="499" class="ln-dash"/>
+          <text x="12" y="503" font-size="12" class="t-soft">L0：每一步的文件都要能打开、能导出</text>
+        </svg>
+      </div>
+      <p class="scroll-hint">图较宽，左右滑动看全图。</p>
+      <ul class="legend" aria-hidden="true">
+        <li><span class="sw sw-old"></span>已有基准覆盖的环节</li>
+        <li><span class="sw sw-new"></span>本提案</li>
+        <li><span class="sw sw-hatch"></span>没查到基准评过</li>
+        <li><span class="sw sw-copper"></span>铜色字：现有基准基本没有的检查</li>
+      </ul>
+      <figcaption><b>图 1　已有工作各管一段。</b>同一行列的是做法相近的几个基准。我们查到的基准里，没有一个评下单包，也没有一个把板子和外壳放在一起查。本提案的目标是沿整条链出题，每一段用对应类别的检查把关；v0 先从局部题做起，见第 5 节。T5 改需求题会同时动好几个环节，所以图里没单列。</figcaption>
+    </figure>
+
+    <h3>三个缺口合起来是主贡献</h3>
+    <div class="gaps">
+      <div class="gap">
+        <p class="code">G1</p>
+        <h4>没有一条做到可下单的端到端任务</h4>
+        <p>查到的公开基准里，没有一个把“从需求到原理图、PCB，再到可下单的制造文件”当成一个任务来评分，也没有一个自动检查制造文件本身。最接近的 IoTGen 打样了 2 块板，但不评制造文件；EDA Bench 照 35 个开源项目重建整板，按 ERC/DRC、铜连接和近似的行为测试打分，不验收 Gerber、BOM、坐标文件是否成套一致；EEBench 把布局、打板和上电留给了后续版本，V1 只到仿真。</p>
+      </div>
+      <div class="gap">
+        <p class="code">G2</p>
+        <h4>电路和外壳没人一起评</h4>
+        <p>查到的公开基准里，没有一个同时给 PCB 和外壳或机构打分。PCBWorld 只查板框边距；ASSEMBENCH、MUSE、CADEngBench 只管机构、装配或可制造性。查到的里，把两边连起来的只有 Flux 9 月底上线的外壳功能，它是商业产品，没有公开评测；IMECE 2023 有一篇 PCB 外壳自动生成的论文可能相关，没读到。可实际做东西时，接口位置一改，外壳就得跟着改。</p>
+      </div>
+      <div class="gap">
+        <p class="code">G4</p>
+        <h4>验证停在 DRC</h4>
+        <p>DRC 管线距、孔径、有没有连上，管不到表 1 里这些失败。只靠规则检查判分也会偏松：PCBSchemaGen 的审计显示，只用 ERC 时通过率虚高 10 到 13 个点。</p>
+      </div>
+    </div>
+
+    <div class="tbl t-mid">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>DRC 查不出的真实失败</th><th>出处</th><th>该由哪类检查拦住</th></tr></thead>
+          <tbody>
+            <tr><td>选的 Flash 是宽体 SOIC-8，板上画的是 SOP-8 焊盘，模型还坚称有合适的封装</td><td>Claude Fable 5 画的墨水屏手表板，下单前换了料</td><td class="lay">L3 手册落地</td></tr>
+            <tr><td>库存数据库显示 1,357 个有货，实际是 0</td><td>日本作者的技能包</td><td class="lay">L3 手册落地</td></tr>
+            <tr><td>题目要约 545 µF 的电容，方案里放的是一颗 22 µF 陶瓷电容，在 4.7 V 偏压下还只剩约 11.4 µF</td><td>EEBench 的失败例子（二手）</td><td class="lay">L3 查参数，L4 核算</td></tr>
+            <tr><td>稳压器输入电容的回路约 85 mm，DRC 和一致性检查全过，仍被否决</td><td>Lyon Industries 白皮书</td><td class="lay">L4 物理近似</td></tr>
+            <tr><td>99 个器件里有 9 处贴片方向错误，包括会让电源接反的接口</td><td>日本作者的工业通信板，下单前人工查出</td><td class="lay">L5 制造</td></tr>
+            <tr><td>API 调用返回成功，器件属性其实已经丢了</td><td>嘉立创博客的 Claude Code 实测</td><td class="lay">L0、L1 读回核对</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-cap"><b>表 1</b>　这些都来自公开的实测或白皮书。检查类别 L0 到 L6 的定义见第 3 节。</p>
+    </div>
+
+    <h3>另外四个空白，放进任务设计里</h3>
+    <dl class="minor">
+      <div><dt><span>G3</span>检索没被当成能力考</dt><dd>真实失败多出在选具体能买的型号和封装。T1 题让 agent 自己找手册，落到料号和封装。</dd></div>
+      <div><dt><span>G5</span>操作接口只有零散对比</dt><dd>证据差别很大：SchGen 里直接写 KiCad 原始文件，功能正确只有 3.0%，换成语义 API 是 60.5%；看截图点鼠标操作 KiCad 原理图，25 题最多做对 6 题；EngiWorld 里 7 个模型的屏幕操作分都低于命令行。这些对比的题目和条件各不相同，还说明不了接口本身差多少。主线先走代码和 MCP，屏幕操作留一组同题对照当附加实验，见第 3 节末尾。</dd></div>
+      <div><dt><span>G6</span>没人按爱好者难度出题</dt><dd>驱动板、传感器板、外壳这一段，agent 今天最可能做成，用户也最多（嘉立创 EDA 注册用户 736.88 万）。出题时按这个难度控制。</dd></div>
+      <div><dt><span>G7</span>几乎没有实物验证</dt><dd>读到的学术工作只做了 2 到 4 件实物。本提案的实物也是小规模：T7 金任务的最后两关是打样和通电试装，实物结果也拿来校准判分器。</dd></div>
+    </dl>
+    <p class="small prose">这些“没人做”的结论都来自搜索没找到，不能证明没有。端到端方向做了 58 次搜索、约 75 次网页抓取；续调研又补读了 13 个核心基准的原文、代码和数据卡，结论没变，说法收窄成：查到的公开工作里，还没有一个对同一个可追溯项目的电路、机械配合、固件和制造文件做联合自动验收。EDA Bench、IoTGen、FunCADBench 和 Flux 的外壳功能都是最近几个月才出现的，投稿前要重查。</p>
+  </div>
+</section>
+
+<!-- §3 -->
+<section class="sec" id="plan">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§3 方案</p>
+      <h2>两件东西，共用一套验证器</h2>
+      <p class="lede2">工具包和 gym 用同一套验证器：工具包用它在下单前拦错，gym 用它判分、当奖励。验证器从第 1 周起就作为工具包的一部分来写。</p>
+    </div>
+
+    <figure class="fig2" id="fig2">
+      <div class="fig-scroll">
+        <svg viewBox="0 0 640 680" font-size="14" role="img" aria-label="图 2：工具包用户的需求和 gym 的题目都交给同一个 agent，主线走代码和 MCP，屏幕操作只做同题对照。agent 通过工具包调用现成工具，产出的文件按题目声明的检查过验证器，没过的项退回 agent 修改。工具包这边，必需项全过才导出下单包；gym 这边，必需项全过才算做对，逐项结果只做诊断，部分分可当强化学习奖励">
+          <defs>
+            <marker id="f2-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-soft"/></marker>
+            <marker id="f2-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-mask"/></marker>
+          </defs>
+          <!-- entries -->
+          <rect x="56" y="16" width="240" height="60" class="box"/>
+          <text x="176" y="41" text-anchor="middle" class="t-b">工具包用户</text>
+          <text x="176" y="62" text-anchor="middle" font-size="12.5" class="t-soft">一句需求，或一条改动</text>
+          <rect x="344" y="16" width="240" height="60" class="box"/>
+          <text x="464" y="41" text-anchor="middle" class="t-b">Gym 题库</text>
+          <text x="464" y="62" text-anchor="middle" font-size="12.5" class="t-soft">从开源工程派生的改需求题</text>
+          <line x1="176" y1="76" x2="176" y2="114" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="186" y="100" font-size="12" class="t-soft">需求</text>
+          <line x1="464" y1="76" x2="464" y2="114" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="474" y="100" font-size="12" class="t-soft">题目</text>
+          <!-- agent -->
+          <rect x="96" y="116" width="448" height="58" class="box"/>
+          <text x="320" y="140" text-anchor="middle" class="t-b">Agent：Claude Code · Codex · Gemini CLI</text>
+          <text x="320" y="161" text-anchor="middle" font-size="12.5" class="t-soft">主线走代码和 MCP，屏幕操作只做同题对照</text>
+          <line x1="320" y1="174" x2="320" y2="206" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="330" y="194" font-size="12" class="t-soft">调用 skills、MCP、命令行</text>
+          <!-- toolkit -->
+          <rect x="56" y="208" width="528" height="92" class="box"/>
+          <text x="72" y="231" class="t-b">工具包里自己写的部分</text>
+          <g font-size="12.5" text-anchor="middle">
+            <rect x="72" y="244" width="160" height="44" class="box-paper"/>
+            <text x="152" y="262">工作流 skills</text>
+            <text x="152" y="280" class="t-soft">需求 → 下单包</text>
+            <rect x="240" y="244" width="160" height="44" class="box-paper"/>
+            <text x="320" y="262">证据记录</text>
+            <text x="320" y="280" class="t-soft">手册页码 + 料号快照</text>
+            <rect x="408" y="244" width="160" height="44" class="box-paper"/>
+            <text x="488" y="262">一键导出</text>
+            <text x="488" y="280" class="t-soft">嘉立创要的全部文件</text>
+          </g>
+          <line x1="320" y1="300" x2="320" y2="332" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="330" y="320" font-size="12" class="t-soft">编排</text>
+          <!-- existing tools -->
+          <rect x="56" y="334" width="528" height="70" class="box"/>
+          <text x="72" y="356" class="t-b">现成开源工具，不重写</text>
+          <text x="72" y="377" font-size="12.5" class="t-soft">KiCad MCP · easyeda-agent · Freerouting</text>
+          <text x="72" y="395" font-size="12.5" class="t-soft">build123d-mcp · jlcparts · easyeda2kicad</text>
+          <line x1="320" y1="404" x2="320" y2="434" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="330" y="423" font-size="12" class="t-soft">产出</text>
+          <!-- artifacts -->
+          <g font-size="12.5" text-anchor="middle">
+            <rect x="56" y="436" width="126" height="34" class="box-paper"/><text x="119" y="458">原理图</text>
+            <rect x="190" y="436" width="126" height="34" class="box-paper"/><text x="253" y="458">PCB</text>
+            <rect x="324" y="436" width="126" height="34" class="box-paper"/><text x="387" y="458">外壳 STEP</text>
+            <rect x="458" y="436" width="126" height="34" class="box-paper"/><text x="521" y="458">Gerber · BOM · 坐标</text>
+          </g>
+          <line x1="320" y1="470" x2="320" y2="502" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="330" y="490" font-size="12" class="t-soft">按题目声明的检查</text>
+          <!-- verifier -->
+          <rect x="56" y="504" width="528" height="74" class="box-mask"/>
+          <text x="72" y="527" class="t-b t-mask">共用验证器</text>
+          <g font-size="13" text-anchor="middle">
+            <rect x="72" y="538" width="64" height="28" class="box-paper"/><text x="104" y="557" class="t-mono">L0</text>
+            <rect x="144" y="538" width="64" height="28" class="box-paper"/><text x="176" y="557" class="t-mono">L1</text>
+            <rect x="216" y="538" width="64" height="28" class="box-paper"/><text x="248" y="557" class="t-mono">L2</text>
+            <rect x="288" y="538" width="64" height="28" class="box-paper"/><text x="320" y="557" class="t-mono t-copper">L3</text>
+            <rect x="360" y="538" width="64" height="28" class="box-paper"/><text x="392" y="557" class="t-mono t-copper">L4</text>
+            <rect x="432" y="538" width="64" height="28" class="box-paper"/><text x="464" y="557" class="t-mono t-copper">L5</text>
+            <rect x="504" y="538" width="64" height="28" class="box-paper"/><text x="536" y="557" class="t-mono t-copper">L6</text>
+          </g>
+          <!-- feedback loop -->
+          <path d="M56 541 H30 V145 H94" class="ln-mask" marker-end="url(#f2-ahm)"/>
+          <text transform="translate(22 343) rotate(-90)" text-anchor="middle" font-size="12" class="t-mask">没过的检查项带着结果退回修改</text>
+          <!-- outputs -->
+          <line x1="184" y1="578" x2="184" y2="612" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="194" y="599" font-size="12" class="t-soft">必需项全过才放行</text>
+          <line x1="456" y1="578" x2="456" y2="612" class="ln-soft" marker-end="url(#f2-ah)"/>
+          <text x="466" y="599" font-size="12" class="t-soft">逐项结果</text>
+          <rect x="56" y="614" width="256" height="56" class="box"/>
+          <text x="184" y="637" text-anchor="middle" class="t-b">工具包：下单前拦错</text>
+          <text x="184" y="657" text-anchor="middle" font-size="12.5" class="t-soft">附证据报告，再导出下单包</text>
+          <rect x="328" y="614" width="256" height="56" class="box"/>
+          <text x="456" y="637" text-anchor="middle" class="t-b">Gym：判分和排行榜</text>
+          <text x="456" y="657" text-anchor="middle" font-size="12.5" class="t-soft">必需项全过才算对，部分分当奖励</text>
+        </svg>
+      </div>
+      <figcaption><b>图 2　两个入口，一条流水线。</b>agent 通过工具包调用现成工具，产出的文件按题目声明的检查过一遍验证器。没过的检查项带着结果退回 agent 修改，补上的正是现在 agent 缺的自我验证。用户这边，必需的检查全过才导出下单包；评测这边，必需检查全过才算做对，逐项的部分分只当诊断和训练奖励。</figcaption>
+    </figure>
+
+    <div class="prose">
+      <h3>工具包：冲影响力</h3>
+      <ul>
+        <li>形态照搬 REA：一个 MCP server、一组 skills、一个命令行，一条命令装进 Claude Code、Codex、Gemini CLI。</li>
+        <li>底层不重写，直接接现成工具：<a href="https://github.com/mixelpixx/KiCAD-MCP-Server">KiCAD-MCP-Server</a>（MIT，约 2.9k star；KiCad 10 用户可以换成同一作者用 Rust 重写的 Konnect）、<a href="https://github.com/zhoushoujianwork/easyeda-agent">easyeda-agent</a>（接嘉立创 EDA 专业版）、<a href="https://github.com/freerouting/freerouting">Freerouting</a>（自动布线）、<a href="https://github.com/pzfreo/build123d-mcp">build123d-mcp</a>（外壳建模，边建边渲染、量尺寸、查可打印性）、<a href="https://github.com/yaqwsx/jlcparts">jlcparts</a>（筛选嘉立创贴片料）、<a href="https://github.com/uPesy/easyeda2kicad.py">easyeda2kicad</a>（按立创商城编号把符号、封装和 3D 模型转成 KiCad 库）。</li>
+        <li>自己写四样：从需求到下单包的工作流 skills；下面的验证器；证据记录，每条连接、每个参数都附手册页码和料号快照；一键导出嘉立创要的全部文件。</li>
+        <li>授权：本体用 MIT 或 Apache-2.0。Konnect 和 easyeda2kicad 是 AGPL，只当独立程序调用，不改代码，不打包进仓库，让用户自己装。</li>
+        <li>KiCad 和嘉立创 EDA 都支持。gym 默认用 KiCad，因为它开源、能装进容器、学术圈都在用；国内用户更多在嘉立创 EDA，它和立创器件库、下单是打通的。嘉立创 EDA 的工程（HEMY、瀚文）可以在原生环境里出题，也可以转成 KiCad；转的话要核对转换前后的连通、封装、层叠和坐标，不能默认无损。</li>
+        <li>机械建模默认用 build123d：agent 在 CAD 这一段写的就是 build123d 代码，工具包只在外面加 MCP 和检查。它和 CadQuery 共用 OpenCascade 内核，能读写精确的 STEP，可以直接交给嘉立创 CNC；能做什么、要补什么，见本节末尾。题源本身是 OpenSCAD 这类开放参数源的，照旧写 OpenSCAD。SolidWorks 闭源、没有官方 MCP、装不进容器，不当底座，最后导出 STEP 给 SolidWorks 用户；项目手上的 SolidWorks 2025 用来转题源和交叉核验，见<a href="#sw">第 6 节</a>。</li>
+      </ul>
+
+      <h3>Gym：冲论文</h3>
+      <p>题型沿用调研里的 T1 到 T7 七类，重心放在 T5 改需求题，理由见第 5 节。</p>
+    </div>
+
+    <div class="tbl t-mid">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>题型</th><th>考什么</th><th>在题库里的分量</th></tr></thead>
+          <tbody>
+            <tr><td class="l">T5 改需求</td><td>给一个现成项目和一条改动，比如 USB-C 挪个位置、主控缺货换型、外壳从打印改成 CNC 铝，电路和外壳要一起改对。相当于硬件版的 SWE-bench。</td><td><span class="chip have">主体</span></td></tr>
+            <tr><td class="l">T6 下单包</td><td>导出 Gerber、钻孔、BOM、坐标文件，检查它们在选定的工厂工艺规则下和源设计一致：层、孔、位号、坐标、方向。目前没有先例，是 G1 的核心。</td><td><span class="chip have">配套</span></td></tr>
+            <tr><td class="l">T1 手册落地</td><td>给需求，自己找手册，交出带页码的引脚表和主要参数。题里埋宽窄体封装、引脚复用、降额这类坑。可以从工程自带的料号、符号、封装批量派生。</td><td><span class="chip have">配套</span></td></tr>
+            <tr><td class="l">T4 外壳</td><td>给 PCB 的 STEP 和使用要求（FDM 打印或 CNC 铝），做出配得上的外壳。</td><td><span class="chip have">配套</span></td></tr>
+            <tr><td class="l">T2 原理图<br>T3 布局布线</td><td>从零画原理图、从零布板。</td><td><span class="chip part">少量，当挑战集</span></td></tr>
+            <tr><td class="l">T7 金任务</td><td>从需求做出一件能通电的完整小产品，比如一块电源模块或电机驱动板配上外壳：选料、原理图、画板、外壳和装配，导出下单包。前六关自动判，只给全过的方案打样，通电和试装由人做，结果单独报告。规矩见<a href="#golden">第 5 节</a>。</td><td><span class="chip part">稀少，但不能没有</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-cap"><b>表 2</b>　七类题型和各自的分量。</p>
+    </div>
+
+    <div class="prose">
+      <p>操作接口分主次。主线跑两种条件：纯代码和 MCP（KiCad MCP、build123d-mcp）；agent 用 MCP 动手后看渲染图目检，也算在 MCP 里。纯代码这一条，从零写电路用 atopile 或 SKiDL，改现成的 KiCad 工程用 kicad-cli 和 Python 脚本，机械用 build123d，题源是 OpenSCAD 的写 OpenSCAD。v0 的代码对 MCP 先在卡 D、卡 E 的板子部分上比（任务卡见第 5 节），build123d 对 build123d-mcp 要等外壳题进库。屏幕操作只挑一小组题做同题对照，放在六周以后，不进主排行榜，见本节末尾。</p>
+      <p>为了防饱和，测试集私有并加 canary 字符串，T5 题也可以持续出新的；公开的是检查代码和一份开发集，见<a href="#rwe">第 6 节</a>。为了能拿来训练，验证器分数用 Prime Intellect 的 verifiers 这类库打包成强化学习环境。</p>
+
+      <h3>验证器：L0 到 L6</h3>
+      <p>L1 到 L6 是课题调研提的设计，基准方法调研加了 L0。续调研建议把它们当检查的分类用，不当必须依次过的台阶：每道题先声明自己的必需检查。只改抽屉尺寸的题不用跑电路仿真，板子和固件联动的题也不能只看外形分。</p>
+    </div>
+
+    <div class="tbl t-wide">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>类别</th><th>查什么</th><th>现成可接的</th><th>现有基准里</th></tr></thead>
+          <tbody>
+            <tr><td class="l">L0<span>文件有效</span></td><td>固定版本的工具能打开、能导出、能读回，文件非空，实体封闭。候选交的文件打不开，这题不通过；评测环境自己起不来，单独记环境错误，不算到模型头上。</td><td>kicad-cli、OpenCascade</td><td><span class="chip have">有</span> PCBWorld、CADGenBench 有类似门槛</td></tr>
+            <tr><td class="l">L1<span>电气规则</span></td><td>ERC、DRC、原理图和 PCB 一致。写明用哪套规则、计入哪些类别；原工程本来就有的问题逐项记豁免，不能整体忽略警告。</td><td>kicad-cli</td><td><span class="chip have">有</span> 很常见</td></tr>
+            <tr><td class="l">L2<span>电路语义</span></td><td>引脚角色兼容、复用冲突、去耦覆盖、电源树。从最终工程重新导出网表再比，允许重编号、改内部网名和等效器件。</td><td>PCBSchemaGen 验证器（MIT）、kicad-happy</td><td><span class="chip have">有</span> 少数基准</td></tr>
+            <tr><td class="l">L3<span>手册落地</span></td><td>料号在冻结的库存快照里有货；封装后缀和焊盘一致；电压、电流和降额参数能追到手册页。</td><td>jlcparts、立创商城 API，其余自写</td><td><span class="chip gap">空白</span> 没有基准考选型</td></tr>
+            <tr><td class="l">L4<span>物理近似</span></td><td>用 L3 查到的参数核算降额后够不够；SPICE 公差角；功率回路和去耦回路的长度与面积；发热粗估。仿真模型和测试台对 agent 只读。</td><td>ngspice，其余自写</td><td><span class="chip part">部分</span> EEBench 有公差角仿真，只到原理图</td></tr>
+            <tr><td class="l">L5<span>制造一致性</span></td><td>层数、孔、板框和源设计一致；BOM、坐标和原理图、PCB 的位号对得上，拼板按“板实例加位号”算；DNP、手焊件、安装孔、基准点按工艺规则处理；贴片原点和旋转按厂家约定核。能宣称的只是“在选定工艺规则下和设计一致”。</td><td>kicad-jlcpcb-tools，其余自写</td><td><span class="chip gap">空白</span> 没有基准查制造文件成套一致</td></tr>
+            <tr><td class="l">L6<span>机械配合</span></td><td>板和外壳的干涉与间隙、接口开孔对齐、螺柱对安装孔、壁厚、可打印性或 CNC 刀具半径；沿装配方向扫一遍，看装的时候会不会碰。板到外壳的坐标变换写进题里，用至少三个不共线的特征核对，不许各自对齐到“看着能装进去”的位置。</td><td>build123d / OpenCascade、CADTests 的写法、CADGenBench 的 keep-in / keep-out</td><td><span class="chip gap">空白</span> 只有纯机械侧，没和 PCB 联动</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-cap"><b>表 3</b>　七类检查。L3 到 L6 要先做，因为表 1 的真实失败正好落在这几类：封装和库存对不上是 L3，85 mm 的电容回路是 L4，贴片方向转错是 L5，L6 对应 G2。L6 打算从 <code>.kicad_pcb</code> 自动生成检查（开孔、螺柱、净空），这一点目前只是推断，要先做原型验证。</p>
+    </div>
+    <div class="prose">
+      <h3 id="cad">CAD 走代码，屏幕操作只做对照</h3>
+      <p>外壳、支架和装配余量这一段，Omnifex 默认让 agent 写 build123d 代码，由 OpenCascade 内核生成精确实体，再交给 L6 去量；题源本身是 OpenSCAD 的（卡 A、卡 E），交原格式的源码。也可以只让 agent 看截图、点 CAD 软件来出题，但这类题不进主线，原因有两个。第一，需求用不着：这里的题是给 PCB 配外壳、按改动挪开孔、留够装配间隙，代码和数值就能把需求写清、把结果量准，换成在图形界面里点，考到的设计能力并不会更多。第二，现在的分数区分度低：下表里几个屏幕操作基准的分数普遍很低，CADWorld 列的 10 个 agent 有一半不超过 1.5%。CADWorld 作者的分析是，较弱的 agent 多半还没交出有效文件就失败了，较强的 agent 才开始在结构、几何和建模过程的要求上失分。CAD-bench 里 agent 交 STEP，多数运行能把实体建出来，失分集中在功能要求上，gym 想拉开差距的正是这一层。这些数字来自不同的基准和题目，同题的证据几乎没有，所以我们自己做一组对照，见本节末尾。</p>
+    </div>
+
+    <div class="tbl t-wide">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>基准</th><th>接口和规模</th><th>结果</th><th>说明什么</th></tr></thead>
+          <tbody>
+            <tr><td class="l"><a href="https://cad-world.github.io/">CADWorld</a><span>2026-09</span></td><td>FreeCAD 屏幕操作，每题限 100 步，200 题</td><td>GPT-5.4 做对 17.5%，Opus 4.8 16.0%，人类专家单次参考 87%；CAM（数控加工编程）和有限元那 18 题没有一个 agent 做对；网站列的 10 个 agent 里，一半不超过 1.5%</td><td>一半的 agent 挤在 0 到 1.5%，区分度低。前沿模型只测到 GPT-5.4 和 Opus 4.8</td></tr>
+            <tr><td class="l">CADWorld 命令行消融<span>同一篇论文</span></td><td>只给终端，50 题，7 个模型</td><td>作者说 7 个模型表现差不多，没说是和屏幕操作比，逐模型数字只画在论文的图里；失败大多是“文档结构不对”：脚本建出来的模型，工程师没法在 FreeCAD 里接着改</td><td>代码 CAD 的代价是没有原生特征树</td></tr>
+            <tr><td class="l"><a href="https://arxiv.org/abs/2609.37686">EngiWorld</a><span>2026-09</span></td><td>26 个工程软件；评测子集 306 题（屏幕操作 148、命令行 158），两边题目不同</td><td>7 个模型的屏幕操作分都低于命令行：Claude Opus 5 是 40.5 对 48.6，DeepSeek V4.1 Flash 是 2.0 对 48.3</td><td>有的模型在屏幕操作题上接近零分，但两边的题不同，只能当旁证</td></tr>
+            <tr><td class="l">Seldon CADBench<span>2026-08</span></td><td>Fusion 屏幕操作，105 题</td><td>最好 30.0%，68.1% 的题没有模型做对；同一个模型换 agent 框架，从 24.6% 到 0%</td><td>框架的影响盖过模型</td></tr>
+            <tr><td class="l">CAD-bench<span>2026</span></td><td>参考实现用 build123d，agent 交 STEP，17 题</td><td>最好的 agent 加权得分 67.7%，齿轮传动这类功能题平均只有 14.1%；直角齿轮箱 96.9% 的运行能建出模型，平均只得 4.0%</td><td>走代码，失败集中在功能上</td></tr>
+            <tr><td class="l"><a href="https://xplore.ai/rwe-bench">RWE-Bench</a><span>2026-10</span></td><td>20 题；官网只写了曲轴例题的工具：CadQuery、Gmsh、CalculiX 和 Python</td><td>最好的单次通过率 37%，来自二手报道，见<a href="#rwe">第 6 节</a></td><td>曲轴例题是写代码建模、跑求解器判分</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-cap"><b>表 4</b>　CAD 接口的证据。各基准的题、指标和模型都不一样，数字只能在各自内部比，不能互相换算。EngiWorld 的是 EngiScore（0 到 100，含优化题的部分分），CAD-bench 的是按题加权的得分，都不是通过率。CADWorld 的 10 个 agent 里有 3 个是 10 月追加评测的，不在论文里。</p>
+    </div>
+
+    <div class="prose">
+      <p>CADWorld 作者对脚本建模的批评要认：代码建的模型没有 SolidWorks 那种原生特征树，工程师没法在图形界面里回到某一步改尺寸。Omnifex 认下这个代价，题面不要求原生特征树：外壳题默认交 STEP 加 build123d 源码，OpenSCAD 题源交 OpenSCAD 源码。源码可以接着改，但 agent 也可能把坐标写死，所以题面要求关键尺寸写成具名参数，判分时改一两个参数重建来确认；gNucleus 的 CAD Bench 只查参数是不是具名的驱动尺寸，没有改参重建。SolidWorks 原生格式的题源用项目手上的 SolidWorks 转成 STEP；Fusion 的 F3Z 要在 Fusion 里打开再导出。</p>
+    </div>
+
+    <div class="two">
+      <div>
+        <h4>build123d 能做的</h4>
+        <ul>
+          <li>精确的边界表示（B-rep）实体：草图、拉伸、旋转、放样、抽壳、圆角、布尔运算，按几何条件选边和面。</li>
+          <li>读写 STEP（带颜色和名字），也能导出 STL、3MF、DXF、SVG、glTF。导入 STEP 后能在实体上用布尔运算开孔、补料、加凸台，正好对上第 4 节外壳题的做法。</li>
+          <li>Apache-2.0，0.13.0（2026-09-21），Python 3.11 到 3.14。紧固件和螺纹有 bd_warehouse，齿轮有 py_gearworks。</li>
+          <li>build123d-mcp（0.3.91，10-15）让 agent 边建边看：在会话里跑代码、渲染、量体积和包围盒、找孔、查可打印性、导入 STEP 比对。作者自报，同一个模型在 CADGenBench 上用了它，分数从 0.360 涨到 0.457，有效模型的比例从 88% 涨到 100%。</li>
+        </ul>
+      </div>
+      <div>
+        <h4>要我们自己补的</h4>
+        <ul>
+          <li>没有全局约束求解，模型是按顺序构造出来的。装配用的 joint 只负责一次性摆位置，既不求解，也不查干涉，所以干涉、间隙和沿装配方向的扫掠都放进 L6，用 OpenCascade 的布尔求交和最短距离来算。</li>
+          <li>内核会建失败，官方文档建议圆角放到最后做。建不出来记 L0 失败，算在模型头上。</li>
+          <li>build123d-mcp 对导入的 STEP 做特征编辑，目前只支持普通通孔改直径；沉头孔、台阶孔要 agent 在代码里改，再用 MCP 的形状比对自查。</li>
+          <li>版本要钉死。build123d 0.13 要 OCP 8.0，CadQuery 2.8 要 OCP 7.9（OCP 是 OpenCascade 的 Python 绑定），两者不能在同一个环境里共存；想沿用 CadQuery 写的检查器，得单独起环境，或者用 build123d 重写。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>屏幕操作留一组小对照，放在六周以后做：v0 只有几道局部题，CAD 那边多是 OpenSCAD 题，凑不出一组。等外壳题和 HEMY 盖板题进库，从 T4、T5 里挑 10 道左右，同一道题用 build123d 代码和 FreeCAD 屏幕操作各跑一遍。FreeCAD 这边复用 CADWorld 公开的虚拟机镜像和评测代码，agent 换成能看截图、发鼠标键盘动作的框架，主线那三个命令行 agent 不直接适用。PCB 这边比 KiCad MCP 和 KiCad 屏幕操作（Cua-Bench 那样）：同一个软件、同一个工程，只换接口，比 CAD 这边干净。这组对照回答 G5，主排行榜只收代码和 MCP 的成绩。每次有新模型发布就重跑一遍，因为 CADWorld 测的还是 GPT-5.4 和 Opus 4.8，屏幕操作的结论可能过时。</p>
+    </div>
+  </div>
+</section>
+
+<!-- §4 -->
+<section class="sec" id="source">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§4 题源</p>
+      <h2>文件齐了，不等于对得上</h2>
+      <p class="lede2">工程文件主要在 GitHub 和立创开源平台。续调研把 25 条项目记录追到了板、机械、固件和制造包这一层，拿到的文件比上一轮以为的多；可版本对得上、能直接当参考答案的组合，比“六类资源都找到了”的项目还少。</p>
+    </div>
+
+    <div class="prose">
+      <h3>去哪里找</h3>
+      <ul>
+        <li>GitHub 和 GitLab 是主干，许可也最好在这里逐个资产核。搜索的终点从仓库主页挪到能配套的资产链：README、Release、文档外链、子模块。SmartKnob 的整机 Fusion 文件在机械 Release 里，splitflap 的制造包在 Release 链到的 S3 上，IronBen 的固件源码在子模块锁定的旧提交里，默认分支已经没有了。所以“没找到”只代表所查的位置没有。</li>
+        <li>oshwhub（立创开源平台中文站，国际站叫 oshwlab）适合发现项目。续调研用登录的浏览器逐个核过项目页、附件和在线编辑器，能把原生工程导出到本地，比如瀚文的 11 块板、Roboto 的 3 块板。页面刚打开时会短暂显示“暂无 BOM”，要等加载完再记。平台协议对批量获取和 AI 训练用途有限制，见本节末尾。</li>
+        <li>Kitspace 和 OSHWA 认证目录是现成的索引，但清单可能指向已经不存在的文件，Glasgow 的 revC3 BOM 就是一例。Crowd Supply 的发货记录、Hackaday 的报道、PCBWay 的买家评价可以当实物证据。Printables、MakerWorld 只能补外壳。</li>
+      </ul>
+
+      <h3>参考工程自己也有错</h3>
+      <p>AlkaidMount 的两个贴片坐标文件都是 0 字节；HEMY 底座法兰小板的 BOM 只有表头；LumenPnP v4.2 的发布包缺了源工程里的两层内铜，也没有主板 BOM；Glasgow 的打印外壳作者只在 revC1 上测过，量产的是 revC3。同一个仓库里的板、壳和固件，也可能来自不同修订。</p>
+      <p>所以入库单位是按版本连起来的资源图。电路、机械、固件和实物证据各自记版本，节点之间用有依据的关系连接：由谁生成、能不能配、实物测的是哪一版。没证实的关系记成“版本未对齐”，题目只建在证实了的那部分上。图 3 是 HEMY v2 的一角。</p>
+    </div>
+
+    <figure class="fig3" id="fig3">
+      <div class="fig-scroll">
+        <svg viewBox="0 0 880 468" font-size="14" role="img" aria-label="图 3：HEMY v2 资源图的一角，有依据的关系只有两类：原生工程包含主控板和燕尾接口板，第三方复刻实测于 v1.1。其余都还没证实：OnStepX 的自定义引脚表还没和主控板对过；主控板的源文件是 4 月的、制造包是 6 月的；燕尾板的制造包还没从源工程重新导出比对，BOM 比坐标表少 DC1 和 H1；燕尾板和机械线上的盖板 STEP 能不能配，还待配准；v2 还没有独立实物证据">
+          <defs>
+            <marker id="f3-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-soft"/></marker>
+            <marker id="f3-ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-copper"/></marker>
+          </defs>
+          <!-- lane separators -->
+          <line x1="10" y1="110" x2="870" y2="110" class="ln"/>
+          <line x1="10" y1="280" x2="870" y2="280" class="ln"/>
+          <line x1="10" y1="374" x2="870" y2="374" class="ln"/>
+          <!-- lane labels -->
+          <g class="t-b">
+            <text x="14" y="68">固件</text>
+            <text x="14" y="200">电路</text>
+            <text x="14" y="332">机械</text>
+            <text x="14" y="426">实物</text>
+          </g>
+
+          <!-- lane: firmware -->
+          <rect x="376" y="39" width="176" height="48" class="box"/>
+          <text x="464" y="59" text-anchor="middle" font-size="13.5" class="t-b">OnStepX 配置</text>
+          <text x="464" y="77" text-anchor="middle" font-size="12" class="t-soft">自定义引脚表</text>
+          <text x="656" y="68" font-size="12" class="t-soft">不能拿上游 MaxPCB4 的引脚表判分</text>
+          <line x1="464" y1="88" x2="464" y2="132" class="ln-copper-dash" marker-end="url(#f3-ahc)"/>
+          <text x="474" y="105" font-size="12" class="t-copper">引脚对应？</text>
+
+          <!-- lane: circuit, main board -->
+          <rect x="96" y="133" width="176" height="48" class="box"/>
+          <text x="184" y="153" text-anchor="middle" font-size="13.5" class="t-b">原生工程 .epro</text>
+          <text x="184" y="171" text-anchor="middle" font-size="12" class="t-soft">2025-04-23，含 5 块板</text>
+          <line x1="272" y1="157" x2="375" y2="157" class="ln-soft" marker-end="url(#f3-ah)"/>
+          <text x="324" y="149" text-anchor="middle" font-size="12" class="t-soft">包含</text>
+          <rect x="376" y="133" width="176" height="48" class="box"/>
+          <text x="464" y="153" text-anchor="middle" font-size="13.5" class="t-b">主控板</text>
+          <text x="464" y="171" text-anchor="middle" font-size="12" class="t-soft">源文件 2025-04-23</text>
+          <line x1="552" y1="157" x2="655" y2="157" class="ln-copper-dash" marker-end="url(#f3-ahc)"/>
+          <text x="604" y="149" text-anchor="middle" font-size="12" class="t-copper">生成？</text>
+          <text x="604" y="175" text-anchor="middle" font-size="12" class="t-copper">日期对不上</text>
+          <rect x="656" y="133" width="176" height="48" class="box"/>
+          <text x="744" y="153" text-anchor="middle" font-size="13.5" class="t-b">主控制造包</text>
+          <text x="744" y="171" text-anchor="middle" font-size="12" class="t-soft">2025-06-23</text>
+
+          <!-- lane: circuit, dovetail board -->
+          <path d="M184 182 V233 H375" class="ln-soft" marker-end="url(#f3-ah)"/>
+          <text x="280" y="225" text-anchor="middle" font-size="12" class="t-soft">包含</text>
+          <rect x="376" y="209" width="176" height="48" class="box"/>
+          <text x="464" y="229" text-anchor="middle" font-size="13.5" class="t-b">燕尾接口板 PCB5_2</text>
+          <text x="464" y="247" text-anchor="middle" font-size="12" class="t-soft">CN2：USB-C 座</text>
+          <line x1="552" y1="233" x2="655" y2="233" class="ln-copper-dash" marker-end="url(#f3-ahc)"/>
+          <text x="604" y="225" text-anchor="middle" font-size="12" class="t-copper">生成？</text>
+          <rect x="656" y="209" width="176" height="48" class="box"/>
+          <text x="744" y="229" text-anchor="middle" font-size="13.5" class="t-b">燕尾板制造包</text>
+          <text x="744" y="247" text-anchor="middle" font-size="12" class="t-copper">BOM 比坐标表少 DC1、H1</text>
+
+          <!-- board ↔ cover, unproven -->
+          <line x1="464" y1="258" x2="464" y2="302" class="ln-copper-dash" marker-start="url(#f3-ahc)" marker-end="url(#f3-ahc)"/>
+          <text x="474" y="275" font-size="12" class="t-copper">配得上？待配准</text>
+
+          <!-- lane: mechanical -->
+          <rect x="376" y="303" width="176" height="48" class="box"/>
+          <text x="464" y="323" text-anchor="middle" font-size="13.5" class="t-b">盖板 STEP</text>
+          <text x="464" y="341" text-anchor="middle" font-size="12" class="t-soft">Dovetail PCB cover</text>
+          <text x="656" y="323" font-size="12" class="t-soft">参数源在 Onshape，只读，</text>
+          <text x="656" y="341" font-size="12" class="t-soft">本地只有 STEP，没有建模历史</text>
+
+          <!-- lane: physical evidence -->
+          <rect x="96" y="397" width="176" height="48" class="box"/>
+          <text x="184" y="417" text-anchor="middle" font-size="13.5" class="t-b">第三方复刻</text>
+          <text x="184" y="435" text-anchor="middle" font-size="12" class="t-soft">HEMY 讨论区 #39</text>
+          <line x1="272" y1="421" x2="375" y2="421" class="ln-soft" marker-end="url(#f3-ah)"/>
+          <text x="324" y="413" text-anchor="middle" font-size="12" class="t-soft">实测于</text>
+          <rect x="376" y="397" width="176" height="48" class="box"/>
+          <text x="464" y="417" text-anchor="middle" font-size="13.5" class="t-b">HEMY v1.1</text>
+          <text x="464" y="435" text-anchor="middle" font-size="12" class="t-soft">上一代</text>
+          <text x="656" y="426" font-size="12.5" class="t-copper">v2 还没有独立实物证据</text>
+        </svg>
+      </div>
+      <p class="scroll-hint">图较宽，左右滑动看全图。</p>
+      <ul class="legend" aria-hidden="true">
+        <li><span class="sw sw-ln"></span>有依据的关系</li>
+        <li><span class="sw sw-ln-copper"></span>还没证实的关系</li>
+      </ul>
+      <figcaption><b>图 3　HEMY v2 的资源图，多数关系还没证实。</b>有依据的只有两类：原生工程里确实包含这几块板，第三方复刻实测的是 v1.1。其余几条都还没证实：燕尾板和盖板没在同一个坐标系里配准过；主控板的源工程是 4 月的，制造包是 6 月的；燕尾板的制造包和源工程同一天，但没重新导出比对过；OnStepX 的引脚表也没和主控板逐个对过。HEMY 的局部题因此要先补这几条边：量出板坐标到装配坐标的变换，从源工程重新导出制造文件和现有的比对，补齐 BOM，核对引脚表。</figcaption>
+    </figure>
+
+    <div class="prose">
+      <h3>15 个种子案例</h3>
+      <p>表 5 按续调研给的分批排序，状态是 10-25 核的。</p>
+    </div>
+
+    <div class="tbl matrix">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th class="case">案例</th><th>PCB 源文件</th><th>制造文件</th><th>机械源文件</th><th>固件</th><th>许可</th><th>实物证据</th><th>建议</th></tr></thead>
+          <tbody>
+            <tr><td class="case"><a href="https://github.com/polvinc/HEMY">HEMY v2</a><span class="flag">旗舰</span><small>谐波赤道仪</small></td>
+              <td><span class="st y"></span><span class="nt">嘉立创 EDA，5 块板</span></td><td><span class="st p"></span><span class="nt">小板 BOM 缺项，版本待对齐</span></td><td><span class="st p"></span><span class="nt">STEP；参数源在 Onshape</span></td><td><span class="st y"></span><span class="nt">OnStepX，自定义引脚</span></td><td><span class="st y"></span><span class="nt"><span class="nw">GPL-3.0</span></span></td><td><span class="st p"></span><span class="nt">第三方复刻的是 v1.1</span></td><td><span class="chip have">首批</span> 燕尾板加盖板，先对齐工程</td></tr>
+            <tr><td class="case"><a href="https://gitlab.com/openflexure/openflexure-microscope">OpenFlexure</a> + Sangaboard<small>显微镜</small></td>
+              <td><span class="st y"></span><span class="nt">KiCad 7，RP2040 新板</span></td><td><span class="st y"></span><span class="nt">齐，导出时跳过了 DRC</span></td><td><span class="st y"></span><span class="nt">OpenSCAD</span></td><td><span class="st y"></span><span class="nt">Sangaboard 固件</span></td><td><span class="st y"></span><span class="nt"><span class="nw">CERN-OHL-S 等</span></span></td><td><span class="st p"></span><span class="nt">用户装过 v7，板是 0.5.1</span></td><td><span class="chip have">首批</span> 换排母</td></tr>
+            <tr><td class="case"><a href="https://github.com/scottbez1/splitflap">splitflap</a><small>翻牌显示器</small></td>
+              <td><span class="st y"></span><span class="nt">KiCad 6</span></td><td><span class="st y"></span><span class="nt">单板、六拼板都有</span></td><td><span class="st y"></span><span class="nt">26 个 OpenSCAD</span></td><td><span class="st y"></span><span class="nt">PlatformIO</span></td><td><span class="st y"></span><span class="nt"><span class="nw">Apache-2.0</span></span></td><td><span class="st p"></span><span class="nt">作者实物图</span></td><td><span class="chip have">首批</span> 板厚配套</td></tr>
+            <tr><td class="case"><a href="https://github.com/foostan/crkbd">Corne v4.1</a><small>分体键盘</small></td>
+              <td><span class="st y"></span><span class="nt">KiCad 层级原理图</span></td><td><span class="st y"></span><span class="nt">164 个位号对得上</span></td><td><span class="st p"></span><span class="nt">壳只有 STEP</span></td><td><span class="st y"></span><span class="nt">QMK，v4.1 官方路线</span></td><td><span class="st p"></span><span class="nt">两份许可，范围没写</span></td><td><span class="st p"></span><span class="nt">作者实物，非独立复刻</span></td><td><span class="chip have">首批</span> 制造包修复</td></tr>
+            <tr><td class="case"><a href="https://github.com/scottbez1/smartknob">SmartKnob View</a><small>力反馈旋钮</small></td>
+              <td><span class="st y"></span><span class="nt">KiCad 6，两块板</span></td><td><span class="st p"></span><span class="nt">BOM 不同版，缺坐标</span></td><td><span class="st p"></span><span class="nt">Release 里有 F3Z</span></td><td><span class="st y"></span><span class="nt">PlatformIO</span></td><td><span class="st y"></span><span class="nt"><span class="nw">Apache / CC BY</span></span></td><td><span class="st p"></span><span class="nt">v185 机械当时未测</span></td><td><span class="chip part">第二批</span> 轴向配合</td></tr>
+            <tr><td class="case"><a href="https://github.com/open-dynamic-robot-initiative/open_robot_actuator_hardware">ODRI Solo-12</a><small>四足</small></td>
+              <td><span class="st y"></span><span class="nt">Eagle，电源板 KiCad</span></td><td><span class="st p"></span><span class="nt">电源板没有</span></td><td><span class="st p"></span><span class="nt">SolidWorks，89 个文件</span></td><td><span class="st y"></span><span class="nt">ESP32、驱动固件</span></td><td><span class="st y"></span><span class="nt"><span class="nw">驱动固件 BSD-3</span></span></td><td><span class="st y"></span><span class="nt">有售，多机构在用</span></td><td><span class="chip part">第二批</span> 安装孔联动</td></tr>
+            <tr><td class="case"><a href="https://github.com/peng-zhihui/HelloWord-Keyboard">瀚文 HelloWord</a><small>键盘</small></td>
+              <td><span class="st p"></span><span class="nt">只在 oshwhub，11 块板</span></td><td><span class="st p"></span><span class="nt">轴体无料号，整包未核</span></td><td><span class="st p"></span><span class="nt">STEP、STL</span></td><td><span class="st y"></span><span class="nt">STM32 两套</span></td><td><span class="st p"></span><span class="nt">三处说法不同</span></td><td><span class="st p"></span><span class="nt">视频是 CNC 版</span></td><td><span class="chip part">第二批</span> 有 BUG 和已修正两版</td></tr>
+            <tr><td class="case"><a href="https://github.com/Roboparty/roboto_origin">Roboto Origin</a><small>双足人形</small></td>
+              <td><span class="st p"></span><span class="nt">只在 oshwhub，3 块板</span></td><td><span class="st y"></span><span class="nt">3 个包已下载</span></td><td><span class="st p"></span><span class="nt">SolidWorks、STEP</span></td><td><span class="st y"></span><span class="nt">Zephyr</span></td><td><span class="st p"></span><span class="nt">平台和 GitHub 不同</span></td><td><span class="st p"></span><span class="nt">关联方报道</span></td><td><span class="chip part">第二批</span> 配好版本再改板</td></tr>
+            <tr><td class="case"><a href="https://github.com/GlasgowEmbedded/glasgow">Glasgow</a><small>接口调试器</small></td>
+              <td><span class="st y"></span><span class="nt">KiCad，多个版本</span></td><td><span class="st p"></span><span class="nt">revC3 缺 BOM、坐标</span></td><td><span class="st p"></span><span class="nt">Fusion，只测过 revC1</span></td><td><span class="st y"></span></td><td><span class="st y"></span><span class="nt"><span class="nw">0BSD / Apache</span></span></td><td><span class="st y"></span><span class="nt">revC3 已出货</span></td><td><span class="chip part">候选</span> 按版本拆开</td></tr>
+            <tr><td class="case"><a href="https://github.com/joeycastillo/The-Open-Book">The Open Book</a><small>电子书阅读器</small></td>
+              <td><span class="st y"></span><span class="nt">KiCad、Eagle</span></td><td><span class="st p"></span><span class="nt"><span class="nw">C2-03</span> 齐，C1 缺料号</span></td><td><span class="st n"></span><span class="nt">只有 STL</span></td><td><span class="st p"></span><span class="nt">另一个仓库，未配版</span></td><td><span class="st y"></span><span class="nt"><span class="nw">CC BY-SA</span></span></td><td><span class="st p"></span><span class="nt">测的是 <span class="nw">C2-01/02</span></span></td><td><span class="chip part">候选</span> 电路和制造</td></tr>
+            <tr><td class="case"><a href="https://github.com/alanzjl/AlkaidMount">AlkaidMount</a><small>谐波赤道仪</small></td>
+              <td><span class="st y"></span><span class="nt">Eagle</span></td><td><span class="st p"></span><span class="nt">坐标文件 0 字节</span></td><td><span class="st p"></span><span class="nt">SolidWorks</span></td><td><span class="st y"></span><span class="nt">OnStep，版本已锁</span></td><td><span class="st y"></span><span class="nt"><span class="nw">GPL-3.0</span></span></td><td><span class="st p"></span><span class="nt">作者制作记录</span></td><td><span class="chip part">候选</span> 数据修复</td></tr>
+            <tr><td class="case"><a href="https://oshwhub.com/course-examples/eda-robotpro">EDA-Robot Pro</a><small>嘉立创官方机器狗</small></td>
+              <td><span class="st p"></span><span class="nt">只在 oshwhub，已导出</span></td><td><span class="st p"></span><span class="nt">没有坐标文件</span></td><td><span class="st n"></span><span class="nt">只有 STL</span></td><td><span class="st p"></span><span class="nt">只有板级配置</span></td><td><span class="st y"></span><span class="nt">页面选 <span class="nw">GPL-3.0</span></span></td><td><span class="st p"></span><span class="nt">wiki 照片</span></td><td><span class="chip part">候选</span> 简单板壳基线</td></tr>
+            <tr><td class="case"><a href="https://github.com/hshi74/toddlerbot">ToddlerBot</a><small>人形</small></td>
+              <td><span class="st n"></span><span class="nt">只有制造包</span></td><td><span class="st y"></span><span class="nt">6 层板，132 个位号一致</span></td><td><span class="st n"></span><span class="nt">Onshape 云端、STL</span></td><td><span class="st p"></span><span class="nt">只有主机端代码</span></td><td><span class="st y"></span><span class="nt"><span class="nw">CC BY-NC-SA</span></span></td><td><span class="st y"></span><span class="nt">一周 5 份复刻</span></td><td><span class="chip part">候选</span> 制造包子题</td></tr>
+            <tr><td class="case"><a href="https://github.com/peng-zhihui/Dummy-Robot">Dummy-Robot</a><small>六轴机械臂</small></td>
+              <td><span class="st y"></span><span class="nt">Altium，9 组</span></td><td><span class="st p"></span><span class="nt">只有 2 组 Gerber</span></td><td><span class="st p"></span><span class="nt">4 个 STEP</span></td><td><span class="st y"></span><span class="nt">STM32</span></td><td><span class="st n"></span><span class="nt">没找到</span></td><td><span class="st p"></span><span class="nt">作者视频</span></td><td><span class="chip gap">只存链接</span></td></tr>
+            <tr><td class="case"><a href="https://github.com/Nate711/StanfordDoggoProject">Stanford Doggo</a> + ODrive<small>四足</small></td>
+              <td><span class="st p"></span><span class="nt">源是 v3.4，用的是 v3.5</span></td><td><span class="st n"></span><span class="nt">v3.5 没有</span></td><td><span class="st n"></span><span class="nt">Fusion 云端，未导出</span></td><td><span class="st y"></span></td><td><span class="st y"></span><span class="nt">MIT</span></td><td><span class="st p"></span><span class="nt">论文</span></td><td><span class="chip gap">暂不进参考池</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="keyline"><span><span class="st y"></span>有，能直接用</span><span><span class="st p"></span>有，但不全、格式受限，或只能从 oshwhub 拿</span><span><span class="st n"></span>所查位置没找到</span></p>
+      <p class="tbl-cap"><b>表 5</b>　15 个种子案例的资源状态，2026-10-25 核实。机械一列，实心指开放格式的参数源（OpenSCAD 这类），半实心指应用原生格式（SolidWorks、Fusion）或只有 STEP 实体，空心指只有 STL 网格或没导出的云端链接。实物一列，实心指有第三方证据（发货、复刻、在售、多家机构在用），半实心指只有作者或关联方自述，或者证据针对的是别的版本。手机上可以左右滑动。</p>
+    </div>
+
+    <div class="prose">
+      <p>机械源比上一轮以为的多。SmartKnob 的 Fusion 整机文件在 Release 里，Solo 有 89 个 SolidWorks 原生文件，OnStep-Box 有 FreeCAD 原生的控制盒。要分清四种：开放格式的参数源、应用原生格式、STEP 实体、STL 网格。外壳题照旧按“读入 STEP、在实体上改孔改壁、再导出 STEP”来设计，build123d 正好能读写 STEP；有参数源的项目另出参数编辑题。SolidWorks 原生格式的几个（Solo、Roboto Origin、AlkaidMount），可以用项目手上的 SolidWorks 2025 批量转成 STEP、量出关键尺寸，见第 6 节。</p>
+      <p>谐波赤道仪可以自成一组。HEMY v2（嘉立创 EDA、STEP、OnStepX）和 AlkaidMount（Eagle、SolidWorks、OnStep）是两种整机做法；顺着 HEMY 的关联项目找到了 AstraDIY，有电源板和 OnStep 驱动板两类原生工程，还有七件外壳 STEP；OnStep 家族里，OnStep-Box 有 FreeCAD 控制盒，OnStep-JUWEI-17 是装进商用赤道仪的 KiCad 9 替换板。它们都叫 OnStep，引脚表却各不相同：HEMY 用自定义引脚，AlkaidMount 选的是 MiniPCB2，不能拿上游的 MaxPCB4 引脚表给 HEMY 主板判分。</p>
+      <p>另外 10 个记录（Bus Pirate 5、ZSWatch、AstraDIY、OnStep-Box、OnStepX 加 MaxPCB4、OnStep-JUWEI-17、ElectronBot、LumenPnP、NASA-JPL 火星车、IronBen）的明细在续调研的项目索引里。LumenPnP 值得单提：新发布包缺了内铜层，可见有新发布、CI 跑通，都不代表工程合格。它适合当制造修复的研究样本，不能拿最新包当参考答案。</p>
+      <p>核实做到了下载文件、解包和少量静态检查，比如 BOM 和坐标文件的位号集合、文件大小和哈希。25 个记录里只有嘉立创官方机器狗的在线板跑过一次默认 DRC，其余都还没跑过 ERC/DRC、固件编译、CAD 重建和干涉检查。</p>
+
+      <h3>许可和平台条款</h3>
+      <p>gym 只做学术研究，禁止商用（NC）的许可不构成排除理由，ToddlerBot 的 CC BY-NC-SA 这类可以用。题源调研（10-24）据此认为学术用途都能入库，续调研撤回了这个结论：学术用途只解决了商用这一条，获取渠道、资产许可、拟用用途和再分发方案还要分开记，一样推不出另一样：</p>
+      <ul>
+        <li>获取渠道。oshwhub 的<a href="https://oshwhub.com/page/license-agreement">项目授权许可协议</a>（页面标 2026-08-18 生效）第 3.5 条，限制未经书面许可的自动批量获取，也限制把这样拿到的内容用于数据分析、机器学习和 AI 训练。手动能打开、能导出，不等于能拿来批量建训练集；手动导出的单个工程能用到什么程度，按协议 3.1 条看项目自己标的授权，续调研没有替平台下结论。所以优先走作者的官方仓库；只在 oshwhub 上有原生工程的项目（瀚文、Roboto、嘉立创官方机器狗），要另取平台授权，或者先只当发现入口。</li>
+        <li>资产许可。同一个项目里，不同资产的许可可能不同，要按文件记。OpenFlexure 的机械和主板是 CERN-OHL-S-2.0，固件是 GPL-3.0，照明板是 CERN-OHL v1.2；瀚文的 oshwhub 项目选了 Public Domain，GitHub 是 GPL-3.0，平台页脚又写学习交流、非商业，三种说法并存，我们不替它裁决。</li>
+        <li>相同方式共享。GPL、CC BY-SA、CERN-OHL-S 这类条款，公开发布衍生数据时要沿用同一许可，带 NC 的也要继续标 NC。</li>
+        <li>其他。没找到许可证的（Dummy）只存链接和提交哈希。Fusion 360 Gallery 不能整体再分发，也不能把模型关联回原作者；Onshape 的条款禁止爬虫和数据挖掘。数据手册有版权，只发料号、URL 和抽出来的事实。KiCad 论坛上有人公开反对拿项目做 AI 训练，原话是 “AI training IS NOT research”。留一个退出机制，成本很低。</li>
+      </ul>
+      <p class="small">以上不是法律意见。</p>
+    </div>
+  </div>
+</section>
+
+<!-- §5 -->
+<section class="sec" id="bank">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§5 出题</p>
+      <h2>以改需求为主，先写契约再出题</h2>
+      <p class="lede2">完整工程用来采集，出题时只截其中一块：从资源图里取一块能独立验收的变化，比如一块接口板、对应的盖板和安装基准，题目只声称它实际测过的性质。</p>
+    </div>
+
+    <div class="prose">
+      <h3>为什么以改需求为主</h3>
+      <p>从零做的 PCB 题几乎全是零分。Cua-Bench 的 25 道 KiCad 题里有 16 道要从零画原理图，参评模型一道都没全对，最好的模型做对的 6 道都在其余 9 道里（其中有改元件值这类修改题）；PCBWorld 的中等板（只测了 10 块）上，所有 LLM 都是 0 分。全零的题分不出模型高下，也给不了训练信号。改已有设计更容易拉开差距：CADEngBench 里改已给的 CAD，通过率是 59.3% 到 72.3%，从零建模并在参数扫描下保持不变量的题只有 6.3% 到 41.4%。</p>
+      <p>改需求也最贴近爱好者改开源项目的真实用法。原工程只是参考候选：需求一改，它不一定还是正确答案，所以每道新需求题都要先有人做出一份满足契约的解，再加一份独立的替代解。判分按需求写检查，允许多种正确解。要不要加从零设计的题，看试跑的通过率和失败分布再定；简单题不全筛掉，大量全零的题也不当成“更难、更好”。赤道仪案例是另一回事：它先当工具包的演示，让 agent 在人看着的情况下从需求画到下单，每次人工介入都记下来。等这条路能少靠人跑通，就照它的样子出 T7 金任务。</p>
+
+      <h3 id="golden">T7 金任务：少，但不能没有</h3>
+      <p>T7 是上面“看试跑再定”的例外，试跑之前就定下要有：它是唯一能测整条链的题，也是唯一能拿实物结果给判分器算误收和漏检的题。题目是从需求做出一件能通电的完整小产品，比如一块可调降压电源模块配上外壳。</p>
+      <ul>
+        <li>分八关。需求和规格、选型和 BOM、原理图、PCB、制造包、外壳和装配，这六关自动判，照常计分；下单打样、通电和试装两关由人按事先写好的测试脚本做。</li>
+        <li>只给六关全过的方案打样，每题每个 agent 至多一个，取第一次全过的运行。一轮两三道题，连人类参考在内大约 10 次打样（估算，没询价）。</li>
+        <li>实物次数少，算不出可靠的通过率，所以实物结果单独报告，当案例研究和判分器的校准数据，不进主排行榜。</li>
+        <li>入库条件另算：维护者先把参考解完整做一遍并打样通过，替代解只要求过前六关。</li>
+        <li>T7 不进 v0。赤道仪案例是第一个原型；第一批正式题最早放进六周以后的增补，选哪几道，和打样预算、测试仪器一起定。</li>
+      </ul>
+
+      <h3>真实修订是最好的题源</h3>
+      <p>作者自己写明原因的修订，比随手删线、挪孔更像真问题。Corne 从 v4.0 到 v4.1，因为原来的电源座缺货，换成了 PJ-399B-6A，电路、固件和外壳都要跟着改（<a href="https://github.com/foostan/crkbd/releases/tag/v4.1">v4.1 发布说明</a>）；HEMY 作者说 v2 可以换用 OnStep 社区的 MaxPCB4 主板，但要改顶板和开孔（<a href="https://github.com/polvinc/HEMY/discussions/23">讨论 #23</a>）；瀚文在 oshwhub 上同时留着主控板“有 BUG”和“已修正”两版，差在哪还没核。用法是旧版加新需求当起始状态，新版当参考候选，再按需求验收，不要求和作者的补丁逐字节相同。北大有一个同名的 HWE-Bench，做的是芯片 RTL 代码修复，和第 1 节那个板级基准不是一回事。它就是这样从真实 PR 筛题的：从 6 个仓库的 3 万多个 PR 里筛出 417 题，坏版本测试失败，打上参考补丁后通过，再人工审。要注意两点：作者的提交常混着无关改动，只抽出独立的需求；PCB 和 CAD 项目很少有回归测试，每个修复都得补检查。</p>
+
+      <h3>五张任务卡</h3>
+      <p>续调研把出题流程落到了五个项目的实际文件上。五张卡都是草案，没跑过参考解；待测的尺寸、磁隙和制造容差都空着，没有拿猜测值补。</p>
+    </div>
+
+    <div class="tcards">
+      <article class="tcard">
+        <p class="code">A · 参数机电<span class="chip have">首批</span></p>
+        <h4><a href="https://gitlab.com/openflexure/openflexure-microscope/-/blob/4f0d1a30d6830a62455bdf509f19d805734c23b5/docs/customisations/drawer_options.md">OpenFlexure：换矮一号的排母</a></h4>
+        <dl>
+          <div><dt>改什么</dt><dd>电子舱从 11 mm 排母改成常见的 8.5 mm。按源码推算，Sangaboard 的支撑面要降 2.5 mm，USB-C 开孔和侧边支撑的数量跟着变（还没渲染量过）。交可重建的 OpenSCAD 源和抽屉 STL。</dd></div>
+          <div><dt>怎么验</dt><dd>源能重建，网格有效；支撑高度和数量、USB-C 插头能不能插进去、板间净空，都按 8.5 mm 配置变了；树莓派 4 的安装位和抽屉对外的接口不动。全部从几何上量，不搜参数字符串。</dd></div>
+          <div><dt>必须判错</dt><dd>只改参数文本、交旧 STL；只降开孔不改支撑；整体往下挪；删掉挡路的墙。</dd></div>
+          <div><dt>还缺</dt><dd>固定 OpenSCAD 版本和引用的库；测量容差；板模型配准。Sangaboard 的丝印、图纸和文档写的是三个不同的小版本。</dd></div>
+        </dl>
+      </article>
+      <article class="tcard">
+        <p class="code">B · 板壳联动<span class="chip have">首批</span></p>
+        <h4><a href="https://github.com/polvinc/HEMY/tree/7aa44d69e59a39bdee2a2c7ec68d987540c3de13/hardware">HEMY v2：挪燕尾板的 USB-C，盖板跟着改</a></h4>
+        <dl>
+          <div><dt>改什么</dt><dd>把燕尾接口板上的 USB-C 座（CN2，MOLEX 105450-0101）沿板上一条轴挪一段固定距离，电气连接和安装孔不变，重走局部连线，再改盖板的开孔和插头通道。交 PCB 源、盖板实体和新的制造包。</dd></div>
+          <div><dt>怎么验</dt><dd>位号和网络保持；接口位置变对了；安装孔没动；DRC 没有新增未豁免的问题；盖板壁厚和开孔达标；插头插拔的路径不干涉；制造包从提交的源工程生成，并且一致。</dd></div>
+          <div><dt>必须判错</dt><dd>只挪盖板开孔；只挪 PCB 的 3D 外观；把外壳整体放大；原样交回旧制造包。</dd></div>
+          <div><dt>还缺</dt><dd>挪多远、插头包络、壁厚和净空都还没量；坐标文件里的位置是板坐标，要先换算到装配坐标；BOM 没列坐标表里的 DC1 和 H1，要先分清是不是手焊件，补齐了才能做参考解。</dd></div>
+        </dl>
+      </article>
+      <article class="tcard">
+        <p class="code">C · 精密配合<span class="chip part">第二阶段</span></p>
+        <h4><a href="https://github.com/scottbez1/smartknob/releases/tag/releases/mechanical/v185-dummy-tag">SmartKnob：屏幕加高后修轴向配合</a></h4>
+        <dl>
+          <div><dt>改什么</dt><dd>以机械 v185 和兼容的底板、屏幕板为起点，屏幕支架加高或加一层保护片后，修好轴向配合；旋钮轴线、屏幕开口和磁编码器的工作条件保持不变。</dd></div>
+          <div><dt>怎么验</dt><dd>旋钮、转子、磁铁和编码器的同轴度与轴向距离；屏幕旋转时的包络不碰；后盖定位销兼容 Base v0.3 及以上。</dd></div>
+          <div><dt>必须判错</dt><dd>所有零件一起平移来凑距离；删掉磁铁；静止不碰、转起来碰；混用 Base v0.2。</dd></div>
+          <div><dt>还缺</dt><dd>工作磁隙没有数据，要从器件手册或实测补；v185 发布时作者自称还没测过。缺这些时只能叫几何配合检查，不能叫编码器功能通过。</dd></div>
+        </dl>
+      </article>
+      <article class="tcard">
+        <p class="code">D · 制造一致性<span class="chip have">首批</span></p>
+        <h4><a href="https://github.com/foostan/crkbd/tree/63366fb7f51cf2a796462fdd90527e99dd126055">Corne v4.1：修一份被改坏的制造包</a></h4>
+        <dl>
+          <div><dt>改什么</dt><dd>给冻结的 v4.1.0 原生工程，加一份人为注入一两处错误的制造包，比如漏一个贴片位号、底面旋转错、混进旧板框。题面写明是合成故障，不冒称上游有这些问题。agent 重新导出并修好。</dd></div>
+          <div><dt>怎么验</dt><dd>逐位号、逐层、逐孔核对源工程和产物；查空文件、重复件、板面和旋转。DNP、手焊件、正反面、原点和旋转怎么处理，提前公布规则。</dd></div>
+          <div><dt>必须判错</dt><dd>BOM 来自旧版而坐标来自新版；单位错了一千倍；底面镜像；文件为空。</dd></div>
+          <div><dt>还缺</dt><dd>只读过文件和元数据，没跑过导出；要固定 KiCad 和导出插件的版本，选定工厂规则；根目录两份许可的作用范围没写清。</dd></div>
+        </dl>
+      </article>
+      <article class="tcard">
+        <p class="code">E · 板厚与机构<span class="chip have">首批</span></p>
+        <h4><a href="https://github.com/scottbez1/splitflap/releases/tag/releases/sensor-smd/v2">splitflap：0.8 mm 传感板配机械 v2</a></h4>
+        <dl>
+          <div><dt>改什么</dt><dd>给机械 v2 和一份标明是合成故障的制造配置，修好板厚和版本选择，让传感板位置、固定接口和制造说明一致。只改 README 里的板厚文字不算。</dd></div>
+          <div><dt>怎么验</dt><dd>板厚 0.8 mm；传感器和运动件的相对位置；装配方向的净空；机械版本对；单板和六拼板的 BOM、坐标按板实例对齐。</dd></div>
+          <div><dt>必须判错</dt><dd>制造说明写 0.8 mm，CAD 里板厚还是 1.6 mm；v0 机械配 v2 板；把六拼的 18 个贴装项并成 3 项；把六个合法重复的位号当错误。</dd></div>
+          <div><dt>还缺</dt><dd>CAD 和 EDA 重放；感应距离的数值范围；参考解和故障样本都还没跑。</dd></div>
+        </dl>
+      </article>
+    </div>
+
+    <div class="prose">
+      <p>制作顺序：先把 A 和 D 各做成 3 到 5 个故障位置或参数不同的实例，再做 B 和 E，最后做 C。同一项目族的实例全部分在同一边；五个项目做出再多变体，也只算五个独立项目族，不能拿变体数充题源的多样性。</p>
+      <p>这些都是局部题，G1 说的整条链不会一步到位。B 这类题已经跨了 PCB、外壳和制造包三段，赤道仪案例会让 agent 从需求一路做到打样。等每一段的检查都校准过，再把局部题串成从改需求一直做到新下单包的长题。</p>
+      <h3>从工程到题目的九步</h3>
+    </div>
+    <ol class="steps">
+      <li><span><strong>冻结工程。</strong>固定每个仓库的提交、子模块、Release 附件和云端 CAD 版本，顺着 README、Release、文档和附件外链找全。留下项目清单、下载哈希、资源关系和缺失清单。</span></li>
+      <li><span><strong>闭合依赖。</strong>收齐层级原理图、符号和封装、3D 模型、CAD 引用的库、固件依赖和加工参数，查 LFS 指针和空文件。依赖不闭合的，不进“可重建”的题池。</span></li>
+      <li><span><strong>跑原版基线。</strong>用固定的工具镜像打开、重建、导出，原工程本来就有的问题逐项记豁免，不默认开源工程 DRC 为零。嘉立创 EDA、Eagle、Altium 转 KiCad 只是可选做法，转的话要核对转换前后的连通、封装、层叠和坐标。</span></li>
+      <li><span><strong>写需求契约。</strong>写清目标变化、要保持的东西、可改的文件、交付物、单位和容差、允许哪些等价实现；分清作者原有的要求、从几何或电路量出来的接口、出题人新加的要求。“板上有个圆孔”推不出它必须是 M3 固定孔。关键数值没冻结的，题目留在草案。</span></li>
+      <li><span><strong>生成起始状态。</strong>删一部分设计、注入一个能归因的故障，或者给旧版加新需求；去掉参考产物。原样提交必须不达标。</span></li>
+      <li><span><strong>做参考解。</strong>由合格的人做出至少一份满足新契约的解，再加一份独立的替代解。需求变了，旧工程不一定还是正确答案。</span></li>
+      <li><span><strong>校准判分器。</strong>参考解、替代解、单故障、组合故障、容差内外成对的样本都跑一遍，再加空输出、删掉整面墙、旧网表、改规则、偷读参考答案这些攻击样本；题面数值和检查常量逐条对账。</span></li>
+      <li><span><strong>按项目族划分。</strong>fork、remix、同一项目的不同修订、同一个参数母体，归成一族，再分训练集和测试集，同族不跨边。</span></li>
+      <li><span><strong>发布接纳。</strong>冻结题面、环境、起始状态、判分器和预期检查；记下每一步的存活数和淘汰原因；能不能发布、能不能拿来训练，单独标。</span></li>
+    </ol>
+    <div class="prose">
+      <p>一道题要进题库，得同时满足：资源和依赖能重建；题面数值完整；必需检查都能执行；参考解和至少一个合理的替代解通过；原样提交和关键故障失败；候选改不了测试；用途和分发状态写清。缺一项，就写明原因，留在草案里。论文里同时报采集了多少项目、资源完整的有多少、能重建的有多少、能出题的有多少、最后接纳了多少题，以及每一步的淘汰原因。</p>
+    </div>
+  </div>
+</section>
+
+<!-- §6 -->
+<section class="sec" id="score">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§6 判分</p>
+      <h2>“验证过”要拆开记，判分器也要先体检</h2>
+      <p class="lede2">确定性的检查也会写错。续调研在已发表的基准里找到了题面和检查对不上的例子；EDA Bench 换了更严的判分器重算同一批输出，最高加权分从 4.58% 掉到 1.48%。所以不写一个笼统的“已验证”，每条结论都说清验证了什么。</p>
+    </div>
+
+    <div class="prose">
+      <h3>六类证据，分开记</h3>
+      <p>下面六类证据并列，缺了哪一类就单独记哪一类。</p>
+    </div>
+    <div class="tbl t-mid">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>证据类别</th><th>合格的证据</th><th>推不出什么</th></tr></thead>
+          <tbody>
+            <tr><td class="l">来源与完整度</td><td>固定的提交或附件哈希；文件非空、能解析；配套关系有依据</td><td>能运行、能制造、能拿来训练</td></tr>
+            <tr><td class="l">工具重放</td><td>固定版本的工具能打开、重建、导出再读回；依赖闭合</td><td>满足需求</td></tr>
+            <tr><td class="l">电气和几何规则</td><td>指定规则集下的 ERC、DRC、实体和净空结果</td><td>功能完整、发热、电磁兼容、能量产</td></tr>
+            <tr><td class="l">需求功能</td><td>在写明的工况、模型或状态下，测量值满足要求</td><td>模型适用范围以外的表现</td></tr>
+            <tr><td class="l">制造一致性</td><td>层叠、孔、BOM、坐标、方向、装配范围都和源设计一致</td><td>厂家已经接受、实际贴装成功</td></tr>
+            <tr><td class="l">实物表现</td><td>指定版本、材料、配置和工况下的测试；作者自测、第三方和我们自己的分开记</td><td>新版本自动继承</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-cap"><b>表 6</b>　“验证过”的六类证据。表 3 的 L0 到 L6 是判分器里的检查类别；这里多出来的“来源与完整度”管入库，“实物表现”对应 T7。表 3 的检查类别大致这样对应：L0 是工具重放；L1，以及 L6 的干涉和净空，属于电气和几何规则；L2 到 L4，以及 L6 的配合要求，属于需求功能；L5 是制造一致性。</p>
+    </div>
+    <div class="prose">
+      <p>每条证据记七样：对象（哪个文件、哪个版本，落到哈希）、范围（验证了什么性质）、条件（工具版本、规则、模型、容差）、方法（谁、怎么得出）、结果、证据（日志、测量值、哈希）和局限（还没证明什么）。结果只取五种：通过、失败、没跑、不适用、出错。没跑就记没跑，不能记成通过，也不能悄悄从必需检查里删掉。</p>
+      <p>比如续调研在嘉立创官方机器狗的在线板上实跑了一次默认 DRC：141 项检查，0 个问题。这条只能记成“这个快照在嘉立创 EDA V4.1.78 的默认规则下通过 DRC”，推不出功能正确，也推不出能量产。</p>
+      <p>判分器有没有校准过，是题目和判分器版本的属性：参考解要过，合理的替代解要过，单故障和贴着边界的坏例要挂；再抽查真实模型输出里判过和判挂的两边，报混淆矩阵、抽样方法和不确定性。修复类的题，要有“起始状态失败、解答通过”的实际运行日志，才算从候选变成正式题。</p>
+
+      <h3>判分方法的三档</h3>
+      <p>按可靠程度大致分三档。gym 尽量用强档，弱档的指标只拿来做诊断。</p>
+    </div>
+
+    <div class="tbl t-mid">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>档</th><th>方法</th><th>已知的问题</th></tr></thead>
+          <tbody>
+            <tr><td class="l">弱</td><td>文本重合；单个 LLM 或多模态评委；和唯一参考答案比形状（Chamfer 距离、IoU）</td><td>P3D 的 68.3% 只是文本转 3D 问答（QA-S）里人和多模态评委的答案一致率，图像和装配的评分另算；CADTests 里，用 Chamfer 距离区分人工判对和判错，AUC 只有 0.663</td></tr>
+            <tr><td class="l">中</td><td>ERC、DRC、DFM 规则检查；和参考网表比对</td><td>只用 ERC 时通过率虚高 10 到 13 个点；PCBWorld 的 DRC 是放宽过的兼容规则，Freerouting 布通率 0.91，算上 DRC 的 Clean Pass 是 0.80；Cua-Bench 的比较器只比器件、连接、网名三项再取平均，合法的位号重编号和把 2.8k 写成 280k 都得 2/3</td></tr>
+            <tr><td class="l">强</td><td>按需求写的确定性检查；仿真；仪器实测</td><td>确定性检查也会把契约写错（CADWorld 的例子见下）；CAD-bench 把孔径差 0.5 mm 的件判满分，又把转过角度的正确六角螺母判 0 分；EDA Bench 的仿真用通用近似模型，电容按 1 MΩ 电阻算，测不了真实功能；实测贵，规模小</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-cap"><b>表 7</b>　判分的三档。几个数字来自不同基准、不同指标，不能互相换算。</p>
+    </div>
+
+    <div class="prose">
+      <h3>几条规矩</h3>
+      <ul>
+        <li>上线前过三组样本：参考解、等价的替代解、故意做坏的近似件。只看参考解满分、明显的坏例低分，证明不了判分器可靠。EDA Bench 的旧判分器让 35 个参考解全得 1.0、35 个严重故障都不超过 0.15，看着很好；<a href="https://github.com/EDA-bench/eda-bench/blob/5d65bfffd6975f44f42914ec15a917d3aacb0298/paper/main.pdf">修订稿</a>换上更严的检查后，参考解平均 0.957，有 2 个只得 0.25；删掉一个无源件的 34 个故障样本，只有 11 个降到 0.75 以下；一个合理的 0.35 mm 统一线宽被打到 0.25。体检做得最完整的有三家，CAD-bench 是其中之一：审计里参考件得 0.992 分，独立写的替代件 0.896，近似故障件还有 0.684。</li>
+        <li>原样提交必须判挂。<a href="https://github.com/huggingface/cadgenbench/blob/33304cf771fc5639144b1df9611e347251052cf8/docs/metrics.md">CADGenBench</a> 的编辑题里，把输入原样交回也可能拿到 0.4 分，所以要单设一道“目标变化有没有发生”的二值门。</li>
+        <li>题面和检查要对账。<a href="https://github.com/Zdong104/CADWORLD/blob/5e9529ff984b5426a5c194b94a09dc84cbe7fa7a/evaluation_examples/examples/part/freecad-part-046.json">CADWorld 有一题</a>，题面要求把 12 mm 的边放大到 18 mm，检查却还按 12 mm 算体积。题面数值、检查常量和参考件的实测值要自动比对。</li>
+        <li>请人分层盲审。PCB 侧做得最完整的是 PCBSchemaGen：一位资深设计师盲审 300 个输出，判分器和人的一致度 κ 0.91；判为通过的里有 6.7% 其实是错的，判为失败的里有 2.7% 其实是对的，后者 75% 来自 ERC 过严。它按 50/50 分层抽样，这两个比例不能直接搬到别的题上。误收更危险，错板子会被当成对的拿去下单。</li>
+        <li>发布后继续抽查判为失败的轨迹。一项审计复核了 5 个屏幕操作基准的 150 条失败轨迹，其中 10.7% 是评测器判错了。</li>
+        <li>判分器和参考答案不给 agent 看，从最终的原生文件重新导出再判。Cua-Bench 的任务脚本先找现成的网表文件，找不到才从原理图导出，旧导出文件可能掩盖没保存的改动；Cua-Bench 报告里，9 次自称完成的运行有 5 次没过验证；Long-Horizon 里有 agent 改了工艺库的温度系数，还把器件并联数设成 10,000。</li>
+        <li>执行失败记零分。Text2CAD-Bench 第 4 级只给执行成功的样本打分，结果无效率 17% 和 55% 的两个模型，总分几乎一样（8.20 对 8.26）。评测环境自己出错单独记，不算到模型头上。</li>
+        <li>固定容差、环境和版本。百分比容差放在 100 mm 的外壳上就是 1 mm；OpenCascade 版本不同，分数就不可比；同一个模型换个 agent 框架，通过率能从 24.6% 变成 0%（Seldon，一个专家出题的 CAD 基准）。判分器修了要升版本、重算旧结果。</li>
+      </ul>
+
+      <h3>怎么计分</h3>
+      <p>每道题输出三样：是否通过、逐项结果、诊断信息。“是否通过”只看声明为必需的检查是不是全过；逐项结果给每条检查的证据；诊断信息给几何距离、错误数、耗时和花费。排行榜只看是否通过：每题每个 agent 跑 3 到 5 次，报单次通过率和它的 95% 区间，以及几次里至少过一次的比例（pass@k，k 是实际跑的次数）。同一项目族的变体高度相关，区间按项目族整族重抽样来算（聚类自助法），不按运行次数算；区间重叠的不排先后。部分分只做诊断和强化学习奖励，不能让“文件很多”“形状很像”抵消短路、错的引脚表或必需的机械干涉；部分分的权重等 v0 校准完再定，和判分器版本一起公布。优化类的题先过硬约束，再比成本和线长。源工程坏了、评测环境坏了、模型交的东西坏了，三种分开记账。另外记三样：成本（BOM 加打样估价）、agent 的花费（token 和时间）、证据质量（引脚和参数决定有没有引用到正确的手册页）。T7 的实物结果单独报告，不进排行榜。</p>
+
+      <h3 id="rwe">RWE-Bench：哪些做法一致，还能借什么</h3>
+      <p>Xplore 10 月 27 日发布的 <a href="https://xplore.ai/rwe-bench">RWE-Bench</a>（Real World Engineering）和本节的思路基本一致。官网直接写明的是做法：20 道题分机械、电气、航空航天三类，每个模型用自家的 agent 框架、开最高推理档。三道例题是：三缸柴油机的整体曲轴，要在 2,400 转满载下满足应力、刚度、轴承载荷和疲劳要求；从 Zynq-7000 到两颗内存的 DDR3L 布线，8 层板、71 个网络，约 300 个器件位置固定，已有的器件和走线不许动，要满足等长和阻抗；高压涡轮导叶的换热 CFD。判分全自动，没有 LLM 评委，也没有人工评分；判分程序会跑物理求解器，所有指标都满足才算通过。每道题由一位工程师连同判分器和一份参考解一起写出，参考解用的是 agent 拿到的同一套工具。</p>
+      <p>结果的数字大多是二手的。官网图表是动态加载的，没能直接抓到，静态文字能核对上的只有三条：Sol 每次运行约 10 美元，Astra 比 Sol 高 12 个点，Opus 高 4 个点，这两个模型的花费都接近 Sol 的 6 倍。RuntimeWire 10 月 27 日的报道和 CADFrontier 10 月 28 日的转录都说有 11 个模型参评，单次通过率最高的是 GPT-6 Astra，37%。下面这些只见于 CADFrontier：20 题是机械 9、电气 5、航空航天 6；每题跑 5 次，每次最多 24 小时，共 1,100 次；Claude Opus 5.5 是 29%，GPT-6.1 Sol 是 25%；5 个模型一次都没过，4 道题没有任何模型做出来；每题 5 次里过一次就算的话，Opus 5.5 是 70%；平均每次跑 3.4 小时，跑得久的分数并不更高。</p>
+      <p>一段中文新闻转述（原始出处没找到）大体准确，一处说过了头，一处查不到出处。说过头的是“直接操作专业工程软件”。这句照搬了官网的宣传语（“the same CAD and CAE tools used by professional engineers”），但“直接操作”容易让人以为是点图形界面；官网点名的只有曲轴例题用的 CadQuery、Gmsh、CalculiX 和 Python，其他题用什么工具没写，CADFrontier 也指出这不是 SolidWorks、NX、Creo 这类交互式参数化软件。查不到出处的是“Astra 5 次通过率 60%”：官网静态文字和 CADFrontier 里都没有；官网有一张 pass@k 动态图没抓到，所以只能算未核实，不能说写错了。读它的分数还要记住 CADFrontier 提的几点：题少，前两名的区间重叠，名次不算定论；题、判分器和参考解都不公开，外人没法复现；分数是模型加自家框架一起的结果；Xplore 本身卖强化学习环境。</p>
+    </div>
+
+    <div class="two">
+      <div>
+        <h4>借过来</h4>
+        <ul>
+          <li>所有硬指标都满足才算对，每条指标写成带阈值的数：质量、应力、疲劳、等长、阻抗。本节已经这样定，需求契约里的每条要求都要能这样算出来。</li>
+          <li>参考解用 agent 拿到的同一套工具做出来，证明题在这套工具里做得出。SolidWorks 可以拿来核验，但不能替 build123d 题做参考解。</li>
+          <li>每题多跑几次，报单次通过率的区间和 pass@k，旁边列每次运行的花费和时长。题少时名次往往定不下来，所以要画区间；区间重叠的不排先后，区间的算法也要写明。</li>
+          <li>没人做出来的题照样留着，只要有参考解证明能做。T7 金任务也照这个思路留：题少、难，但参考解要有实物证明做得出。</li>
+          <li>评测题不授权训练，官网原话是 “The benchmark tasks themselves are never licensed for training”，训练环境另出。我们按项目族分开，测试用的项目族不进训练。</li>
+          <li>电气题也能这样判。DDR3L 那道例题用的是等长、阻抗这类确定性检查；“已有的器件和走线不许动”也正是 T5 的出法。高速板本身 v0 先不碰。</li>
+        </ul>
+      </div>
+      <div>
+        <h4>补上它没做的</h4>
+        <ul>
+          <li>判分器的体检结果要公开：参考解、替代解、故障样本各过了多少，盲审的误收和误拒是多少。RWE 没公开这些。</li>
+          <li>检查代码随工具包开源，再留一份公开的开发集，外人能复现开发集上的分数。开发集从不进测试集的项目族里出，比如本来就要公开演示的 HEMY 一族；测试题的题面、契约常量、参考解和故障样本都不公开。</li>
+          <li>模型和框架分开看。除了各家自己的框架，六周以后再用同一个简单框架把所有模型跑一遍。gNucleus 的 CAD Bench V3 榜上有同一个模型配两种框架的分：Opus 5.5 配 Claude Code 是 61.03，配 mini-swe-agent 是 57.96（百分制的平均奖励，不是通过率）。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prose">
+      <h3 id="sw">SolidWorks 2025 怎么用</h3>
+      <p>项目手上有一台装了 SolidWorks 2025 的 Windows 电脑。它进不了 gym 的评测环境：要 Windows 和授权，装不进容器，也没有官方 MCP。但在评测环境之外，有三处用得上，前两处可以离线批量跑，第三处靠人。</p>
+      <ol>
+        <li>转题源。第 4 节里 Solo（89 个原生文件）、Roboto Origin 和 AlkaidMount 的机械源都是 SolidWorks 格式。用它打开、重建，记下有没有重建错误，导出 STEP，量出质量属性和关键尺寸，补进资源图。外壳题照旧在 STEP 上出，参考解用 build123d 做，SolidWorks 只拿来核验。</li>
+        <li>交叉核验判分器。L6 用的是 OpenCascade，SolidWorks 用的是另一套内核 Parasolid。给判分器体检时，把参考解、替代解和故障样本的 STEP 导进 SolidWorks，跑干涉检查，量体积和质量属性，和我们的结果逐项对。两套内核对不上的样本都要人工看，原因可能是容差、STEP 转换，也可能是判分器的 bug。</li>
+        <li>人工盲审和金任务终检。审阅者在 SolidWorks 里打开候选的 STEP，量尺寸、剖切看间隙；T7 金任务下单前，再用它做一遍干涉检查，CNC 件加跑 SolidWorks 自带的 DFMXpress 可加工性检查。</li>
+      </ol>
+      <p>批处理走它的 COM 接口，用 Python 的 pywin32 调。开源的 <a href="https://pypi.org/project/pysldwrap">pySldWrap</a>（MIT）包好了打开、改尺寸、重建、导出 STEP 和读质量属性，不过它停在 2022 年的 0.2 版，没在 2025 上试过；干涉检查用装配体的 InterferenceDetectionManager。按 TriMech 和 GoEngineer 两家经销商的版本对比，干涉检查、质量属性、SimulationXpress（单零件的简易有限元）和 DFMXpress 在 Standard 版就有，零件和装配体的完整有限元、运动分析要 Premium。转格式和查干涉，商业版哪个都够，教育版的功能范围没查；想拿它给金任务做装配体有限元，就得是 Premium。</p>
+    </div>
+  </div>
+</section>
+
+<!-- §7 -->
+<section class="sec" id="payoff">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§7 产出</p>
+      <h2>一篇基准论文，加一个真有人用的工具</h2>
+      <p class="lede2">论文靠任务定义和验证器立住，工具包靠能复现的实物 demo 传开。</p>
+    </div>
+    <div class="prose">
+      <h3>论文要回答的四个问题</h3>
+      <ol>
+        <li>今天的 agent 沿整条链能走多远，卡在哪类检查上？</li>
+        <li>同一批题，走代码和走 MCP 差多少？屏幕操作在同题对照里差多少？</li>
+        <li>验证器能在下单前多拦住多少错，代价是多少误收和误拒？</li>
+        <li>验证器分数当奖励，能不能把硬件设计能力训上去？</li>
+      </ol>
+      <p>主贡献是任务定义加验证器（G1、G2、G4）。建题方法本身也能写进论文：从完整工程建资源图、写需求契约、生成会失败的起始状态、校准判分器，并公布每一步的存活数和淘汰原因。附加的有：接口对照（G5）；一个新指标，看每个引脚和参数决定有没有引用到正确的手册页（G3）；小规模实物子集（G7）；可训练。已有工作说明验证器分数当信号有用：PCBSchemaGen 用它引导推理时的搜索，cadrille 和 CADEvolve 用几何奖励做强化学习，都有明显提升。</p>
+      <p>投稿方向：NeurIPS 的数据集和评测赛道（基准本体；EDA Bench 的修订稿用的就是这个赛道 2026 年的模板）；ICLR（PCB-Bench 发在 ICLR 2026）；MLCAD（PCB-QA 发在这里）；DAC、ICCAD（EDA 圈）；KDD 的 agent 评测研讨会（PCBWorld 发在这里）。加上新手用户实验的话，也可以投 CHI 或 UIST 的个人制造方向。</p>
+
+      <h3>热度：几千 star 比较现实</h3>
+      <p>学术基准的仓库一般只有几十到几百 star（PCB-Bench 45，3DCodeBench 96）。KiCad、FreeCAD 的 MCP 各约 2.9k，是比较现实的对标。给创作软件接 MCP 的项目里最火的 blender-mcp 是 2.8 万，要到这个量级，得有几个别人能照着复现的 demo（赤道仪、墨水屏手表、机械键盘这类），第一次下单的成功率也要够高，这一点没有把握。</p>
+    </div>
+    <div class="two">
+      <div>
+        <h4>有利</h4>
+        <ul>
+          <li>实物比软件好传播。一块点亮的板子、一台自己做的赤道仪，比反编译截图直观。</li>
+          <li>嘉立创体量大，也有动力。2026 年上半年嘉立创 EDA 注册用户 736.88 万，订单 1,163.94 万笔，CNC 收入同比增长约 110%；它的官方博客已经在写 Claude Code 画板实测。</li>
+          <li>中文社区有需求。B 站有从 MCP 配置讲到嘉立创 EDA 实战的教程，也有人在卖技能包。</li>
+        </ul>
+      </div>
+      <div>
+        <h4>不利</h4>
+        <ul>
+          <li>硬件试错花钱、要等，失败会被放大。OpenAI 的 KiCad 演示在 Hackaday 评论区和 KiCad 论坛招来不少质疑：走线乱，读不准手册，画不好封装。</li>
+          <li>少了 REA 那种“能抄别人软件”的争议，话题性弱一些。</li>
+          <li>KiCad MCP 已经有好几个，单做又一个 MCP 不会火。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §8 -->
+<section class="sec" id="roadmap">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§8 路线图</p>
+      <h2>前六周：先做工具包和赤道仪，第 3 周起建题库</h2>
+      <p class="lede2">验证器从第 1 周就写进工具包。赤道仪案例跑出第一批失败、检查规则有了雏形以后，第 3 周开始建题库，用的是同一套验证器。这样规则从真实失败里长出来，题也更像真问题。</p>
+    </div>
+
+    <figure class="fig4" id="fig4">
+      <div class="fig-scroll">
+        <svg viewBox="0 0 920 248" font-size="13" role="img" aria-label="图 4：六周甘特图。第 1 到 2 周做工具包和验证器，之后验证器持续补规则；第 2 到 4 周做赤道仪案例，先对齐 HEMY 的源工程和制造包，再打样一次，失败清单回流成新规则；第 3 到 6 周建 v0 题库，3 个项目族、每族 2 到 3 道局部题，用同一套验证器判分，HEMY 的题等工程对齐后再加；第 6 周对外发布">
+          <defs>
+            <marker id="f4-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-soft"/></marker>
+          </defs>
+          <g text-anchor="middle" font-size="12.5" class="t-soft">
+            <text x="300" y="22" class="t-soft">第 1 周</text>
+            <text x="412" y="22" class="t-soft">第 2 周</text>
+            <text x="524" y="22" class="t-soft">第 3 周</text>
+            <text x="636" y="22" class="t-soft">第 4 周</text>
+            <text x="748" y="22" class="t-soft">第 5 周</text>
+            <text x="860" y="22" class="t-soft">第 6 周</text>
+          </g>
+          <g>
+            <line x1="244" y1="32" x2="244" y2="236" class="ln"/>
+            <line x1="356" y1="32" x2="356" y2="236" class="ln"/>
+            <line x1="468" y1="32" x2="468" y2="236" class="ln"/>
+            <line x1="580" y1="32" x2="580" y2="236" class="ln"/>
+            <line x1="692" y1="32" x2="692" y2="236" class="ln"/>
+            <line x1="804" y1="32" x2="804" y2="236" class="ln"/>
+            <line x1="916" y1="32" x2="916" y2="236" class="ln"/>
+          </g>
+          <!-- row 0: toolkit + verifier -->
+          <text x="8" y="61" class="t-b">工具包和验证器</text>
+          <text x="8" y="79" font-size="12" class="t-soft">先写 L0 L1 L3 L5 L6</text>
+          <rect x="250" y="53" width="212" height="22" class="bar-new"/>
+          <text x="356" y="69" text-anchor="middle" font-size="12.5" class="t-on">串现成工具，写第一批检查</text>
+          <line x1="462" y1="64" x2="910" y2="64" class="ln-mask-dash"/>
+          <text x="478" y="56" font-size="12" class="t-mask">验证器持续补规则</text>
+          <!-- row 1: mount case -->
+          <text x="8" y="113" class="t-b">谐波赤道仪案例</text>
+          <text x="8" y="131" font-size="12" class="t-soft">先对齐 HEMY v2 的工程</text>
+          <rect x="362" y="105" width="324" height="22" class="bar-new"/>
+          <text x="524" y="121" text-anchor="middle" font-size="12.5" class="t-on">对齐工程，再做驱动板、外壳和下单包</text>
+          <polygon points="700,106 710,116 700,126 690,116" class="ms"/>
+          <text x="700" y="145" text-anchor="middle" font-size="12">打样回来：上电，电机转</text>
+          <!-- failures flow back into rules -->
+          <line x1="560" y1="103" x2="560" y2="70" class="ln-soft" marker-end="url(#f4-ah)"/>
+          <text x="568" y="92" font-size="12" class="t-soft">失败清单</text>
+          <!-- aligned HEMY project feeds the bank -->
+          <line x1="612" y1="128" x2="612" y2="155" class="ln-soft" marker-end="url(#f4-ah)"/>
+          <text x="604" y="146" text-anchor="end" font-size="12" class="t-soft">HEMY 题</text>
+          <!-- row 2: task bank -->
+          <text x="8" y="165" class="t-b">v0 题库与评测</text>
+          <text x="8" y="183" font-size="12" class="t-soft">3 个项目族，每族 2 到 3 道题</text>
+          <rect x="474" y="157" width="436" height="22" class="bar-new"/>
+          <text x="692" y="173" text-anchor="middle" font-size="12.5" class="t-on">建题，校准判分器，跑三个 agent，做两组对照</text>
+          <!-- verifier feeds the bank -->
+          <line x1="800" y1="70" x2="800" y2="155" class="ln-soft" marker-end="url(#f4-ah)"/>
+          <text x="808" y="100" font-size="12" class="t-soft">同一套验证器判分</text>
+          <!-- row 3: release -->
+          <text x="8" y="213" class="t-b">对外发布</text>
+          <text x="8" y="231" font-size="12" class="t-soft">开源、技术报告、demo</text>
+          <rect x="810" y="205" width="100" height="22" class="bar-new"/>
+          <text x="860" y="221" text-anchor="middle" font-size="12.5" class="t-on">发布</text>
+        </svg>
+      </div>
+      <p class="scroll-hint">图较宽，左右滑动看全图。</p>
+      <figcaption><b>图 4　前六周。</b>菱形是第一次打样回来的节点。两组对照指接口对照，以及装和不装工具包的对照。HEMY 的题要等赤道仪案例把它的源工程和制造包对齐以后，再进题库。</figcaption>
+    </figure>
+
+    <div class="tbl t-wide">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>时间</th><th>做什么</th><th>怎样算完成</th></tr></thead>
+          <tbody>
+            <tr><td class="l">第 1 到 2 周</td><td>把 KiCAD-MCP-Server、jlcparts、easyeda2kicad、Freerouting、build123d-mcp 串起来；写 L0、L1、L3、L5、L6 检查和证据记录，外加 L4 里最简单的功率回路长度检查（赤道仪是电机驱动板，这一项必须有）。</td><td>拿一个带嘉立创下单包的成熟项目（比如 Corne v4.1，BOM 和坐标文件的 164 个位号对得上，坐标和旋转还没核），从需求跑到下单包，各类检查都出结果，每个器件都带手册链接和料号快照。</td></tr>
+            <tr><td class="l">第 2 到 4 周</td><td>谐波赤道仪案例。先把 HEMY v2 自己的源工程和制造包对齐：主控板的源是 4 月的、制造包是 6 月的，两块小板的 BOM 有缺项。这些差异先核实是不是真错（比如缺的是不是手焊件），核实了的就是 agent 的第一批真实修复题。再参照 HEMY v2 的方案（OnStepX 固件、两颗 TMC5160 步进驱动），让 agent 从需求做到驱动板、外壳和嘉立创下单包，真打样一次；补上 L4 的降额核算，接入 PCBSchemaGen 验证器做 L2；全程录屏，记下每次人工介入和失败原因。</td><td>板子回来能上电，电机能转。产出 demo 视频和论文里的案例研究，失败清单变成新的检查规则；对齐好的 HEMY 工程留给题库。这一轮也是 T7 金任务的第一个原型。</td></tr>
+            <tr><td class="l">第 3 到 6 周</td><td>v0 题库。先做 OpenFlexure、Corne、splitflap 三个项目族，每族 2 到 3 道局部题，参数编辑、PCB 和外壳联动、制造包一致性各至少一类。A 和 D 先各做 3 到 5 个实例，实例是同一道题换个故障位置或参数。HEMY 的燕尾板加盖板题等工程对齐后再加：第 6 周前校准过就进 v0，赶不上就放进六周以后的第一批增补。每题交付冻结的资源图、可重放的参考解、会失败的起始状态、需求契约、独立的替代解、故障样本、校准报告和隔离的判分器。跑 Claude Code、Codex、Gemini CLI，每题跑 3 到 5 次，报单次通过率的区间；做接口对照（代码对 MCP，先在卡 D、卡 E 的板子部分上比）和装不装工具包的对照，抽一批结果请人盲审。</td><td>每道题都有校准报告：参考解和替代解通过，原样提交和关键故障失败。第一版结果按题族报告，附每一步的候选数、存活数和淘汰原因。</td></tr>
+            <tr><td class="l">第 6 周</td><td>开源工具包和检查代码，发技术报告和 v0 题库的校准报告（测试题不公开；公开开发集用 HEMY 一族的题，赶不上就随第一批增补发），在 B 站和 X 上发 demo。</td><td>对外发布。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tbl-cap"><b>表 8</b>　计划没有给第二次打样留时间。第一次打样失败的话，赤道仪案例顺延，题库照常推进，因为 v0 的题都不需要实物。题库的进度按接纳条件算，不按题数，校准没过的题留在草案里。六周以后再从 25 个项目记录里往外扩，SmartKnob 这类要实测磁隙的题放第二阶段；屏幕操作对照组、统一框架对照和第一批 T7 金任务，也都排在六周以后。</p>
+    </div>
+
+    <div class="prose">
+      <h3>先别做的事</h3>
+      <ul>
+        <li>高速板、射频、BGA、市电，先都不碰。</li>
+        <li>别自己写布线算法。Quilter 和 PCBWorld 在做这件事，Freerouting 够用。</li>
+        <li>别急着扩项目数。先把三个项目族的题校准好；拿变体数充题量，也撑不起多样性。</li>
+        <li>别只发排行榜。排行榜能拿到报道（EEBench 上了 Hackaday），让人用起来的是一条命令就能装的工具。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- §9 -->
+<section class="sec" id="risks">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§9 风险</p>
+      <h2>主要风险和对策</h2>
+    </div>
+    <div class="tbl t-mid">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>风险</th><th>对策</th></tr></thead>
+          <tbody>
+            <tr><td>被模型进步追平。EEBench 官方榜单（10-14 的快照）上，同为 Sonnet 档，4.6 得 20.4%，5.5（xhigh 推理档）得 67.2%。画原理图、布线这类单点能力，大概率会被模型进步和大厂产品覆盖。</td><td>多出长流程、跨领域、改需求类的题；保留私有测试集；把接口当变量，结论不容易过时。</td></tr>
+            <tr><td>屏幕操作的结论过时。CADWorld 只测到 GPT-5.4、Opus 4.8 这一代，新模型点 CAD 软件可能好很多。</td><td>六周以后做一组同题的屏幕操作对照，新模型发布就重跑；追上代码路线的话，再把屏幕操作加进主线。</td></tr>
+            <tr><td>代码 CAD 交不出原生特征树。用 SolidWorks、Fusion 的工程师要能接着改的模型，CADWorld 作者也拿这一点批评脚本建模。</td><td>认下这个代价。交付 STEP 加源码；题面要求关键尺寸写成具名参数，判分时改一两个参数重建，确认源码真能接着改；原生格式的题源先转成 STEP 再出题。</td></tr>
+            <tr><td>被大厂或嘉立创直接做掉。OpenAI 在推屏幕操作；atopile 有 EEBench，还有一个做 agent 训练环境的项目 Aletheia；Flux 融资约 3,700 万美元，9 月底上线了外壳功能；嘉立创有用户、器件库和下单入口，条件最好。</td><td>做大模型公司没动力做的部分：嘉立创和立创商城的落地细节（库存快照、贴片方向、下单格式）、板壳联动检查、带实物结果的评测数据。和嘉立创更可能是合作关系，工具包保持 KiCad 和嘉立创 EDA 两边都能用。</td></tr>
+            <tr><td>工具包只是“方便”。REA 被实测过，不装它的普通 agent 反而先完成任务。</td><td>发布时带对照数据：同一批题，装和不装工具包，下单前拦下的错误数各是多少。打样失败率要等实物子集攒够样本。</td></tr>
+            <tr><td>判分器误收，或者把错的契约写死。</td><td>三组样本体检；题面数值、检查常量和参考件实测值对账；分层盲审，论文里报误收率；判分器修了就升版本、重算旧结果；用实物结果校准。</td></tr>
+            <tr><td>题源本身有错。坐标文件 0 字节、BOM 只有表头、同名的板壳固件来自不同版本。</td><td>入库先查文件有没有有效内容、版本配不配套；参考工程先跑基线，原有问题逐项记；没证实的配套关系记成版本未对齐，不在上面建题。</td></tr>
+            <tr><td>平台条款和许可。oshwhub 的协议限制自动批量获取，也限制把这样拿到的内容用于数据分析和 AI 训练。</td><td>优先走作者的官方仓库；获取渠道、资产许可、用途、再分发分开记；oshwhub 独有的工程另取授权，或者只当发现入口；没有许可证的只存链接；留退出机制。</td></tr>
+            <tr><td>安全。</td><td>只做低压直流（比如 24 V 以下），不碰市电和大电流锂电充电；检查里加上极性和保险丝。</td></tr>
+            <tr><td>可复现。库存每天在变，工具版本会漂，网页上的原生工程也会变。</td><td>冻结器件库快照；KiCad、FreeCAD、OpenCascade 的版本固定在容器里；网页工程只认导出到本地的文件哈希。</td></tr>
+            <tr><td>实物成本。墨水屏手表板 5 块贴好片 130 欧元，每块约 26 欧元。</td><td>实物子集控制规模。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §10 -->
+<section class="sec" id="open">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">§10 未核实</p>
+      <h2>还没核实的地方</h2>
+      <p class="lede2">下面这些会影响具体数字或题源的取舍，不改变方向。会直接卡住前六周的是三项：HEMY 题要量的尺寸和要补的 BOM、L6 检查能不能从 PCB 自动生成、五张卡的参考解还没跑；oshwhub 的授权只影响第二批的瀚文、Roboto 和候选里的嘉立创官方机器狗。前几轮留下的几项已在续调研里核清：EEBench 榜单用官网数据核过了，EDA Bench 和 Cua-Bench 读到了代码，SmartKnob 的机械源在 Release 里找到了，HEMY v1.1 有第三方复刻。</p>
+    </div>
+    <div class="open">
+      <div>
+        <h3>只有二手来源、或口径没查清的</h3>
+        <ul>
+          <li>表 1 里的电容降额例子来自报道 EEBench 的二手文章。</li>
+          <li>OpenAI 在 GPT-6 Astra 页面上报的 BenchCAD 95.9%，口径是“几何重合”，和论文的综合分不同，没查到具体怎么算。</li>
+          <li>Erik Schluntz 的帖子只从搜索摘要看到原文。</li>
+          <li>blender-mcp、freecad-mcp 的 star 数来自 GitTrend 镜像。</li>
+          <li>RWE-Bench 的分领域题数、每题 5 次和 24 小时的设置、逐个模型的通过率和花费、pass@5、“4 题无人做出”，都只见于 CADFrontier 的转录；官网图表是动态加载的，没直接抓到。中文转述里的“Astra 5 次通过率 60%”，官网静态文字和 CADFrontier 里都没有，官网的 pass@k 图又没抓到，未核实。</li>
+          <li>build123d-mcp 在 CADGenBench 上的提分是作者自报。</li>
+        </ul>
+        <h3>拿不到或没读到的</h3>
+        <ul>
+          <li>HWE-Bench 板级题的测试台、EEBench 的内部判分器、Seldon 的完整验证器、CADGenBench 的私有标注规则、CADEngBench 的完整任务包都没公开，相关数字只能当作者自报，HWE-Bench 的 8.15% 也没法复现。</li>
+          <li>IMECE 2023 有一篇 PCB 外壳自动生成的论文，可能是和 G2 最相关的学术工作，没读到。</li>
+          <li>Hackaday.io、Printables 的服务条款没读到（oshwhub 的协议已读）。</li>
+          <li>2026 年 6 到 10 月的新工作可能有遗漏；CNKI 等中文文献库没有直接检索。</li>
+          <li>RWE-Bench 的题、判分器和参考解都不公开；电气和航空航天题用什么工具，官网没写。</li>
+        </ul>
+      </div>
+      <div>
+        <h3>要人工确认的</h3>
+        <ul>
+          <li>瀚文的许可：oshwhub 项目选 Public Domain，GitHub 是 GPL-3.0，平台页脚写学习交流、非商业，三种说法并存。</li>
+          <li>只在 oshwhub 上有原生工程的项目，能不能用来建题库，要问平台拿授权。</li>
+          <li>云端 CAD：HEMY 的 Onshape 能打开（只读，166 个零件实例），建模历史没导出；Doggo 的 Fusion，ToddlerBot 和 NASA-JPL 火星车的 Onshape，也都没导出。</li>
+          <li>立创商城业务 API 的申请条件和费用；嘉立创当期的免费打样规则；国内谐波赤道仪的售价和 2 千元的成本估计。</li>
+          <li>项目手上的 SolidWorks 2025 是 Standard、Professional、Premium 还是教育版。转格式和查干涉，商业版哪个都行，装配体有限元要 Premium，教育版没查。</li>
+          <li>第一批 T7 金任务选哪几道，打样预算和测试仪器怎么安排。</li>
+        </ul>
+        <h3>还没动手做的</h3>
+        <ul>
+          <li>五张任务卡都是草案：参考解、替代解和故障样本一个都没跑；HEMY 题的移动距离、插头包络、壁厚和净空，SmartKnob 的工作磁隙，都还没量。</li>
+          <li>25 个记录里，只有嘉立创官方机器狗的在线板跑过一次默认 DRC；其余都没跑过 ERC/DRC、固件编译、CAD 重建和干涉检查。</li>
+          <li>L6 检查能不能从 <code>.kicad_pcb</code> 自动生成，要先做原型。</li>
+          <li>嘉立创 EDA 工程转成 KiCad 会丢什么，没有数据。</li>
+          <li>Ploopy 和 MNT Reform 这轮没有重审。</li>
+          <li>Flux、Diode 等商业产品具体做到哪一步，没有核实。</li>
+          <li>SolidWorks 批处理脚本（打开、重建、导出 STEP、质量属性、干涉检查）还没写，也没在 Windows 上跑过；pySldWrap 在 2025 上能不能用也没试。屏幕操作对照组排在六周以后，题还没挑。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- refs -->
+<section class="sec" id="refs">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-no">附</p>
+      <h2>资料和术语</h2>
+    </div>
+    <div class="prose">
+      <h3>调研报告和核实笔记</h3>
+      <ul>
+        <li><code>~/QLY/report/pcb_cad_gym_research/continuation_20261025/main_report.md</code>：2026-10-25 续调研，先读。13 个核心基准的原文和代码复核、“验证过”怎么定义、25 条项目记录的资源审计。同目录的 <code>task_construction.md</code> 是出题规范和五张任务卡，<code>project_index.json</code> 是这 25 条记录的索引。</li>
+        <li><code>~/QLY/report/pcb_cad_gym_research/main_report.md</code>：2026-10-22 课题调研。REA、已有工作地图、七个空白、可用的开源基建、起步计划。</li>
+        <li><code>~/QLY/report/pcb_cad_gym_research/datasources/main_report.md</code>：2026-10-24 题源调研。平台入口、搜索 case、15 个案例的文件清单。</li>
+        <li><code>~/QLY/report/pcb_cad_gym_research/bench_papers/main_report.md</code>：2026-10-24 基准方法调研。约 60 个基准怎样取数、出题、判分，许可，以及对课题调研的更正。</li>
+        <li><code>~/QLY/report/pcb_cad_gym_research/cad_rwe_review/main_report.md</code>：2026-10-28 核实笔记。RWE-Bench 逐条核实和可借鉴的判分做法，CADWorld、EngiWorld 等接口证据，build123d 和 build123d-mcp 的能力边界，SolidWorks 2025 的用法，附原始链接。</li>
+      </ul>
+      <p>本页数字的出处和原始链接都在这些报告和它们的笔记里。几轮之间有冲突的地方，以续调研里附了证据的更正为准；第 2 版新增的 CAD 接口、RWE-Bench 和 SolidWorks 部分，出处在 10-28 的核实笔记里。</p>
+      <h3>术语</h3>
+    </div>
+    <dl class="gloss" id="gloss">
+      <div><dt>agent</dt><dd>能自己调用工具、分多步完成任务的 AI，比如 Claude Code、Codex、Gemini CLI。</dd></div>
+      <div><dt>MCP</dt><dd>Model Context Protocol，让 agent 直接调用软件功能的标准接口。</dd></div>
+      <div><dt>skills</dt><dd>写给 agent 看的分步骤操作说明，用到时才加载。</dd></div>
+      <div><dt>屏幕操作（CUA）</dt><dd>agent 看截图、点鼠标、敲键盘来操作软件。</dd></div>
+      <div><dt>build123d、CadQuery</dt><dd>两个用 Python 写代码建模的 CAD 库，底层都是 OpenCascade 内核，能生成精确实体、读写 STEP。build123d 由 CadQuery 的部分代码改写而来，现在是独立项目。</dd></div>
+      <div><dt>OpenCascade、Parasolid</dt><dd>几何内核，负责算实体、布尔运算和距离。OpenCascade 开源，build123d、CadQuery、FreeCAD 都用它；Parasolid 是 SolidWorks 用的商业内核。</dd></div>
+      <div><dt>原生特征树</dt><dd>SolidWorks、Fusion 这类软件记下的建模步骤，工程师能回到某一步改尺寸再重建。STEP 不带它。</dd></div>
+      <div><dt>gym</dt><dd>一组任务加自动判分，既能当评测基准，也能当强化学习的训练环境。</dd></div>
+      <div><dt>ERC、DRC、DFM</dt><dd>ERC 查原理图的电气规则，DRC 查 PCB 的线距、孔径和连通，DFM 按工厂的工艺能力查设计能不能做出来。</dd></div>
+      <div><dt>Gerber、BOM、坐标文件</dt><dd>PCB 厂用的光绘文件；物料清单；贴片机用的每个元件的位置和角度（也叫 CPL）。</dd></div>
+      <div><dt>拼板</dt><dd>几块小板拼成一块大板生产。同一个位号会在每个板实例里各出现一次，这是合法的。</dd></div>
+      <div><dt>STEP、STL、F3Z</dt><dd>STEP 是精确的实体模型，能量尺寸、能交给 CNC；STL 是三角网格，只能打印或粗查干涉。两者都不带建模历史。F3Z 是 Fusion 360 的归档文件，带建模历史。</dd></div>
+      <div><dt>DNP</dt><dd>Do Not Populate：原理图和 BOM 里有、但不贴装的器件。</dd></div>
+      <div><dt>IoU、Chamfer 距离、AUC</dt><dd>前两个衡量两个形状重合多少、差多远；AUC 衡量一个分数区分对错的能力，0.5 等于瞎猜，1 是完全分开。</dd></div>
+      <div><dt>资源图</dt><dd>把一个项目的电路、机械、固件、制造包和实物证据按版本存成节点，用“由谁生成”“能不能配”“实测于哪一版”这类有依据的关系连起来。</dd></div>
+      <div><dt>需求契约</dt><dd>一道题的验收条款：目标变化、要保持不变的东西、可改的文件、交付物、单位和容差。</dd></div>
+      <div><dt>起始状态、参考解</dt><dd>起始状态是交给 agent 的初始工程，原样提交必须不达标；参考解是证明题有解的一份合格答案。</dd></div>
+      <div><dt>项目族</dt><dd>fork、remix、同一项目的不同修订归为一族。划分训练集和测试集时整族一起走。</dd></div>
+      <div><dt>降额</dt><dd>器件在实际工况下的参数比标称值差，比如陶瓷电容加上直流偏压后容量明显下降。</dd></div>
+      <div><dt>SPICE 公差角</dt><dd>把元件参数推到公差上下限的各种组合去仿真，看最坏情况下电路还能不能工作。</dd></div>
+      <div><dt>误收、误拒</dt><dd>判分器把错的判成对，或者把对的判成错。各家论文的分母不一样，引用时要写清。</dd></div>
+      <div><dt>κ</dt><dd>扣除偶然一致后的标注一致度，1 是完全一致。</dd></div>
+      <div><dt>pass@1、pass@k</dt><dd>pass@1 是单次运行的平均通过率；pass@k 是每题跑 k 次、至少过一次就算这题过。</dd></div>
+      <div><dt>95% 区间</dt><dd>按样本推出的范围，真实通过率有 95% 的把握落在里面。同一项目族的变体高度相关，Omnifex 按项目族整族重抽样来算（聚类自助法）。两个模型的区间重叠时，不排先后。</dd></div>
+      <div><dt>有限元、CFD</dt><dd>有限元把零件划成小网格，算应力和变形；CFD 算流体流动和换热。Gmsh 负责划网格，CalculiX 是开源的有限元求解器。</dd></div>
+      <div><dt>金任务</dt><dd>T7：从需求做出一件能通电的完整小产品，比如一块电源模块配上外壳。前六关自动判，只给全过的方案打样，通电和试装由人做；结果单独报告，不进主排行榜。数量少，但题库里不能没有。</dd></div>
+      <div><dt>canary 字符串</dt><dd>嵌在题里的唯一字符串，用来发现题目有没有混进模型的训练语料。</dd></div>
+      <div><dt>OnStepX、MaxPCB4</dt><dd>OnStepX 是开源的望远镜赤道仪控制固件，MaxPCB4 是 OnStep 社区的一款主控板。TMC5160 是 HEMY 用的步进电机驱动芯片。</dd></div>
+      <div><dt>燕尾板</dt><dd>HEMY 燕尾座上的 DC 和 USB 接口小板，工程里叫 ZZ - DC &amp; USB Dovetail。</dd></div>
+      <div><dt>Sangaboard</dt><dd>OpenFlexure 显微镜的电机控制板。</dd></div>
+      <div><dt>嘉立创、立创商城、oshwhub</dt><dd>嘉立创做 PCB 打样、贴片和 CNC；立创商城是同一集团的元器件商城；嘉立创 EDA 是它家的在线 EDA；oshwhub 是它家的开源硬件平台，国际站叫 oshwlab。</dd></div>
+      <div><dt>G、L、T 编号</dt><dd>沿用调研报告：G1 到 G7 是七个空白，L0 到 L6 是七类检查，T1 到 T7 是七类题型。</dd></div>
+      <div><dt>Make Anything</dt><dd>调研报告里给工具包起的名字，本页统一叫 Omnifex。</dd></div>
+    </dl>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">Omnifex 提案 · 第 2 版 · 2026-10-28 · 依据 2026-10-22 到 10-25 的四轮调研，10-28 补核 CAD 接口和 RWE-Bench</div>
+</footer>
+</body></html>

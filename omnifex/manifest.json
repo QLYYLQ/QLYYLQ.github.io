@@ -1,0 +1,34 @@
+[
+  {
+    "page": "progress.html",
+    "source": "omnifex_progress.html",
+    "claude_artifact": "https://claude.ai/artifact/6NvXrEkq11p1oacy3Dvrmq",
+    "source_sha256": "29ea16e75f367465bbe56e9b5423b5d75b5d5482acafbab6e4baa6edd9e39974",
+    "page_sha256": "a482c2e7a06a8e81101a5d1ec2b93b1d2dffa3df0b883067705ec6b8875b08a4",
+    "bytes": 85091
+  },
+  {
+    "page": "task-sources.html",
+    "source": "omnifex_task_sources.html",
+    "claude_artifact": "https://claude.ai/artifact/8nhGkYKYwhAJcbBwAHLLR2",
+    "source_sha256": "07b5c3a4dc04ce50206dc13df372fdb72f002683b5c8eaf3bd0d9ff7ad94b3ce",
+    "page_sha256": "f3f52b89548653c60b5db826e0ed4501e6e504204ccf34519bafcf8b126e193d",
+    "bytes": 1039907
+  },
+  {
+    "page": "proposal-v2.html",
+    "source": "omnifex_proposal_v2.html",
+    "claude_artifact": "https://claude.ai/artifact/3zowhsEogmzyMFHNhGunrK",
+    "source_sha256": "0e1b37559df9497e8a81dafa6be5702ace6e64141973abb6621fe671e36849e7",
+    "page_sha256": "131b79a98141bbdf3c5980ef45ee54c0c957593ee8f069ae439626b893688818",
+    "bytes": 151967
+  },
+  {
+    "page": "validation-report.html",
+    "source": "omnifex_validation_report.html",
+    "claude_artifact": "https://claude.ai/artifact/Sa3GGATBuejjNoLcFC9sNG",
+    "source_sha256": "0808d96fcb6661cfcc2b17cf1e34d8e1f56c79362d726f765324f61c71e46dd4",
+    "page_sha256": "c9e0cd31b4d1031fa391d28e22cd0e089c248a4791d23e3f14699b14076e354c",
+    "bytes": 78704
+  }
+]

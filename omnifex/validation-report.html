@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Omnifex 验证报告</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=Noto+Serif+SC:wght@700;900&display=swap">
+<style>
+/* Layout: the same drawing sheet as the Omnifex proposal. Hero = report title + engineering title block; one reading
+   column (~42rem); tables and commands break out to sheet width. Green = solder mask (what works / what we have),
+   copper = problems and gaps. */
+:root{
+  --paper:#F1F4F1;
+  --sheet:#FAFBFA;
+  --ink:#16201B;
+  --ink-soft:#4B5852;
+  --rule:#CDD5D0;
+  --rule-strong:#97A49D;
+  --mask:#1C5D47;
+  --mask-wash:rgba(28,93,71,.09);
+  --copper:#A9581F;
+  --copper-wash:rgba(169,88,31,.10);
+  --on-accent:#F7F9F7;
+  --font-display:"Noto Serif SC","Songti SC","STSong","Source Han Serif SC",serif;
+  --font-body:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Source Han Sans SC",system-ui,sans-serif;
+  --font-label:"IBM Plex Sans Condensed","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1512; --sheet:#141D19; --ink:#E4EAE6; --ink-soft:#A2B0A9;
+    --rule:#2A3631; --rule-strong:#4C5A54;
+    --mask:#5BB590; --mask-wash:rgba(91,181,144,.12);
+    --copper:#E08A4E; --copper-wash:rgba(224,138,78,.13);
+    --on-accent:#0E1512;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1512; --sheet:#141D19; --ink:#E4EAE6; --ink-soft:#A2B0A9;
+  --rule:#2A3631; --rule-strong:#4C5A54;
+  --mask:#5BB590; --mask-wash:rgba(91,181,144,.12);
+  --copper:#E08A4E; --copper-wash:rgba(224,138,78,.13);
+  --on-accent:#0E1512;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16.5px;line-height:1.8}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--paper)}
+a{color:var(--mask);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+code{font-family:var(--font-mono);font-size:.86em;background:var(--mask-wash);padding:.05em .35em;border-radius:2px;overflow-wrap:anywhere}
+
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* top bar */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--paper);border-bottom:1px solid var(--rule)}
+.topbar-in{display:flex;align-items:center;gap:20px;min-height:48px}
+.brand{font-family:var(--font-label);font-weight:600;font-size:15px;letter-spacing:.02em;color:var(--ink);text-decoration:none;white-space:nowrap}
+.brand span{color:var(--ink-soft);font-weight:500;margin-left:.45em}
+.toc{position:relative;display:flex;gap:16px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1;justify-content:flex-end}
+.toc::-webkit-scrollbar{display:none}
+.toc a{color:var(--ink-soft);text-decoration:none;font-size:14px;white-space:nowrap;padding-block:12px}
+.toc a:hover{color:var(--ink)}
+.toc a[aria-current="true"]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--mask)}
+@media (max-width:960px){.toc{justify-content:flex-start;gap:14px}.brand span{display:none}}
+
+/* hero */
+.hero{border-bottom:1px solid var(--rule)}
+.hero-in{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:56px;padding-block:60px 52px;align-items:end}
+@media (max-width:880px){.hero-in{grid-template-columns:minmax(0,1fr);gap:34px;padding-block:40px}}
+.eyebrow{font-family:var(--font-label);font-size:13px;letter-spacing:.08em;color:var(--ink-soft);margin:0 0 18px}
+.pname{font-family:var(--font-label);font-weight:600;font-size:clamp(24px,2.8vw,30px);line-height:1;letter-spacing:.05em;color:var(--mask);margin:0 0 14px}
+h1{font-family:var(--font-display);font-weight:900;font-size:clamp(30px,4.4vw,46px);line-height:1.2;letter-spacing:-.01em;margin:0 0 24px;text-wrap:balance}
+.nw{white-space:nowrap}
+.lede{font-size:18px;line-height:1.85;max-width:38em;margin:0 0 26px}
+.hero-links{display:flex;flex-wrap:wrap;gap:10px;margin:0}
+.hero-links a{font-family:var(--font-label);font-weight:600;font-size:14px;text-decoration:none;color:var(--mask);border:1px solid var(--mask);padding:7px 14px;border-radius:2px}
+.hero-links a:hover{background:var(--mask-wash)}
+
+.titleblock{margin:0;border:1.5px solid var(--ink);background:var(--sheet);font-size:14.5px}
+.titleblock .tb-cap{font-family:var(--font-label);font-size:12px;letter-spacing:.1em;color:var(--ink-soft);padding:6px 12px;border-bottom:1.5px solid var(--ink);margin:0}
+.titleblock dl{margin:0}
+.titleblock dl div{display:grid;grid-template-columns:4.2em minmax(0,1fr);border-top:1px solid var(--rule-strong)}
+.titleblock dl div:first-child{border-top:0}
+.titleblock dt{font-size:13px;color:var(--ink-soft);padding:9px 12px;border-right:1px solid var(--rule-strong)}
+.titleblock dd{margin:0;padding:9px 12px;line-height:1.55;min-width:0}
+.titleblock .tb-name dd{font-family:var(--font-display);font-weight:900;font-size:20px;line-height:1.3}
+
+/* summary */
+.summary{padding-block:44px 0}
+.sum-h{font-family:var(--font-label);font-weight:600;font-size:14px;letter-spacing:.08em;color:var(--ink-soft);margin:0 0 12px}
+.points{margin:0;border-top:1px solid var(--rule);max-width:52rem}
+.points div{display:grid;grid-template-columns:4.5em minmax(0,1fr);gap:18px;padding-block:14px;border-bottom:1px solid var(--rule)}
+.points dt{font-family:var(--font-label);font-weight:600;font-size:14px;color:var(--ink-soft);padding-top:2px}
+.points dd{margin:0;min-width:0}
+
+/* sections */
+.sec{padding-block:76px 0}
+.sec-head{max-width:46rem;margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:13px;color:var(--ink-soft);margin:0 0 10px}
+h2{font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.5vw,36px);line-height:1.3;margin:0;text-wrap:balance}
+h3{font-size:19px;font-weight:700;line-height:1.45;margin:44px 0 12px;text-wrap:balance}
+.sec-head + .prose > h3:first-child{margin-top:0}
+.h-no{font-family:var(--font-mono);font-weight:500;font-size:.8em;color:var(--ink-soft);margin-right:.7em}
+.prose{max-width:42rem;min-width:0}
+.prose p{margin:0 0 16px}
+.prose ul,.prose ol{padding-left:1.3em;margin:0 0 16px}
+.prose li{margin:0 0 9px}
+.prose li > p{margin:0}
+.prose li::marker{color:var(--ink-soft)}
+
+/* tables */
+.tbl{margin:22px 0 28px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.65;font-variant-numeric:tabular-nums}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--rule)}
+thead th{font-family:var(--font-label);font-weight:600;font-size:13px;letter-spacing:.03em;color:var(--ink-soft);border-bottom:1px solid var(--rule-strong);white-space:nowrap;background:var(--paper)}
+tbody tr:last-child td{border-bottom:0}
+tbody td:first-child{font-weight:600}
+.t-wide table{min-width:820px}
+.t-mid table{min-width:640px}
+.t-narrow td:first-child{min-width:6.5em}
+.scroll-hint{display:none;font-size:12.5px;color:var(--ink-soft);margin:8px 0 0}
+@media (max-width:880px){.t-wide .scroll-hint{display:block}}
+/* phone width: each row becomes a block, first cell as its heading, other cells labelled with their column */
+@media (max-width:700px){
+  .tbl .scroll-hint{display:none}
+  .t-wide table,.t-mid table{min-width:0}
+  .tbl table,.tbl tbody,.tbl tr,.tbl td{display:block;width:100%}
+  .tbl thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .tbl tr{padding-block:12px;border-bottom:1px solid var(--rule)}
+  .tbl tbody tr:last-child{border-bottom:0}
+  .tbl td{border-bottom:0;padding:3px 0}
+  .tbl td:first-child{font-weight:700;padding-bottom:6px}
+  .tbl td:not(:first-child)::before{content:attr(data-label);display:block;font-family:var(--font-label);font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ink-soft)}
+  .t-narrow td::before{display:none}
+}
+
+.chip{display:inline-block;font-family:var(--font-label);font-size:12.5px;font-weight:600;letter-spacing:.03em;padding:0 7px;border-radius:2px;white-space:nowrap;margin:0 2px 4px 0}
+.chip.have{color:var(--mask);background:var(--mask-wash)}
+.chip.gap{color:var(--copper);background:var(--copper-wash)}
+.chip.part{color:var(--ink-soft);box-shadow:inset 0 0 0 1px var(--rule-strong)}
+
+/* commands */
+.code-block{margin:4px 0 22px;max-width:56rem;min-width:0}
+.code-block pre{margin:0;overflow-x:auto;background:var(--sheet);border:1px solid var(--rule);padding:14px 16px;font-family:var(--font-mono);font-size:13px;line-height:1.75}
+.code-block pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal;white-space:pre}
+
+footer{border-top:1px solid var(--rule);margin-top:80px;padding-block:26px 48px;color:var(--ink-soft);font-size:14px}
+footer p{margin:0 0 8px;max-width:52rem}
+</style>
+
+<header class="topbar" lang="zh-CN">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#top">Omnifex<span>验证报告</span></a>
+    <nav class="toc" aria-label="章节"><a href="#summary">结论</a><a href="#s1">环境</a><a href="#s2">检查项</a><a href="#s3">开源板</a><a href="#s4">D5012</a><a href="#s5">判分器</a><a href="#s6">外壳</a><a href="#s7">金任务</a><a href="#s8">局限</a><a href="#s9">待你定</a><a href="#files">文件</a></nav>
+  </div>
+</header>
+
+<main id="top" lang="zh-CN">
+
+<section class="hero">
+  <div class="wrap hero-in">
+    <div>
+      <p class="eyebrow">验证报告 · 2026-10-28</p>
+      <p class="pname" lang="en">Omnifex</p>
+      <h1><span class="nw">数据验证：</span><span class="nw">KiCad 批跑、</span><span class="nw">验证环境、</span><span class="nw">外壳补题和金任务</span></h1>
+      <p class="lede">用你 Mac 上的 KiCad 10.0.7 批跑 D5012（54 个项目），云端用同版本批跑 27 块开源板。</p>
+      <p class="hero-links"><a href="#s4-2">D5012 的真问题</a><a href="#s4-8">能用的板</a><a href="#s6">外壳怎么补</a><a href="#s7">金任务</a><a href="#s9">要你定的事</a></p>
+    </div>
+    <aside class="titleblock" aria-label="报告概要">
+      <p class="tb-cap">标题栏</p>
+      <dl>
+        <div class="tb-name"><dt>项目</dt><dd lang="en">Omnifex</dd></div>
+        <div><dt>文档</dt><dd>数据验证报告</dd></div>
+        <div><dt>日期</dt><dd>2026-10-28</dd></div>
+        <div><dt>工具</dt><dd>KiCad 10.0.7（你的 Mac，arm64）；开源板在云端用同一版本</dd></div>
+        <div><dt>数据</dt><dd>D5012 工厂数据 54 个项目，其中 50 块有 PCB；开源 27 块板，来自 12 个仓库和 KiCad 测试数据里的 2 块样例</dd></div>
+        <div><dt>脚本</dt><dd>10 个，纯标准库，用 KiCad 自带的 Python 3.9 跑</dd></div>
+        <div><dt>原文</dt><dd><code>kicad_validation/main_report.md</code></dd></div>
+        <div><dt>状态</dt><dd>已交付；第 9 节的事待你定</dd></div>
+      </dl>
+    </aside>
+  </div>
+</section>
+
+<section class="summary" id="summary" aria-labelledby="summary-h">
+  <div class="wrap">
+    <h2 class="sum-h" id="summary-h">先看结论</h2>
+    <dl class="points"><div><dt>环境</dt><dd>PCB 这一段的自动检查，你 Mac 上现有的 KiCad 10.0.7 加 10 个纯标准库脚本就够了，导入、DRC、ERC、原理图对 PCB、Gerber 比对、走线载流、阻容核算都能跑。缺的是后半段要用的四样：电路仿真（ngspice）、CAD 内核（build123d 或 CadQuery）、器件 3D 模型下载工具、实物测试仪器。外壳题和金任务做不做得成，看这四样（<a href="#s1">第 1 节</a>）。</dd></div><div><dt>D5012</dt><dd>50 块有 PCB 的板全部导入并读全，45 块和工厂 Gerber 逐孔逐焊盘对得上，27 块没有断开。找到一处真的铜重叠：功放电源小功率板 一个过孔压在整流走线上，重叠 0.027 mm，工厂给的 Gerber 里一模一样，按这份文件做出来就是短路。这块板的文件夹备注正是&quot;431调压电路有误请勿装&quot;，是不是指这一处要问同事。另有两处像是真问题（一个漏打的过孔、两颗叠在一起的灯）。8 块板网络标签残缺，DRC 判不了，要先重建网络。只看断开、短路、原理图对 PCB、工厂 Gerber 这四项，全库有 16 块干净，其中 12 块来自第一批候选，另外 4 块不在第一批里（<a href="#s4">第 4 节</a>）。</dd></div><div><dt>开源项目</dt><dd>27 块全部导入并跑完。KiCad 原生的 12 块在作者自己的规则下，11 块没有断开；仓库发布了 Gerber 的 7 块里，5 块和 KiCad 导出的逐孔逐焊盘对得上。电源阻容核算找出一个实在的问题：Open Book B1 的充电芯片 MCP73831 编程电阻是 1 kΩ，按手册公式充电电流 1 A，超过这颗芯片 0.5 A 的上限（<a href="#s3">第 3 节</a>）。</dd></div><div><dt>格式</dt><dd>非 KiCad 格式导入后有成批的伪影。KiCad 的嘉立创专业版导入器在 4 块 HEMY 板上丢了全部 16 个非金属化孔；Eagle 和 Altium 板导入后铺铜一灌，几百条间距违规冒出来；27 块板报出来的短路，除了一处有意设计的地线连接件，全都牵涉无网络的铜。PCB 侧的题建议只用 KiCad 原生文件和嘉立创标准版（D5012 就是这种，但其中 8 块网络标签残缺），其他格式要逐块人工核过才能用（第 3、5 节）。</dd></div><div><dt>外壳</dt><dd>建议以&quot;给现有 PCB 配外壳&quot;为主线，按约束判分，每题配一个维护者先做好的可行解；另找 10 个左右带外壳的开源项目，出需要原厂外壳当真值的题，单独统计，也拿来校准判分器。D5012 里的 OBJ 只覆盖 59% 的器件，不能直接当高度包络，每道外壳题要补一份带来源的高度表（<a href="#s6">第 6 节</a>）。</dd></div><div><dt>金任务</dt><dd>同意必须有。设计成 8 关的链：需求、选型和 BOM、原理图、PCB、制造包、外壳和装配六关自动判，下单打样和通电试装两关由人做，只给过了前六关的方案花钱。第一批建议 G1&quot;可调降压电源模块加外壳&quot;，D5012 的 LM2596S 当人类基线（<a href="#s7">第 7 节</a>）。</dd></div><div><dt>待你定</dt><dd>要你定的事放在<a href="#s9">第 9 节</a>，最急的是装不装 CAD 内核、实物层谁来测、每轮预算多少。</dd></div></dl>
+  </div>
+</section>
+<section class="sec" id="s1" aria-labelledby="s1-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§1</p><h2 id="s1-h">验证需要的环境</h2></div>
+    <div class="tbl t-mid"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>环节</th>
+<th>用什么</th>
+<th>你 Mac 上</th>
+<th>这轮</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="环节">读板、DRC、导出 Gerber/钻孔/STEP</td>
+<td data-label="用什么">KiCad 10.0.7：<code>kicad-cli</code> 加自带 Python 3.9 里的 <code>pcbnew</code></td>
+<td data-label="你 Mac 上"><span class="chip have">已装</span>（arm64）</td>
+<td data-label="这轮">用了。云端用 KiCad 官方 docker 镜像的同一版本先调脚本</td>
+</tr>
+<tr>
+<td data-label="环节">嘉立创标准版 PCB 转 KiCad</td>
+<td data-label="用什么">KiCad 10 自带导入器 <code>kicad-cli pcb import --format auto</code></td>
+<td data-label="你 Mac 上"><span class="chip have">已有</span></td>
+<td data-label="这轮">用了。D5012 全是标准版 6.5.40 的 JSON。10.0.7 有个 bug：嘉立创的长条槽孔被写成一个空的焊盘形状块，后面还多一个右括号。KiCad 读回这个文件会报错；只删空块不删括号，又会只读进前一部分而且不报错。脚本两样都删，再核对读进来的封装、走线、过孔数和导入器写出的数一致</td>
+</tr>
+<tr>
+<td data-label="环节">嘉立创专业版、Eagle、Altium 转 KiCad</td>
+<td data-label="用什么">同一个导入器</td>
+<td data-label="你 Mac 上"><span class="chip have">已有</span></td>
+<td data-label="这轮">开源项目用了。专业版多板工程无界面导入会崩，脚本先按板拆开再导</td>
+</tr>
+<tr>
+<td data-label="环节">嘉立创原理图</td>
+<td data-label="用什么">KiCad 读不了（<code>kicad-cli sch</code> 没有 import）</td>
+<td data-label="你 Mac 上"><span class="chip gap">无</span></td>
+<td data-label="这轮">自写 <code>easyeda_std.py</code> 从 JSON 重建网表，做轻量 ERC 和原理图对 PCB</td>
+</tr>
+<tr>
+<td data-label="环节">KiCad 原理图 ERC</td>
+<td data-label="用什么"><code>kicad-cli sch erc</code></td>
+<td data-label="你 Mac 上"><span class="chip have">已有</span></td>
+<td data-label="这轮">只能查 <code>.kicad_sch</code>。KiCad 5 的 <code>.sch</code> 无界面读进来一个元件都没有，要在图形界面里另存一次</td>
+</tr>
+<tr>
+<td data-label="环节">设计规则</td>
+<td data-label="用什么">设计者自己的规则（嘉立创源文件里的 DRCRULE）和嘉立创工艺能力（1 到 2 层、4 到 6 层两套）</td>
+<td data-label="你 Mac 上"><span class="chip have">脚本内置</span></td>
+<td data-label="这轮">用了</td>
+</tr>
+<tr>
+<td data-label="环节">Gerber 和钻孔比对</td>
+<td data-label="用什么">自写 <code>gerber_stats.py</code>，逐个比孔、焊盘和外形</td>
+<td data-label="你 Mac 上"><span class="chip have">纯标准库</span></td>
+<td data-label="这轮">用了。gerbv 没装，这轮用不上</td>
+</tr>
+<tr>
+<td data-label="环节">阻容核算</td>
+<td data-label="用什么">自写 <code>netcalc.py</code>：反馈分压、充电电流、555 和 SG3525 频率、电容耐压</td>
+<td data-label="你 Mac 上"><span class="chip have">纯标准库</span></td>
+<td data-label="这轮">用了。表里没有的芯片只给分压比，要人查手册</td>
+</tr>
+<tr>
+<td data-label="环节">走线载流</td>
+<td data-label="用什么">自写 <code>copper_path.py</code>：电源端子间最小铜截面，按 IPC-2221 折成电流</td>
+<td data-label="你 Mac 上"><span class="chip have">纯标准库</span></td>
+<td data-label="这轮">用了</td>
+</tr>
+<tr>
+<td data-label="环节">电路仿真</td>
+<td data-label="用什么">ngspice 命令行</td>
+<td data-label="你 Mac 上"><span class="chip gap">没装</span> KiCad 包里只有给图形界面用的 ngspice 库</td>
+<td data-label="这轮">没用。公式算不了的题（环路稳定、滤波、瞬态）才需要</td>
+</tr>
+<tr>
+<td data-label="环节">CAD 内核（外壳干涉、间隙、壁厚）</td>
+<td data-label="用什么">build123d 或 CadQuery，底层都是 OpenCascade</td>
+<td data-label="你 Mac 上"><span class="chip gap">没装</span></td>
+<td data-label="这轮">外壳题和金任务第 6 关离不开</td>
+</tr>
+<tr>
+<td data-label="环节">器件 3D 模型</td>
+<td data-label="用什么">立创商城的 3D 模型（easyeda2kicad 一类工具能下）；D5012 自带的 OBJ</td>
+<td data-label="你 Mac 上"><span class="chip gap">没装</span> 下载工具</td>
+<td data-label="这轮">D5012 的 OBJ 只覆盖 59% 器件，见<a href="#s6">第 6 节</a></td>
+</tr>
+<tr>
+<td data-label="环节">可打印性</td>
+<td data-label="用什么">切片软件命令行（PrusaSlicer、OrcaSlicer）</td>
+<td data-label="你 Mac 上"><span class="chip gap">没装</span></td>
+<td data-label="这轮">可选</td>
+</tr>
+<tr>
+<td data-label="环节">实物层</td>
+<td data-label="用什么">限流可调电源、万用表、电子负载、示波器、热电偶或热像仪；3D 打印机或嘉立创 3D 打印</td>
+<td data-label="你 Mac 上"><span class="chip part">待你确认</span></td>
+<td data-label="这轮">金任务最后两关</td>
+</tr>
+</tbody>
+</table></div><p class="scroll-hint">表格较宽，可以左右滑动。</p></div>
+    <div class="prose"><p>脚本只用 Python 标准库，因为 KiCad 自带的 Python 3.9 没有 numpy、PIL、shapely；你系统里的 miniconda Python 3.12 有 numpy，但没有 <code>pcbnew</code>。所以一律用 KiCad 自带的那个解释器跑。</p>
+<p>重跑命令（在 <code>kicad_validation/</code> 下）：</p>
+</div>
+    <div class="code-block"><pre><code>PY=/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3
+&quot;$PY&quot; scripts/omnifex_check.py --d5012 &quot;../D5012-大量工厂文件PCB原理图&quot; --out runs/d5012
+&quot;$PY&quot; scripts/digest.py runs/d5012 &gt; runs/d5012/digest.jsonl</code></pre></div>
+    <div class="prose"><p>加 <code>--only 名字片段</code> 只跑某几块，加 <code>--resume</code> 跳过已经跑完的。开源项目用 <code>--manifest 清单.json</code>，清单格式见 <code>results/oss/oss_manifest.json</code>。D5012 文件夹只读，所有输出都写在 <code>--out</code> 指定的目录里。查断开和短路细节、列元件网络、在 Gerber 里查擦边接触的命令，以及开源项目怎么下载源文件重跑，见 README。</p>
+</div>
+  </div>
+</section>
+<section class="sec" id="s2" aria-labelledby="s2-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§2</p><h2 id="s2-h">每块板查了什么</h2></div>
+    <div class="tbl t-mid"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>做法</th>
+<th>能发现什么</th>
+<th>会误报的地方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="步骤">导入</td>
+<td data-label="做法">非 KiCad 格式用 KiCad 导入器转换。嘉立创标准版另用自己的解析器逐个焊盘对网络名，并核对加载后的封装、走线、过孔数和导入器写出的数一致</td>
+<td data-label="能发现什么">导入丢东西、网络名变了、板子没读全</td>
+<td data-label="会误报的地方">见<a href="#s3">第 3 节</a>的格式问题</td>
+</tr>
+<tr>
+<td data-label="步骤">DRC</td>
+<td data-label="做法">嘉立创标准版跑三套：设计者自己的规则（不重灌铜）、同规则重灌铜、嘉立创工艺规则。KiCad 原生跑工程自带规则（重灌铜，有新版原理图时加原理图一致性）和嘉立创工艺规则。其他格式跑原样、重灌铜、嘉立创工艺三套。结果按断开、短路、电气间距、制造、导入伪影归类，丝印和封装库问题单列不计</td>
+<td data-label="能发现什么">断开、短路、间距、制造能力</td>
+<td data-label="会误报的地方">无网络的铜（跳线、螺丝孔、独立焊盘）会报成短路；网络标签错了会报出假断开；同一处冲突有时记成短路，有时记成间距（<a href="#s3-1">3.1 节</a>）</td>
+</tr>
+<tr>
+<td data-label="步骤">原理图</td>
+<td data-label="做法">KiCad 用 <code>sch erc</code>；嘉立创用自写的轻量 ERC（悬空网络、只有一个脚的命名网络、重复位号）</td>
+<td data-label="能发现什么">原理图本身的接线错误</td>
+<td data-label="会误报的地方">KiCad 版本不同会带来大量字段不一致告警</td>
+</tr>
+<tr>
+<td data-label="步骤">原理图对 PCB</td>
+<td data-label="做法">KiCad 用 DRC 的 <code>--schematic-parity</code>；嘉立创用两边网表逐网对照，统计一致、拆分、合并</td>
+<td data-label="能发现什么">PCB 和原理图对不上的网络</td>
+<td data-label="会误报的地方">原理图有多份时挑对得最好的一份，可能挑错版本；位号重复时配对不唯一，会报出假的不一致</td>
+</tr>
+<tr>
+<td data-label="步骤">阻容核算</td>
+<td data-label="做法">已知基准电压的稳压芯片按反馈分压算输出电压，和网络名对；充电芯片按编程电阻算电流，和芯片上限比；555、SG3525 算频率；电容耐压和所在网络电压比</td>
+<td data-label="能发现什么">输出电压设错、电流超限、耐压不够</td>
+<td data-label="会误报的地方">表外芯片只报分压比和反推的基准电压</td>
+</tr>
+<tr>
+<td data-label="步骤">走线载流</td>
+<td data-label="做法">每个电源网络取端子（连接器、保险丝、电感等），求两两之间的最小铜截面（并联走线宽度相加，过孔折成等效宽度，铺铜不限），按 IPC-2221 外层 1 oz 折成温升 10 °C 和 20 °C 时的允许电流。有电流线索（项目名里的&quot;5A&quot;、充电电流）就判够不够</td>
+<td data-label="能发现什么">大电流路径上的细线、窄颈</td>
+<td data-label="会误报的地方">不算过孔发热，不做 IPC-2152 修正，铺铜按无限宽算，结果偏乐观</td>
+</tr>
+<tr>
+<td data-label="步骤">Gerber 比对</td>
+<td data-label="做法">导出 Gerber 和钻孔，跟仓库或工厂给的 Gerber 包比：孔逐个比、焊盘逐个比、外形尺寸比；走线长度和铺铜面积只作参考</td>
+<td data-label="能发现什么">发布文件和源文件不是同一版、导入丢孔</td>
+<td data-label="会误报的地方">走线长度和铺铜面积不同软件画法不同（Eagle 用线条填铺铜），所以不计入结论</td>
+</tr>
+</tbody>
+</table></div><p class="scroll-hint">表格较宽，可以左右滑动。</p></div>
+  </div>
+</section>
+<section class="sec" id="s3" aria-labelledby="s3-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§3</p><h2 id="s3-h">开源项目：27 块板的结果</h2></div>
+    <div class="prose"><p>来源：12 个开源仓库，KiCad 原生 12 块、Eagle 3 块、Altium 4 块、嘉立创专业版 6 块，加上 KiCad 源码仓库测试数据里的 2 块嘉立创标准版样例。仓库地址和提交号见 <code>results/oss/oss_sources.csv</code>，逐板明细见 <code>results/oss/summary.csv</code> 和 <code>results/oss/boards/</code>。开源板的源文件是在云端下载的，所以在云端用同一版本的 KiCad 跑；D5012 不出你的 Mac，在 Mac 上跑。</p>
+<h3 id="s3-1"><span class="h-no">3.1</span>KiCad 原生 12 块</h3></div>
+    <div class="tbl t-wide"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>板</th>
+<th>层</th>
+<th>封装</th>
+<th>自带规则 DRC</th>
+<th>发布版 Gerber</th>
+<th>最弱电源路径（温升 20 °C）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="板">Glasgow revC3</td>
+<td data-label="层">4</td>
+<td data-label="封装">272</td>
+<td data-label="自带规则 DRC">无断开，制造类告警 17</td>
+<td data-label="发布版 Gerber">一致</td>
+<td data-label="最弱电源路径（温升 20 °C）">GND 0.80 mm，2.8 A</td>
+</tr>
+<tr>
+<td data-label="板">Corne cherry</td>
+<td data-label="层">2</td>
+<td data-label="封装">180</td>
+<td data-label="自带规则 DRC">无断开，制造 4</td>
+<td data-label="发布版 Gerber">一致</td>
+<td data-label="最弱电源路径（温升 20 °C）">+5V 0.51 mm，2.0 A</td>
+</tr>
+<tr>
+<td data-label="板">Corne chocolate</td>
+<td data-label="层">2</td>
+<td data-label="封装">180</td>
+<td data-label="自带规则 DRC">无断开，电气 5</td>
+<td data-label="发布版 Gerber">一致</td>
+<td data-label="最弱电源路径（温升 20 °C）">+5V 0.51 mm，2.0 A</td>
+</tr>
+<tr>
+<td data-label="板">Open Book C1</td>
+<td data-label="层">2</td>
+<td data-label="封装">38</td>
+<td data-label="自带规则 DRC">无断开，制造 156（阻焊桥）</td>
+<td data-label="发布版 Gerber">一致</td>
+<td data-label="最弱电源路径（温升 20 °C）">+3V3 0.50 mm，2.0 A</td>
+</tr>
+<tr>
+<td data-label="板">Open Book B1</td>
+<td data-label="层">2</td>
+<td data-label="封装">76</td>
+<td data-label="自带规则 DRC">无断开，电气 26，制造 154</td>
+<td data-label="发布版 Gerber">一致</td>
+<td data-label="最弱电源路径（温升 20 °C）">+3.3VP 0.30 mm，1.4 A</td>
+</tr>
+<tr>
+<td data-label="板">Sangaboard v0.3</td>
+<td data-label="层">2</td>
+<td data-label="封装">63</td>
+<td data-label="自带规则 DRC">无断开，走线交叉 1（一段零长度走线），电气 9</td>
+<td data-label="发布版 Gerber">不一致</td>
+<td data-label="最弱电源路径（温升 20 °C）">MOT_PWR 0.53 mm，2.0 A</td>
+</tr>
+<tr>
+<td data-label="板">Sangaboard v0.4</td>
+<td data-label="层">2</td>
+<td data-label="封装">96</td>
+<td data-label="自带规则 DRC">GND 断开 1，短路 3（都牵涉无网络铜），电气 20</td>
+<td data-label="发布版 Gerber">不一致</td>
+<td data-label="最弱电源路径（温升 20 °C）">+3V3 0.53 mm，2.0 A</td>
+</tr>
+<tr>
+<td data-label="板">SmartKnob view_base</td>
+<td data-label="层">2</td>
+<td data-label="封装">107</td>
+<td data-label="自带规则 DRC">无断开，制造 15</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="最弱电源路径（温升 20 °C）">+3V3 0.40 mm，1.7 A</td>
+</tr>
+<tr>
+<td data-label="板">SmartKnob view_screen</td>
+<td data-label="层">2</td>
+<td data-label="封装">12</td>
+<td data-label="自带规则 DRC">干净</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="最弱电源路径（温升 20 °C）">/VDD 0.40 mm，1.7 A</td>
+</tr>
+<tr>
+<td data-label="板">splitflap chainlinkDriver</td>
+<td data-label="层">2</td>
+<td data-label="封装">65</td>
+<td data-label="自带规则 DRC">无断开，电气 29</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="最弱电源路径（温升 20 °C）">+3V3 0.25 mm，1.2 A</td>
+</tr>
+<tr>
+<td data-label="板">splitflap chainlinkBase</td>
+<td data-label="层">2</td>
+<td data-label="封装">128</td>
+<td data-label="自带规则 DRC">无断开，短路 1（牵涉无网络铜），电气 13</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="最弱电源路径（温升 20 °C）">+12V 0.50 mm，2.0 A</td>
+</tr>
+<tr>
+<td data-label="板">splitflap sensor_smd</td>
+<td data-label="层">2</td>
+<td data-label="封装">7</td>
+<td data-label="自带规则 DRC">干净</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="最弱电源路径（温升 20 °C）">没有电源网络</td>
+</tr>
+</tbody>
+</table></div><p class="scroll-hint">表格较宽，可以左右滑动。</p></div>
+    <div class="prose"><ul>
+<li>发布文件和源文件不一定是同一版。Sangaboard 两个版本仓库里的 Gerber 都和提交的板子对不上：v0.3 有 8 个孔位置或孔径不同，v0.4 发布版 177 个孔里只有 164 个对得上。拿开源项目的 Gerber 当&quot;正确答案&quot;之前，要先做这一步比对。</li>
+<li>Open Book B1 的充电电流设错了。U4 是 MCP73831-2-OT，PROG 脚经 R3 接地，R3 是 1 kΩ。按手册公式 I = 1000 V / R_PROG，充电电流 1 A，超过这颗芯片 0.5 A 的上限。原理图和 PCB 上都是 1k。脚本从网表自动算出了这一条，没有人工提示。</li>
+<li>表外芯片只给比值。Glasgow 的 TPS73101（可调 LDO，Glasgow 的 I/O 电压可编程，分压比本来就不对应固定输出）和 SmartKnob 的 HX711（内部稳压器的反馈分压，比值 2.22，按 1.25 V 基准约 2.8 V）都落到&quot;分压比已知、基准未知&quot;这一类，留给人或手册表补。</li>
+<li>工程自带的 ERC 和原理图一致性在新版 KiCad 下噪声很大。Glasgow 有 619 条 ERC 告警、326 条原理图一致性问题，绝大多数是 KiCad 版本升级带来的字段不一致。判分时只能看少数几类（网络冲突、缺封装、多封装），不能看总数。4 块用 KiCad 5 旧原理图的板子 ERC 跑不了。</li>
+<li>换规则重灌铜会改变连通性。Corne 两块在作者规则下没有断开，换成嘉立创规则重灌铜后 GND 和 GNDR 冒出 3 处断开：规则一变，铺铜避让焊盘、孔和板边的距离跟着变，细颈处就被切断了。判分时，参考板和 agent 的板要用同一套规则、同一个灌铜步骤。</li>
+<li>同一个文件跑几次 DRC，条数会变。Sangaboard v0.4 同一个文件、同一条命令连跑 12 次（其中 6 次把 KiCad 限成单线程），短路条数在 2 到 7 之间跳，违规总数一直是 141。原因是焊接跳线上那块无网络铜皮压着焊盘，同一处冲突这次记成&quot;短路&quot;，下次记成&quot;间距不足&quot;，限成单线程也一样。非 KiCad 格式每次导入生成的文件也不完全相同：HEMY AstrAlim 三次导入后重灌铜，断开数是 41、63、39，同一个导入文件连跑三次则都是 39。3.1 和 3.2 两张表的数取自最后一次批跑，也就是 <code>results/oss/</code> 里的结果。</li>
+</ul>
+<h3 id="s3-2"><span class="h-no">3.2</span>其他格式 15 块</h3></div>
+    <div class="tbl t-wide"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>板</th>
+<th>格式</th>
+<th>原样导入 DRC</th>
+<th>发布版 Gerber</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="板">AlkaidMount</td>
+<td data-label="格式">Eagle</td>
+<td data-label="原样导入 DRC">无断开</td>
+<td data-label="发布版 Gerber">孔全对上；外形高度发布版 77.0 mm、KiCad 导出 78.6 mm，KiCad 导出多 25 个焊盘</td>
+<td data-label="说明">差异原因没查</td>
+</tr>
+<tr>
+<td data-label="板">ODRI master board v2</td>
+<td data-label="格式">Eagle</td>
+<td data-label="原样导入 DRC">无断开，电气 160</td>
+<td data-label="发布版 Gerber">孔对上，焊盘有少量差异</td>
+<td data-label="说明">铺铜导入后的间距违规为主</td>
+</tr>
+<tr>
+<td data-label="板">ODRI microDriver v2</td>
+<td data-label="格式">Eagle，6 层</td>
+<td data-label="原样导入 DRC">断开 9、短路 37、电气 499</td>
+<td data-label="发布版 Gerber">孔和焊盘对上</td>
+<td data-label="说明">导入伪影多，VDD 在铜上断开；AGND 和 GND 经一个名叫 GND-AGND 的连接件相连，是有意设计</td>
+</tr>
+<tr>
+<td data-label="板">Dummy 电机驱动 42</td>
+<td data-label="格式">Altium，4 层</td>
+<td data-label="原样导入 DRC">无断开，电气 729</td>
+<td data-label="发布版 Gerber">孔对上；两层内层的焊盘，发布版 250 和 178 个，KiCad 导出都是 289 个</td>
+<td data-label="说明">重灌铜后 GND 断开 7 处</td>
+</tr>
+<tr>
+<td data-label="板">Dummy 控制板</td>
+<td data-label="格式">Altium</td>
+<td data-label="原样导入 DRC">无断开，电气 558</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="说明">重灌铜后 GND 断开 15 处</td>
+</tr>
+<tr>
+<td data-label="板">Dummy 灯环</td>
+<td data-label="格式">Altium</td>
+<td data-label="原样导入 DRC">电气 13</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="说明"></td>
+</tr>
+<tr>
+<td data-label="板">ODrive v3</td>
+<td data-label="格式">Altium</td>
+<td data-label="原样导入 DRC">短路 20（都牵涉无网络铜），制造 819</td>
+<td data-label="发布版 Gerber">仓库没给</td>
+<td data-label="说明"></td>
+</tr>
+<tr>
+<td data-label="板">HEMY Redux v2.6.5M</td>
+<td data-label="格式">嘉立创专业版，4 层</td>
+<td data-label="原样导入 DRC">短路 11（都牵涉无网络铜）</td>
+<td data-label="发布版 Gerber">少 10 个非金属化孔</td>
+<td data-label="说明">重灌铜后断开 12 处</td>
+</tr>
+<tr>
+<td data-label="板">HEMY 刹车驱动 1.1</td>
+<td data-label="格式">嘉立创专业版</td>
+<td data-label="原样导入 DRC">短路 5</td>
+<td data-label="发布版 Gerber">一致</td>
+<td data-label="说明"></td>
+</tr>
+<tr>
+<td data-label="板">HEMY DC/USB 燕尾</td>
+<td data-label="格式">嘉立创专业版</td>
+<td data-label="原样导入 DRC">短路 3</td>
+<td data-label="发布版 Gerber">少 2 个 3.2 mm 安装孔</td>
+<td data-label="说明"></td>
+</tr>
+<tr>
+<td data-label="板">HEMY 底座法兰 DC</td>
+<td data-label="格式">嘉立创专业版</td>
+<td data-label="原样导入 DRC">电气 2</td>
+<td data-label="发布版 Gerber">少 2 个 3.2 mm 安装孔</td>
+<td data-label="说明"></td>
+</tr>
+<tr>
+<td data-label="板">HEMY USB 转接</td>
+<td data-label="格式">嘉立创专业版</td>
+<td data-label="原样导入 DRC">电气 11</td>
+<td data-label="发布版 Gerber">少 2 个 3.2 mm 安装孔</td>
+<td data-label="说明"></td>
+</tr>
+<tr>
+<td data-label="板">HEMY AstrAlim</td>
+<td data-label="格式">嘉立创专业版，4 层</td>
+<td data-label="原样导入 DRC">断开 20、短路 49</td>
+<td data-label="发布版 Gerber">少 20 个 0.3 mm 过孔</td>
+<td data-label="说明">Gerber 比工程早 11 天，可能是版本差</td>
+</tr>
+<tr>
+<td data-label="板">智能手表样例</td>
+<td data-label="格式">嘉立创标准版</td>
+<td data-label="原样导入 DRC">断开 290</td>
+<td data-label="发布版 Gerber">无发布版</td>
+<td data-label="说明">样例本身大量没布完的线</td>
+</tr>
+<tr>
+<td data-label="板">USB 电表样例</td>
+<td data-label="格式">嘉立创标准版</td>
+<td data-label="原样导入 DRC">无断开</td>
+<td data-label="发布版 Gerber">无发布版</td>
+<td data-label="说明"></td>
+</tr>
+</tbody>
+</table></div><p class="scroll-hint">表格较宽，可以左右滑动。</p></div>
+    <div class="prose"><ul>
+<li>嘉立创专业版导入器丢非金属化孔。4 块 HEMY 板导出的钻孔里，少的正好是全部非金属化孔（3 块小板各 2 个 3.2 mm 安装孔，Redux 10 个 1.1 到 1.5 mm 孔），金属化孔一个不差。3 块小板的 Gerber 和工程是同一天导出的，Redux 的 Gerber 晚两个月，少的也正好是非金属化孔，所以最可能是导入器的问题；我没有在嘉立创专业版里打开核对。多板工程还会让无界面导入直接崩溃，脚本先把每块板拆成单独的工程再导。</li>
+<li>短路几乎全部牵涉无网络的铜。27 块板里报出的短路，一边几乎总是 <code>&lt;no net&gt;</code>：焊接跳线、标志图形、导入时丢了网络的焊盘或铺铜。两边都是有名网络的只有一处：ODRI microDriver 的 U$2，封装就叫 GND-AGND，是有意把模拟地和数字地在一点接起来的连接件，KiCad 导入 Eagle 板后不知道它是网络连接件（net tie），于是报短路。</li>
+<li>Eagle 和 Altium 的铺铜导入后不可信。导入后铺铜要么没灌（脚本会先灌一次），要么一灌就和焊盘冲突，电气类违规动辄几百条。ODRI microDriver 这块 6 层板导入后 VDD 在铜上是断的，走线载流算出来是 0，这是导入问题，不能当设计问题。</li>
+<li>嘉立创标准版导入最干净。两块样例逐个焊盘对网络名，376/376 和 245/245 全部一致；手表样例原理图和 PCB 55 个网络全部对上。D5012 正是这种格式。</li>
+</ul>
+</div>
+  </div>
+</section>
+<section class="sec" id="s4" aria-labelledby="s4-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§4</p><h2 id="s4-h">D5012：54 个项目的结果</h2></div>
+    <div class="prose"><p>D5012 一共 54 个项目文件夹，5 个只有原理图没有 PCB，88-38 面板一个文件夹里有两块板，所以实际跑了 50 块板，全是嘉立创标准版。在你 Mac 上全量跑一遍约 6 分钟。逐板明细在 <code>runs/d5012/summary.csv</code>，每块板一行的摘要在 <code>runs/d5012/digest.jsonl</code>，断开和短路的具体位置在 <code>runs/d5012/drc_detail.txt</code>，几处可疑元件的网络在 <code>parts_detail.txt</code> 和 <code>pcb_dump.txt</code>，工厂 Gerber 的核对在 <code>gerber_probe.txt</code>。下面的结论都来自文件本身，没有在嘉立创里打开核对，也没有对照实物。</p>
+<h3 id="s4-1"><span class="h-no">4.1</span>总览</h3></div>
+    <div class="tbl t-narrow"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>检查</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="检查">导入</td>
+<td data-label="结果">50 块全部导入并读全。TAD7850功放、太阳能灯板单片机控制两块有长条槽孔，要先绕开 KiCad 写槽孔的 bug（<a href="#s1">第 1 节</a>）；绕得不彻底时板子只读进一部分，而且不报错</td>
+</tr>
+<tr>
+<td data-label="检查">逐焊盘对网络名</td>
+<td data-label="结果">46 块全对。另外 4 块各有几个焊盘对不上：3 块是同一个位号用在好几个元件上（拼版里两块子板位号重复，或者拿元件值当位号，如 63V100UF、10K），按位号配对本身不唯一；功放隔离滤波器是 4 个输入输出端子焊盘两边网络名不同（比如 IN3 的 1 脚，源文件叫 T3_4，KiCad 叫 U5_1），可能只是同一个网络换了名字，没细查</td>
+</tr>
+<tr>
+<td data-label="检查">工厂 Gerber</td>
+<td data-label="结果">45 块的孔、焊盘、外形全部对上。4 块孔全对、焊盘有出入：16V-58F 的 Gerber 里有 1 个焊盘源文件没有；LM2596S、RGB三色灯、TPA3116 的源文件里分别有 4、12、14 个焊盘在 Gerber 里找不到。东芝1943-2500 没有 Gerber</td>
+</tr>
+<tr>
+<td data-label="检查">DRC（设计者自己的规则）</td>
+<td data-label="结果">27 块没有断开，其中 23 块也没有短路。另外 23 块有断开，分类见 <a href="#s4-2">4.2</a> 到 4.6</td>
+</tr>
+<tr>
+<td data-label="检查">短路</td>
+<td data-label="结果">14 块报了短路。两边都是有名网络的只有 4 块：1 块是真的铜重叠（<a href="#s4-2">4.2</a>），1 块是包含它的拼版，另 2 块是网络标签错乱（<a href="#s4-6">4.6</a>）。其余 10 块的短路都牵涉无网络的铜</td>
+</tr>
+<tr>
+<td data-label="检查">原理图对 PCB</td>
+<td data-label="结果">35 块有原理图可比，27 块网络全部一致，8 块有出入（<a href="#s4-3">4.3</a>）。15 块没有原理图</td>
+</tr>
+<tr>
+<td data-label="检查">其他 DRC 告警</td>
+<td data-label="结果">按设计者自己的规则，40 块报了电气间距违规，共 6119 条；同样的规则重灌铜后只剩 13 块、1075 条，可见大部分是导入后铺铜没重灌造成的。孔环、焊盘栈、禁布区这几类告警也不少，没有逐条看。按嘉立创工艺规则跑，多出来的主要是孔到铜间距（35 块）。两套规则下一条非外观告警都没有的只有 3 块</td>
+</tr>
+<tr>
+<td data-label="检查">阻容和走线</td>
+<td data-label="结果">见 <a href="#s4-7">4.7</a></td>
+</tr>
+</tbody>
+</table></div></div>
+    <div class="prose"><h3 id="s4-2"><span class="h-no">4.2</span>像是真问题的</h3><ol>
+<li>功放电源小功率板：一个过孔压在整流走线上。光耦 U8 第 1 脚所在的网络，也连着输出端子 OUT- 和 5 mΩ 采样电阻 R22 的一端。这个网络的一个过孔（外径 0.61 mm）边缘压进整流管 D2、D4 阳极那条 3 mm 宽的走线，铜重叠 0.027 mm。工厂给的 Gerber 里，这个过孔和这条走线的相对位置、重叠量完全一样；拼版 TAD7850功放（TAD7850功放原版 加 功放电源小功率板）的 Gerber 里也有同一处。按这份文件做出来两者就是连通的：整流管阳极直接接到了 R22 靠 OUT- 的一侧，电流可以绕过 R22。U8 是 431 稳压环路里的光耦（TL431 的阴极接 U8 第 2 脚），这块板的文件夹备注正写着&quot;431调压电路有误请勿装&quot;。备注说的是不是这一处，要问同事。这块板原理图和 PCB 的 36 个网络全部一致，只做原理图对 PCB 发现不了它。</li>
+<li>数据线插头3.0：A4 焊盘没接上。插头的 A4 焊盘（VCC）在顶层，接过来的 VCC 走线在底层，两者在同一位置，中间没有过孔，A4 和其余 VCC 是断开的。像是漏了一个过孔。</li>
+<li>显微镜5V光源：两颗灯叠在一起。L19、L20 两颗 5 mm 草帽灯和 L1、L2 的坐标完全相同。按这个 PCB 文件出 BOM 和坐标会多 2 颗灯，实际也装不上。DRC 不报，因为叠在一起的焊盘属于同一网络。</li>
+<li>另一条缺陷备注查不出来：东芝1943-2500差分缩小板 的文件夹备注是&quot;电路驱动功率不足，需换直插管&quot;。这是实测出来的性能问题，DRC、阻容核算、走线载流都看不到。这块板的网络标签也残缺（<a href="#s4-6">4.6</a>），本来就判不了。</li>
+</ol>
+<h3 id="s4-3"><span class="h-no">4.3</span>原理图和 PCB 对不上的 8 块</h3><p>3 块是 PCB 改过、原理图没跟着改，1 块原理图和 PCB 不是同一版，1 块是网络标签错误，1 块是有意的接法，2 块比对本身无效：</p>
+<ul>
+<li>LM2596S模块（标签错误）：PCB 把 U1 的 FB（4 脚）和输出 SW（2 脚）标成同一个网络 U1_2，铜上是分开的两块，原理图里两者也是分开的。这一个标签错误带出三条告警：DRC 报 1 处断开，原理图对 PCB 报 1 处合并，走线载流把反馈线当成输出线，报&quot;0.25 mm 只能过 1.2 A，芯片额定 3 A&quot;。照 DRC 补线会把 FB 和 SW 短路。另外工厂 Gerber 比源文件少 4 个焊盘，数目正好等于源文件里没有网络的独立焊盘数。</li>
+<li>4.2V锂电池单灯珠指示灯（PCB 改过）：原理图里 AZ431 的参考脚接电位器 R4 的滑动端，报警电压可调；PCB 上参考脚直接接 R2、R3 分压（33 kΩ、100 kΩ），没有电位器。按 2.495 V 基准算，报警点固定在 3.32 V，对单节锂电池的低电量报警是合理的值。</li>
+<li>TAD7850功放原版（PCB 改过）：电容 C10（1 µF）的两个脚在原理图和 PCB 上对调了；原理图里 C10 和 R2 是直插封装，PCB 上是 0805 贴片。无极性电容对调不影响功能。</li>
+<li>汽车32v功放电源（PCB 改过）：电位器 RP2 的两端对调，调节方向反了，电路本身不受影响。这块板还有几个位号直接写成元件值（10K、10R、SS34 这类），逐焊盘对网络名因此有 5 个对不上。</li>
+<li>太阳能灯板单片机控制（版本不同）：原理图 35 个元件、PCB 33 个封装，只有 25 个位号对得上；PCB 上有两个网络各合并了原理图里的两组。没细查。</li>
+<li>LM3886功放双芯片（有意的接法）：两颗 LM3886 的空脚（2、6、11 脚）在 PCB 上各自并在一起，U1 的接到 U3（封装名就叫&quot;空脚焊盘&quot;），U2 的接到 U7。原理图里这几个脚悬空。不影响功能。</li>
+<li>16V-58F超级电容组、RGB三色灯（比对无效）：前者原理图有 20 个重复位号，后者原理图解析不完整（168 个脚都悬空）。</li>
+</ul>
+<h3 id="s4-4"><span class="h-no">4.4</span>看着像问题、其实不是</h3><ul>
+<li>ET5100锂电池充电模块：唯一的断开是丝印&quot;短接 充两节电池&quot;旁边那对焊盘，是设计好的焊接跳线。</li>
+<li>LM3886功放双芯片：唯一的断开是一段 36 mm 的 VEE 走线，落在板框外 272 mm 的画布上，是画板时遗留的，不在板上。</li>
+<li>显微镜5V光源：唯一的断开在网络 S$6893 上。这个网络只有顶层、底层各一段圆弧，没有任何焊盘，连不连都不影响电路。</li>
+<li>汽车32v功放电源的 8 条短路：都是没有网络的安装孔（H1、H3 到 H6、H8）压在有网络的铜块上，是拿螺丝孔当大电流接线点的常见做法。孔不带网络，KiCad 就报短路。</li>
+<li>独立焊盘没有网络：5050灯珠铝基板 的 1 条短路、TP4056充电模块2A双芯片版 的 2 条短路，都是不带网络的独立焊盘压在走线或过孔上（TP4056 那个独立焊盘压着两个 B+ 过孔，像是电池正极焊盘）。TPA3225数字功放 的 4 条短路是 U16 散热焊盘下的几个通孔和底层一块铜皮重叠，两边都没有网络。</li>
+<li>TP4056充电模块2A双芯片版 的同名网络：两颗 TP4056 各带一个 1.2 kΩ 编程电阻，按手册各充 1 A，合计 2 A，和板名对得上。第二路的 PROG、指示灯网络和第一路同名，像是整路复制过来的；两路之间铜上本来就不用连，DRC 就把它们报成断开。同一块板 GND 也报了断开，放在 4.5。</li>
+</ul>
+<h3 id="s4-5"><span class="h-no">4.5</span>要在嘉立创里打开确认的</h3><ul>
+<li>铺铜之间没连上：16V-58F（GND、16V 各 1 处）、IP5358（GND 2 处、GGND 1 处）、TPA3116（GND 1 处），都是同一网络的两块铺铜之间没有铜连接。走线载流检查在 16V-58F 和 IP5358 的这几个网络上找到了互不连通的端子焊盘，说明断开的两边都接着元件。可能真断，也可能是 KiCad 没认出某种连接方式。</li>
+<li>TP4056充电模块2A双芯片版 的 GND：GND 报了断开，这块板两个像是接电池的独立焊盘又都没有网络，要确认两路的地都接到了电池负极。</li>
+<li>大功率降压模块：VIN 和 CS1 各 1 处断开，都是走线端头够不着焊盘（VIN 那段走线停在离 C14 的 1 脚约 5 mm 的地方），走线载流也显示两个输入端子之间 VIN 不通。这块板有 83 块铺铜，VIN 可能靠铺铜连接而 KiCad 没认出来。</li>
+<li>3.7V单节锂电池保护板：DW01 的 2 脚（电流检测）和 3 脚（充电控制）各有一段圆弧走线，端点离焊盘 1.7 到 2 mm。如果真没连上，过流检测和充电控制都会失效；两处都在圆弧上，也可能是导入时圆弧端点还原有偏差。</li>
+<li>汽车电容启动延时控制板：Q2 第 2 脚的网络断成两部分，断口一边是一段 0.008 mm 长的碎线。那一边如果只有这段碎线，就无所谓；如果还连着焊盘，就是真断。</li>
+<li>太阳能灯板单片机控制：59 处断开，26 处在铺铜之间；780 个过孔里 284 个没有网络，KiCad 不把无网络的过孔算作连接。多半是标签问题。</li>
+<li>TAD7850功放（拼版）：比它包含的两块单板（TAD7850功放原版、功放电源小功率板）多出 1 处 GND 断开（C11 第 2 脚），原因没查。</li>
+<li>功放电源小功率板 的擦边连接：查上面那处短路时，底层还有 3 个过孔和同网络 3 到 3.2 mm 宽的走线只擦边接触，重叠 0.002 到 0.016 mm，工厂 Gerber 里一样。最浅的一处交界只有约 0.07 mm 宽，比常见的最小线宽还窄，蚀刻后可能断开。这几个过孔有没有别的连接，没查。</li>
+<li>88-38 后面板220：网络 S$466 的走线断成了几段，另有 1 处地铺铜没连上。这是一块面板，这些走线可能只是图案。</li>
+</ul>
+<h3 id="s4-6"><span class="h-no">4.6</span>网络标签残缺，DRC 判不了</h3><p>8 块板的网络标签不完整或者错乱，DRC 报出来的断开和短路主要反映标签，不反映铜：</p>
+</div>
+    <div class="tbl t-narrow"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>板</th>
+<th>情况</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="板">LED灯板</td>
+<td data-label="情况">489 个焊盘 463 个没有网络；没有走线，全用铜块连</td>
+</tr>
+<tr>
+<td data-label="板">LED带电量显示灯板</td>
+<td data-label="情况">523 个焊盘 458 个没有网络</td>
+</tr>
+<tr>
+<td data-label="板">宽压灯LED</td>
+<td data-label="情况">442 个焊盘 336 个没有网络；另有 3 个 OFF/ON 焊盘在板框外 15 mm</td>
+</tr>
+<tr>
+<td data-label="板">汽车32v功放整流电容板</td>
+<td data-label="情况">240 个焊盘 64 个没有网络；过孔之间报了 32 处断开，无网络的铜和有名网络之间报了 53 处短路</td>
+</tr>
+<tr>
+<td data-label="板">东芝1943-2500差分缩小板</td>
+<td data-label="情况">417 个焊盘 101 个没有网络</td>
+</tr>
+<tr>
+<td data-label="板">单节3.7v电量显示</td>
+<td data-label="情况">R2、LED5 等元件的焊盘没有网络</td>
+</tr>
+<tr>
+<td data-label="板">RGB三色灯</td>
+<td data-label="情况">每个 LED 的焊盘各成一个网络，走线明明接到焊盘中心，DRC 却报成短路</td>
+</tr>
+<tr>
+<td data-label="板">大功率电阻均衡板</td>
+<td data-label="情况">18 个 30 Ω 均衡电阻的两个焊盘都标成同一个网络 R36_1，板上并没有 R36 这个元件；这个网络碰到了 B+、B-、B7.4V、GND、PWM，DRC 报的有名网络短路都出在这里</td>
+</tr>
+</tbody>
+</table></div></div>
+    <div class="prose"><p>这批板要出 PCB 侧的题，得先按铜的连通关系重建网络。拿来出外壳题不受影响：东芝没有 Gerber，其余 7 块的孔和外形都和工厂 Gerber 对得上。</p>
+<h3 id="s4-7"><span class="h-no">4.7</span>阻容核算和走线载流</h3><ul>
+<li>稳压：LM2596S 降压板反馈下电阻 330 Ω、上面是 10 kΩ 电位器，输出可调 1.23 到 38.5 V；芯片输入最高 40 V，实际上限受输入电压限制。XL6009 升压板是 1 kΩ 加 10 kΩ 电位器，1.25 到 13.75 V；升压电路输出不会低于输入，实际下限是输入电压。TPA3225 板上的 LM1117-3.3 是固定 3.3 V。4 块板的 TL431 接成电位器分压，范围没算。TX4139（TPA3225 板）和 TD8655（大功率降压模块）不在芯片表里，只得到分压比 13 和 4.17，要查手册的基准电压。</li>
+<li>充电：TP4056 编程电阻 1.2 kΩ，按手册 I = 1200 / R，充电电流 1.0 A，正好是芯片上限；双芯片板两路各一个，合计 2 A。</li>
+<li>555 和 SG3525：4 处都不是公式能直接算的接法（带电位器、二极管，或者不是多谐振荡），频率没算。</li>
+<li>电容耐压：D5012 的电容值大多只写容量不写耐压，全库只有 2 块板的 4 颗电容能核，都够。</li>
+<li>走线载流：能判的只有找得到电流线索的 2 块。LM2596S 的告警是 4.3 说的标签错误带出来的误报，脚本已经标成&quot;网络标签可疑&quot;。XL6009 升压板输入 VCC 最窄 1.02 mm，按 IPC-2221 温升 20 °C 约 3.3 A，比芯片 4 A 的开关电流上限低，满载时偏紧。其余板只给出最窄的一段（<code>summary.csv</code> 的 <code>weakest_power_path</code> 列），不知道那段路上过多大电流，不下结论。比如 200W甲乙功放 的 -35V 最窄 0.5 mm，可能只是给前级供电的支路。</li>
+</ul>
+<h3 id="s4-8"><span class="h-no">4.8</span>第一批候选和全库能用的板</h3><p>这里说的&quot;干净&quot;只看四项：没有断开，没有短路，原理图对 PCB 一致，工厂 Gerber 对上。4.1 里的间距、孔环这类告警不算在内。</p>
+<p>上一份评估（d5012_assessment）从资料成套、封装对齐的 21 块里，去掉当时查到有断开的 4 块和带缺陷备注的功放电源小功率板，选出第一批 16 块。其中 12 块这一轮干净：3s充电模块、3串18650锂电保护带均衡大电流、ne555调光修改版、功放电池供电隔离模块、大功率4.2V5A保护板、200W甲乙功放-东芝1943-5200、k170-j74-对称-功放板、全协议IP2366大功率140瓦充电模块、功放差分1943-5200-菱形双差分、功放隔离滤波器、半桥逆变器-SG3525、运放音频前级放大。功放隔离滤波器有 4 个端子焊盘导入后网络名不同（<a href="#s4-1">4.1</a>），不影响这四项。</p>
+<p>另外 4 块要先清理：IP5358（3 处铺铜没连上）、蓝牙桌面功放TPA3116（1 处地铺铜没连上，源文件有 14 个焊盘在 Gerber 里找不到）、LM3886功放双芯片（删掉板外那段走线；空脚的接法在原理图里补上，或者判分时排除）、TPA3225数字功放（U16 散热焊盘补上网络）。</p>
+<p>全库按同样四项干净的有 16 块：上面 12 块，加上第一批之外的 SG3525驱动板、升压模块、太阳能大功率自动亮灯板、超级电容保护板。另有 7 块断开、短路、Gerber 都没问题，但没有原理图（5 块），或者原理图和 PCB 有已知出入（4.2V锂电池单灯珠指示灯、TAD7850功放原版，见 <a href="#s4-3">4.3</a>）。</p>
+<p>原本因为备注被排除的功放电源小功率板，本身就能出一道找错题：给出板子和&quot;431调压电路有误&quot;这句备注，看 agent 能不能找到那个过孔。前提是同事确认备注说的就是这一处（<a href="#s9">第 9 节</a>）。</p>
+</div>
+  </div>
+</section>
+<section class="sec" id="s5" aria-labelledby="s5-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§5</p><h2 id="s5-h">对 Omnifex 判分器的影响</h2></div>
+    <div class="prose"><ol>
+<li>清掉 DRC 告警不等于修好。LM2596S（<a href="#s4-3">4.3</a>）照飞线补一根线，DRC 清零，FB 和 SW 却被短路了，正确改法是拆网络。判分器要看引脚功能和网络语义；发现网络被合并时，下游的载流结论要降级。这块板本身就可以出一道&quot;别被 DRC 带偏&quot;的题。</li>
+<li>短路要分两类，有名网络的也要看铜。一边是无网络的铜，多半是跳线、螺丝孔、独立焊盘或导入伪影；两个有名网络连在一起才可能是真短路。27 块开源板的短路全是前一类（ODRI 那处是有意的地线连接件）。D5012 里两边都是有名网络的 4 块板中，真的铜重叠只有 1 处（功放电源小功率板，0.027 mm；拼版 TAD7850功放 里同一处又报了一次），另 2 块是网络标签错乱。判分器报短路时要给出铜重叠的尺寸，以及两个网络各连着哪些元件。同一网络只擦边接触的地方（4.5，重叠不到 0.02 mm）也该报，做出来可能是断的。</li>
+<li>导入后先核对读全没有。KiCad 10.0.7 读嘉立创的长条槽孔会写坏文件，处理不彻底时板子只读进前一部分，导入和加载都不报错（<a href="#s1">第 1 节</a>）。判分器跑任何检查之前，要把加载后的封装、走线、过孔数和导入器写出的数对一遍。</li>
+<li>规则和灌铜步骤要固定。同一块板换规则、重灌铜，断开数会变（Corne、Dummy、HEMY Redux 都有）。参考板和 agent 的板要用同一套规则、同一个步骤，比的是差值。</li>
+<li>比位置和网络，不比条数。同一个文件连跑几次，短路条数都会变（<a href="#s3-1">3.1 节</a>）。判分器要把短路和间距两类违规按&quot;哪两个网络、在什么位置&quot;合并去重再比，无网络铜的冲突单列一类。</li>
+<li>两套规则各管一件事。设计者自己的规则回答&quot;这块板和它自己的设定一致吗&quot;，嘉立创工艺规则回答&quot;这块板能不能下单&quot;。出题时两套都跑，判分时按题目要求选。</li>
+<li>噪声大的指标不看总数。ERC 和原理图一致性只看网络冲突、缺封装、多封装这几类，版本差异带来的字段告警成百上千；Gerber 比对只看孔、焊盘和外形，走线长度和铺铜面积受画法影响太大。</li>
+<li>题源格式要筛。PCB 侧的题只用 KiCad 原生和嘉立创标准版。Eagle、Altium、嘉立创专业版的板要先过 Gerber 比对和人工核对，用来出外壳题或当参考倒问题不大：孔位通常没错（专业版的安装孔除外），外形大多对得上（AlkaidMount 差了 1.6 mm，原因没查）。</li>
+<li>网络标签残缺的板先重建网络。D5012 有 8 块板成片的焊盘没有网络，或者网络名错乱（<a href="#s4-6">4.6 节</a>），在这种板上跑 DRC 和原理图对 PCB 没有意义。出 PCB 侧的题之前，要按铜的连通关系重建网络；外壳题不受影响。</li>
+<li>表外芯片要攒成表。这一轮的芯片表收了常见的稳压和充电芯片（LM2596、XL4015、XL6009、MT3608、MP1584、LM1117、TL431、TP4056、MCP73831 等）。D5012 里接了反馈分压、又不在表里的芯片只有 TX4139 和 TD8655，脚本报了分压比，人查一下手册的基准电压就能补进表里。</li>
+<li>有些缺陷只有实测看得到。东芝1943-2500 的&quot;驱动功率不足&quot;（<a href="#s4-2">4.2</a>），这轮的静态检查一项都发现不了。判分器漏掉多少这类问题，只能靠金任务的实物关来估（<a href="#s7">第 7 节</a>）。</li>
+</ol>
+</div>
+  </div>
+</section>
+<section class="sec" id="s6" aria-labelledby="s6-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§6</p><h2 id="s6-h">外壳缺失怎么补</h2></div>
+    <div class="prose"><h3 id="s6-1"><span class="h-no">6.1</span>现在手上有什么</h3><ul>
+<li>D5012 只有 PCB，没有外壳。开源这边，这轮批跑只取了 PCB，不过 12 个仓库里有 5 个带外壳文件：splitflap（OpenSCAD 源文件）、Glasgow（Fusion 源文件，加 STL、IGES 导出）、Corne 和 HEMY（STEP）、Open Book（一个 STL）；SmartKnob 的外壳放在 Release 里，是 Fusion 格式。这些外壳和这轮跑的板是不是同一版，没核。</li>
+<li>D5012 带的 OBJ 只包含有嘉立创 3D 模型的器件，不能直接当外壳的高度包络。全库 2530 个器件里 59% 有模型，有 8 块板一个模型都没有。LM2596S 的 OBJ 里只有二极管和 LM2596，最高的两颗电解电容、电感、电位器都不在里面。OBJ 的单位是 10 mil 画布单位，LM2596 的 TO-263 高 4.50 mm，和模型名里的 H4.5 对得上。</li>
+<li>KiCad 能把板子导出成带元件的 STEP，但没有 3D 模型的器件会被跳过。</li>
+<li>试点的两块板（LM2596S、ET5100）都没有安装孔，外壳只能靠卡槽或压条固定。</li>
+<li>D5012 的&quot;88-38 面板&quot;文件夹里有两块板，后面板外形正好 88 × 38 mm，另一块上印着&quot;T12 Soldering Station 12~25.2V&quot;。看起来同事的产品用标准铝型材做外壳，前后面板就是 PCB。T12 的主板不在 D5012 里。</li>
+</ul>
+<h3 id="s6-2"><span class="h-no">6.2</span>两条路对比</h3></div>
+    <div class="tbl t-mid"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th></th>
+<th>A. 再找大量带外壳的项目</th>
+<th>B. 给现有 PCB 配外壳</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="">题量</td>
+<td data-label="A. 再找大量带外壳的项目">前两轮调研（datasources、continuation）的 15 个案例加上这轮的仓库，带外壳文件的有十来个，大多只有 STEP、STL 导出或 SolidWorks、Fusion 原生文件；能直接改参数的开放源文件（OpenSCAD、FreeCAD）只有 splitflap、OpenFlexure、OnStep-Box 等几个</td>
+<td data-label="B. 给现有 PCB 配外壳">跟着 PCB 走：D5012 第一批 16 块，加上开源 KiCad 板，每块能出好几道</td>
+</tr>
+<tr>
+<td data-label="">标准答案</td>
+<td data-label="A. 再找大量带外壳的项目">有原厂外壳可以直接比</td>
+<td data-label="B. 给现有 PCB 配外壳">没有唯一答案，按约束判分：装得进、孔位和开口对得上、元件和壳体留够间隙、壁厚和可打印；每题配一个维护者先做好的可行解</td>
+</tr>
+<tr>
+<td data-label="">外壳和板是不是同一版</td>
+<td data-label="A. 再找大量带外壳的项目">常对不上（Sangaboard 连 Gerber 都和源文件不是同一版）</td>
+<td data-label="B. 给现有 PCB 配外壳">外壳就是照这块板做的</td>
+</tr>
+<tr>
+<td data-label="">训练集污染</td>
+<td data-label="A. 再找大量带外壳的项目">热门项目多半进过训练集</td>
+<td data-label="B. 给现有 PCB 配外壳">D5012 是没公开过的工厂数据</td>
+</tr>
+<tr>
+<td data-label="">每题的准备工作</td>
+<td data-label="A. 再找大量带外壳的项目">找项目、转格式、核对版本，一个项目半天到一天</td>
+<td data-label="B. 给现有 PCB 配外壳">补高度表、写外壳要求、做一个可行解</td>
+</tr>
+<tr>
+<td data-label="">能测的能力</td>
+<td data-label="A. 再找大量带外壳的项目">复现或修改现成外壳</td>
+<td data-label="B. 给现有 PCB 配外壳">从板子出发设计外壳；改板带动改壳；修复故意放进去的错误</td>
+</tr>
+<tr>
+<td data-label="">主要风险</td>
+<td data-label="A. 再找大量带外壳的项目">找不够，格式转换失真</td>
+<td data-label="B. 给现有 PCB 配外壳">高度数据要补；判分器本身要先校准</td>
+</tr>
+</tbody>
+</table></div><p class="scroll-hint">表格较宽，可以左右滑动。</p></div>
+    <div class="prose"><h3 id="s6-3"><span class="h-no">6.3</span>建议</h3><p>主线走 B，A 只取十来个项目（第 5 条）。</p>
+<ol>
+<li>给 D5012 的板子做壳，按约束判分。每道题补三样东西：一张高度表（按&quot;实测 &gt; 立创 3D 模型 &gt; 封装名和手册 &gt; OBJ&quot;的顺序取数，每个数标来源）；一份外壳要求（丝印上写明的、从板子量出来的、出题人加的，三类分开写）；一个维护者先做好的可行解，证明题目做得出来。</li>
+<li>变异修复题：在可行解里放进已知错误，比如开孔偏了、内腔太矮、卡槽不对、壁太薄。答案是已知的，这批题顺便测判分器会不会误收、误拒。</li>
+<li>联动修改题：改板子带着改外壳，比如电位器换成侧装、电容换成更高的、加安装孔。</li>
+<li>型材加 PCB 面板：照 88-38 的做法，外壳就是下单一块 PCB 再买一段型材，检查大多是二维的，试装便宜。还缺 T12 主板和型材截面图，要问同事。</li>
+<li>需要原厂外壳当真值的题，用开源项目出（HEMY、splitflap、Glasgow、Corne、SmartKnob、OpenFlexure 这类，凑 10 个左右），和 D5012 的题分开统计。这批题的外壳是已知答案，也拿来校准判分器。</li>
+<li>实物轻量层：拿现成的实板加打印的外壳试装，不用做新板，便宜，可以多做几次。</li>
+</ol>
+</div>
+  </div>
+</section>
+<section class="sec" id="s7" aria-labelledby="s7-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§7</p><h2 id="s7-h">金任务：从 0 到 1 做出一个能通电的产品</h2></div>
+    <div class="prose"><h3 id="s7-1"><span class="h-no">7.1</span>为什么必须有</h3><p>它是唯一能测整条链的题，也是唯一能给软件检查算误收率的真值。软件检查自己会出错：LM2596S 那条误导性的断开，是对照原理图才看出来的。它也会漏：东芝1943-2500 的&quot;驱动功率不足，需换直插管&quot;，这轮的静态检查一项都看不到。错了多少、漏了多少，只有拿实物结果对照才算得出来。实物次数少，算不出可靠的成功率，论文里当案例研究和判分器校准报告来写。</p>
+<h3 id="s7-2"><span class="h-no">7.2</span>八关</h3></div>
+    <div class="tbl t-mid"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>关</th>
+<th>agent 交什么</th>
+<th>怎么判</th>
+<th>谁判</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="关">1 需求和规格</td>
+<td data-label="agent 交什么">把题面写成可检查的规格：电气指标、尺寸、接口、使用环境、预算</td>
+<td data-label="怎么判">必填项齐全，和题面不矛盾</td>
+<td data-label="谁判"><span class="chip have">自动</span> ，加人抽查</td>
+</tr>
+<tr>
+<td data-label="关">2 选型和 BOM</td>
+<td data-label="agent 交什么">料号、用量、单价</td>
+<td data-label="怎么判">嘉立创能买到、有库存、封装存在；电压电流降额够</td>
+<td data-label="谁判"><span class="chip have">自动</span></td>
+</tr>
+<tr>
+<td data-label="关">3 原理图</td>
+<td data-label="agent 交什么">KiCad 原理图</td>
+<td data-label="怎么判">ERC；阻容核算（输出电压、电流、频率、耐压）；需要时 SPICE</td>
+<td data-label="谁判"><span class="chip have">自动</span></td>
+</tr>
+<tr>
+<td data-label="关">4 PCB</td>
+<td data-label="agent 交什么">KiCad 板</td>
+<td data-label="怎么判">嘉立创规则 DRC；原理图一致性；走线载流；关键布局规则</td>
+<td data-label="谁判"><span class="chip have">自动</span></td>
+</tr>
+<tr>
+<td data-label="关">5 制造包</td>
+<td data-label="agent 交什么">Gerber、钻孔、BOM、坐标</td>
+<td data-label="怎么判">文件齐全；Gerber 读回来和板子一致；嘉立创 DFM</td>
+<td data-label="谁判"><span class="chip have">自动</span></td>
+</tr>
+<tr>
+<td data-label="关">6 外壳和装配</td>
+<td data-label="agent 交什么">外壳 CAD 和装配体</td>
+<td data-label="怎么判">装配无干涉；间隙、开孔对准、固定方式、壁厚、可打印</td>
+<td data-label="谁判"><span class="chip have">自动</span>（要 CAD 内核）</td>
+</tr>
+<tr>
+<td data-label="关">7 下单打样</td>
+<td data-label="agent 交什么">无</td>
+<td data-label="怎么判">只给过了 1 到 6 关的方案下单，记录费用和周期</td>
+<td data-label="谁判"><span class="chip part">人</span></td>
+</tr>
+<tr>
+<td data-label="关">8 通电和试装</td>
+<td data-label="agent 交什么">无</td>
+<td data-label="怎么判">按事先写好的测试脚本</td>
+<td data-label="谁判"><span class="chip part">人</span></td>
+</tr>
+</tbody>
+</table></div><p class="scroll-hint">表格较宽，可以左右滑动。</p></div>
+    <div class="prose"><h3 id="s7-3"><span class="h-no">7.3</span>通电测试脚本（以 G1 可调降压电源为例）</h3><ol>
+<li>上电前：目检；量输入、输出对地电阻，不能短路。</li>
+<li>限流上电：电源限流 100 mA，空载输入电流在规格内。</li>
+<li>空载输出：调到规格范围两端，读数在规格内。</li>
+<li>带载：按规格分档加载，记输出电压、纹波（示波器）、效率。</li>
+<li>温升：额定负载跑 10 分钟，热电偶或热像仪测关键件，温度在规格内。</li>
+<li>保护：规格要求的短路、过流保护逐项试。</li>
+<li>装壳：板子装进打印的外壳，接口能插拔，旋钮能调，散热不受影响。</li>
+<li>装壳后复测第 4、5 步。</li>
+</ol>
+<p>主指标是一次成功：不飞线、不改板、不改壳，通过全部验收项。次指标是验收项通过比例、人工干预次数、成本和用时。每个实物失败都要追到前六关里本该拦住它的那一关，用来改判分器。</p>
+<h3 id="s7-4"><span class="h-no">7.4</span>候选题</h3></div>
+    <div class="tbl t-mid"><div class="tbl-wrap" tabindex="0" role="region" aria-label="表格"><table>
+<thead>
+<tr>
+<th>题</th>
+<th>内容</th>
+<th>人类基线</th>
+<th>难点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="题">G1</td>
+<td data-label="内容">可调降压电源模块加外壳</td>
+<td data-label="人类基线">D5012 的 LM2596S</td>
+<td data-label="难点">反馈分压、电感电容选型、散热、电位器开孔</td>
+</tr>
+<tr>
+<td data-label="题">G2</td>
+<td data-label="内容">T12 焊台，型材加 PCB 面板</td>
+<td data-label="人类基线">同事的产品（主板文件待要）</td>
+<td data-label="难点">大电流、温控、面板开孔和型材配合</td>
+</tr>
+<tr>
+<td data-label="题">G3</td>
+<td data-label="内容">谐波赤道仪控制盒</td>
+<td data-label="人类基线">HEMY 开源项目（有原厂外壳）</td>
+<td data-label="难点">多板、电机驱动、装配</td>
+</tr>
+</tbody>
+</table></div><p class="scroll-hint">表格较宽，可以左右滑动。</p></div>
+    <div class="prose"><p>LM2596S 当基线之前，要先改掉它的网络标签错误（<a href="#s4-3">4.3</a>）；它没有安装孔（<a href="#s6-1">6.1</a>），外壳只能用卡槽或压条固定。</p>
+<p>出题前，维护者自己把每题完整做一遍，证明做得出来，也借此校准测试脚本。</p>
+<h3 id="s7-5"><span class="h-no">7.5</span>成本（估算，没有询价）</h3><p>一轮两三道题，每题两三个 agent 方案加 1 个人类参考，大约 10 次打样。简单电源板按嘉立创常见价位，5 片 PCB、贴片、元件、打印外壳加运费，每次大约两三百元，一轮两三千元。更贵的是人的时间：每次打样的测试和记录大约要半天。</p>
+</div>
+  </div>
+</section>
+<section class="sec" id="s8" aria-labelledby="s8-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§8</p><h2 id="s8-h">局限</h2></div>
+    <div class="prose"><ul>
+<li>走线载流用 IPC-2221 外层公式，没算过孔发热、没做 IPC-2152 修正，铺铜按无限宽算，结果偏乐观，只适合找明显过细的路径。</li>
+<li>阻容核算只覆盖表里的芯片和几种典型电路；表外芯片要人看手册。</li>
+<li>嘉立创原理图的 ERC 是自写的轻量版本，只查悬空网络、单脚命名网络和重复位号。</li>
+<li>开源项目只跑了 27 块，格式结论来自这些样本。嘉立创专业版丢孔的结论没在嘉立创专业版里打开核对。</li>
+<li>D5012 的结论都来自文件：没有在嘉立创里打开核对，也没有对照实物板。<a href="#s4-5">4.5 节</a>列的几处要人看。工厂 Gerber 除了孔、焊盘、外形，只逐条核了功放电源小功率板这一处短路。</li>
+<li>4.8 的&quot;干净&quot;不含间距、孔环这类告警，它们大多是导入造成的，但没有逐条排除。</li>
+<li>外壳和金任务部分是方案，还没有做出任何一道题，也没有跑过 CAD 检查。</li>
+</ul>
+</div>
+  </div>
+</section>
+<section class="sec" id="s9" aria-labelledby="s9-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">§9</p><h2 id="s9-h">要你定的事</h2></div>
+    <div class="prose"><p>前两条最急：不装 CAD 内核，外壳题做不出来；实物层没定下来，金任务做不出来。</p>
+<ol>
+<li>装不装 CAD 内核（build123d 或 CadQuery，放进单独的 Python 环境）和 ngspice（brew）？外壳检查必须有前者。</li>
+<li>实物层：手头有哪些仪器（限流电源、万用表、电子负载、示波器、热电偶）；外壳用自己的打印机还是嘉立创打印；谁来操作；每轮预算多少。</li>
+<li>外壳主线：同意&quot;给现有 PCB 配外壳为主，另找 10 个左右带外壳的开源项目出真值题、做校准&quot;吗？</li>
+<li>金任务允不允许 agent 根据实测结果出第二版？</li>
+<li>要问同事的：功放电源小功率板 的&quot;431调压电路有误&quot;指的是不是 U8 过孔压整流走线那一处；数据线插头3.0 的 A4 是不是漏了过孔；LM2596S 和 ET5100 有没有实物板；T12 焊台的主板文件和成品；型材是哪家的；有没有打样记录和问题记录。</li>
+</ol>
+</div>
+  </div>
+</section>
+<section class="sec" id="files" aria-labelledby="files-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="sec-no">附录</p><h2 id="files-h">文件</h2></div>
+    <div class="prose"><ul>
+<li><code>scripts/</code>：这次用的 10 个脚本（<code>omnifex_check.py</code> 是入口，<code>drc_detail.py</code> 查断开和短路的细节，<code>pcb_dump.py</code> 列出一块嘉立创板的全部封装和焊盘网络，<code>gerber_probe.py</code> 在 Gerber 里找过孔只擦边压到走线的地方），另有试点时写的 <code>board_stats.py</code>、<code>drc_summary.py</code>、<code>net_islands.py</code>，以及写外壳草稿时加的 <code>obj_groups.py</code>、<code>model_coverage.py</code>（查 OBJ 里的器件高度和 3D 模型覆盖）。</li>
+<li><code>runs/d5012/</code>：D5012 批跑输出，每个项目一个子目录（导入后的板、DRC 报告、导出的 Gerber、<code>result.json</code>），汇总在 <code>summary.csv</code>、<code>summary.md</code>、<code>digest.jsonl</code>；<code>drc_detail.txt</code> 是断开和短路的细节，<code>parts_detail.txt</code>、<code>pcb_dump.txt</code> 是几处可疑元件和板子的网络明细，<code>gerber_probe.txt</code> 是功放电源小功率板和它的拼版在工厂 Gerber 里的核对。</li>
+<li><code>results/oss/</code>：开源项目批跑结果（云端跑的），含来源清单 <code>oss_sources.csv</code>、汇总和逐板 <code>result.json</code>。源文件没放进来，按清单里的仓库和提交号可以重新下载。</li>
+<li><code>env/</code>：环境侦察的原始输出（KiCad 版本、kicad-cli 帮助原文、KiCad 自带 Python 能用的包、系统信息）。</li>
+<li><code>pilot/pilot_report.md</code>：LM2596S、ET5100 两块板的试点记录。</li>
+<li><code>task_design/cad_gap_golden_task.md</code>：外壳补题和金任务的详细草稿，本报告第 6、7 节由它整理而来。</li>
+<li><code>mech/</code>：查外壳问题时的机械数据：两块试点板 OBJ 的分组尺寸、D5012 各板的 3D 模型覆盖（<a href="#s6-1">6.1 节</a>的 59% 出自这里）、KiCad 导出的 LM2596S 板 STEP。</li>
+</ul>
+</div>
+  </div>
+</section>
+
+</main>
+
+<footer lang="zh-CN">
+  <div class="wrap">
+    <p>原文在你 Mac 上：<code>/Users/qly/QLY/report/pcb_cad_gym_research/kicad_validation/main_report.md</code>，本页按它排版。</p>
+    <p>脚本、开源项目结果和 sha256 校验值在 <a href="https://claude.ai/artifact/E911rTUXj71iMQekT8Dwpf">Omnifex 验证文件</a>；项目提案在 <a href="proposal-v2.html">Omnifex 提案</a>。</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  try{
+    var nav=document.querySelector('.toc');
+    var links=Array.prototype.slice.call(nav.querySelectorAll('a'));
+    var byId={};
+    links.forEach(function(a){byId[a.getAttribute('href').slice(1)]=a;});
+    var current=null;
+    function mark(id){
+      var a=byId[id];
+      if(!a||a===current)return;
+      if(current)current.removeAttribute('aria-current');
+      a.setAttribute('aria-current','true');
+      current=a;
+      if(nav.scrollWidth>nav.clientWidth)nav.scrollLeft=Math.max(0,a.offsetLeft-(nav.clientWidth-a.offsetWidth)/2);
+    }
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting)mark(e.target.id);});
+    },{rootMargin:'-30% 0px -65% 0px'});
+    Object.keys(byId).forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s);});
+  }catch(e){}
+})();
+</script>
