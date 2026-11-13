@@ -1,0 +1,96 @@
+{
+  "contrasts": [
+    {
+      "contrast": "ours__lin_elem__Math_p80__ minus allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "corr_delta_pass1_delta_cap_rate": -0.44590537358192883,
+      "corr_delta_pass1_delta_mean_tokens": -0.5296561035638709,
+      "corr_delta_pass1_delta_repeat_rate": -0.446844872627443,
+      "focus": "ours__lin_elem__Math_p80__",
+      "interpretation": "descriptive problem-level association; not causal",
+      "mean_delta_pass1": -0.057291666666666664,
+      "question_losses": 49,
+      "question_ties": 28,
+      "question_wins": 13,
+      "reference": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600"
+    },
+    {
+      "contrast": "ours__lin_elem__Math_p80__ minus allenai__Olmo-3-7B-RL-Zero-Math",
+      "corr_delta_pass1_delta_cap_rate": -0.3462276633752648,
+      "corr_delta_pass1_delta_mean_tokens": -0.46814257689355493,
+      "corr_delta_pass1_delta_repeat_rate": -0.37685753072194983,
+      "focus": "ours__lin_elem__Math_p80__",
+      "interpretation": "descriptive problem-level association; not causal",
+      "mean_delta_pass1": -0.050694444444444445,
+      "question_losses": 38,
+      "question_ties": 38,
+      "question_wins": 14,
+      "reference": "allenai__Olmo-3-7B-RL-Zero-Math"
+    },
+    {
+      "contrast": "ours__qh_maglin__Math_p80__ minus allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "corr_delta_pass1_delta_cap_rate": 0.05333103109734853,
+      "corr_delta_pass1_delta_mean_tokens": -0.1432521093457564,
+      "corr_delta_pass1_delta_repeat_rate": -0.0740906105859512,
+      "focus": "ours__qh_maglin__Math_p80__",
+      "interpretation": "descriptive problem-level association; not causal",
+      "mean_delta_pass1": -0.02361111111111111,
+      "question_losses": 40,
+      "question_ties": 31,
+      "question_wins": 19,
+      "reference": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600"
+    },
+    {
+      "contrast": "ours__qh_maglin__Math_p80__ minus allenai__Olmo-3-7B-RL-Zero-Math",
+      "corr_delta_pass1_delta_cap_rate": 0.012151854025218798,
+      "corr_delta_pass1_delta_mean_tokens": -0.17939201020564846,
+      "corr_delta_pass1_delta_repeat_rate": 0.0017720183861642152,
+      "focus": "ours__qh_maglin__Math_p80__",
+      "interpretation": "descriptive problem-level association; not causal",
+      "mean_delta_pass1": -0.017013888888888887,
+      "question_losses": 37,
+      "question_ties": 29,
+      "question_wins": 24,
+      "reference": "allenai__Olmo-3-7B-RL-Zero-Math"
+    },
+    {
+      "contrast": "ours__qh_hybrid_k4096__Math_p80 minus allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "corr_delta_pass1_delta_cap_rate": -0.0941774819836949,
+      "corr_delta_pass1_delta_mean_tokens": -0.42693052506211315,
+      "corr_delta_pass1_delta_repeat_rate": -0.15267575745734505,
+      "focus": "ours__qh_hybrid_k4096__Math_p80",
+      "interpretation": "descriptive problem-level association; not causal",
+      "mean_delta_pass1": -0.00034722222222222224,
+      "question_losses": 30,
+      "question_ties": 30,
+      "question_wins": 30,
+      "reference": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600"
+    },
+    {
+      "contrast": "ours__qh_hybrid_k4096__Math_p80 minus allenai__Olmo-3-7B-RL-Zero-Math",
+      "corr_delta_pass1_delta_cap_rate": 0.03536333998132118,
+      "corr_delta_pass1_delta_mean_tokens": -0.25565752219130466,
+      "corr_delta_pass1_delta_repeat_rate": 0.10273441126821885,
+      "focus": "ours__qh_hybrid_k4096__Math_p80",
+      "interpretation": "descriptive problem-level association; not causal",
+      "mean_delta_pass1": 0.00625,
+      "question_losses": 26,
+      "question_ties": 36,
+      "question_wins": 28,
+      "reference": "allenai__Olmo-3-7B-RL-Zero-Math"
+    },
+    {
+      "contrast": "allenai__Olmo-3-7B-RL-Zero-Math minus allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "corr_delta_pass1_delta_cap_rate": 0.1217521972496736,
+      "corr_delta_pass1_delta_mean_tokens": -0.0052960206191516555,
+      "corr_delta_pass1_delta_repeat_rate": 0.06354703459359143,
+      "focus": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "interpretation": "descriptive problem-level association; not causal",
+      "mean_delta_pass1": -0.006597222222222222,
+      "question_losses": 33,
+      "question_ties": 32,
+      "question_wins": 25,
+      "reference": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600"
+    }
+  ],
+  "schema": "p80_aime_trajectory_diagnostics_v1"
+}

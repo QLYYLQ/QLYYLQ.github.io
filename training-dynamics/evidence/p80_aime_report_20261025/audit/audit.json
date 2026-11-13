@@ -1,0 +1,313 @@
+{
+  "schema": "p80_aime_independent_smallfile_audit_v1",
+  "generated_at": "2026-10-25T19:10:30.482973+08:00",
+  "status": "PASS_FULL_CHAIN_SCOPED",
+  "scope": {
+    "independently_read": "manifest, protocol, datasets, source manifest, provenance, strict gate, completion receipt, all 32 results JSONL files, all 32 finals",
+    "full_sample_integration": "multi-GB sample streams were independently scanned by the trajectory audit; their 32 SHA256 values are compared here with the bound strict gate values",
+    "not_independently_rehashed": "ordered sample-part streams; the production gate verified their byte concatenation equals each independently hashed merged sample file"
+  },
+  "failures": [],
+  "inventory": {
+    "cells": 32,
+    "track_counts": {
+      "Math": 15,
+      "Mix": 11,
+      "Code": 6
+    },
+    "labels_unique": 32,
+    "manifest_matches_gate": true,
+    "manifest_matches_input_matrix": true,
+    "diagnostic_cells": [
+      "ours__qh_maglin__Math_p80__freeze1800",
+      "ours__qh_maglin__Math_p80__freeze2000",
+      "ours__qh_hybrid_k4096__Math_p80__freeze1800",
+      "ours__qh_hybrid_k4096__Math_p80__freeze2000",
+      "ours__qh_maglin__Mix_p80__freeze500",
+      "ours__qh_maglin__Mix_p80__freeze900",
+      "ours__qh_maglin__Mix_p80__freeze1000"
+    ],
+    "future_information_cells": [
+      "ours__qh_maglin__Math_p80__freeze1800",
+      "ours__qh_maglin__Math_p80__freeze2000",
+      "ours__qh_hybrid_k4096__Math_p80__freeze1800",
+      "ours__qh_hybrid_k4096__Math_p80__freeze2000",
+      "ours__qh_maglin__Mix_p80__freeze900",
+      "ours__qh_maglin__Mix_p80__freeze1000"
+    ]
+  },
+  "protocol": {
+    "evaluation": {
+      "bench": "aime",
+      "n_problems": 90,
+      "n": 32,
+      "k": 16,
+      "seed": 0,
+      "temperature": 1.0,
+      "top_p": 1.0,
+      "top_k": -1,
+      "ignore_eos": false,
+      "repetition_penalty": 1.0,
+      "max_tokens": 32768,
+      "max_model_len": 49152,
+      "sample_chars": 4194304,
+      "limit": 0,
+      "generation_mode": "production",
+      "mock_llm": false,
+      "canary": false,
+      "token_ids_stored": true,
+      "text_storage": "full_fail_on_sample_chars",
+      "prompt_token_ids_verified": true,
+      "cudagraph_mode": "PIECEWISE",
+      "safetensors_load_strategy": "prefetch",
+      "max_num_seqs": 4,
+      "prompt": "checkpoint tokenizer plus its own chat_template.jinja; one user message; tokenize=False; add_generation_prompt=True",
+      "prompt_token_check": "apply_chat_template(tokenize=True) equals the rendered text tokenized with add_special_tokens=False and equals RequestOutput.prompt_token_ids",
+      "datasets": [
+        {
+          "relpath": "aimo-aime/test.jsonl",
+          "rows": 20,
+          "sha256": "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe"
+        },
+        {
+          "relpath": "aimo-aime/train.jsonl",
+          "rows": 70,
+          "sha256": "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+        }
+      ]
+    },
+    "gate_matches_protocol": true,
+    "source_package_files_checked": 46,
+    "source_hash_mismatches": []
+  },
+  "dataset": {
+    "records": [
+      {
+        "path": "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "rows": 20,
+        "sha256": "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe"
+      },
+      {
+        "path": "$DATA_ROOT/data/aimo-aime/train.jsonl",
+        "rows": 70,
+        "sha256": "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      }
+    ],
+    "combined_rows": 90,
+    "unique_problem_texts": 90,
+    "local_split_warning": "test=20 and train=70 are both concatenated into one 90-problem evaluation panel; the names do not establish a held-out split",
+    "upstream_match": "separately verified exact problem+answer set equality to all 90 rows of AI-MO/aimo-validation-aime; see dataset_source_verification.json"
+  },
+  "binding": {
+    "gate_status": "PASS",
+    "gate_created_at": "2026-10-25T16:17:12.652317+08:00",
+    "gate_sha256": "f292749161b552d215c1be50fc8ea3fa99d418216686ea4a75248650caa7c5b6",
+    "completion_receipt_gate_hash_matches": true,
+    "input_hash_checks": {
+      "manifest": true,
+      "protocol": true,
+      "source_manifest": true,
+      "provenance": true
+    },
+    "analysis_inventory_sha256_matches": true,
+    "artifact_hash_mismatches": [],
+    "pre_submit_vs_production_model_fingerprint_mismatches": [],
+    "model_weight_identity": {
+      "shards": 96,
+      "sampled_one_mib_windows": 288,
+      "full_shard_sha256_records": 0,
+      "assessment": "model identity binds size plus head/middle/tail 1 MiB windows per shard, not a full-byte shard digest"
+    }
+  },
+  "compact_result_crosscheck": {
+    "result_problem_rows": 2880,
+    "expected_result_problem_rows": 2880,
+    "correctness_vector_positions": 92160,
+    "expected_correctness_vector_positions": 92160,
+    "duplicate_problem_rows": 0,
+    "missing_problem_rows": 0,
+    "final_aggregate_mismatches": [],
+    "earliest_result_timestamp": "2026-10-14T04:18:00.891033+08:00",
+    "latest_result_timestamp": "2026-10-25T15:23:44.075155+08:00",
+    "result_rows_by_app_prefix": {
+      "[运行节点]": 780,
+      "[运行节点]": 2100
+    }
+  },
+  "full_sample_crosscheck": {
+    "available": true,
+    "validation_path": "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/trajectories/validation.json",
+    "validation_sha256": "e84638f1431213c9ffff0fdc17ebcb0519071d3373060160cef11ceed76bca20",
+    "status": "PASS",
+    "cells": 32,
+    "samples": 92160,
+    "sample_bytes": 10485399440,
+    "raw_sample_hash_mismatches_vs_gate": [],
+    "final_hash_mismatches_vs_gate": [],
+    "validated": {
+      "final_metrics_and_per_problem_vectors_match": true,
+      "length_finish_equals_32768_tokens": true,
+      "stored_correct_replays": true,
+      "stored_extracted_answer_replays": true,
+      "token_ids_length_equals_num_tokens": true,
+      "uid_and_gold_match_pinned_dataset": true
+    },
+    "completion_diversity": {
+      "path": "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/trajectories/completion_diversity.json",
+      "sha256": "0d09efd42a18cd742cb07244201dd49de2f33453cc225faf7cb61418b14f7865",
+      "global": {
+        "cells": 32,
+        "draws": 92160,
+        "extra_exact_text_duplicate_draw_rate": 6.510416666666667e-05,
+        "extra_exact_text_duplicate_draws": 6,
+        "extra_exact_token_duplicate_draw_rate": 6.510416666666667e-05,
+        "extra_exact_token_duplicate_draws": 6,
+        "groups_with_exact_text_duplicate": 5,
+        "groups_with_exact_token_duplicate": 5,
+        "label_problem_groups": 2880,
+        "max_text_multiplicity": 3,
+        "max_token_multiplicity": 3,
+        "questions_per_cell": 90,
+        "text_token_partition_discordant_pairs": 0
+      },
+      "cells_with_exact_duplicates": [
+        {
+          "draws": 2880,
+          "extra_exact_text_duplicate_draw_rate": 0.0020833333333333333,
+          "extra_exact_text_duplicate_draws": 6,
+          "extra_exact_token_duplicate_draw_rate": 0.0020833333333333333,
+          "extra_exact_token_duplicate_draws": 6,
+          "label": "ours__lin_elem__Mix_p80__",
+          "max_text_multiplicity": 3,
+          "max_token_multiplicity": 3,
+          "median_distinct_text_per_32": 32.0,
+          "median_distinct_token_per_32": 32.0,
+          "min_distinct_text_per_32": 30,
+          "min_distinct_token_per_32": 30,
+          "questions": 90,
+          "questions_with_exact_text_duplicate": 5,
+          "questions_with_exact_token_duplicate": 5,
+          "text_token_partition_discordant_pairs": 0
+        }
+      ],
+      "primary_comparison_labels_with_exact_duplicates": {},
+      "boundary": "Exact duplicates can expose repeated streams, but are not a complete test of statistical independence. Their absence cannot prove independent draws, and naturally sampled trajectories can occasionally be identical."
+    }
+  },
+  "token_text_decode_crosscheck": {
+    "available": true,
+    "analysis_path": "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/budget/analysis.json",
+    "analysis_sha256": "70ade77690e7db08b7091916ba0684a2c01739b6dbc974aec89734dfefb12ba6",
+    "sample_hash_mismatches_vs_gate": [],
+    "decode_audit": {
+      "cells": 32,
+      "decoded_full_direct_exact": 92126,
+      "decoded_full_exact": 92160,
+      "decoded_full_mismatches": 0,
+      "decoded_full_terminal_incomplete_adjustments": 34,
+      "decoded_full_pending_token_counts": {
+        "1": 33,
+        "2": 1
+      },
+      "decoded_prefix_count": 23572,
+      "decoded_prefix_terminal_incomplete_adjustments": 241,
+      "decoded_prefix_pending_token_counts": {
+        "1": 236,
+        "2": 5
+      },
+      "short_fulltext_reused_after_decode_check": 68588,
+      "pinned_full_scorer_exact": 92160,
+      "pinned_full_scorer_mismatches": 0,
+      "full_text_cap_exceptions": 0
+    },
+    "method": {
+      "clean_up_tokenization_spaces": false,
+      "implementation": "tokenizers.Tokenizer.decode_batch plus exact vLLM terminal pending-token fallback",
+      "skip_special_tokens": true,
+      "terminal_incomplete_utf8": "if the decoded suffix ends in U+FFFD, withhold the shortest terminal token suffix as vLLM incremental detokenization does",
+      "tokenizers_version": "0.21.4"
+    },
+    "interpretation": "all completion token IDs reproduce stored full text under the vLLM incremental pending-byte rule; 16k remains a same-trajectory prefix replay, not fresh generation"
+  },
+  "pre_registration": {
+    "plan_claims_registered_before_generation": true,
+    "plan_mtime": "2026-10-14T03:06:46.537959+08:00",
+    "manifest_mtime": "2026-10-14T03:33:25.489170+08:00",
+    "protocol_mtime": "2026-10-14T03:36:54.783941+08:00",
+    "pre_submit_provenance_created_at": "2026-10-14T03:43:06.180127+08:00",
+    "production_provenance_created_at": "2026-10-14T04:01:15.815248+08:00",
+    "earliest_result_timestamp": "2026-10-14T04:18:00.891033+08:00",
+    "mtime_precedes_earliest_result_seconds": 4274.3530740737915,
+    "plan_in_submitted_source_manifest": false,
+    "immutable_binding_assessment": "documented before the earliest result by filesystem mtime, but the analysis plan is absent from the submitted source/provenance hash chain"
+  },
+  "primary_inference_crosscheck": [
+    {
+      "a": "ours__lin_elem__Math_p80__",
+      "b": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "metric": "sampled pass@1",
+      "paired_problem_bootstrap": {
+        "estimate": -0.057291666666666664,
+        "lo": -0.0763888888888889,
+        "hi": -0.03923611111111111,
+        "replicates": 10000,
+        "seed": 0,
+        "unit": "AIME problem"
+      },
+      "negative_problem_count": 49,
+      "zero_problem_count": 28,
+      "positive_problem_count": 13,
+      "paired_problem_sd": 0.09158909404987257
+    },
+    {
+      "a": "ours__qh_maglin__Math_p80__",
+      "b": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "metric": "sampled pass@1",
+      "paired_problem_bootstrap": {
+        "estimate": -0.02361111111111111,
+        "lo": -0.03888888888888889,
+        "hi": -0.009375,
+        "replicates": 10000,
+        "seed": 0,
+        "unit": "AIME problem"
+      },
+      "negative_problem_count": 40,
+      "zero_problem_count": 31,
+      "positive_problem_count": 19,
+      "paired_problem_sd": 0.07155462782236034
+    }
+  ],
+  "interpretation_checks": {
+    "target_minus_donor_pass1": -0.006597222222222199,
+    "target_minus_donor_percentage_points": -0.6597222222222199,
+    "recovery_fraction_allowed": false,
+    "recovery_fraction_reason": "the official Math target-minus-donor pass@1 gap is small and negative under this protocol",
+    "sampling_unit": "90 problems; retain all 32 fixed decoding draws within each resampled problem",
+    "bootstrap_limit": "problem bootstrap covers variation over this 90-problem panel with fixed draws; it does not include independent decoding-seed replication",
+    "multiplicity": "the two registered inferiority tests require Holm adjustment if an individual family-level significance claim is made",
+    "sampled_pass1_definition": "mean correctness of 32 stochastic completions per problem, averaged over 90 problems; it is not a greedy single completion"
+  },
+  "strict_gate_coverage": [
+    "manifest-defined 32-cell universe and exact inventory",
+    "90 result rows and 90x32 full sample rows per cell",
+    "no duplicate/missing sample keys",
+    "sample-parts byte concatenation equals merged sample stream",
+    "full stored token-id lengths, finish accounting and context limits",
+    "full-text score replay with the pinned extractor and gold equality",
+    "per-problem and final aggregate recomputation",
+    "protocol, dataset, source-package and sampled model fingerprints"
+  ],
+  "strict_gate_nonclaims": [
+    "semantic adequacy of the pinned answer extractor",
+    "independent correctness of every gold answer",
+    "terminal-gate retokenization of every prompt; prompt equality was checked by the generation evaluator and the gate verifies the saved identity records",
+    "statistical independence or content diversity of the 32 sample rows per problem",
+    "completion token-ID to stored-text decode round-trip; the gate checks token-ID shape and counts, while the exact-prefix audit validates decoding separately",
+    "full-byte cryptographic identity of every weight shard",
+    "cryptographic attestation that the runtime loaded the claimed weights",
+    "externally signed or WORM protection against coordinated rewriting of raw artifacts, gate and receipt",
+    "generalization beyond this public 90-problem AIME panel",
+    "causal attribution of score differences to temperature alone",
+    "training-cost savings or deployability of future-information diagnostics"
+  ]
+}

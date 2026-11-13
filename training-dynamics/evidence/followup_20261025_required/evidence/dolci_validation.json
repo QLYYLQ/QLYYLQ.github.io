@@ -1,0 +1,341 @@
+{
+  "checks": {
+    "all_19_matched_dolci_gold_values_match_aime_gold_numerically": true,
+    "all_90_raw_aime_gold_values_match_replay_gold_numerically": true,
+    "current_aime_question_and_raw_gold_hashes_match_registered_map": true,
+    "every_overlap_has_one_unique_dolci_row": true,
+    "independent_dolci_row_ids_match_registered_map": true,
+    "independent_overlap_flags_match_registered_map": true,
+    "output_problem_idx_exact_0_through_89": true,
+    "output_uid_exact_aime_zero_padded": true,
+    "registered_manifest_declares_19_71": true
+  },
+  "counts": {
+    "aime_rows": 90,
+    "dolci_train_rows": 13266,
+    "matched_gold_exact_string_equal": 14,
+    "matched_gold_integer_equal": 19,
+    "matched_gold_leading_zero_only_differences": 5,
+    "non_overlap": 71,
+    "overlap": 19,
+    "overlap_in_aime_test20": 5,
+    "overlap_in_aime_train70": 14,
+    "replay_gold_exact_string_equal_to_raw_aime": 70,
+    "replay_gold_integer_equal_to_raw_aime": 90
+  },
+  "gold_note": "Five matched AIME raw answers are zero-padded (049, 081, 033, 012, 072); Dolci and replay store the same integer answers without leading zeroes. The overlap flag is based only on exact question text, as registered.",
+  "inputs": {
+    "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/statistics/problem_metrics.csv": {
+      "labels": 32,
+      "rows": 2880,
+      "sha256": "31e3516387b56d6ee4dd3233681ead134766034ec21751f6cc3d253c65740d90"
+    },
+    "$REMOTE_HOME/mask_analysis/local_results/synthesis_followup_20260927/continuation_data_overlap_20260927/aime90_dolci_overlap_map.csv": {
+      "rows": 90,
+      "sha256": "67b2c58eea0095a27b903a8886819438fc197cf7e4f3708b326f297aa28078ec"
+    },
+    "$REMOTE_HOME/mask_analysis/local_results/synthesis_followup_20260927/continuation_data_overlap_20260927/build_overlap_maps.py": {
+      "sha256": "2b008704f27fc31a7df5080e0cf9ebf14e52c64e7e825de601694f076ea85473"
+    },
+    "$REMOTE_HOME/mask_analysis/local_results/synthesis_followup_20260927/continuation_data_overlap_20260927/overlap_maps_manifest.json": {
+      "sha256": "4ffbb8a6f6834312fd91a55dd1f5d97dfa80255455bb1ca40b5befd7a76d1c26"
+    },
+    "$DATA_ROOT/data/aimo-aime/test.jsonl": {
+      "rows": 20,
+      "sha256": "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe"
+    },
+    "$DATA_ROOT/data/aimo-aime/train.jsonl": {
+      "rows": 70,
+      "sha256": "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+    },
+    "$DATA_ROOT/data/allenai/Dolci-RL-Zero-Math-7B/verl/train.parquet": {
+      "rows": 13266,
+      "sha256": "1e15f56845e70dad480fb5e6833bffea974ecf6c4341ea4530586694b7a1675c"
+    }
+  },
+  "matched_rows": [
+    {
+      "aime_raw_gold": "049",
+      "dolci_gold": "49",
+      "dolci_row_id": 5075,
+      "gold_exact_string_equal_aime_vs_dolci": false,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 2,
+      "question_sha256": "10da6e1013dd331d8461e11fe2519c3a391e377718596b44e8bcff77b5adc6a1",
+      "replay_gold_answer": "49",
+      "source_index": 2,
+      "source_split": "test",
+      "uid": "aime-002"
+    },
+    {
+      "aime_raw_gold": "756",
+      "dolci_gold": "756",
+      "dolci_row_id": 5052,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 3,
+      "question_sha256": "5a51def1060dd0095f962a5f40ab88f0fec556e1df0ae56875da2bb712a2df56",
+      "replay_gold_answer": "756",
+      "source_index": 3,
+      "source_split": "test",
+      "uid": "aime-003"
+    },
+    {
+      "aime_raw_gold": "081",
+      "dolci_gold": "81",
+      "dolci_row_id": 5081,
+      "gold_exact_string_equal_aime_vs_dolci": false,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 11,
+      "question_sha256": "7b23eede27da61a3897269621fb2d55c9d8df580201c0e48cc2588b7b2a1912a",
+      "replay_gold_answer": "81",
+      "source_index": 11,
+      "source_split": "test",
+      "uid": "aime-011"
+    },
+    {
+      "aime_raw_gold": "033",
+      "dolci_gold": "33",
+      "dolci_row_id": 5077,
+      "gold_exact_string_equal_aime_vs_dolci": false,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 14,
+      "question_sha256": "effcab19e0aed5c9083788a6f9f909277adbe2f742842e02b76d3bc1241f37bc",
+      "replay_gold_answer": "33",
+      "source_index": 14,
+      "source_split": "test",
+      "uid": "aime-014"
+    },
+    {
+      "aime_raw_gold": "719",
+      "dolci_gold": "719",
+      "dolci_row_id": 5071,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 15,
+      "question_sha256": "0ad93fe26435b76d88ad58a85b362d95dd75d96aace3338e0572268d3451a357",
+      "replay_gold_answer": "719",
+      "source_index": 15,
+      "source_split": "test",
+      "uid": "aime-015"
+    },
+    {
+      "aime_raw_gold": "167",
+      "dolci_gold": "167",
+      "dolci_row_id": 5085,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 20,
+      "question_sha256": "9c577b903f8c16c3706882cdebb77be6cf5c2cf240fcaa802a26c34630f10c0f",
+      "replay_gold_answer": "167",
+      "source_index": 0,
+      "source_split": "train",
+      "uid": "aime-020"
+    },
+    {
+      "aime_raw_gold": "242",
+      "dolci_gold": "242",
+      "dolci_row_id": 5041,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 25,
+      "question_sha256": "9c4ca998b3407fc07d367031b1657bc15cd7080f2be706d002e48f4ac086be19",
+      "replay_gold_answer": "242",
+      "source_index": 5,
+      "source_split": "train",
+      "uid": "aime-025"
+    },
+    {
+      "aime_raw_gold": "191",
+      "dolci_gold": "191",
+      "dolci_row_id": 5064,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 28,
+      "question_sha256": "4884c0258b65791d89937f814551c1ec7054967b40e8b73974f8fe4dcb716fb5",
+      "replay_gold_answer": "191",
+      "source_index": 8,
+      "source_split": "train",
+      "uid": "aime-028"
+    },
+    {
+      "aime_raw_gold": "125",
+      "dolci_gold": "125",
+      "dolci_row_id": 5076,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 29,
+      "question_sha256": "fc049b1258db27fbb7170dde6cc5fcba576522ac6f606fb58defd1411841a245",
+      "replay_gold_answer": "125",
+      "source_index": 9,
+      "source_split": "train",
+      "uid": "aime-029"
+    },
+    {
+      "aime_raw_gold": "012",
+      "dolci_gold": "12",
+      "dolci_row_id": 5069,
+      "gold_exact_string_equal_aime_vs_dolci": false,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 32,
+      "question_sha256": "6067792c8f234eeecc4eee46362a7fca14ac98273de73c5fe19374f7f5f47491",
+      "replay_gold_answer": "12",
+      "source_index": 12,
+      "source_split": "train",
+      "uid": "aime-032"
+    },
+    {
+      "aime_raw_gold": "607",
+      "dolci_gold": "607",
+      "dolci_row_id": 5067,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 48,
+      "question_sha256": "a8d0a59f01b5ffac51758acdb51ee56a8587e6c231bd95007812550a0946c405",
+      "replay_gold_answer": "607",
+      "source_index": 28,
+      "source_split": "train",
+      "uid": "aime-048"
+    },
+    {
+      "aime_raw_gold": "751",
+      "dolci_gold": "751",
+      "dolci_row_id": 5087,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 49,
+      "question_sha256": "99f21268b1b76ff80912c926a1481c8118e5b485082100a9a4434115736e84da",
+      "replay_gold_answer": "751",
+      "source_index": 29,
+      "source_split": "train",
+      "uid": "aime-049"
+    },
+    {
+      "aime_raw_gold": "247",
+      "dolci_gold": "247",
+      "dolci_row_id": 5083,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 56,
+      "question_sha256": "db87f375e975e3ccb9b4c461350c8b463e1553772aa6590e561c87764bc45425",
+      "replay_gold_answer": "247",
+      "source_index": 36,
+      "source_split": "train",
+      "uid": "aime-056"
+    },
+    {
+      "aime_raw_gold": "834",
+      "dolci_gold": "834",
+      "dolci_row_id": 5042,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 58,
+      "question_sha256": "e529d8f9bc27ac69d468f3cd227431692b2d9734e1a289fe1639018b20fcae6e",
+      "replay_gold_answer": "834",
+      "source_index": 38,
+      "source_split": "train",
+      "uid": "aime-058"
+    },
+    {
+      "aime_raw_gold": "140",
+      "dolci_gold": "140",
+      "dolci_row_id": 5062,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 60,
+      "question_sha256": "b529f82229fe2f830747106175f307e0517cf824f90cac45a607d3225409068a",
+      "replay_gold_answer": "140",
+      "source_index": 40,
+      "source_split": "train",
+      "uid": "aime-060"
+    },
+    {
+      "aime_raw_gold": "250",
+      "dolci_gold": "250",
+      "dolci_row_id": 5068,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 68,
+      "question_sha256": "a5f56d0bbefd6a205823e2363020bb6c215692962a931fa79ed35454f15f48c3",
+      "replay_gold_answer": "250",
+      "source_index": 48,
+      "source_split": "train",
+      "uid": "aime-068"
+    },
+    {
+      "aime_raw_gold": "072",
+      "dolci_gold": "72",
+      "dolci_row_id": 5043,
+      "gold_exact_string_equal_aime_vs_dolci": false,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 70,
+      "question_sha256": "7b153bafd54a08d1c6b5bdadef9a19102a5c003302b9bdc8a6967bb173c60562",
+      "replay_gold_answer": "72",
+      "source_index": 50,
+      "source_split": "train",
+      "uid": "aime-070"
+    },
+    {
+      "aime_raw_gold": "392",
+      "dolci_gold": "392",
+      "dolci_row_id": 5058,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 77,
+      "question_sha256": "2d4f06cf8ed005e4bfd4128a91abd5fb8b7d30edc26edb4a041f9c9a0f41372d",
+      "replay_gold_answer": "392",
+      "source_index": 57,
+      "source_split": "train",
+      "uid": "aime-077"
+    },
+    {
+      "aime_raw_gold": "180",
+      "dolci_gold": "180",
+      "dolci_row_id": 5054,
+      "gold_exact_string_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_dolci": true,
+      "gold_integer_equal_aime_vs_replay": true,
+      "problem_idx": 83,
+      "question_sha256": "50367d86fc853353ab01969e4e1078b7d5645025633c682c44fe5119ab8500ab",
+      "replay_gold_answer": "180",
+      "source_index": 63,
+      "source_split": "train",
+      "uid": "aime-083"
+    }
+  ],
+  "matching_rule": "Exact Python string equality on the complete question text; no trimming, normalization, or fuzzy/paraphrase matching.",
+  "ordering": "AIME test.jsonl physical rows 0..19, then train.jsonl physical rows 0..69, mapped to problem_idx 0..89 and uid aime-000..aime-089.",
+  "output": {
+    "columns": [
+      "problem_idx",
+      "uid",
+      "in_dolci",
+      "dolci_row_id"
+    ],
+    "path": "$REMOTE_HOME/mask_analysis/local_results/followup_20261025/dolci_oldcode/dolci_overlap.csv",
+    "rows": 90,
+    "sha256": "5b369724b9c29e50edea5a6534c5c9e66ab6db55bdc445534dc5dae43780eba4"
+  },
+  "schema": "followup_20261025_dolci_overlap_validation_v1",
+  "scope": "AIME90 exact-question overlap with Dolci-RL-Zero-Math-7B train",
+  "source_mutation": false,
+  "status": "PASS"
+}

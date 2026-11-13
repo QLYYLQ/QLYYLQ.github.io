@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>密集续训与短程外推诊断 · 训练动力学</title><meta name="description" content="从现有结果表整理幅度、舍入与真实后续更新分解的对照，保留多重比较口径。">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="training-dynamics.css"><link rel="icon" href="favicon.svg">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a> / <a href="./">训练动力学</a> / 研究记录</nav>
+<header class="top"><div class="eyebrow">2026-10-12—13 · 研究总览</div><h1>密集续训与短程外推诊断</h1><p class="lead">从现有结果表整理幅度、舍入与真实后续更新分解的对照，保留多重比较口径。</p>
+<p class="source-note">按原研究日期归档；后续补充见<a href="./#reports">报告目录</a>。<a href="sources/short-horizon.md" download>Markdown</a></p></header>
+<details class="report-toc"><summary>章节目录</summary><div class="toc">
+<ul>
+<li><a href="#_1">如何阅读这些对照</a></li>
+<li><a href="#_2">幅度收益依赖前缀，舍入对照未检出稳定差异</a></li>
+<li><a href="#_3">选定对照的原始数值</a></li>
+<li><a href="#_4">证据与范围</a></li>
+</ul>
+</div>
+</details><main id="content" class="prose"><p>本页依据 10 月 12—13 日保存在本地的结果表整理，不是原总报告的一章，也未重新运行实验。研究对象为 runA 的密集续训与短程构造，任务为 MATH-500 和 GSM8K。u40、u64、u80 表示续训 optimizer update；它们不是官方轨迹的 step400、step1600 等步号。</p>
+<h2 id="_1">如何阅读这些对照</h2>
+<p>SR 为随机舍入，RNE 为最近偶数舍入。<code>s40</code>、<code>s64</code> 表示使用的前缀末端。幅度 c 表示沿当前累计更新方向的缩放。<code>orth(D)</code> 使用真实后续更新 D 的正交分量，包含未来信息，只是诊断。<code>supp(D)</code> 和 <code>comp(D)</code> 也依赖真实后续更新，不能当作可部署的预测器。</p>
+<p>配对区间来自原分析脚本的题级 bootstrap（10,000 次，seed=0）；MATH-500 为 500 题，GSM8K 为 1,319 题，每题 8 个样本。下面同时给出原始 95% 区间和后续保存的 Holm p 值，二者的校正口径不同。结果条件于已有样本，不覆盖独立训练或解码种子的全部不确定性。</p>
+<h2 id="_2">幅度收益依赖前缀，舍入对照未检出稳定差异</h2>
+<p>s40 的 c1.88 SR 相对 donor 在两项任务的点估计均提高，但 MATH-500 的 Holm p=0.084。s64 的 c1.19 SR 相对 donor 的两个区间均跨零。两组 SR 与已保存 RNE 的比较也均跨零，不能据此把舍入方式当作主要改善来源。s40 的 c2、c3 对照在本面板较好；事后扫描幅度不等于已经确定一个可泛化的缩放规则。</p>
+<h2 id="_3">选定对照的原始数值</h2>
+<p>差值和区间均为 pass@1 百分点；比较方向严格沿用表内 a−b。含未来信息的 orth(D) 行用于解释信息位置。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>对照</th>
+<th>任务</th>
+<th style="text-align: right;">差值（pp）</th>
+<th style="text-align: right;">原始 95% 区间</th>
+<th style="text-align: right;">Holm p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s40 mag c1.88: SR vs saved RNE</td>
+<td>math500</td>
+<td style="text-align: right;">-0.83</td>
+<td style="text-align: right;">[-2.25, +0.60]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr>
+<td>s40 mag c1.88: SR vs saved RNE</td>
+<td>gsm8k</td>
+<td style="text-align: right;">-0.33</td>
+<td style="text-align: right;">[-1.31, +0.63]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr>
+<td>s64 mag c1.19: SR vs saved RNE</td>
+<td>math500</td>
+<td style="text-align: right;">-0.57</td>
+<td style="text-align: right;">[-2.10, +0.95]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr>
+<td>s64 mag c1.19: SR vs saved RNE</td>
+<td>gsm8k</td>
+<td style="text-align: right;">+0.33</td>
+<td style="text-align: right;">[-0.71, +1.36]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr>
+<td>s40 mag c1.88 SR vs donor u40</td>
+<td>math500</td>
+<td style="text-align: right;">+2.27</td>
+<td style="text-align: right;">[+0.75, +3.82]</td>
+<td style="text-align: right;">0.0840</td>
+</tr>
+<tr>
+<td>s40 mag c1.88 SR vs donor u40</td>
+<td>gsm8k</td>
+<td style="text-align: right;">+3.45</td>
+<td style="text-align: right;">[+2.34, +4.55]</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr>
+<td>s64 mag c1.19 SR vs donor u64</td>
+<td>math500</td>
+<td style="text-align: right;">+0.10</td>
+<td style="text-align: right;">[-1.35, +1.57]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr>
+<td>s64 mag c1.19 SR vs donor u64</td>
+<td>gsm8k</td>
+<td style="text-align: right;">+0.41</td>
+<td style="text-align: right;">[-0.62, +1.45]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr>
+<td>s40 dose c2 vs donor</td>
+<td>math500</td>
+<td style="text-align: right;">+3.00</td>
+<td style="text-align: right;">[+1.50, +4.52]</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr>
+<td>s40 dose c2 vs donor</td>
+<td>gsm8k</td>
+<td style="text-align: right;">+3.61</td>
+<td style="text-align: right;">[+2.50, +4.73]</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr>
+<td>s40 dose c3 vs donor</td>
+<td>math500</td>
+<td style="text-align: right;">+4.32</td>
+<td style="text-align: right;">[+2.55, +6.15]</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr>
+<td>s40 dose c3 vs donor</td>
+<td>gsm8k</td>
+<td style="text-align: right;">+9.63</td>
+<td style="text-align: right;">[+8.43, +10.82]</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr>
+<td>s40 orth(D) vs donor</td>
+<td>math500</td>
+<td style="text-align: right;">+6.12</td>
+<td style="text-align: right;">[+4.62, +7.62]</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr>
+<td>s40 orth(D) vs donor</td>
+<td>gsm8k</td>
+<td style="text-align: right;">+8.24</td>
+<td style="text-align: right;">[+7.12, +9.33]</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr>
+<td>s40 orth vs target u80</td>
+<td>math500</td>
+<td style="text-align: right;">+0.00</td>
+<td style="text-align: right;">[-1.23, +1.23]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr>
+<td>s40 orth vs target u80</td>
+<td>gsm8k</td>
+<td style="text-align: right;">+0.40</td>
+<td style="text-align: right;">[-0.53, +1.31]</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="_4">证据与范围</h2>
+<p>真实后续更新的正交分量可在本批测量中接近 u80 的功能，但它使用了目标信息，不能据此计算训练节省。没有检出差异也不等于等价。此处只整理已有诊断；实际加速仍需相同后续训练预算下的学习曲线对照。</p>
+<p><a href="evidence/results_20261012/diag_eval_analysis/cells.csv">完整 cell 指标</a> · <a href="evidence/results_20261012/diag_eval_analysis/contrasts.json">全部配对区间</a> · <a href="evidence/results_20261012/round3/diag_multiplicity.json">多重比较结果</a> · <a href="evidence/results_20261012/round3/curve_contrasts.json">续训曲线对照</a> · <a href="evidence/results_20261012/analyse_diag_eval.py">原分析脚本</a> · <a href="evidence/make_diag_ckpts.py">构造定义</a></p></main>
+<footer class="site"><a href="./">训练动力学</a><a href="./#materials">资料与来源</a><a href="../">主页</a></footer></div></body></html>

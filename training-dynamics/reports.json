@@ -1,0 +1,10 @@
+[
+  {"slug":"overview","title":"权重几何、外推与推理流形","date":"2026-10-10","group":"研究总览","source":"FINAL_REPORT.html","format":"html","description":"三条官方轨迹、67 个有效 checkpoint：权重更新结构、留出预测、功能评测与隐状态几何。"},
+  {"slug":"short-horizon","title":"密集续训与短程外推诊断","date":"2026-10-12—13","group":"研究总览","source":"short-horizon.md","format":"md","description":"从现有结果表整理幅度、舍入与真实后续更新分解的对照，保留多重比较口径。"},
+  {"slug":"p80-aime","title":"p80 外推的 AIME 表现与生成轨迹","date":"2026-10-25","group":"AIME 专项","source":"p80_aime_report_20261025/REPORT.html","format":"html","description":"32 个 checkpoint、90 道题、92,160 条输出；包含主比较、配方、采样协议与精确 token 前缀分析。"},
+  {"slug":"followup","title":"补充评测：14 个必做条件","date":"2026-10-27","group":"后续实验","source":"followup_20261025_required/reports/FOLLOWUP_REPORT.md","format":"md","description":"基座、采样协议、Code 与长预算对照；附由逐题表重算的完整条件汇总。"},
+  {"slug":"random-walk","title":"匹配随机游走与漂移扫描","date":"2026-10-27","group":"后续实验","source":"followup_20261025_required/reports/rw_method.md","format":"md","description":"18 个配置、576 条匹配随机游走与 2,880 条漂移轨迹，检验时间低维性的参考水平。"},
+  {"slug":"dataset-overlap","title":"AIME 与训练题面重合核对","date":"2026-10-27","group":"后续实验","source":"followup_20261025_required/reports/dolci_overlap.md","format":"md","description":"90 道 AIME 中 19 道与 Dolci 训练题面逐字相同；同时保存旧 Code 协议结果的核验说明。"},
+  {"slug":"code-seed","title":"Code 末步：C7 独立种子补充","date":"2026-10-27","group":"后续实验","source":"followup_20261025_C7/reports/C7_REPORT.md","format":"md","description":"seed=1 的 90 题、2,880 条样本已经完成，补齐先前必做包未纳入的 C7 条件。"},
+  {"slug":"data-dictionary","title":"总报告数据字典","date":"2026-10-10","group":"资料说明","source":"DATA_DICTIONARY.md","format":"md","description":"历史研究包的目录、字段、命名与统计口径；本站的实际收录范围另见资料清单。"}
+]

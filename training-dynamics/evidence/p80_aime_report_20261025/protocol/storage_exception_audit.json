@@ -1,0 +1,44 @@
+{
+  "schema": "p80_aime_protocol_storage_exception_v1",
+  "status": "BOUNDED_NOT_EXACT",
+  "scope": "temperature_0.6_top_p_0.95 current-scorer replay only",
+  "cell": "ours__qh_maglin__Code_p80__",
+  "case": {
+    "problem_idx": 59,
+    "uid": "aime-059",
+    "sample_idx": 21,
+    "run_id": "[运行节点]-22369-1790738490",
+    "gold_answer": 45,
+    "num_tokens": 32768,
+    "finish_reason": "length",
+    "persisted_text_chars": 262144,
+    "sample_chars": 262144,
+    "explicit_text_truncated_flag": null,
+    "explicit_storage_truncated_flag": null,
+    "detected_by": "persisted_text_chars >= sample_chars",
+    "persisted_extracted_answer": null,
+    "persisted_correct": false,
+    "current_scorer_replay_correct": false
+  },
+  "observed_persisted_text_metrics": {
+    "protocol_t0_6_pass1": 0.2659722222222222,
+    "protocol_t1_0_pass1": 0.27152777777777776,
+    "t1_minus_t0_6_pass1": 0.005555555555555556,
+    "protocol_t0_6_pass16": 0.547865418966671,
+    "protocol_t1_0_pass16": 0.5630414321858752,
+    "t1_minus_t0_6_pass16": 0.015176013219204254
+  },
+  "conservative_one_unknown_sample_bounds": {
+    "assumption": "The missing text tail can change this one sample from wrong to correct; all other samples are fixed.",
+    "protocol_t0_6_pass1": [0.2659722222222222, 0.26631944444444444],
+    "t1_minus_t0_6_pass1": [0.005208333333333315, 0.005555555555555556],
+    "protocol_t0_6_pass16": [0.547865418966671, 0.5478654340506212],
+    "t1_minus_t0_6_pass16": [0.015175998135254054, 0.015176013219204254]
+  },
+  "score_impact": {
+    "observed_stored_vs_replay_change": 0,
+    "exact_full_text_score": "unrecoverable",
+    "paired_bootstrap_interval": "NA for an exact full-text claim",
+    "track_summary_policy": "exclude this cell from exact same-scorer Code summaries"
+  }
+}

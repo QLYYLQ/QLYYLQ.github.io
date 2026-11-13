@@ -1,0 +1,3 @@
+label,samples,observed_correct,capped_samples,wrong_capped_samples,observed_pass1,optimistic_correct_if_all_wrong_caps_rescued,optimistic_pass1_bound,donor_pass1_held_fixed,remaining_gap_to_donor_pp,interpretation
+ours__lin_elem__Math_p80__,2880,833,76,73,0.28923611111111114,906,0.3145833333333333,0.34652777777777777,3.194444444444444,deterministic optimistic bound on rescoring only observed capped failures; not measured performance or a longer-budget decoding prediction
+ours__qh_maglin__Math_p80__,2880,930,12,12,0.3229166666666667,942,0.32708333333333334,0.34652777777777777,1.9444444444444444,deterministic optimistic bound on rescoring only observed capped failures; not measured performance or a longer-budget decoding prediction

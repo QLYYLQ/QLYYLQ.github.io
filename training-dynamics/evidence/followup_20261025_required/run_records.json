@@ -1,0 +1,1195 @@
+{
+  "created_at": 1793050018.3787556,
+  "records": [
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/A1/math500/A1__base.json",
+        "final_sha256": "3b11cdd5ed83da16c13cd8cf03cb254b6bf46839629c4b0051d900f491de4e5c",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/A1/math500/A1__base.results.jsonl",
+        "results_sha256": "45d0b8e5bf6d2f2ee9c428531c93cf9cdf90d7e3ec14b4cbd1dd4867650c9c43",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/A1/math500/samples/A1__base.jsonl",
+        "samples_sha256": "e002f70f8ede4150a4710b2ae1f856e7020c610ad6bcfeab99c1220665c92a21"
+      },
+      "bench": "math500",
+      "cell_id": "A1",
+      "chat_template_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "base",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/pass8_converted/math500.jsonl"
+      ],
+      "dataset_sha256": [
+        "e5248492b07cf2dc157d1d3ea5130cc281362b1d73f02ee0a146d140e1c4a587"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 8,
+      "label": "A1__base",
+      "max_model_len": 18432,
+      "max_num_seqs": 32,
+      "max_tokens": 16384,
+      "model_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "277d7ea5c6159d4c2d6986a8a23757d1ef06acaa7abc2c40e0513446f7db0f85",
+        "generation_config.json": "52e8c2bef1d50a9aa99ce1da2a586ec40f524c1eded9c9ece289f3146b909ded",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "4cb2b52960bababa8ec27153831e405ef7811e3fad1226106e09c28e715cfb21",
+        "tokenizer.json": "73fd5254624f39a88e3faac6a8e11300fc3c735ed37880d4f4f08db898eaecca",
+        "tokenizer_config.json": "ffa5b2cfee6e73d5dc0a7d3b7e02eb6ed60a491dd782f2bd8ad2b4659b2aafc6",
+        "vocab.json": "9e14712c91b37c7aab74b1306baa46ac342d620637a4b44523cdc3aec7d24195"
+      },
+      "n": 8,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 500,
+        "checked_request_outputs": 500,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "score_sample",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.6,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/A2/math500/A2__base.json",
+        "final_sha256": "dc7c39692128277d6093e0b31ceef595483f00e4f7dae27f27afb251766960e3",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/A2/math500/A2__base.results.jsonl",
+        "results_sha256": "3a23ab3853351f674346fe56ebb4422b177166564bef7c0c3169dcddd6acef83",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/A2/math500/samples/A2__base.jsonl",
+        "samples_sha256": "ec17fa32d52c5c3ec95a9954b60faa2c4fbf8ceb45533331d2c65f5fd841b50f"
+      },
+      "bench": "math500",
+      "cell_id": "A2",
+      "chat_template_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "base",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/pass8_converted/math500.jsonl"
+      ],
+      "dataset_sha256": [
+        "e5248492b07cf2dc157d1d3ea5130cc281362b1d73f02ee0a146d140e1c4a587"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 8,
+      "label": "A2__base",
+      "max_model_len": 18432,
+      "max_num_seqs": 32,
+      "max_tokens": 16384,
+      "model_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "277d7ea5c6159d4c2d6986a8a23757d1ef06acaa7abc2c40e0513446f7db0f85",
+        "generation_config.json": "52e8c2bef1d50a9aa99ce1da2a586ec40f524c1eded9c9ece289f3146b909ded",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "4cb2b52960bababa8ec27153831e405ef7811e3fad1226106e09c28e715cfb21",
+        "tokenizer.json": "73fd5254624f39a88e3faac6a8e11300fc3c735ed37880d4f4f08db898eaecca",
+        "tokenizer_config.json": "ffa5b2cfee6e73d5dc0a7d3b7e02eb6ed60a491dd782f2bd8ad2b4659b2aafc6",
+        "vocab.json": "9e14712c91b37c7aab74b1306baa46ac342d620637a4b44523cdc3aec7d24195"
+      },
+      "n": 8,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 500,
+        "checked_request_outputs": 500,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "score_sample",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.8,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/A3/math500/A3__allenai__Olmo-3-7B-RL-Zero-Math-step_400.json",
+        "final_sha256": "6a81f6f284c6de05edba91d505c50ac3035a9d392ac4bc7314c77957503f9e8b",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/A3/math500/A3__allenai__Olmo-3-7B-RL-Zero-Math-step_400.results.jsonl",
+        "results_sha256": "84fe9756887748500135db37e61c55d3b8f26cc0b01b57f382e7b163efbf2f9a",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/A3/math500/samples/A3__allenai__Olmo-3-7B-RL-Zero-Math-step_400.jsonl",
+        "samples_sha256": "93e3cac89d4f5fde66f3a3e395a9b4cf115553abbae201a987b0d467f9dfd2c8"
+      },
+      "bench": "math500",
+      "cell_id": "A3",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_400/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_400",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/pass8_converted/math500.jsonl"
+      ],
+      "dataset_sha256": [
+        "e5248492b07cf2dc157d1d3ea5130cc281362b1d73f02ee0a146d140e1c4a587"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 8,
+      "label": "A3__allenai__Olmo-3-7B-RL-Zero-Math-step_400",
+      "max_model_len": 18432,
+      "max_num_seqs": 32,
+      "max_tokens": 16384,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_400",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "49b7b376c9a77281e37b1544e00f6b83ffe1d46bd47ff1c5ee04a7d642ecbe2b",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "efb2efc43d18cab28f53dc1a08f261a0d9cc29d913cdec6a2be1eecbf5a3d5c0",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 8,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 500,
+        "checked_request_outputs": 500,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "score_sample",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "kind": "current"
+      },
+      "temperature": 0.8,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/A4/math500/A4__allenai__Olmo-3-7B-RL-Zero-Math.json",
+        "final_sha256": "634797cdf8565157ea70dc1bb2662117306f65af3aba17a677864e84e07280a3",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/A4/math500/A4__allenai__Olmo-3-7B-RL-Zero-Math.results.jsonl",
+        "results_sha256": "e0e15b3a1d110f7643dea6d11fe71bb2cff42c6932f44fa102c87ef776f58316",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/A4/math500/samples/A4__allenai__Olmo-3-7B-RL-Zero-Math.jsonl",
+        "samples_sha256": "d1011f01950e9e5af91597a857f284b4f41802f1839006d24d879c677b50e1d4"
+      },
+      "bench": "math500",
+      "cell_id": "A4",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/pass8_converted/math500.jsonl"
+      ],
+      "dataset_sha256": [
+        "e5248492b07cf2dc157d1d3ea5130cc281362b1d73f02ee0a146d140e1c4a587"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 8,
+      "label": "A4__allenai__Olmo-3-7B-RL-Zero-Math",
+      "max_model_len": 18432,
+      "max_num_seqs": 32,
+      "max_tokens": 16384,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "49b7b376c9a77281e37b1544e00f6b83ffe1d46bd47ff1c5ee04a7d642ecbe2b",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 8,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 500,
+        "checked_request_outputs": 500,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "score_sample",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "kind": "current"
+      },
+      "temperature": 0.8,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/B1/aime/B1__base.json",
+        "final_sha256": "894d91a40ab3638930c98c3d423f3225a569d3329ce28ec396b1155580942992",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/B1/aime/B1__base.results.jsonl",
+        "results_sha256": "fdcdef2949786c81d5b911283d36745851b73734f23fd0780bcac94586b54aa2",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/B1/aime/samples/B1__base.jsonl",
+        "samples_sha256": "47079bcc2ef4d988f638d203c865b07dfbb970ed1205dd17d2971e1c7a6fc5d3"
+      },
+      "bench": "aime",
+      "cell_id": "B1",
+      "chat_template_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "base",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 16,
+      "label": "B1__base",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "277d7ea5c6159d4c2d6986a8a23757d1ef06acaa7abc2c40e0513446f7db0f85",
+        "generation_config.json": "52e8c2bef1d50a9aa99ce1da2a586ec40f524c1eded9c9ece289f3146b909ded",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "4cb2b52960bababa8ec27153831e405ef7811e3fad1226106e09c28e715cfb21",
+        "tokenizer.json": "73fd5254624f39a88e3faac6a8e11300fc3c735ed37880d4f4f08db898eaecca",
+        "tokenizer_config.json": "ffa5b2cfee6e73d5dc0a7d3b7e02eb6ed60a491dd782f2bd8ad2b4659b2aafc6",
+        "vocab.json": "9e14712c91b37c7aab74b1306baa46ac342d620637a4b44523cdc3aec7d24195"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 1.0,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Base"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/B2/aime/B2__base.json",
+        "final_sha256": "b833c69426ad7076e9846529b14b764ede82ec7e95dd7c8fdefd5167f3af457c",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/B2/aime/B2__base.results.jsonl",
+        "results_sha256": "410113dcba1a00b5a7c2319fa6f95a8cca2e4955bed62c3a2ee7f644086e77cd",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/B2/aime/samples/B2__base.jsonl",
+        "samples_sha256": "759c49bb90ffaed812489516c403c073a4cb557ef755bee0831f435f9d79d390"
+      },
+      "bench": "aime",
+      "cell_id": "B2",
+      "chat_template_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "base",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}\n\nThink through the problem step by step and put your final answer in \\boxed{}.",
+      "exact_user_template_sha256": "fe86e04630be44befe8d7c46b7e9342809d7a96a2cdb54e416996c333a4d6263",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 16,
+      "label": "B2__base",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$DATA_ROOT/models/experiments/trainproto_v2_20261013/base_overlay__Olmo-3-1025-7B",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "277d7ea5c6159d4c2d6986a8a23757d1ef06acaa7abc2c40e0513446f7db0f85",
+        "generation_config.json": "52e8c2bef1d50a9aa99ce1da2a586ec40f524c1eded9c9ece289f3146b909ded",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "4cb2b52960bababa8ec27153831e405ef7811e3fad1226106e09c28e715cfb21",
+        "tokenizer.json": "73fd5254624f39a88e3faac6a8e11300fc3c735ed37880d4f4f08db898eaecca",
+        "tokenizer_config.json": "ffa5b2cfee6e73d5dc0a7d3b7e02eb6ed60a491dd782f2bd8ad2b4659b2aafc6",
+        "vocab.json": "9e14712c91b37c7aab74b1306baa46ac342d620637a4b44523cdc3aec7d24195"
+      },
+      "n": 32,
+      "prompt_profile": "thinking_user_instruction_v1",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "Custom user instruction for this follow-up while retaining the tp2 base dapo chat_template.jinja; this is not the native Code/Mix thinking chat template.",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "thinking",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 1.0,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Base"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/C1/aime/C1__allenai__Olmo-3-7B-RL-Zero-Math-step_1600.json",
+        "final_sha256": "0b5c97a09273438bc6fb8909262977eab36f4544ee3371393aa32b715c52f11e",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/C1/aime/C1__allenai__Olmo-3-7B-RL-Zero-Math-step_1600.results.jsonl",
+        "results_sha256": "ede15114f9a1e4f658e52f374eac3b70fb6bd6597bc47b5b3b86b39faf4ae269",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/C1/aime/samples/C1__allenai__Olmo-3-7B-RL-Zero-Math-step_1600.jsonl",
+        "samples_sha256": "33fb83aad495351113bd89d78d7baa93b7bb748fdd0ed77111c35f15330655ce"
+      },
+      "bench": "aime",
+      "cell_id": "C1",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1600/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 16,
+      "label": "C1__allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1600",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "49b7b376c9a77281e37b1544e00f6b83ffe1d46bd47ff1c5ee04a7d642ecbe2b",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "efb2efc43d18cab28f53dc1a08f261a0d9cc29d913cdec6a2be1eecbf5a3d5c0",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.6,
+      "top_k": -1,
+      "top_p": 0.95,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/C2/aime/C2__allenai__Olmo-3-7B-RL-Zero-Math.json",
+        "final_sha256": "23b3e71355e852806dd6cbe471aaaf8d24ccae7f1e570590da85ee431e5b9e56",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/C2/aime/C2__allenai__Olmo-3-7B-RL-Zero-Math.results.jsonl",
+        "results_sha256": "fd21a56908e79e3212e864027600af26f5d3269740fa3bbb21f3e57fda1ab218",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/C2/aime/samples/C2__allenai__Olmo-3-7B-RL-Zero-Math.jsonl",
+        "samples_sha256": "85369a035bd557b587e882cf579d35d4e1c6677656584da078a260e9b53fb4ab"
+      },
+      "bench": "aime",
+      "cell_id": "C2",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 16,
+      "label": "C2__allenai__Olmo-3-7B-RL-Zero-Math",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "49b7b376c9a77281e37b1544e00f6b83ffe1d46bd47ff1c5ee04a7d642ecbe2b",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.6,
+      "top_k": -1,
+      "top_p": 0.95,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/C3/aime/C3__ours__lin_elem__Math_p80__.json",
+        "final_sha256": "52f7a43e637821f9d82b9510659948098fa0561f37df30ec007e988d791198ef",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/C3/aime/C3__ours__lin_elem__Math_p80__.results.jsonl",
+        "results_sha256": "76dc4b232240e87c9c6b7d970d9bf5df3be75aa7bdbcaeae01fb80cdd267a6ec",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/C3/aime/samples/C3__ours__lin_elem__Math_p80__.jsonl",
+        "samples_sha256": "ec97567e4cff90135c63804e40bcac9fda29349c022b455247bef77f0a18d734"
+      },
+      "bench": "aime",
+      "cell_id": "C3",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/ours/lin_elem/Math_p80/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "ours__lin_elem__Math_p80__",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 16,
+      "label": "C3__ours__lin_elem__Math_p80__",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$CHECKPOINT_ROOT/models/ours/lin_elem/Math_p80",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "49b7b376c9a77281e37b1544e00f6b83ffe1d46bd47ff1c5ee04a7d642ecbe2b",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "efb2efc43d18cab28f53dc1a08f261a0d9cc29d913cdec6a2be1eecbf5a3d5c0",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.6,
+      "top_k": -1,
+      "top_p": 0.95,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/C4/aime/C4__ours__qh_maglin__Math_p80__.json",
+        "final_sha256": "b37cb26aba7763acb0ce6f7b06c0a3162b4f530b7fefd5a3ad7ec99d75299782",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/C4/aime/C4__ours__qh_maglin__Math_p80__.results.jsonl",
+        "results_sha256": "6b28eb669d28f0264085f12d728487c6624b67e854a4d33dbb7ed93382bdf3b9",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/C4/aime/samples/C4__ours__qh_maglin__Math_p80__.jsonl",
+        "samples_sha256": "cfbc9e9db4883246fc8a7ada5d5a46328a020c442ad5c71c2671e7b73cf7223a"
+      },
+      "bench": "aime",
+      "cell_id": "C4",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/ours/qh_maglin/Math_p80/chat_template.jinja",
+      "chat_template_sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+      "checkpoint_label": "ours__qh_maglin__Math_p80__",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "dapo",
+      "k": 16,
+      "label": "C4__ours__qh_maglin__Math_p80__",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$CHECKPOINT_ROOT/models/ours/qh_maglin/Math_p80",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "49b7b376c9a77281e37b1544e00f6b83ffe1d46bd47ff1c5ee04a7d642ecbe2b",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "efb2efc43d18cab28f53dc1a08f261a0d9cc29d913cdec6a2be1eecbf5a3d5c0",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "dapo",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.6,
+      "top_k": -1,
+      "top_p": 0.95,
+      "track": "Math"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/C5/aime/C5__allenai__Olmo-3-7B-RL-Zero-Code-step_2500.json",
+        "final_sha256": "cef095bdedad5163cb7bcb667f304da31c51f873ce44fabf560e637cdb5da8b4",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/C5/aime/C5__allenai__Olmo-3-7B-RL-Zero-Code-step_2500.results.jsonl",
+        "results_sha256": "8037c22222fbb4a63437fd8817bbb18af29b5d03ab9e8363c5756ce4d787c386",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/C5/aime/samples/C5__allenai__Olmo-3-7B-RL-Zero-Code-step_2500.jsonl",
+        "samples_sha256": "0eee2275b3855250d8099f92da815bf740df837ce0f2a5541e642e47be5faa48"
+      },
+      "bench": "aime",
+      "cell_id": "C5",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Code-step_2500/chat_template.jinja",
+      "chat_template_sha256": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "thinking",
+      "k": 16,
+      "label": "C5__allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Code-step_2500",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "911158d905ffff1c299e005751472631f9b1f04c8d04e8d2ed8233265cc8ab02",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "efb2efc43d18cab28f53dc1a08f261a0d9cc29d913cdec6a2be1eecbf5a3d5c0",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "thinking",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.6,
+      "top_k": -1,
+      "top_p": 0.95,
+      "track": "Code"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/C6/aime/C6__allenai__Olmo-3-7B-RL-Zero-Code.json",
+        "final_sha256": "7a5a5866e136fd40407a5a534f874b3616a11dd511b22fcd088ea779c774a36c",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/C6/aime/C6__allenai__Olmo-3-7B-RL-Zero-Code.results.jsonl",
+        "results_sha256": "85e41a06afd463034c48cd0fb8e75ff7d3c4b344e781e34e38cdadde09351608",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/C6/aime/samples/C6__allenai__Olmo-3-7B-RL-Zero-Code.jsonl",
+        "samples_sha256": "24eb566cbbf2c5af8b7257fc4f3754429a785c8c81371fabc8cc4af6a9d391c1"
+      },
+      "bench": "aime",
+      "cell_id": "C6",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Code/chat_template.jinja",
+      "chat_template_sha256": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "thinking",
+      "k": 16,
+      "label": "C6__allenai__Olmo-3-7B-RL-Zero-Code",
+      "max_model_len": 49152,
+      "max_num_seqs": 4,
+      "max_tokens": 32768,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Code",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+        "config.json": "ef558ed6af54ec61e9547b60523a6a066f891d1e8d52331fdaeb685864378e30",
+        "generation_config.json": "911158d905ffff1c299e005751472631f9b1f04c8d04e8d2ed8233265cc8ab02",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "thinking",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 0.6,
+      "top_k": -1,
+      "top_p": 0.95,
+      "track": "Code"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/D1/aime/D1__allenai__Olmo-3-7B-RL-Zero-Mix-step_800.json",
+        "final_sha256": "c90e485c9ae405b6f63df82df9634043794ed7d5af25e25684adf6884d69bf7a",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/D1/aime/D1__allenai__Olmo-3-7B-RL-Zero-Mix-step_800.results.jsonl",
+        "results_sha256": "f2dccd33ddd82889864a3778406b558519d5cd1fc361c3c379df99e2df0c79bb",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/D1/aime/samples/D1__allenai__Olmo-3-7B-RL-Zero-Mix-step_800.jsonl",
+        "samples_sha256": "88143e5b508bf87e03574ae9a031da1f0240ffae5adb643b5550cd385ed0356e"
+      },
+      "bench": "aime",
+      "cell_id": "D1",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Mix-step_800/chat_template.jinja",
+      "chat_template_sha256": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "thinking",
+      "k": 16,
+      "label": "D1__allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "max_model_len": 65536,
+      "max_num_seqs": 4,
+      "max_tokens": 61440,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Mix-step_800",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+        "config.json": "e5c2e2df0b1fe8392104116eb7d51d51c9bbbdaa429e2a887f2e81e296cedd4f",
+        "generation_config.json": "911158d905ffff1c299e005751472631f9b1f04c8d04e8d2ed8233265cc8ab02",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "efb2efc43d18cab28f53dc1a08f261a0d9cc29d913cdec6a2be1eecbf5a3d5c0",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "thinking",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 1.0,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Mix"
+    },
+    {
+      "artifacts": {
+        "final_path": "$DATA_ROOT/output/followup_20261025/raw/D2/aime/D2__allenai__Olmo-3-7B-RL-Zero-Mix.json",
+        "final_sha256": "b90096a8b8ca553ea0e55c944b6a0d46469fc11064b2af38e79e857be655db5b",
+        "results_path": "$DATA_ROOT/output/followup_20261025/raw/D2/aime/D2__allenai__Olmo-3-7B-RL-Zero-Mix.results.jsonl",
+        "results_sha256": "51603910443c91e081f7c43ce3aa94578a531b82baf974f3713a18ae38949d84",
+        "samples_path": "$DATA_ROOT/output/followup_20261025/raw/D2/aime/samples/D2__allenai__Olmo-3-7B-RL-Zero-Mix.jsonl",
+        "samples_sha256": "2d757f36f85fb3244c4ab8b347f05b23c70adde4777debc517e29f0f8cee67db"
+      },
+      "bench": "aime",
+      "cell_id": "D2",
+      "chat_template_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Mix/chat_template.jinja",
+      "chat_template_sha256": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+      "checkpoint_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "cudagraph_mode": "PIECEWISE",
+      "dataset_paths": [
+        "$DATA_ROOT/data/aimo-aime/test.jsonl",
+        "$DATA_ROOT/data/aimo-aime/train.jsonl"
+      ],
+      "dataset_sha256": [
+        "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+        "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+      ],
+      "engine_contract": "native OLMo3 vLLM 0.22.1 plus vllm-ascend 0.22.1rc2",
+      "exact_user_template": "{problem}",
+      "exact_user_template_sha256": "b3e27e83bd384d4aeafc31dc7257a5e4e5fbbe25a1f9628e31ec06cb786008ea",
+      "gate_source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+      "generation_mode": "production",
+      "generation_source_manifest_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+      "ignore_eos": false,
+      "image": "[内部地址已省略]",
+      "jinja_detected_template_type": "thinking",
+      "k": 16,
+      "label": "D2__allenai__Olmo-3-7B-RL-Zero-Mix",
+      "max_model_len": 65536,
+      "max_num_seqs": 4,
+      "max_tokens": 61440,
+      "model_path": "$CHECKPOINT_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Mix",
+      "model_small_file_sha256": {
+        "chat_template.jinja": "6d549883b5ed12879e191845c256a30c7dfd4eced0a4f160060a3ea0199d9e3a",
+        "config.json": "e5c2e2df0b1fe8392104116eb7d51d51c9bbbdaa429e2a887f2e81e296cedd4f",
+        "generation_config.json": "911158d905ffff1c299e005751472631f9b1f04c8d04e8d2ed8233265cc8ab02",
+        "merges.txt": "b6fe424e334903f7fb84d3a106d9730455f4744b9fe3c21ee136d97a00e72502",
+        "model.safetensors.index.json": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95",
+        "special_tokens_map.json": "78afb564e81264029b25f9caf24bda2521d5bdaeff5cd3fdbc01d3da2e8ce2f2",
+        "tokenizer.json": "a8c8767b8e1e295680be0cd1f6b758c6329df18aaa985fd5ccd730a52d43ac9b",
+        "tokenizer_config.json": "5b602e67ef60c878dc2c1bc626532171b4e17034a95b97fdb7c95931943921cc",
+        "vocab.json": "1ff0268113f38035e61859dad673eee8a485073d62986a30e43b2c78d918a545"
+      },
+      "n": 32,
+      "prompt_profile": "native_question",
+      "prompt_token_check": {
+        "apply_vs_rendered_tokenization": "PASS",
+        "checked_problems": 90,
+        "checked_request_outputs": 90,
+        "request_output_vs_preflight": "PASS"
+      },
+      "protocol_qualification": "",
+      "repetition_penalty": 1.0,
+      "runtime_versions": {
+        "tokenizers": "0.22.2",
+        "transformers": "5.5.4",
+        "vllm": "0.22.1+empty",
+        "vllm_ascend": "0.22.1rc2.dev0+g5f6faa0cb.d20260907"
+      },
+      "safetensors_load_strategy": "prefetch",
+      "scorer_entry": "extract_answer",
+      "scorer_source": "eval_pass8.py",
+      "scorer_source_sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19",
+      "scorer_template_type": "thinking",
+      "seed": 0,
+      "source_relationship": {
+        "changed_files": [
+          "strict_gate.py"
+        ],
+        "gate_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+        "generation_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "history_path": "/workdir/generation_source_history/654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65.json",
+        "history_sha256": "654c7a818abc688576b61b49fdd3815d85b1b353e794c3333d866c327c1bca65",
+        "kind": "gate_only_amendment"
+      },
+      "temperature": 1.0,
+      "top_k": -1,
+      "top_p": 1.0,
+      "track": "Mix"
+    }
+  ],
+  "schema": "followup_20261025_run_records_v1",
+  "source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780"
+}

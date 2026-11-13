@@ -1,0 +1,579 @@
+{
+  "schema": "p80_aime_cross_protocol_summary_v1",
+  "source": {
+    "strict_result": "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/statistics/existing_analyzer/RESULT.json",
+    "strict_result_sha256": "c4cfb667dc26d50e6e8e9149252d3e3adafe2c417e7c8c2744a0ad6b2d06f2bf",
+    "inventory": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/input_audit/matrix32.json",
+    "inventory_sha256": "e02addf0cee823acc2707f179f6ad6cb28c92484e28ec2441b0c7fde58994e67"
+  },
+  "comparison": {
+    "protocol_a": {
+      "temperature": 0.6,
+      "top_p": 0.95
+    },
+    "protocol_b": {
+      "temperature": 1.0,
+      "top_p": 1.0
+    },
+    "shared": {
+      "n_problems": 90,
+      "n": 32,
+      "k": 16,
+      "max_tokens": 32768
+    },
+    "samples_per_protocol": 92160,
+    "paired_unit": "AIME problem; completion draws are fresh and unpaired",
+    "interpretation": "New-minus-old is a descriptive protocol contrast. It combines the T=1.0/top_p=1.0 versus T=0.6/top_p=0.95 sampling change with runtime, backend/version, numerical, scheduling, and fresh Monte Carlo draw differences; it is not a pure temperature causal effect."
+  },
+  "strict_replay": {
+    "valid": false,
+    "validation_problems": [
+      "old cell ours__qh_maglin__Code_p80__ has 1 full-text storage-cap exceptions"
+    ],
+    "scorer": {
+      "semantics": "pinned eval_pass8.extract_answer",
+      "sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19"
+    },
+    "dataset": {
+      "n_problems": 90,
+      "uid_first": "aime-000",
+      "uid_last": "aime-089"
+    },
+    "bootstrap": {
+      "multiplicity_adjustment": "none",
+      "reps": 10000,
+      "seed": 0,
+      "unit": "AIME problem"
+    }
+  },
+  "comparability_audit": {
+    "checkpoint_label_and_relpath": {
+      "checked_cells": 32,
+      "mismatches": [],
+      "result": "match",
+      "limit": "The 0.6/0.95 outputs record paths and labels but no model-byte fingerprint, so bitwise checkpoint identity is not independently recoverable from those outputs."
+    },
+    "problem_and_gold": {
+      "result": "match",
+      "basis": "The strict analyzer requires all problem_idx 0..89, 32 samples per problem, and every persisted gold value to match the SHA-pinned test-then-train AIME source."
+    },
+    "prompt": {
+      "template_type_match": true,
+      "new_prompt_token_ids_verified": true,
+      "old_exact_prompt_token_identity": "not_verifiable",
+      "reason": "The 0.6/0.95 rows do not persist prompt token IDs or prompt hashes. They retain the template family and dataset ordering only."
+    },
+    "storage": {
+      "totals": {
+        "new_cells": {
+          "samples": 92160,
+          "scorer_changes": 0,
+          "extracted_answer_changes": 0,
+          "fulltext_cap_exceptions": 0,
+          "token_ids_present": 92160
+        },
+        "old_cells": {
+          "samples": 92160,
+          "scorer_changes": 0,
+          "extracted_answer_changes": 1,
+          "fulltext_cap_exceptions": 1,
+          "token_ids_present": 0
+        }
+      },
+      "old_math_mix_sample_chars": "not_recorded_for_26_cells",
+      "old_math_mix_unmarked_text_cap_status": "not_verifiable",
+      "exact_16k_prefix_replay_across_protocols": "not_possible",
+      "reason": "The 0.6/0.95 sample rows do not contain completion token IDs. Decoded-text retokenization would not be exact."
+    },
+    "sampling": {
+      "same_problem_budget": true,
+      "same_completion_budget": true,
+      "completion_draws_paired": false,
+      "runtime_held_constant": false
+    }
+  },
+  "primary": {
+    "Math:ours__lin_elem__Math_p80__-minus-donor": {
+      "a": "ours__lin_elem__Math_p80__",
+      "b": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "new_within_protocol_stored": {
+        "cap_rate": {
+          "estimate": 0.02326388888888889,
+          "hi": 0.03611111111111111,
+          "lo": 0.0125,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "mean_tokens": {
+          "estimate": 177.19722222222222,
+          "hi": 720.2260416666667,
+          "lo": -331.7347222222222,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass1": {
+          "estimate": -0.057291666666666664,
+          "hi": -0.03923611111111111,
+          "lo": -0.0763888888888889,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass16": {
+          "estimate": -0.08915138921767186,
+          "hi": -0.032951314068174996,
+          "lo": -0.1465580028322002,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        }
+      },
+      "new_primary_pass1_decision": "lower",
+      "old_gap_replayed": {
+        "pass1": -0.16284722222222225,
+        "pass16": -0.23449012335937275,
+        "cap_rate": 0.2947916666666667,
+        "mean_tokens": 6607.250694444443
+      },
+      "new_gap_replayed": {
+        "pass1": -0.05729166666666663,
+        "pass16": -0.08915138921767185,
+        "cap_rate": 0.02326388888888889,
+        "mean_tokens": 177.19722222222117
+      },
+      "difference_in_differences_replayed": {
+        "cap_rate": {
+          "estimate": -0.27152777777777776,
+          "hi": -0.22465277777777778,
+          "lo": -0.31875,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "mean_tokens": {
+          "estimate": -6430.053472222222,
+          "hi": -5240.491666666667,
+          "lo": -7631.276736111111,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass1": {
+          "estimate": 0.10555555555555556,
+          "hi": 0.153125,
+          "lo": 0.059722222222222225,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass16": {
+          "estimate": 0.14533873414170106,
+          "hi": 0.2321454172618149,
+          "lo": 0.06265859585492936,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        }
+      }
+    },
+    "Math:ours__qh_maglin__Math_p80__-minus-donor": {
+      "a": "ours__qh_maglin__Math_p80__",
+      "b": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "new_within_protocol_stored": {
+        "cap_rate": {
+          "estimate": 0.0010416666666666667,
+          "hi": 0.004166666666666667,
+          "lo": -0.0020833333333333333,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "mean_tokens": {
+          "estimate": -273.13854166666664,
+          "hi": -93.9625,
+          "lo": -451.49097222222224,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass1": {
+          "estimate": -0.02361111111111111,
+          "hi": -0.009375,
+          "lo": -0.03888888888888889,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass16": {
+          "estimate": -0.045279753400927505,
+          "hi": 0.0032121413169968046,
+          "lo": -0.09524065360227624,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        }
+      },
+      "new_primary_pass1_decision": "lower",
+      "old_gap_replayed": {
+        "pass1": -0.05868055555555557,
+        "pass16": -0.08366717795527401,
+        "cap_rate": 0.06666666666666665,
+        "mean_tokens": 1534.1302083333321
+      },
+      "new_gap_replayed": {
+        "pass1": -0.023611111111111083,
+        "pass16": -0.0452797534009276,
+        "cap_rate": 0.0010416666666666664,
+        "mean_tokens": -273.13854166666715
+      },
+      "difference_in_differences_replayed": {
+        "cap_rate": {
+          "estimate": -0.065625,
+          "hi": -0.03611111111111111,
+          "lo": -0.0954861111111111,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "mean_tokens": {
+          "estimate": -1807.26875,
+          "hi": -1089.7097222222221,
+          "lo": -2519.776736111111,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass1": {
+          "estimate": 0.035069444444444445,
+          "hi": 0.0625,
+          "lo": 0.00798611111111111,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass16": {
+          "estimate": 0.03838742455434659,
+          "hi": 0.10933461619741817,
+          "lo": -0.03782057129570379,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        }
+      }
+    },
+    "Math:target-minus-donor": {
+      "a": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "b": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "new_within_protocol_stored": {
+        "cap_rate": {
+          "estimate": 0.002777777777777778,
+          "hi": 0.008333333333333333,
+          "lo": -0.001736111111111111,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "mean_tokens": {
+          "estimate": -58.23368055555556,
+          "hi": 213.89097222222222,
+          "lo": -307.16041666666666,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass1": {
+          "estimate": -0.006597222222222222,
+          "hi": 0.008333333333333333,
+          "lo": -0.021527777777777778,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass16": {
+          "estimate": -0.02771916093730269,
+          "hi": 0.01789016355846992,
+          "lo": -0.07331912364223583,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        }
+      },
+      "new_primary_pass1_decision": null,
+      "old_gap_replayed": {
+        "pass1": 0.04618055555555556,
+        "pass16": 0.008485533376178078,
+        "cap_rate": -0.07673611111111112,
+        "mean_tokens": -1942.148263888892
+      },
+      "new_gap_replayed": {
+        "pass1": -0.006597222222222199,
+        "pass16": -0.027719160937302756,
+        "cap_rate": 0.0027777777777777775,
+        "mean_tokens": -58.23368055555511
+      },
+      "difference_in_differences_replayed": {
+        "cap_rate": {
+          "estimate": 0.07951388888888888,
+          "hi": 0.11423611111111111,
+          "lo": 0.04618055555555556,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "mean_tokens": {
+          "estimate": 1883.9145833333334,
+          "hi": 2651.123611111111,
+          "lo": 1164.7069444444444,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass1": {
+          "estimate": -0.05277777777777778,
+          "hi": -0.029861111111111113,
+          "lo": -0.07673611111111112,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        },
+        "pass16": {
+          "estimate": -0.03620469431348071,
+          "hi": 0.04080137064158386,
+          "lo": -0.10937947137339002,
+          "n_problems": 90,
+          "reps": 10000,
+          "seed": 0
+        }
+      }
+    }
+  },
+  "track_summaries": {
+    "Code": {
+      "all_cells": {
+        "n_cells": 6,
+        "pass1": {
+          "median_delta": -0.007118055555555555,
+          "min_delta": -0.09895833333333333,
+          "max_delta": 0.05763888888888889,
+          "n_positive_estimate": 2,
+          "n_ci_above_zero": 1,
+          "n_ci_below_zero": 1
+        },
+        "pass16": {
+          "median_delta": -0.029538422140173295,
+          "min_delta": -0.18421245486167187,
+          "max_delta": 0.07581971826134971,
+          "n_positive_estimate": 2,
+          "n_ci_above_zero": 1,
+          "n_ci_below_zero": 1
+        },
+        "cap_rate": {
+          "median_delta": -0.09236111111111112,
+          "min_delta": -0.6711805555555556,
+          "max_delta": -0.06145833333333333,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 6
+        },
+        "mean_tokens": {
+          "median_delta": -2467.191840277778,
+          "min_delta": -12470.273958333333,
+          "max_delta": -1475.5975694444444,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 6
+        }
+      },
+      "no_detected_storage_cap_only": {
+        "n_cells": 5,
+        "pass1": {
+          "median_delta": -0.012847222222222222,
+          "min_delta": -0.09895833333333333,
+          "max_delta": 0.05763888888888889,
+          "n_positive_estimate": 1,
+          "n_ci_above_zero": 1,
+          "n_ci_below_zero": 1
+        },
+        "pass16": {
+          "median_delta": -0.03619707719591015,
+          "min_delta": -0.18421245486167187,
+          "max_delta": 0.07581971826134971,
+          "n_positive_estimate": 1,
+          "n_ci_above_zero": 1,
+          "n_ci_below_zero": 1
+        },
+        "cap_rate": {
+          "median_delta": -0.1076388888888889,
+          "min_delta": -0.6711805555555556,
+          "max_delta": -0.06145833333333333,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 5
+        },
+        "mean_tokens": {
+          "median_delta": -3136.056597222222,
+          "min_delta": -12470.273958333333,
+          "max_delta": -1475.5975694444444,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 5
+        }
+      },
+      "detected_storage_cap_cells": [
+        "ours__qh_maglin__Code_p80__"
+      ]
+    },
+    "Math": {
+      "all_cells": {
+        "n_cells": 15,
+        "pass1": {
+          "median_delta": 0.08715277777777777,
+          "min_delta": 0.03263888888888889,
+          "max_delta": 0.1909722222222222,
+          "n_positive_estimate": 15,
+          "n_ci_above_zero": 15,
+          "n_ci_below_zero": 0
+        },
+        "pass16": {
+          "median_delta": 0.04998237758365584,
+          "min_delta": -0.0309680872581231,
+          "max_delta": 0.18365144789072593,
+          "n_positive_estimate": 14,
+          "n_ci_above_zero": 7,
+          "n_ci_below_zero": 0
+        },
+        "cap_rate": {
+          "median_delta": -0.4197916666666667,
+          "min_delta": -0.6371527777777778,
+          "max_delta": -0.2861111111111111,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 15
+        },
+        "mean_tokens": {
+          "median_delta": -8832.931597222223,
+          "min_delta": -13581.978472222223,
+          "max_delta": -5268.010416666667,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 15
+        }
+      },
+      "no_detected_storage_cap_only": {
+        "n_cells": 15,
+        "pass1": {
+          "median_delta": 0.08715277777777777,
+          "min_delta": 0.03263888888888889,
+          "max_delta": 0.1909722222222222,
+          "n_positive_estimate": 15,
+          "n_ci_above_zero": 15,
+          "n_ci_below_zero": 0
+        },
+        "pass16": {
+          "median_delta": 0.04998237758365584,
+          "min_delta": -0.0309680872581231,
+          "max_delta": 0.18365144789072593,
+          "n_positive_estimate": 14,
+          "n_ci_above_zero": 7,
+          "n_ci_below_zero": 0
+        },
+        "cap_rate": {
+          "median_delta": -0.4197916666666667,
+          "min_delta": -0.6371527777777778,
+          "max_delta": -0.2861111111111111,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 15
+        },
+        "mean_tokens": {
+          "median_delta": -8832.931597222223,
+          "min_delta": -13581.978472222223,
+          "max_delta": -5268.010416666667,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 15
+        }
+      },
+      "detected_storage_cap_cells": []
+    },
+    "Mix": {
+      "all_cells": {
+        "n_cells": 11,
+        "pass1": {
+          "median_delta": 0.13055555555555556,
+          "min_delta": 0.03993055555555555,
+          "max_delta": 0.17291666666666666,
+          "n_positive_estimate": 11,
+          "n_ci_above_zero": 11,
+          "n_ci_below_zero": 0
+        },
+        "pass16": {
+          "median_delta": 0.1590246953489865,
+          "min_delta": 0.030912112937172994,
+          "max_delta": 0.20338766193246724,
+          "n_positive_estimate": 11,
+          "n_ci_above_zero": 10,
+          "n_ci_below_zero": 0
+        },
+        "cap_rate": {
+          "median_delta": -0.64375,
+          "min_delta": -0.6857638888888888,
+          "max_delta": -0.58125,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 11
+        },
+        "mean_tokens": {
+          "median_delta": -9343.605555555556,
+          "min_delta": -11801.534027777778,
+          "max_delta": -8887.57326388889,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 11
+        }
+      },
+      "no_detected_storage_cap_only": {
+        "n_cells": 11,
+        "pass1": {
+          "median_delta": 0.13055555555555556,
+          "min_delta": 0.03993055555555555,
+          "max_delta": 0.17291666666666666,
+          "n_positive_estimate": 11,
+          "n_ci_above_zero": 11,
+          "n_ci_below_zero": 0
+        },
+        "pass16": {
+          "median_delta": 0.1590246953489865,
+          "min_delta": 0.030912112937172994,
+          "max_delta": 0.20338766193246724,
+          "n_positive_estimate": 11,
+          "n_ci_above_zero": 10,
+          "n_ci_below_zero": 0
+        },
+        "cap_rate": {
+          "median_delta": -0.64375,
+          "min_delta": -0.6857638888888888,
+          "max_delta": -0.58125,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 11
+        },
+        "mean_tokens": {
+          "median_delta": -9343.605555555556,
+          "min_delta": -11801.534027777778,
+          "max_delta": -8887.57326388889,
+          "n_positive_estimate": 0,
+          "n_ci_above_zero": 0,
+          "n_ci_below_zero": 11
+        }
+      },
+      "detected_storage_cap_cells": []
+    }
+  },
+  "artifact_rows": {
+    "protocol_cell_contrasts": 32,
+    "donor_relative_did": 57
+  }
+}

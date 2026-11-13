@@ -1,0 +1,85 @@
+{
+  "schema": "p80_aime_year_sensitivity_v1",
+  "status": "POSTHOC_SENSITIVITY",
+  "year_mapping": {
+    "source": "AI-MO/aimo-validation-aime revision 8c6be017548b0fe2eb9fdf2239fca99700b9bccf, year parsed from each row's AoPS URL after exact local problem+answer matching",
+    "counts": {
+      "2022": 30,
+      "2023": 30,
+      "2024": 30
+    },
+    "unmatched": 0
+  },
+  "metric": "mean per-problem sampled pass@1 difference, extrapolation minus Math step1600 donor",
+  "comparisons": [
+    {
+      "label": "ours__lin_elem__Math_p80__",
+      "year_stratified_10000_bootstrap_seed0": {
+        "estimate": -0.057291666666666664,
+        "lo": -0.0763888888888889,
+        "hi": -0.03958333333333333
+      },
+      "by_year": {
+        "2022": {
+          "difference": -0.04479166666666667,
+          "negative_zero_positive_problems": [
+            16,
+            7,
+            7
+          ]
+        },
+        "2023": {
+          "difference": -0.058333333333333334,
+          "negative_zero_positive_problems": [
+            14,
+            12,
+            4
+          ]
+        },
+        "2024": {
+          "difference": -0.06875,
+          "negative_zero_positive_problems": [
+            19,
+            9,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "label": "ours__qh_maglin__Math_p80__",
+      "year_stratified_10000_bootstrap_seed0": {
+        "estimate": -0.02361111111111111,
+        "lo": -0.03854166666666667,
+        "hi": -0.009375
+      },
+      "by_year": {
+        "2022": {
+          "difference": -0.013541666666666667,
+          "negative_zero_positive_problems": [
+            15,
+            8,
+            7
+          ]
+        },
+        "2023": {
+          "difference": -0.034375,
+          "negative_zero_positive_problems": [
+            12,
+            13,
+            5
+          ]
+        },
+        "2024": {
+          "difference": -0.022916666666666665,
+          "negative_zero_positive_problems": [
+            13,
+            10,
+            7
+          ]
+        }
+      }
+    }
+  ],
+  "interpretation": "both registered point differences are negative within each of the three represented AIME years, and a post hoc bootstrap that preserves 30 problems per year also stays below zero; this is a robustness check, not a replacement for the registered pooled problem bootstrap"
+}

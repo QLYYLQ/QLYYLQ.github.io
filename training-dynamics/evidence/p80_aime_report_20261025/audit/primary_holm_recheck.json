@@ -1,0 +1,57 @@
+{
+  "schema": "p80_primary_holm_independent_recheck_v1",
+  "status": "PASS",
+  "implementation": {
+    "library": "scipy.stats.ttest_1samp",
+    "scipy_version": "1.10.1",
+    "alternative": "less",
+    "unit": "AIME problem",
+    "difference": "(correct_method - correct_donor) / 32",
+    "n_problems": 90,
+    "family_size": 2,
+    "holm_order": "ascending raw p; first multiplied by 2, second retained subject to monotonicity"
+  },
+  "tests": [
+    {
+      "method": "ours__lin_elem__Math_p80__",
+      "donor": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "estimate": -0.057291666666666664,
+      "t": -5.934292488420965,
+      "raw_one_sided_p": 2.7820206480518724e-08,
+      "holm_p": 5.564041296103745e-08
+    },
+    {
+      "method": "ours__qh_maglin__Math_p80__",
+      "donor": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "estimate": -0.02361111111111111,
+      "t": -3.130400847745914,
+      "raw_one_sided_p": 0.0011807658747900443,
+      "holm_p": 0.0011807658747900443
+    }
+  ],
+  "posthoc_sign_test_sensitivity": [
+    {
+      "method": "ours__lin_elem__Math_p80__",
+      "negative_zero_positive_problems": [
+        49,
+        28,
+        13
+      ],
+      "raw_one_sided_exact_binomial_p": 2.4087616996330222e-06,
+      "holm_p": 4.8175233992660444e-06
+    },
+    {
+      "method": "ours__qh_maglin__Math_p80__",
+      "negative_zero_positive_problems": [
+        40,
+        31,
+        19
+      ],
+      "raw_one_sided_exact_binomial_p": 0.004320749841640867,
+      "holm_p": 0.004320749841640867
+    }
+  ],
+  "family_alpha": 0.05,
+  "both_reject": true,
+  "qualification": "the analysis plan required Holm for a family-level claim but did not pre-specify the p-value test statistic; the paired t implementation is therefore explicit analysis implementation rather than a fully immutable preregistered detail. The exact paired sign tests are post hoc sensitivity checks and also reject both nulls after Holm."
+}

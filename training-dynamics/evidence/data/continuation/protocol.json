@@ -1,0 +1,35 @@
+{
+ "created_at": "2026-10-09T07:08:13.515354+00:00",
+ "runs": {
+  "runA": {
+   "source": "$DATA_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1600",
+   "lr": 3e-06
+  },
+  "runB": {
+   "source": "$DATA_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1000",
+   "lr": 1e-06
+  }
+ },
+ "updates_per_arm": 250,
+ "save_frequency": 2,
+ "checkpoint_count_per_arm": 125,
+ "checkpoint_format": "BF16 HF weights plus data.pt; optimizer state absent and no optimizer resume",
+ "checkpoint_publication": "Read back each HDFS file with SHA256; retry transient I/O up to six times; block training after each save until COMMITTED receipt; keep two local actor checkpoints",
+ "training": {
+  "epochs": 10,
+  "batch_prompts": 96,
+  "responses_per_prompt": 8,
+  "response_cap": 16384,
+  "test_frequency": 50,
+  "seed": 42
+ },
+ "resources": {
+  "workers_per_run": 3,
+  "accelerators_per_worker": 16,
+  "queue": "root.hldy_training_cluster.hadoop-scalellm.910c_exp",
+  "priority": "P1"
+ },
+ "logging": "W&B offline under each shared attempt root; no in-scope online credential available",
+ "output_root": "$DATA_ROOT/output/olmo3_rlvr_retrain_20261009",
+ "checkpoint_root": "$CHECKPOINT_ROOT/models/olmo3_rlvr_retrain_20261009"
+}

@@ -1,0 +1,4 @@
+runA 38->40 model.layers.7.mlp.down_proj.weight shape=(4096, 11008) changed=1567444/45088768 = 3.48%  relFro=2.099e-04
+runA 40->42 model.layers.7.mlp.down_proj.weight shape=(4096, 11008) changed=1544559/45088768 = 3.43%  relFro=2.108e-04
+runB 36->38 model.layers.7.mlp.down_proj.weight shape=(4096, 11008) changed=532489/45088768 = 1.18%  relFro=4.416e-05
+runB 38->40 model.layers.7.mlp.down_proj.weight shape=(4096, 11008) changed=534388/45088768 = 1.19%  relFro=4.501e-05

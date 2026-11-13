@@ -1,0 +1,40 @@
+{
+  "epoch": 1791625335.5847619,
+  "expected_workers": 48,
+  "fraction_abs_delta_gt_1": 5.417715556177427e-07,
+  "gap_metrics": {
+    "gap/4097_8192/fraction_abs_gt_1": 0.0,
+    "gap/4097_8192/mean_abs_logp": 0.006859261076897383,
+    "gap/4097_8192/tokens": 2438977,
+    "gap/8193_16384/fraction_abs_gt_1": 2.0467853119043866e-06,
+    "gap/8193_16384/mean_abs_logp": 0.007262140512466431,
+    "gap/8193_16384/tokens": 1954284,
+    "gap/context_buckets_available": 1,
+    "gap/fraction_abs_gt_1": 5.417715556177427e-07,
+    "gap/gt16384/fraction_abs_gt_1": 0.0,
+    "gap/gt16384/mean_abs_logp": 0.006896197330206633,
+    "gap/gt16384/tokens": 8958,
+    "gap/le4096/fraction_abs_gt_1": 0.0,
+    "gap/le4096/mean_abs_logp": 0.006792530417442322,
+    "gap/le4096/tokens": 2980967,
+    "gap/max_abs_logp": 2.0918123722076416,
+    "gap/mean_abs_logp": 0.006939002778381109,
+    "gap/mean_signed_logp": -0.00013502566434908658,
+    "gap/p95_abs_logp": 0.03957259654998779,
+    "gap/p99_abs_logp": 0.07300257682800293,
+    "gap/response_tokens": 7383186
+  },
+  "hf_forward_pass_count": 48,
+  "hf_window_forward_pass_count": 48,
+  "hf_workers_missing_window_invocation": [],
+  "mean_abs_logp_delta": 0.006939002778381109,
+  "response_tokens": 7383186,
+  "status": "PASS",
+  "step": 42,
+  "sync_pass_count": 48,
+  "synced_workers_missing_swa_patch": [],
+  "thresholds": {
+    "fraction_abs_delta_gt_1": 0.01,
+    "mean_abs_logp_delta": 0.2
+  }
+}

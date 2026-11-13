@@ -1,0 +1,44 @@
+{
+ "label": "diag_runA_s40_orth_sr_seed0",
+ "spec": {
+  "kind": "orth",
+  "c": null,
+  "round": "sr",
+  "seed": 0
+ },
+ "w0": "$DATA_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1600",
+ "start": {
+  "step": 40,
+  "path": "$DATA_ROOT/models/experiments/rlvr_shorthorizon_20261011/real__runA_u40"
+ },
+ "target": {
+  "step": 80,
+  "path": "$DATA_ROOT/models/experiments/rlvr_shorthorizon_20261011/real__runA_u80"
+ },
+ "out_dir": "$DATA_ROOT/models/experiments/rlvr_diag_20261012/diag_runA/diag_runA_s40_orth_sr_seed0",
+ "totals": {
+  "n": 7298011136.0,
+  "nz": 1489381427.0,
+  "sq_saved": 2.288222704057101,
+  "sq_nominal": 2.1592063282783505,
+  "ip_delta": -1.9465017498406225e-05,
+  "ip_D": 2.159215173156291,
+  "sq_delta": 1.4476170300707722,
+  "sq_D": 2.1816297532281204,
+  "rounded_away": 539385098.0
+ },
+ "derived": {
+  "frac_elements_changed_vs_start": 0.20408045414635004,
+  "frac_nominal_changes_rounded_away": 0.07390850574881885,
+  "push_saved_over_delta": 1.2572519080942481,
+  "push_nominal_over_delta": 1.2212940194214366,
+  "c_eff_saved_along_delta": 0.999986553752067,
+  "cos_saved_push_vs_real_later_update": 0.966398515724251,
+  "saved_push_over_real_later_update": 1.0241383315285042
+ },
+ "per_tensor_coef_summary": {
+  "alpha_median": -0.12357378936376989,
+  "beta_median": 1.498808804130931,
+  "tensors_with_zero_delta": 3
+ }
+}

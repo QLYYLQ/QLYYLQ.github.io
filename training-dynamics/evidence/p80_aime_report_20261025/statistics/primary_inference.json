@@ -1,0 +1,50 @@
+{
+  "family": [
+    "Math:ours__lin_elem__Math_p80__-minus-donor",
+    "Math:ours__qh_maglin__Math_p80__-minus-donor"
+  ],
+  "method": "one-sided paired t tests with Holm step-down adjustment",
+  "family_alpha": 0.05,
+  "zero_margin": true,
+  "tests": {
+    "Math:ours__lin_elem__Math_p80__-minus-donor": {
+      "hypotheses": "H0: E[method-donor] >= 0; H1: E[method-donor] < 0",
+      "test": "one-sided paired t test on 90 problem-level pass@1 differences",
+      "t_statistic": -5.934292488420965,
+      "df": 89,
+      "raw_p": 2.7820206480518724e-08,
+      "unadjusted_percentile_bootstrap_95_ci": {
+        "estimate": -0.057291666666666664,
+        "lo": -0.0763888888888889,
+        "hi": -0.03923611111111111,
+        "reps": 10000,
+        "seed": 0,
+        "n_problems": 90
+      },
+      "holm_adjusted_p": 5.564041296103745e-08,
+      "family_alpha": 0.05,
+      "reject_inferiority_null": true,
+      "ci_decision": "lower"
+    },
+    "Math:ours__qh_maglin__Math_p80__-minus-donor": {
+      "hypotheses": "H0: E[method-donor] >= 0; H1: E[method-donor] < 0",
+      "test": "one-sided paired t test on 90 problem-level pass@1 differences",
+      "t_statistic": -3.130400847745914,
+      "df": 89,
+      "raw_p": 0.0011807658747900443,
+      "unadjusted_percentile_bootstrap_95_ci": {
+        "estimate": -0.02361111111111111,
+        "lo": -0.03888888888888889,
+        "hi": -0.009375,
+        "reps": 10000,
+        "seed": 0,
+        "n_problems": 90
+      },
+      "holm_adjusted_p": 0.0011807658747900443,
+      "family_alpha": 0.05,
+      "reject_inferiority_null": true,
+      "ci_decision": "lower"
+    }
+  },
+  "interpretation": "A non-rejection or an interval crossing zero is inconclusive and is not equivalence."
+}

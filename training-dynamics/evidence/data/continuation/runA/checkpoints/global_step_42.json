@@ -1,0 +1,51 @@
+{
+  "app_id": "[运行节点]",
+  "epoch": 1791626080.7397006,
+  "files": {
+    "actor/huggingface/chat_template.jinja": {
+      "bytes": 430,
+      "sha256": "bbff3bab94f2df1534d5971cb5ef47bfa3b06f1fb56965cc70dbcf261e72d3fa"
+    },
+    "actor/huggingface/config.json": {
+      "bytes": 1655,
+      "sha256": "72a84f3c4508aa91129fc5c3a7d614a966a1ac59dc61e7019d044d4c4ef2681f"
+    },
+    "actor/huggingface/generation_config.json": {
+      "bytes": 73,
+      "sha256": "c47b4b99ef339b4634dd455269d7331f164650b3d0e47d4e6c443436b632ad42"
+    },
+    "actor/huggingface/model-00001-of-00003.safetensors": {
+      "bytes": 4969984976,
+      "sha256": "3357920db5cebf796b1cfaf5df96ce088fe41802f7cdb9037b63bfad73743f44"
+    },
+    "actor/huggingface/model-00002-of-00003.safetensors": {
+      "bytes": 4981161496,
+      "sha256": "d286071759bcc8a25ac96caba8fbec894832e6bc36559379b35215800f4e8622"
+    },
+    "actor/huggingface/model-00003-of-00003.safetensors": {
+      "bytes": 4644917240,
+      "sha256": "e70c888e2de8953a7b6f4bc3b56663300ecd841fbaace539d6ba03fa148c68c3"
+    },
+    "actor/huggingface/model.safetensors.index.json": {
+      "bytes": 29630,
+      "sha256": "47a8266860f2a5f95c021fb4d7d3a469a95ee8b445742becbb6b19632cfc6e95"
+    },
+    "actor/huggingface/tokenizer.json": {
+      "bytes": 7137486,
+      "sha256": "4db319b9fad56774aef7c15b9214be37b454a7abf6a668bb60145708873258c1"
+    },
+    "actor/huggingface/tokenizer_config.json": {
+      "bytes": 312,
+      "sha256": "1944bab337212e8204d09b6218203a10542080bbf1a568e5584fc3f94118b19f"
+    },
+    "data.pt": {
+      "bytes": 7316,
+      "sha256": "bc9432f9c4fd1e99d41db2e9106068b6eafd1620ad15ae238b4c4d216f192a15"
+    }
+  },
+  "format": "HF weights plus dataloader state; no optimizer resume",
+  "producer_node": "0",
+  "source": "$DATA_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1600",
+  "status": "COMMITTED",
+  "update": 42
+}

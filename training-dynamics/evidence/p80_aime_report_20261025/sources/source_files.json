@@ -1,0 +1,62 @@
+[
+  {
+    "source": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/analysis_plan.json",
+    "copy": "sources/analysis_plan.json",
+    "bytes": 2548,
+    "sha256": "7c7114e5a2d354c28728d3970df870dd8f5b43c8a7925a03e204eff06353f9ea"
+  },
+  {
+    "source": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/input_audit/matrix32.json",
+    "copy": "sources/matrix32.json",
+    "bytes": 64889,
+    "sha256": "e02addf0cee823acc2707f179f6ad6cb28c92484e28ec2441b0c7fde58994e67"
+  },
+  {
+    "source": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/_p80_aime_strict_gate.json",
+    "copy": "sources/_p80_aime_strict_gate.json",
+    "bytes": 29250,
+    "sha256": "f292749161b552d215c1be50fc8ea3fa99d418216686ea4a75248650caa7c5b6"
+  },
+  {
+    "source": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/_p80_rollout_provenance.json",
+    "copy": "sources/_p80_rollout_provenance.json",
+    "bytes": 160578,
+    "sha256": "8c1907edc91ffd22c806be189086e7f305439e51febb8280a3327ac3eff67588"
+  },
+  {
+    "source": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/resume_20261022/completion_receipt.json",
+    "copy": "sources/completion_receipt.json",
+    "bytes": 16938,
+    "sha256": "cbfca5e462492ace0be516b4ddc46f63a7aa3a78aa6802f35418140761277946"
+  },
+  {
+    "source": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/eval_pkg_v1/eval_pass8.py",
+    "copy": "sources/eval_pass8.py",
+    "bytes": 44918,
+    "sha256": "91990b38c64432a9cfad2be25b6e3121be7c1ff7c6e8f4b4c6950b74dabd2b19"
+  },
+  {
+    "source": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/analysis/analyze_aime_matrix.py",
+    "copy": "sources/analyze_aime_matrix.py",
+    "bytes": 43656,
+    "sha256": "6746b421239b56b034d00eef2a240ee7be47844379bf6ecdb3eaf7d12f8d4489"
+  },
+  {
+    "source": "$REMOTE_HOME/mask_analysis/olmo_analysis/extrapolate_ckpt.py",
+    "copy": "sources/extrapolate_ckpt.py",
+    "bytes": 38748,
+    "sha256": "403a6893f2307435f269ad2256cdfd10970655d89b35c61f168e945f3538ed29"
+  },
+  {
+    "source": "$REMOTE_HOME/mask_analysis/olmo_analysis/olmo_utils.py",
+    "copy": "sources/olmo_utils.py",
+    "bytes": 58566,
+    "sha256": "da7593b2ee3d0aa93fd4b3c2438dc03ad03590a4f194443540f4fa26be0108c8"
+  },
+  {
+    "source": "$REMOTE_HOME/mask_analysis/olmo_analysis/run_expde_sequential.sh",
+    "copy": "sources/run_expde_sequential.sh",
+    "bytes": 1793,
+    "sha256": "cdd4c5746351ffd14d7c2cccc502d3bd9d2c369571e32f44d3f5321b93f23e44"
+  }
+]

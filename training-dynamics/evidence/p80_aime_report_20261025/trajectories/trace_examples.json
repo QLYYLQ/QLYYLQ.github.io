@@ -1,0 +1,1780 @@
+{
+  "cases": [
+    {
+      "additional_selection_rationales": [
+        {
+          "category": "ours__qh_maglin__Math_p80__:largest_question_gain_vs_donor",
+          "focus_label": "ours__qh_maglin__Math_p80__",
+          "rationale": "largest_question_gain_vs_donor by 32-draw question pass@1 delta; ties use smallest uid; within the question choose the smallest sample_idx with correctness pattern focus/donor=(True, False); question delta=0.187500."
+        }
+      ],
+      "category": "ours__lin_elem__Math_p80__:largest_question_gain_vs_donor",
+      "focus_label": "ours__lin_elem__Math_p80__",
+      "sample_idx": 1,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 41637,
+            "char_start": 41402,
+            "text": "\n- **Probability**: \\(\\frac{6! \\cdot 2^6}{12!}\\)\n- **Simplification**: Simplifying the fraction results in \\(\\frac{1}{10,395}\\)\n\n result:\n- \\(m = 1\\) and \\(n = 10,395\\)\n- \\(m + n = 1 + 10,395 = 10,396\\)\n\nFinal answer: \\(\\boxed{10496}\\)"
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 10496,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 10496,
+          "gold_answer": 247,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " in this format: $$Answer$$\n\nOkay, so there's this problem about Ellina arranging her blocks in a row. The key is figuring out when an arrangement is considered \"even,\" which requires that for each color with two blocks, there's an even num"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 10496,
+          "line_repeat_fraction": 0.055825242718446605,
+          "num_tokens": 10438,
+          "problem_idx": 88,
+          "repeat_primary": false,
+          "sample_idx": 1,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 10496,
+          "scored_first_answer": 10496,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 41637,
+            "char_start": 41317,
+            "text": "ations:\n- **Total arrangements**: \\(\\frac{12!}{2^6}\\)\n- **Even arrangements**: \\(6!\\)\n- **Probability**: \\(\\frac{6! \\cdot 2^6}{12!}\\)\n- **Simplification**: Simplifying the fraction results in \\(\\frac{1}{10,395}\\)\n\n result:\n- \\(m = 1\\) and \\(n = 10,395\\)\n- \\(m + n = 1 + 10,395 = 10,396\\)\n\nFinal answer: \\(\\boxed{10496}\\)"
+          },
+          "tail_repeat64": 0.0009794319294809011,
+          "text_sha256": "3d395a8ce85eadf62f545085dec5d67b048cae953310a0c5f90fee8ead400393",
+          "token_ids_sha256_le_u32": "a62f7238d355e38b67db334e79fbb62cc8f91c9b376f47c8680730f31f6d0868",
+          "uid": "aime-088"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 34431,
+            "char_start": 34197,
+            "text": "   \\frac{6220800}{479001600} = \\frac{16}{231}\n     \\]\n\n5. **Result**:\n   The probability is \\(\\frac{16}{231}\\). The sum of the numerator and the denominator is:\n   \\[\n   16 + 231 = 247\n   \\]\n\nThus, the final answer is \\(\\boxed{247}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 247,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 247,
+          "gold_answer": 247,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $($ $tags)$.\n\nOkay, so there's this problem where Ellina has twelve blocks, two of each color: red, blue, yellow, green, orange, and purple. She arranges them in a row randomly. The question is asking for the probability that the a"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 247,
+          "line_repeat_fraction": 0.045662100456621,
+          "num_tokens": 9846,
+          "problem_idx": 88,
+          "repeat_primary": false,
+          "sample_idx": 1,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 247,
+          "scored_first_answer": 247,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 34431,
+            "char_start": 34111,
+            "text": "{479001600} = \\frac{6220800}{479001600}\n     \\]\n   - Simplify the fraction:\n     \\[\n     \\frac{6220800}{479001600} = \\frac{16}{231}\n     \\]\n\n5. **Result**:\n   The probability is \\(\\frac{16}{231}\\). The sum of the numerator and the denominator is:\n   \\[\n   16 + 231 = 247\n   \\]\n\nThus, the final answer is \\(\\boxed{247}\\)."
+          },
+          "tail_repeat64": 0.0009794319294809011,
+          "text_sha256": "4f477fe190eb5f4f7d8699e5b57404e2267cd32326b8557709851e0a773cb934",
+          "token_ids_sha256_le_u32": "483480d4868aaee341f13ef4258bd0680668be5c8aca800aff540ab33b2e9540",
+          "uid": "aime-088"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 33224,
+            "char_start": 32990,
+            "text": "c{6! \\times 6! \\times 2^6}{12!} = \\frac{16}{231}\n   \\]\n\n5. **Result**: The fraction \\(\\frac{16}{231}\\) is in simplest form, where \\(m = 16\\) and \\(n = 231\\). Therefore, \\(m + n = 16 + 231 = 247\\).\n\nThe final answer is \\(\\boxed{247}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 247,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 247,
+          "gold_answer": 247,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " in this format: $$Answer$$\n\nOkay, so there's this problem about Ellina arranging her blocks in a row. The key is figuring out when an arrangement is considered \"even,\" which requires that between each pair of the same-colored blocks there'"
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 247,
+          "line_repeat_fraction": 0.05454545454545454,
+          "num_tokens": 8824,
+          "problem_idx": 88,
+          "repeat_primary": false,
+          "sample_idx": 1,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 247,
+          "scored_first_answer": 247,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 33224,
+            "char_start": 32904,
+            "text": " the fraction**: Simplifying the above expression step-by-step, we find:\n   \\[\n   \\frac{6! \\times 6! \\times 2^6}{12!} = \\frac{16}{231}\n   \\]\n\n5. **Result**: The fraction \\(\\frac{16}{231}\\) is in simplest form, where \\(m = 16\\) and \\(n = 231\\). Therefore, \\(m + n = 16 + 231 = 247\\).\n\nThe final answer is \\(\\boxed{247}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "fdf6fcd09fe3d309029d2487d22b1b04be5be1cc0725c60dba8f6d7c90138c69",
+          "token_ids_sha256_le_u32": "87d56ba18d3b6ca963deaca588dcb9948f2ae57ca5326707d2b990aa1ae9ac1d",
+          "uid": "aime-088"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 37274,
+            "char_start": 37040,
+            "text": "ation**: Simplifying the fraction step-by-step, we find that the probability is \\(\\frac{16}{231}\\).\n\n5. **Result**: The values \\(m = 16\\) and \\(n = 231\\) are coprime, so \\(m + n = 16 + 231 = 247\\).\n\n### Final Answer:\n\\[\n\\boxed{247}\n\\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 4,
+          "correct": true,
+          "extracted_answer": 247,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 247,
+          "gold_answer": 247,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " in this format: $$Answer$$\n\nOkay, so I need to find the probability that Ellina's arrangement of the twelve blocks is even. An even arrangement is defined as one where between each pair of blocks of the same color, there's an even number o"
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 247,
+          "line_repeat_fraction": 0.026442307692307692,
+          "num_tokens": 9512,
+          "problem_idx": 88,
+          "repeat_primary": false,
+          "sample_idx": 1,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 247,
+          "scored_first_answer": 247,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 37274,
+            "char_start": 36954,
+            "text": "s 6!}{\\frac{12!}{(2!)^6}} = \\frac{6! \\times 6! \\times 2!^6}{12!}\n   \\]\n\n4. **Simplification**: Simplifying the fraction step-by-step, we find that the probability is \\(\\frac{16}{231}\\).\n\n5. **Result**: The values \\(m = 16\\) and \\(n = 231\\) are coprime, so \\(m + n = 16 + 231 = 247\\).\n\n### Final Answer:\n\\[\n\\boxed{247}\n\\]"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "af90fd5fd7781a6a60b6840d4e954aeb5bc3c4f2b154a374f79a164f85b274cb",
+          "token_ids_sha256_le_u32": "45671b9f432dd4b8700926e312a24dfcf747bd64de7ba59905dc6b9bbf545a39",
+          "uid": "aime-088"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 29402,
+            "char_start": 29168,
+            "text": "ation, the probability is found to be \\(\\frac{16}{231}\\).\n\n4. **Final Result**:\n   The values \\(m = 16\\) and \\(n = 231\\) are coprime. Therefore, the sum \\(m + n\\) is:\n   \\[\n   16 + 231 = 247\n   \\]\n\nThe final answer is \\(\\boxed{247}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 2,
+          "correct": true,
+          "extracted_answer": 247,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 247,
+          "gold_answer": 247,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " in this format: $$Answer$$\n\nOkay, so there's this problem about Ellina arranging her blocks in a row. The key is figuring out when an arrangement is considered \"even,\" which requires that for each color with two blocks, there's an even num"
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 247,
+          "line_repeat_fraction": 0.036619718309859155,
+          "num_tokens": 8010,
+          "problem_idx": 88,
+          "repeat_primary": false,
+          "sample_idx": 1,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 247,
+          "scored_first_answer": 247,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 29402,
+            "char_start": 29082,
+            "text": "this fraction involves canceling common terms and reducing the result. After simplification, the probability is found to be \\(\\frac{16}{231}\\).\n\n4. **Final Result**:\n   The values \\(m = 16\\) and \\(n = 231\\) are coprime. Therefore, the sum \\(m + n\\) is:\n   \\[\n   16 + 231 = 247\n   \\]\n\nThe final answer is \\(\\boxed{247}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "0027f001c61ac6594365c44268de56e35bd26656c542c5e61f979c4a43a0f21d",
+          "token_ids_sha256_le_u32": "fc0d7584be1a8c48c96e4761af82081cbd4a76f827236ab5bb80497d970ffd2f",
+          "uid": "aime-088"
+        }
+      ],
+      "selection_rationale": "largest_question_gain_vs_donor by 32-draw question pass@1 delta; ties use smallest uid; within the question choose the smallest sample_idx with correctness pattern focus/donor=(True, False); question delta=0.125000.",
+      "uid": "aime-088"
+    },
+    {
+      "category": "ours__lin_elem__Math_p80__:largest_question_loss_vs_donor",
+      "focus_label": "ours__lin_elem__Math_p80__",
+      "sample_idx": 2,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 16854,
+            "char_start": 16620,
+            "text": "  - \\( b = 5y = 5 \\times 2\\sqrt{5} = 10\\sqrt{5} \\)\n   - Area of \\( \\triangle ABC \\):\n     - \\( \\text{Area} = \\frac{b^2}{2} = \\frac{(10\\sqrt{5})^2}{2} = \\frac{500}{2} = 250 \\).\n\nThus, the area of \\( \\triangle ABC \\) is \\(\\boxed{250}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 250,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 250,
+          "gold_answer": 250,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so I have this geometry problem here. Let me read it again to make sure I get all the details.\n\nIt says: Let triangle ABC be an isosceles triangle with angle A equal to 90 degrees. There exists a point P inside the triangle such th"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 250,
+          "line_repeat_fraction": 0.014492753623188406,
+          "num_tokens": 5484,
+          "problem_idx": 68,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 250,
+          "scored_first_answer": 250,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 16854,
+            "char_start": 16534,
+            "text": "lving gives \\( y = 2\\sqrt{5} \\).\n\n5. **Area Calculation**:\n   - Calculate \\( b \\):\n     - \\( b = 5y = 5 \\times 2\\sqrt{5} = 10\\sqrt{5} \\)\n   - Area of \\( \\triangle ABC \\):\n     - \\( \\text{Area} = \\frac{b^2}{2} = \\frac{(10\\sqrt{5})^2}{2} = \\frac{500}{2} = 250 \\).\n\nThus, the area of \\( \\triangle ABC \\) is \\(\\boxed{250}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "25e409fbcde68de5f5ef815bacb3f308d18a4c3b1c5fc62cffb32a0db1341be5",
+          "token_ids_sha256_le_u32": "a1511c9230c00087ddf56b1dbea7d59cf084068208adf14f67eec2010620cb61",
+          "uid": "aime-068"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 15259,
+            "char_start": 14719,
+            "text": ".\n\nYes. So area is490/9.\n\nBut 490 divided by9 is approximately54.44..., but need to check if answer is required as exact fraction.\n\nBut the problem says \"Find the area of triangle ABC.\" and \"put your final answer within \\boxed{}\".\n\nTherefore answer is490/9. But need to check if that's correct.\n\nWait but let me cross-verify.\n\nAlternatively, perhaps there is a miscalculation in the step where we applied trigonometric Ceva.\n\nWait let me check that step again.\n\nFrom trigonometric Ceva:\n\n[sinθ / sin(90° -θ)] * [sinθ / sin(45° -θ)] * [sinθ "
+          },
+          "answerline_count": 0,
+          "boxed_count": 1,
+          "correct": false,
+          "extracted_answer": null,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": null,
+          "gold_answer": 250,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $($ $tags)$.\n\nOkay, so I need to find the area of an isosceles right triangle ABC where angle A is 90 degrees. There's a point P inside the triangle such that the angles PAB, PBC, and PCA are all equal, and the length AP is 10. Hmm"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": null,
+          "line_repeat_fraction": 0.025974025974025976,
+          "num_tokens": 7037,
+          "problem_idx": 68,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "none",
+          "scored_final_answer": null,
+          "scored_first_answer": null,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 20643,
+            "char_start": 20323,
+            "text": "or \\( c \\):\n     \\[\n     c = \\frac{14\\sqrt{5}}{3}\n     \\]\n\n5. **Area Calculation**:\n   - Area of \\( \\triangle ABC \\):\n     \\[\n     \\text{Area} = \\frac{1}{2} \\times c^2 = \\frac{1}{2} \\times \\left( \\frac{14\\sqrt{5}}{3} \\right)^2 = \\frac{490}{9}\n     \\]\n\nThus, the area of \\( \\triangle ABC \\) is \\(\\boxed{\\dfrac{490}{9}}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "0404220137e1b7043331a065ac349bc90e3c9110c1cf3f2038062db5adb23558",
+          "token_ids_sha256_le_u32": "bf268c99577a65efe1795b675fad098a8449bc5b58ce0e5ef679e368857ee39b",
+          "uid": "aime-068"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 30856,
+            "char_start": 30635,
+            "text": "\\[\n   a^2 = \\left( \\frac{5\\sqrt{10}}{2} \\right)^2 = \\frac{250}{4} = \\frac{125}{2}\n   \\]\n   Therefore, the area is:\n   \\[\n   \\text{Area} = \\frac{125}{4}\n   \\]\n\nThe area of \\( \\triangle ABC \\) is \\(\\boxed{\\dfrac{125}{4}}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 0,
+          "correct": false,
+          "extracted_answer": null,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": null,
+          "gold_answer": 250,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $functional form.\n\nOkay, so I need to solve this geometry problem where there's an isosceles triangle ABC with a right angle at A. There's a point P inside the triangle such that the angles PAB, PBC, and PCA are all equal. Also, th"
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": null,
+          "line_repeat_fraction": 0.029661016949152543,
+          "num_tokens": 10553,
+          "problem_idx": 68,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "none",
+          "scored_final_answer": null,
+          "scored_first_answer": null,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 30856,
+            "char_start": 30536,
+            "text": "c{1}{2} \\times a \\times a = \\frac{a^2}{2}\n   \\]\n   Substituting \\( a = \\frac{5\\sqrt{10}}{2} \\):\n   \\[\n   a^2 = \\left( \\frac{5\\sqrt{10}}{2} \\right)^2 = \\frac{250}{4} = \\frac{125}{2}\n   \\]\n   Therefore, the area is:\n   \\[\n   \\text{Area} = \\frac{125}{4}\n   \\]\n\nThe area of \\( \\triangle ABC \\) is \\(\\boxed{\\dfrac{125}{4}}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "b6505f0d313239c7453c53693369c7a4a1edd2ed73b306a93f7fb6600876ade3",
+          "token_ids_sha256_le_u32": "f6e830f81ec50ee2ae512829c3401615762b97f7ecf4e3ca793fd61ee3528ddf",
+          "uid": "aime-068"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 39653,
+            "char_start": 39418,
+            "text": "ecognizing the right triangle's properties, applying trigonometric identities, and solving for the coordinates and distances. The final area calculation leads to the conclusion that the area of \\( \\triangle ABC \\) is \\( \\boxed{200} \\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 200,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 200,
+          "gold_answer": 250,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so I have this geometry problem here. Let me read it again to make sure I get all the details.\n\nIt says: Let triangle ABC be an isosceles triangle with angle A equal to 90 degrees. There exists a point P inside the triangle such th"
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 200,
+          "line_repeat_fraction": 0.025157232704402517,
+          "num_tokens": 13964,
+          "problem_idx": 68,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 200,
+          "scored_first_answer": 200,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 39653,
+            "char_start": 39333,
+            "text": "oblem's constraints, the area of the triangle is determined.\n\nThe key steps involve recognizing the right triangle's properties, applying trigonometric identities, and solving for the coordinates and distances. The final area calculation leads to the conclusion that the area of \\( \\triangle ABC \\) is \\( \\boxed{200} \\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "87bcb9db82c384ec19e65405cda112eae2de9b652979694c65a9d9d4c0bc45d0",
+          "token_ids_sha256_le_u32": "1aaed5e4e830ceca7df2c48abc6808768693a189b77651e20284168a720fa19f",
+          "uid": "aime-068"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 47901,
+            "char_start": 47680,
+            "text": ") is calculated as \\( \\frac{1}{2} \\times AB \\times AC \\).\n   - Substituting \\( b = \\frac{14\\sqrt{5}}{3} \\), we find the area to be \\( \\frac{490}{9} \\).\n\nThus, the area of \\( \\triangle ABC \\) is \\(\\boxed{\\dfrac{490}{9}}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 0,
+          "correct": false,
+          "extracted_answer": null,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": null,
+          "gold_answer": 250,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so I have this geometry problem here. Let me read it again to make sure I get all the details.\n\nIt says: Let triangle ABC be an isosceles triangle with angle A equal to 90 degrees. There exists a point P inside the triangle such th"
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": null,
+          "line_repeat_fraction": 0.05639614855570839,
+          "num_tokens": 14406,
+          "problem_idx": 68,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "none",
+          "scored_final_answer": null,
+          "scored_first_answer": null,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 47901,
+            "char_start": 47581,
+            "text": "gives \\( b = \\frac{14\\sqrt{5}}{3} \\).\n\n5. **Area Calculation**:\n   - The area of \\( \\triangle ABC \\) is calculated as \\( \\frac{1}{2} \\times AB \\times AC \\).\n   - Substituting \\( b = \\frac{14\\sqrt{5}}{3} \\), we find the area to be \\( \\frac{490}{9} \\).\n\nThus, the area of \\( \\triangle ABC \\) is \\(\\boxed{\\dfrac{490}{9}}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "ad1cfab2b7a34d1bfe0a025ead5c55f77fd189cace5ef9c667b2f5387473c66f",
+          "token_ids_sha256_le_u32": "6c42cc1d02b3d31808488d7ae3085af78d5f3049155365a7a360f99b0491ddb6",
+          "uid": "aime-068"
+        }
+      ],
+      "selection_rationale": "largest_question_loss_vs_donor by 32-draw question pass@1 delta; ties use smallest uid; within the question choose the smallest sample_idx with correctness pattern focus/donor=(False, True); question delta=-0.343750.",
+      "uid": "aime-068"
+    },
+    {
+      "category": "ours__qh_maglin__Math_p80__:largest_question_loss_vs_donor",
+      "focus_label": "ours__qh_maglin__Math_p80__",
+      "sample_idx": 5,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 29631,
+            "char_start": 29397,
+            "text": "(C\\) is at \\((107, 16)\\) and \\(E\\) is at \\((3, 16)\\), the distance \\(CE\\) is the horizontal distance between these points on the same line \\(y = 16\\). This distance is \\(107 - 3 = 104\\).\n\nThus, the length of \\(CE\\) is \\(\\boxed{104}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 104,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 104,
+          "gold_answer": 104,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, let me try to work through this problem step by step. It's a bit tricky, so I need to take it slowly and make sure I understand each part.\n\nFirst, the problem mentions two rectangles, ABCD and EFGH. The points D, E, and C are colli"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 104,
+          "line_repeat_fraction": 0.03636363636363636,
+          "num_tokens": 9764,
+          "problem_idx": 17,
+          "repeat_primary": false,
+          "sample_idx": 5,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 104,
+          "scored_first_answer": 104,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 29631,
+            "char_start": 29311,
+            "text": "87, 33)\\), and \\(H\\) at \\((3, 33)\\).\n\nFinally, we calculate the length \\(CE\\). Since \\(C\\) is at \\((107, 16)\\) and \\(E\\) is at \\((3, 16)\\), the distance \\(CE\\) is the horizontal distance between these points on the same line \\(y = 16\\). This distance is \\(107 - 3 = 104\\).\n\nThus, the length of \\(CE\\) is \\(\\boxed{104}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "feb2ee453c786ab4b37b0a8ceac243721cf4eaee4e90248b03524f8aaf718c48",
+          "token_ids_sha256_le_u32": "a8fe05beeb255f2c039f13602cf9c72aa4cae60a73893261785c656f96a6aed9",
+          "uid": "aime-017"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 30736,
+            "char_start": 30502,
+            "text": "ing the distance \\(CE\\) where \\(C\\) is at \\((107, 16)\\) and \\(E\\) is at \\((e, 16)\\), we find the distance is \\(|107 - e|\\). For \\(e = 208\\), the distance \\(CE\\) is \\(|107 - 208| = 101\\).\n\nThus, the length of \\(CE\\) is \\(\\boxed{101}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 2,
+          "correct": false,
+          "extracted_answer": 101,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 101,
+          "gold_answer": 104,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so there's this problem with two rectangles, ABCD and EFGH. The points D, E, and C are collinear. Also, points A, D, H, and G lie on a circle. The given side lengths are BC=16, AB=107, FG=17, and EF=184. The question is asking for "
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 101,
+          "line_repeat_fraction": 0.007211538461538462,
+          "num_tokens": 9682,
+          "problem_idx": 17,
+          "repeat_primary": false,
+          "sample_idx": 5,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 101,
+          "scored_first_answer": 101,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 30736,
+            "char_start": 30416,
+            "text": " \\(e\\), we find that \\(e = 208\\) (or \\(-392\\)) are possible values.\n\nFinally, calculating the distance \\(CE\\) where \\(C\\) is at \\((107, 16)\\) and \\(E\\) is at \\((e, 16)\\), we find the distance is \\(|107 - e|\\). For \\(e = 208\\), the distance \\(CE\\) is \\(|107 - 208| = 101\\).\n\nThus, the length of \\(CE\\) is \\(\\boxed{101}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "ef5857e1ad978b070d7bb5d82adea5b5168c844cbc4b05acfa3c3efcd7deacff",
+          "token_ids_sha256_le_u32": "3eb5454bfac361848367ac82a5e4c54553819e41663ec5452c548e557e5819a2",
+          "uid": "aime-017"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 28162,
+            "char_start": 27928,
+            "text": "87, 16)\\):\n     \\[\n     CE = |107 - (-187)| ,CE = 294}\n     \\]\n\n5. **Conclusion**:\n   - Considering the problem context and typical geometric configurations, the valid solution is \\(e = 3\\), leading to \\(CE = 104\\).\n\n\\[\n\\boxed{104}\n\\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 104,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 104,
+          "gold_answer": 104,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so there's this problem with two rectangles, ABCD and EFGH. The points D, E, C, and F are all collinear. Also, points A, D, H, and G lie on a circle. The given measurements are BC = 16, AB = 107, FG = 17, and EF = 184. We need to f"
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 104,
+          "line_repeat_fraction": 0.03529411764705882,
+          "num_tokens": 8300,
+          "problem_idx": 17,
+          "repeat_primary": false,
+          "sample_idx": 5,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 104,
+          "scored_first_answer": 104,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 28162,
+            "char_start": 27842,
+            "text": "- If \\(e = -187\\), \\(CE\\) is the horizontal distance between \\(C(107, 16)\\) and \\(E(-187, 16)\\):\n     \\[\n     CE = |107 - (-187)| ,CE = 294}\n     \\]\n\n5. **Conclusion**:\n   - Considering the problem context and typical geometric configurations, the valid solution is \\(e = 3\\), leading to \\(CE = 104\\).\n\n\\[\n\\boxed{104}\n\\]"
+          },
+          "tail_repeat64": 0.002938295788442703,
+          "text_sha256": "863ae01c19eb1f2aab28ac00cc882eadb03b09ebf0e084b6f53718d67a269b9c",
+          "token_ids_sha256_le_u32": "be0d7f74b4ed7e7e9db8fb2ce17d8de5e018bffc89a46d14102443b1e53c9db3",
+          "uid": "aime-017"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 37360,
+            "char_start": 37127,
+            "text": " approximately gives \\(b \\approx 6.087\\).\n   - Substituting \\(b\\) into the distance formula results in \\(CE \\approx 83\\).\n\nAfter verifying the calculations and considering the problem's context, the final answer is:\n\n\\[\n\\boxed{83}\n\\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 4,
+          "correct": false,
+          "extracted_answer": 83,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 83,
+          "gold_answer": 104,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so there's this problem with two rectangles, ABCD and EFGH. The points D, E, C, and F are all collinear. Also, points A, D, H, and G lie on a circle. The given measurements are BC = 16, AB = 107, FG = 17, and EF = 184. We need to f"
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 83,
+          "line_repeat_fraction": 0.0420032310177706,
+          "num_tokens": 11604,
+          "problem_idx": 17,
+          "repeat_primary": false,
+          "sample_idx": 5,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 83,
+          "scored_first_answer": 83,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 37360,
+            "char_start": 37040,
+            "text": "|b + 77|\\).\n\n5. **Approximation and Verification**:\n   - Solving the quadratic equation approximately gives \\(b \\approx 6.087\\).\n   - Substituting \\(b\\) into the distance formula results in \\(CE \\approx 83\\).\n\nAfter verifying the calculations and considering the problem's context, the final answer is:\n\n\\[\n\\boxed{83}\n\\]"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "6dcd3f7202205853e67b620a044a55941b6bc0df6c8f8eccb08e2bcc1bc58fcf",
+          "token_ids_sha256_le_u32": "086988a2aa782876d320b0133b1b7d3376a870fd51d32cab4c70b6caea66df04",
+          "uid": "aime-017"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 29565,
+            "char_start": 29331,
+            "text": "\n5. **Calculating CE**:\n   - The coordinates of C are (107, 16) and E are (3, 16). The length of CE is the horizontal distance between these points:\n     \\[\n     CE = |107 - 3| = 104\n     \\]\n\nThus, the length of CE is \\(\\boxed{104}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 104,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 104,
+          "gold_answer": 104,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so there's this problem about two rectangles, ABCD and EFGH. The points D, E, C, and F are all collinear. Also, points A, D, H, and G are on a circle. The given measurements are BC = 16, AB = 107, FG = 17, and EF = 184. We need to "
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 104,
+          "line_repeat_fraction": 0.05367231638418079,
+          "num_tokens": 9663,
+          "problem_idx": 17,
+          "repeat_primary": false,
+          "sample_idx": 5,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 104,
+          "scored_first_answer": 104,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 29565,
+            "char_start": 29245,
+            "text": "lgebraic manipulation and solving the quadratic equation, we find that \\( x_E = 3 \\).\n\n5. **Calculating CE**:\n   - The coordinates of C are (107, 16) and E are (3, 16). The length of CE is the horizontal distance between these points:\n     \\[\n     CE = |107 - 3| = 104\n     \\]\n\nThus, the length of CE is \\(\\boxed{104}\\)."
+          },
+          "tail_repeat64": 0.0009794319294809011,
+          "text_sha256": "dd981cd0d4d586bf35e90b9d9e5a409c3ddc500a29878f170807d4b88760e308",
+          "token_ids_sha256_le_u32": "c8b082e5b4a88bc196b613e89be97f4fb68a62537f8461dcca16794df403663f",
+          "uid": "aime-017"
+        }
+      ],
+      "selection_rationale": "largest_question_loss_vs_donor by 32-draw question pass@1 delta; ties use smallest uid; within the question choose the smallest sample_idx with correctness pattern focus/donor=(False, True); question delta=-0.281250.",
+      "uid": "aime-017"
+    },
+    {
+      "category": "ours__qh_hybrid_k4096__Math_p80:largest_question_gain_vs_donor",
+      "focus_label": "ours__qh_hybrid_k4096__Math_p80",
+      "sample_idx": 4,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 48082,
+            "char_start": 47848,
+            "text": " exactly one valid \\(r\\) within the same range. Therefore, there are exactly 100 such pairs \\((r, s)\\).\n\nThus, the number of ordered pairs \\((r, s)\\) of positive integers not exceeding 100 that satisfy the equation is \\(\\boxed{100}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 2,
+          "correct": false,
+          "extracted_answer": 100,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 100,
+          "gold_answer": 834,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " and in the form $m box_{blue}, where m and box_{blue} are defined.\n\nOkay, so I need to find the number of ordered pairs (r, s) of positive integers such that both r and s are between 1 and 100, inclusive. The equation given is i times w^r "
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 100,
+          "line_repeat_fraction": 0.01732283464566929,
+          "num_tokens": 13424,
+          "problem_idx": 58,
+          "repeat_primary": false,
+          "sample_idx": 4,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 100,
+          "scored_first_answer": 100,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 48082,
+            "char_start": 47762,
+            "text": "dicity and the range constraints, every valid \\(s\\) (from 1 to 100) will correspond to exactly one valid \\(r\\) within the same range. Therefore, there are exactly 100 such pairs \\((r, s)\\).\n\nThus, the number of ordered pairs \\((r, s)\\) of positive integers not exceeding 100 that satisfy the equation is \\(\\boxed{100}\\)."
+          },
+          "tail_repeat64": 0.0019588638589618022,
+          "text_sha256": "1ce020d907e96806e5ac84d79c90a154b4655c9a5a125a748b07e40c4c64f3d2",
+          "token_ids_sha256_le_u32": "981e388a2de6fc0b4868c42f34cdeabe56a49b641b636693e1a455b5b95f0a3f",
+          "uid": "aime-058"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 29102,
+            "char_start": 28868,
+            "text": "ity of complex arguments modulo \\( 2\\pi \\).\n4. Summing the valid pairs for each range of \\( k \\).\n\nAfter detailed calculations and verification, the total number of valid ordered pairs \\((r, s)\\) is found to be 317.\n\n\\[\n\\boxed{317}\n\\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 317,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 317,
+          "gold_answer": 834,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $ $ format: $$ Texas instruments graphing calculator should not be used.\n\nOkay, so I have this problem here where I need to find the number of ordered pairs (r, s) of positive integers not exceeding 100. The equation given is i mul"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 317,
+          "line_repeat_fraction": 0.05739514348785872,
+          "num_tokens": 10415,
+          "problem_idx": 58,
+          "repeat_primary": false,
+          "sample_idx": 4,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 317,
+          "scored_first_answer": 317,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 29102,
+            "char_start": 28782,
+            "text": "iving the linear relationship between \\( r \\) and \\( s \\).\n3. Considering the periodicity of complex arguments modulo \\( 2\\pi \\).\n4. Summing the valid pairs for each range of \\( k \\).\n\nAfter detailed calculations and verification, the total number of valid ordered pairs \\((r, s)\\) is found to be 317.\n\n\\[\n\\boxed{317}\n\\]"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "3ca383867ff46acd672305d5dea24fdf875ddb3c267637a0a13f48f73eb5a41a",
+          "token_ids_sha256_le_u32": "5c49d78c67c91460be69d54e0f62c80174d1a4cbffbb4921bd2c62b9313ee39f",
+          "uid": "aime-058"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 26161,
+            "char_start": 25927,
+            "text": "ions, the total number of valid pairs is found to be:\n\\[ 33 \\text{ trios} \\times 25 \\text{ pairs per trio} + 9 \\text{ pairs from the remaining value} = 825 + 9 = 834 \\]\n\nThus, the number of ordered pairs \\((r, s)\\) is \\(\\boxed{834}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 834,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 834,
+          "gold_answer": 834,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " and in the form $m box_{blue}, where m and box_{blue} are defined.\n\nOkay, so I have this problem where I need to find the number of ordered pairs of positive integers (r, s) both not exceeding 100 that satisfy the equation i·w^r = z^s. The"
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 834,
+          "line_repeat_fraction": 0.0687960687960688,
+          "num_tokens": 8677,
+          "problem_idx": 58,
+          "repeat_primary": false,
+          "sample_idx": 4,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 834,
+          "scored_first_answer": 834,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 26161,
+            "char_start": 25841,
+            "text": "ed and summed over all trios and remaining values of \\( s \\).\n\nAfter detailed calculations, the total number of valid pairs is found to be:\n\\[ 33 \\text{ trios} \\times 25 \\text{ pairs per trio} + 9 \\text{ pairs from the remaining value} = 825 + 9 = 834 \\]\n\nThus, the number of ordered pairs \\((r, s)\\) is \\(\\boxed{834}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "e1f20ba6e4cf7eac78712cae2ecaf423d6d0b11650cc3862b59582d1b25e10f3",
+          "token_ids_sha256_le_u32": "523b6dae0b2a46845a622db4774daa488ab2c00e7e7adfa102bfd22b33b4e263",
+          "uid": "aime-058"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 44614,
+            "char_start": 44381,
+            "text": "riodic nature of the solutions, we conclude that the number of valid pairs \\((r, s)\\) is derived from the combinations of residues modulo 3 and 12. The final count, considering overlaps and valid ranges, results in:\n\n\\[\n\\boxed{75}\n\\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 2,
+          "correct": false,
+          "extracted_answer": 75,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 75,
+          "gold_answer": 834,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " and in the form $m box_{blue}, where m and box_{blue} are defined.\n\nOkay, so I need to find the number of ordered pairs (r, s) of positive integers not exceeding 100 that satisfy the equation i·w^r = z^s. The values of w and z are given as"
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 75,
+          "line_repeat_fraction": 0.03903903903903904,
+          "num_tokens": 13760,
+          "problem_idx": 58,
+          "repeat_primary": false,
+          "sample_idx": 4,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 75,
+          "scored_first_answer": 75,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 44614,
+            "char_start": 44294,
+            "text": "ng they fall within the required range.\n\nAfter detailed analysis and considering the periodic nature of the solutions, we conclude that the number of valid pairs \\((r, s)\\) is derived from the combinations of residues modulo 3 and 12. The final count, considering overlaps and valid ranges, results in:\n\n\\[\n\\boxed{75}\n\\]"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "5caa15c6d3742641281b5f28da700356b580ad9e54236f738d15c88fcab6a362",
+          "token_ids_sha256_le_u32": "b8c61cea32a1587f338823c4dbe18e6127d98c8dc52dd93a422ba5e10d84dcba",
+          "uid": "aime-058"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 22511,
+            "char_start": 22277,
+            "text": " has 33 values of \\( s \\), each contributing 8 valid \\( r \\) values.\n\nSumming these contributions:\n\\[ 34 \\times 9 + 33 \\times 8 + 33 \\times 8 = 306 + 264 + 264 = 834 \\]\n\nThus, the number of ordered pairs \\((r, s)\\) is \\(\\boxed{834}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 834,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 834,
+          "gold_answer": 834,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " and in the form $m box_{blue}, where m and box_{blue} are defined.\n\nOkay, so I need to find the number of ordered pairs (r, s) of positive integers such that both r and s are between 1 and 100 inclusive. The equation given is i times w^r e"
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 834,
+          "line_repeat_fraction": 0.006472491909385114,
+          "num_tokens": 7705,
+          "problem_idx": 58,
+          "repeat_primary": false,
+          "sample_idx": 4,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 834,
+          "scored_first_answer": 834,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 22511,
+            "char_start": 22191,
+            "text": "id \\( r \\) values.\n- For \\( s \\equiv 2 \\pmod{3} \\) and \\( s \\equiv 0 \\pmod{3} \\), each has 33 values of \\( s \\), each contributing 8 valid \\( r \\) values.\n\nSumming these contributions:\n\\[ 34 \\times 9 + 33 \\times 8 + 33 \\times 8 = 306 + 264 + 264 = 834 \\]\n\nThus, the number of ordered pairs \\((r, s)\\) is \\(\\boxed{834}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "3dcf6e61d8cad3409cfe3adefa93ec8ef7dbb8b5b7f8e1d467ff6a73fe917da6",
+          "token_ids_sha256_le_u32": "13ce4cfa217feb511b4f38acfe384bc2c452fce0f0aaeb00fc6a031719f7c473",
+          "uid": "aime-058"
+        }
+      ],
+      "selection_rationale": "largest_question_gain_vs_donor by 32-draw question pass@1 delta; ties use smallest uid; within the question choose the smallest sample_idx with correctness pattern focus/donor=(True, False); question delta=0.187500.",
+      "uid": "aime-058"
+    },
+    {
+      "category": "ours__qh_hybrid_k4096__Math_p80:largest_question_loss_vs_donor",
+      "focus_label": "ours__qh_hybrid_k4096__Math_p80",
+      "sample_idx": 7,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 56580,
+            "char_start": 56346,
+            "text": "125}{4}\\).\n\n4. **Perimeter Calculation**:\n   - The perimeter of the rhombus is \\(4a\\). Substituting \\(a = \\frac{125}{4}\\), the perimeter is \\(4 \\times \\frac{125}{4} = 125\\).\n\nThus, the perimeter of rhombus \\(ABCD\\) is \\(\\boxed{125}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 2,
+          "correct": true,
+          "extracted_answer": 125,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 125,
+          "gold_answer": 125,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using $\\textrm{latex}$ !!\nPlease confirm it is well pronounced and justified too.\n\nOkay, so there's this rhombus ABCD where angle BAD is less than 90 degrees. That means the Rhombus isn't a square but it's \"nice and pointy\" at one corn"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 125,
+          "line_repeat_fraction": 0.06132075471698113,
+          "num_tokens": 18464,
+          "problem_idx": 29,
+          "repeat_primary": false,
+          "sample_idx": 7,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 125,
+          "scored_first_answer": 125,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 56580,
+            "char_start": 56260,
+            "text": "}\\) and \\(\\cos \\theta = \\frac{3}{5}\\), we get \\(a \\sin \\theta = 25 \\implies a = \\frac{125}{4}\\).\n\n4. **Perimeter Calculation**:\n   - The perimeter of the rhombus is \\(4a\\). Substituting \\(a = \\frac{125}{4}\\), the perimeter is \\(4 \\times \\frac{125}{4} = 125\\).\n\nThus, the perimeter of rhombus \\(ABCD\\) is \\(\\boxed{125}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "03a73555ed0339234eb0768f05230942c074abe39b985f4f99206c94e80d6399",
+          "token_ids_sha256_le_u32": "0ccfaebb15f7d850f3805007c22c44110072874f1c0ebee9ff56040728d66ebe",
+          "uid": "aime-029"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 44984,
+            "char_start": 44750,
+            "text": "ving the quadratic equation derived from the coordinates and distances confirms the side length \\(a = 31.25\\).\n   - The perimeter of the rhombus is \\(4 \\times 31.25 = 125\\).\n\nThus, the perimeter of rhombus \\(ABCD\\) is \\(\\boxed{125}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 125,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 125,
+          "gold_answer": 125,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using \\texttt{latex} tag!\n\nOkay, so I need to find the perimeter of a rhombus ABCD where there's a point P on the incircle. The distances from P to the sides DA, AB, and BC are 9, 5, and 16 respectively. The angle BAD is less than 90 d"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 125,
+          "line_repeat_fraction": 0.1076923076923077,
+          "num_tokens": 14378,
+          "problem_idx": 29,
+          "repeat_primary": false,
+          "sample_idx": 7,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 125,
+          "scored_first_answer": 125,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 44984,
+            "char_start": 44664,
+            "text": " solving for \\(a\\) gives the side length.\n\n5. **Verification and Perimeter**:\n   - Solving the quadratic equation derived from the coordinates and distances confirms the side length \\(a = 31.25\\).\n   - The perimeter of the rhombus is \\(4 \\times 31.25 = 125\\).\n\nThus, the perimeter of rhombus \\(ABCD\\) is \\(\\boxed{125}\\)."
+          },
+          "tail_repeat64": 0.0009794319294809011,
+          "text_sha256": "d4f723aa410c8960a38db2b2f32ec75d052bae140445a160277542fbb92fe42e",
+          "token_ids_sha256_le_u32": "99d494ca6c06c2fcb914bd0260d81f696292900a35a18538cc53ab360eaa20dd",
+          "uid": "aime-029"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 44566,
+            "char_start": 44333,
+            "text": "    \\[\n     50 = 12.5 \\times s \\implies s = \\frac{50}{12.5} = 4\n     \\]\n\n5. **Perimeter Calculation**:\n   - The perimeter of the rhombus is \\(4 \\times s = 4 \\times 4 = 16\\).\n\nThus, the perimeter of rhombus \\(ABCD\\) is \\(\\boxed{16}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 16,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 16,
+          "gold_answer": 125,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using $\\textrm{latex}$ !!\nPlease confirm it is well pronounced and justified too.\n\nOkay, so there's this problem about a rhombus ABCD where angle BAD is less than 90 degrees. There's a point P on the incircle of the rhombus. The distan"
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 16,
+          "line_repeat_fraction": 0.029850746268656716,
+          "num_tokens": 12332,
+          "problem_idx": 29,
+          "repeat_primary": false,
+          "sample_idx": 7,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 16,
+          "scored_first_answer": 16,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 44566,
+            "char_start": 44246,
+            "text": "5 + 9 + 16 + 20 = 50\\).\n   - This total sum equals \\(r \\times s\\). Solving for \\(s\\):\n     \\[\n     50 = 12.5 \\times s \\implies s = \\frac{50}{12.5} = 4\n     \\]\n\n5. **Perimeter Calculation**:\n   - The perimeter of the rhombus is \\(4 \\times s = 4 \\times 4 = 16\\).\n\nThus, the perimeter of rhombus \\(ABCD\\) is \\(\\boxed{16}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "68283f0827ec6b7736c9819dc4d0de9891a9dcc7a53a1e285dc6656ed9d26151",
+          "token_ids_sha256_le_u32": "c4541d6afc07beedc5562d1d5e0e62c32e150710d789bfb3c7085fc3cb5ef458",
+          "uid": "aime-029"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 47948,
+            "char_start": 47714,
+            "text": "detailed geometric analysis and considering the given distances, the side length \\(s\\) is found to be \\(105\\).\n\n5. **Final Perimeter**:\n   - The perimeter is \\(4 \\times 105 = 420\\).\n\nThus, the perimeter of \\(ABCD\\) is \\(\\boxed{420}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 420,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 420,
+          "gold_answer": 125,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using $\\textrm{latex}$ !!\nPlease confirm it is well pronounced and justified too.\n\nOkay, so there's this rhombus ABCD where angle BAD is less than 90 degrees. That means the Rhombus isn't a square but it's \"nice and pointy\" at one corn"
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 420,
+          "line_repeat_fraction": 0.037481259370314844,
+          "num_tokens": 14445,
+          "problem_idx": 29,
+          "repeat_primary": false,
+          "sample_idx": 7,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 420,
+          "scored_first_answer": 420,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 47948,
+            "char_start": 47628,
+            "text": " the inradius and the perimeter.\n   - The perimeter of the rhombus is \\(4s\\). Through detailed geometric analysis and considering the given distances, the side length \\(s\\) is found to be \\(105\\).\n\n5. **Final Perimeter**:\n   - The perimeter is \\(4 \\times 105 = 420\\).\n\nThus, the perimeter of \\(ABCD\\) is \\(\\boxed{420}\\)."
+          },
+          "tail_repeat64": 0.002938295788442703,
+          "text_sha256": "7d10f1d72d45782565997bdb82a31b5238f50624c74f0b0ec729538fdf0e9e54",
+          "token_ids_sha256_le_u32": "f411950ddf0aff52f7ba4bdfa83872573402cdfd16d09f597643e290f525f3ae",
+          "uid": "aime-029"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 70355,
+            "char_start": 70122,
+            "text": " of the rhombus.\n\n6. **Conclusion**:\n   - After detailed calculations and verification, the perimeter of the rhombus is found to be \\(4a\\). Given the derived relationships and checks, the perimeter is determined to be \\(\\boxed{40}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 8,
+          "correct": false,
+          "extracted_answer": 40,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 40,
+          "gold_answer": 125,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using $\\textrm{latex}$ !!\nPlease confirm it is well pronounced and justified too.\n\nOkay, so there's this rhombus ABCD where angle BAD is less than 90 degrees. There's a point P on the incircle of the rhombus. The distances from P to th"
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 40,
+          "line_repeat_fraction": 0.050746268656716415,
+          "num_tokens": 21393,
+          "problem_idx": 29,
+          "repeat_primary": false,
+          "sample_idx": 7,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 40,
+          "scored_first_answer": 40,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 70355,
+            "char_start": 70035,
+            "text": "m point \\(P\\) to the sides, we solve for \\(a\\) using the given distances and properties of the rhombus.\n\n6. **Conclusion**:\n   - After detailed calculations and verification, the perimeter of the rhombus is found to be \\(4a\\). Given the derived relationships and checks, the perimeter is determined to be \\(\\boxed{40}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "83096e16f297f7360e405bf05d669445eda15dd05ae22030decd0479fe6f58c7",
+          "token_ids_sha256_le_u32": "933b6536235eda96613da198e3800342768f58632084bc3d343f07ba3be7c560",
+          "uid": "aime-029"
+        }
+      ],
+      "selection_rationale": "largest_question_loss_vs_donor by 32-draw question pass@1 delta; ties use smallest uid; within the question choose the smallest sample_idx with correctness pattern focus/donor=(False, True); question delta=-0.218750.",
+      "uid": "aime-029"
+    },
+    {
+      "category": "answer_revision_to_correct:longest",
+      "focus_label": "ours__qh_hybrid_k4096__Math_p80",
+      "sample_idx": 26,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 44545,
+            "char_start": 44311,
+            "text": "sidents equation from the total memberships equation:\n     \\[\n     3x = 2424 - 900\n     \\]\n     \\[\n     3x = 1524\n     \\]\n     \\[\n     x = 408\n     \\]\n\nThus, the number of residents who own all four of these things is \\(\\boxed{408}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 408,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 408,
+          "gold_answer": 73,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $ $ format: $$ Texas instruments graphing calculator should not be used.\n\nOkay, so there's this problem about Aimeville and its residents owning different items. The question is asking for the number of residents who own all four i"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 408,
+          "line_repeat_fraction": 0.035269709543568464,
+          "num_tokens": 11688,
+          "problem_idx": 79,
+          "repeat_primary": false,
+          "sample_idx": 26,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 408,
+          "scored_first_answer": 408,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 44545,
+            "char_start": 44225,
+            "text": "[\n     a + b + c + d + e + f + g + h + 4x = 2424\n     \\]\n   - Subtracting the total residents equation from the total memberships equation:\n     \\[\n     3x = 2424 - 900\n     \\]\n     \\[\n     3x = 1524\n     \\]\n     \\[\n     x = 408\n     \\]\n\nThus, the number of residents who own all four of these things is \\(\\boxed{408}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "966c3eabd21008f252632bce117a9b9d81db5432ff7279d7d7bb8e7b1f81a2a8",
+          "token_ids_sha256_le_u32": "1ac6af9205fbd36eab0505b29fa488e4a5ee9c16d7838abaf68f962fbe3207ea",
+          "uid": "aime-079"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 68459,
+            "char_start": 68222,
+            "text": "d the intersections of the items.\n\n8. **Final Calculation**: After solving the system of equations and considering the intersections and overlaps, we find that the number of residents who own all four items is:\n   \\[\n   \\boxed{100}\n   \\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 5,
+          "correct": false,
+          "extracted_answer": 100,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 100,
+          "gold_answer": 73,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $ $ format: $$ Texas instruments graphing calculator should not be used.\n\nOkay, so there's this problem about Aimeville and its residents owning different items. The question is asking how many residents own all four items: a diamo"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 100,
+          "line_repeat_fraction": 0.07,
+          "num_tokens": 19403,
+          "problem_idx": 79,
+          "repeat_primary": false,
+          "sample_idx": 26,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 100,
+          "scored_first_answer": 100,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 68459,
+            "char_start": 68139,
+            "text": "etermined by solving the equations and considering the total number of residents and the intersections of the items.\n\n8. **Final Calculation**: After solving the system of equations and considering the intersections and overlaps, we find that the number of residents who own all four items is:\n   \\[\n   \\boxed{100}\n   \\]"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "ca8aee00f6e3d5510277d9517b47aea9a71c1dfb7f1793323429a4c68055e3da",
+          "token_ids_sha256_le_u32": "b9b488582eef146db026bf180c5af7433e9defb0fbd1c36a0cd56749ac9164e7",
+          "uid": "aime-079"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 22242,
+            "char_start": 22008,
+            "text": "ts owning all four items: \\( x \\)\n\nWe set up the equation:\n\\[\n437 + 234 + x = 900\n\\]\n\nSolving for \\( x \\):\n\\[\n671 + x = 900\n\\]\n\\[\nx = 900 - 671\n\\]\n\\[\nx = 229\n\\]\n\nThus, the number of residents who own all four items is \\(\\boxed{229}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 229,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 229,
+          "gold_answer": 73,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $functional form.\n\nOkay, so there's this problem about Aimeville with 900 residents. Each person owns four items: a diamond ring, a set of golf clubs, a garden spade, and a bag of candy hearts. The problem gives the numbers of resi"
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 229,
+          "line_repeat_fraction": 0.03225806451612903,
+          "num_tokens": 5440,
+          "problem_idx": 79,
+          "repeat_primary": false,
+          "sample_idx": 26,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 229,
+          "scored_first_answer": 229,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 22242,
+            "char_start": 21922,
+            "text": "ts owning exactly two items: 437\n- Residents owning exactly three items: 234\n- Residents owning all four items: \\( x \\)\n\nWe set up the equation:\n\\[\n437 + 234 + x = 900\n\\]\n\nSolving for \\( x \\):\n\\[\n671 + x = 900\n\\]\n\\[\nx = 900 - 671\n\\]\n\\[\nx = 229\n\\]\n\nThus, the number of residents who own all four items is \\(\\boxed{229}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "4b17f44ae3248e0f63967489ae1d6dbea335de9149577c91eafa3deaabef0d21",
+          "token_ids_sha256_le_u32": "ebe84b4e3e55779995d6f5371f4a6b349f803bcb3b4266ef29738cdee0cf058c",
+          "uid": "aime-079"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 59826,
+            "char_start": 59593,
+            "text": " = 42 \\):\n     \\[\n     170 + 437 + 234 + 17 + 42 = 900\n     \\]\n   - Total items owned:\n     \\[\n     437 \\cdot 1 + 234 \\cdot 2 + 17 \\cdot 3 + 42 \\cdot 4 = 1124\n     \\]\n\nThe number of residents who own all four items is \\(\\boxed{42}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 42,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 42,
+          "gold_answer": 73,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $functional form.\n\nOkay, so there's this problem about Aimeville's residents and their possessions. Let me read it again to make sure I get all the details.\n\nThere are 900 residents. Out of these, 195 own a diamond ring, 367 own a "
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 42,
+          "line_repeat_fraction": 0.08447488584474885,
+          "num_tokens": 17217,
+          "problem_idx": 79,
+          "repeat_primary": false,
+          "sample_idx": 26,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 42,
+          "scored_first_answer": 42,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 59826,
+            "char_start": 59506,
+            "text": ":\n   - Total residents: \\( x = 170 \\), \\( y = 437 \\), \\( z = 234 \\), \\( w = 17 \\), \\( v = 42 \\):\n     \\[\n     170 + 437 + 234 + 17 + 42 = 900\n     \\]\n   - Total items owned:\n     \\[\n     437 \\cdot 1 + 234 \\cdot 2 + 17 \\cdot 3 + 42 \\cdot 4 = 1124\n     \\]\n\nThe number of residents who own all four items is \\(\\boxed{42}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "fcc8cda16c715a62456da484ad29862a3111985bec38325765ed02b18918d151",
+          "token_ids_sha256_le_u32": "f990ffde6e6b2c31575e73d0b266d6e611c52053c2cf519790f71ff12feed725",
+          "uid": "aime-079"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 76161,
+            "char_start": 75928,
+            "text": ").\n   - Calculations:\n     - \\( 437 + 468 + 3x = 1124 \\).\n     - \\( 905 + 3x = 1124 \\).\n     - \\( 3x = 219 \\).\n     - \\( x = \\frac{219}{3} = 73 \\).\n\nThus, the number of residents of Aimeville who own all four items is \\(\\boxed{73}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 4,
+          "correct": true,
+          "extracted_answer": 73,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 129,
+          "gold_answer": 73,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $functional form.\n\nOkay, so I have this problem about Aimeville's residents and their possessions. Let me read it again to make sure I get all the details.\n\nThere are 900 residents. Among them, 195 own a diamond ring, 367 own a set"
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 73,
+          "line_repeat_fraction": 0.0751054852320675,
+          "num_tokens": 22532,
+          "problem_idx": 79,
+          "repeat_primary": false,
+          "sample_idx": 26,
+          "scored_answer_changed": true,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 73,
+          "scored_first_answer": 129,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 76161,
+            "char_start": 75841,
+            "text": " two expressions for the total sum of items:\n     - \\( 437 + 2 \\times 234 + 3x = 1124 \\).\n   - Calculations:\n     - \\( 437 + 468 + 3x = 1124 \\).\n     - \\( 905 + 3x = 1124 \\).\n     - \\( 3x = 219 \\).\n     - \\( x = \\frac{219}{3} = 73 \\).\n\nThus, the number of residents of Aimeville who own all four items is \\(\\boxed{73}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "17a54235c17d141ba9a6a730e9468dea1cdeac2d2eb989b147b27436b592a99f",
+          "token_ids_sha256_le_u32": "895d28c070331d32a43cfdf9ada9fe49f31b43ce77226a073f73e119ec708ff5",
+          "uid": "aime-079"
+        }
+      ],
+      "selection_rationale": "Among core samples whose frozen-priority first explicit answer differs from the final scored answer and whose final score is correct, choose largest num_tokens; lexical label/uid/sample_idx break ties.",
+      "uid": "aime-079"
+    },
+    {
+      "category": "malformed_last_boxed_invalidates_earlier_correct_boxed",
+      "focus_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "sample_idx": 25,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 24428,
+            "char_start": 24194,
+            "text": "ording to the problem, this logarithm equals \\( \\log_{10} \\left( \\frac{m}{n} \\right) \\). Therefore, we identify \\( m = 11 \\) and \\( n = 101 \\).\n\nThe sum \\( m + n \\) is:\n\n\\[\n11 + 101 = 112\n\\]\n\nThus, the final answer is \\(\\boxed{112}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 4,
+          "correct": true,
+          "extracted_answer": 112,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 112,
+          "gold_answer": 112,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using \\texttt{latex} tag!\n\nOkay, so there's this problem where we have a positive real number x, which isn't equal to 1/20 or 1/2. The equation given is log base 20x of (22x) equals log base 2x of (202x). We need to find what log base "
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 112,
+          "line_repeat_fraction": 0.03523035230352303,
+          "num_tokens": 8038,
+          "problem_idx": 52,
+          "repeat_primary": false,
+          "sample_idx": 25,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 112,
+          "scored_first_answer": 112,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 24428,
+            "char_start": 24108,
+            "text": "ight)\n\\]\n\nThus, \\( k \\) is equal to \\( \\log_{10} \\left( \\frac{11}{101} \\right) \\). According to the problem, this logarithm equals \\( \\log_{10} \\left( \\frac{m}{n} \\right) \\). Therefore, we identify \\( m = 11 \\) and \\( n = 101 \\).\n\nThe sum \\( m + n \\) is:\n\n\\[\n11 + 101 = 112\n\\]\n\nThus, the final answer is \\(\\boxed{112}\\)."
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "cfdd0d819b0d3b658d2977d55c6dbcc029466355bf8d581ceca4ee7432de807d",
+          "token_ids_sha256_le_u32": "0749a195ffc44219b51932e5ced092306f337254b6d5770044fe5dd75831f8f7",
+          "uid": "aime-052"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 10130,
+            "char_start": 9899,
+            "text": "em states that \\( \\log_{20x}(22x) \\) can be written as \\( \\log_{10} \\left( \\frac{m}{n} \\right) \\). Therefore, \\( m = 11 \\) and \\( n = 101 \\). Summing these values:\n\n\\[\nm + n = 11 + 101 = 112\n\\]\n\nThe final answer is:\n\n\\[\n\\boxed{@js}"
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": null,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 112,
+          "gold_answer": 112,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using \\texttt{latex} tag!\n\nOkay, let me try to work through this problem step by step. It's a logarithm equation problem, and it involves some properties of logarithms and variable substitution. Hmm, the problem states that there is a "
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": null,
+          "line_repeat_fraction": 0.016129032258064516,
+          "num_tokens": 3096,
+          "problem_idx": 52,
+          "repeat_primary": false,
+          "sample_idx": 25,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "none",
+          "scored_final_answer": null,
+          "scored_first_answer": null,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 10130,
+            "char_start": 9810,
+            "text": "ithm base 10 of both sides:\n\n\\[\nk = \\log_{10} \\left( \\frac{11}{101} \\right)\n\\]\n\nThe problem states that \\( \\log_{20x}(22x) \\) can be written as \\( \\log_{10} \\left( \\frac{m}{n} \\right) \\). Therefore, \\( m = 11 \\) and \\( n = 101 \\). Summing these values:\n\n\\[\nm + n = 11 + 101 = 112\n\\]\n\nThe final answer is:\n\n\\[\n\\boxed{@js}"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "785a60736a2180c5d557b981ca34fdac0830d020fbeffb6d68fa48681c250f01",
+          "token_ids_sha256_le_u32": "c30c37cf7c43a2139f2ebad3a88098e11f43ccc802ef18ca979c53069b7ca604",
+          "uid": "aime-052"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 22331,
+            "char_start": 22097,
+            "text": "\\). This implies \\(m = 11\\) and \\(n = 101\\) since the problem states that \\(\\log_{20x}(22x)\\) is equal to \\(\\log_{10}(m/n)\\).\n\nFinally, since \\(m\\) and \\(n\\) are relatively prime, we find \\(m + n = 11 + 101 = 112\\).\n\n\\[\n\\boxed{112}\n\\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 112,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 112,
+          "gold_answer": 112,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using \\texttt{dukesscript} format in markdown format!\n\nOkay, so I have this logarithmic equation to solve. It says that there's a positive real number x, not equal to either 1/20 or 1/2, and it satisfies the equation:\n\nlog_{20x}(22x) ="
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 112,
+          "line_repeat_fraction": 0.06451612903225806,
+          "num_tokens": 7210,
+          "problem_idx": 52,
+          "repeat_primary": false,
+          "sample_idx": 25,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 112,
+          "scored_first_answer": 112,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 22331,
+            "char_start": 22011,
+            "text": "refore, we can express \\(\\log_{20x}(22x)\\) as \\(\\log_{10}\\left( \\frac{11}{101} \\right)\\). This implies \\(m = 11\\) and \\(n = 101\\) since the problem states that \\(\\log_{20x}(22x)\\) is equal to \\(\\log_{10}(m/n)\\).\n\nFinally, since \\(m\\) and \\(n\\) are relatively prime, we find \\(m + n = 11 + 101 = 112\\).\n\n\\[\n\\boxed{112}\n\\]"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "5ffe9e3cba8262f65d60f62c4d491c10c530be5ee0dc271dd98ed9cd772f7bc0",
+          "token_ids_sha256_le_u32": "f9c1ed5a4f26054e06330519c011e78e8f1bd9dee9b358b85324714380fce51d",
+          "uid": "aime-052"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 25110,
+            "char_start": 24876,
+            "text": "log_{10} \\left( \\frac{11}{101} \\right)\n\\]\n\nThus, \\( \\frac{m}{n} = \\frac{11}{101} \\). Since 11 and 101 are relatively prime, \\( m = 11 \\) and \\( n = 101 \\). Therefore, \\( m + n = 11 + 101 = 112 \\).\n\nThe final answer is \\(\\boxed{112}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 4,
+          "correct": true,
+          "extracted_answer": 112,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 112,
+          "gold_answer": 112,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using \\texttt{latex} tag!\n\nOkay, so there's this problem where we have a positive real number x, not equal to 1/20 or 1/2. The equation given is:\n\nlog_{20x}(22x) = log_{2x}(202x)\n\nAnd we need to find log_{20x}(22x) expressed as log_{10"
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 112,
+          "line_repeat_fraction": 0.06091370558375635,
+          "num_tokens": 8772,
+          "problem_idx": 52,
+          "repeat_primary": false,
+          "sample_idx": 25,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 112,
+          "scored_first_answer": 112,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 25110,
+            "char_start": 24790,
+            "text": " Comparing this with our result, we have:\n\n\\[\n\\log_{10} \\left( \\frac{m}{n} \\right) = \\log_{10} \\left( \\frac{11}{101} \\right)\n\\]\n\nThus, \\( \\frac{m}{n} = \\frac{11}{101} \\). Since 11 and 101 are relatively prime, \\( m = 11 \\) and \\( n = 101 \\). Therefore, \\( m + n = 11 + 101 = 112 \\).\n\nThe final answer is \\(\\boxed{112}\\)."
+          },
+          "tail_repeat64": 0.0019588638589618022,
+          "text_sha256": "ce787ce50957a8f942158b4121a8aaefcdb90d88fa7dc5a31a7aa6d5486f2ce6",
+          "token_ids_sha256_le_u32": "beaeefd4432561027a26d1644405534b9195444452ddb007b2d19fceeb282ee5",
+          "uid": "aime-052"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 9969,
+            "char_start": 9735,
+            "text": "\\right)\n\\]\n\nThus, \\( t \\) is expressed as \\( \\log_{10}\\left( \\frac{11}{101} \\right) \\). Therefore, \\( m = 11 \\) and \\( n = 101 \\), which are coprime. The sum \\( m + n \\) is:\n\\[\n11 + 101 = 112\n\\]\n\nThe final answer is:\n\\[\n\\boxed{112}\n\\]"
+          },
+          "answerline_count": 0,
+          "boxed_count": 4,
+          "correct": true,
+          "extracted_answer": 112,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 112,
+          "gold_answer": 112,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag using \\texttt{latex} tag!\n\nOkay, let me try to work through this problem step by step. It's a logarithm equation problem, and it involves some properties of logarithms and variable substitution. Hmm, the problem states that there's a p"
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 112,
+          "line_repeat_fraction": 0.00847457627118644,
+          "num_tokens": 3379,
+          "problem_idx": 52,
+          "repeat_primary": false,
+          "sample_idx": 25,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 112,
+          "scored_first_answer": 112,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 9969,
+            "char_start": 9649,
+            "text": "\nt = -\\log_{10}\\left( \\frac{101}{11} \\right)\n\\]\n\\[\nt = \\log_{10}\\left( \\frac{11}{101} \\right)\n\\]\n\nThus, \\( t \\) is expressed as \\( \\log_{10}\\left( \\frac{11}{101} \\right) \\). Therefore, \\( m = 11 \\) and \\( n = 101 \\), which are coprime. The sum \\( m + n \\) is:\n\\[\n11 + 101 = 112\n\\]\n\nThe final answer is:\n\\[\n\\boxed{112}\n\\]"
+          },
+          "tail_repeat64": 0.0,
+          "text_sha256": "f39d55d09138bc02394c466bc11b21def7d537cc7d78460666908410e7cba43f",
+          "token_ids_sha256_le_u32": "4f7830fb543652354b09f3632467709f54cafa4a9db835c27986d2da0b789df6",
+          "uid": "aime-052"
+        }
+      ],
+      "selection_rationale": "Among core samples where the first plain boxed integer equals gold, the last boxed syntax is non-integer, and the frozen scorer returns null, choose lexical label/uid/sample_idx minimum.",
+      "uid": "aime-052"
+    },
+    {
+      "additional_selection_rationales": [
+        {
+          "category": "highest_repeat_among_core_cap_hits",
+          "focus_label": "ours__lin_elem__Math_p80__",
+          "rationale": "Among core samples with finish_reason=length and num_tokens=32768, choose maximum tail_repeat64; lexical identifiers break ties."
+        }
+      ],
+      "category": "highest_core_tail_repeat64",
+      "focus_label": "ours__lin_elem__Math_p80__",
+      "sample_idx": 2,
+      "samples_same_uid_and_sample_idx": [
+        {
+          "answer_context_excerpt": {
+            "char_end": 41611,
+            "char_start": 41377,
+            "text": " is 969. This number is a palindrome in base ten (969) and converts to 1111 in base eight, which is also a palindrome.\n\nThus, the greatest integer less than 1000 that is a palindrome in both base ten and base eight is \\(\\boxed{969}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": false,
+          "extracted_answer": 969,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 969,
+          "gold_answer": 585,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so I need to find the greatest integer less than 1000 that is a palindrome in both base ten and base eight. Hmm, palindromes are numbers that read the same forwards and backwards. For example, 121 is a palindrome in base ten becaus"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 969,
+          "line_repeat_fraction": 0.0931174089068826,
+          "num_tokens": 12075,
+          "problem_idx": 42,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 969,
+          "scored_first_answer": 969,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 41611,
+            "char_start": 41291,
+            "text": "nversions, the largest number found to be a palindrome in both base ten and base eight is 969. This number is a palindrome in base ten (969) and converts to 1111 in base eight, which is also a palindrome.\n\nThus, the greatest integer less than 1000 that is a palindrome in both base ten and base eight is \\(\\boxed{969}\\)."
+          },
+          "tail_repeat64": 0.007835455435847209,
+          "text_sha256": "14c4c03d3daa9e99d07a875fe4a4a0c6cc5bcf88c1d532328ddc80f0207727fa",
+          "token_ids_sha256_le_u32": "1f507d2c891e57950c4c8a0c701f49d65570ed0dc5c01fac019c34a35bb3931a",
+          "uid": "aime-042"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 41430,
+            "char_start": 41196,
+            "text": " but did not meet the criteria.\n   - The number 585 is confirmed to be a palindrome in both bases through conversions.\n\nThus, the greatest integer less than 1000 that is a palindrome in both base ten and base eight is \\(\\boxed{585}\\)."
+          },
+          "answerline_count": 0,
+          "boxed_count": 3,
+          "correct": true,
+          "extracted_answer": 585,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 585,
+          "gold_answer": 585,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " tag, in $($ $tags)$.\n\nOkay, so I need to find the greatest integer less than 1000 that is a palindrome in both base ten and base eight. Hmm, palindromes are numbers that read the same forwards and backwards. Examples given are like 292, wh"
+          },
+          "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 585,
+          "line_repeat_fraction": 0.021377672209026127,
+          "num_tokens": 13276,
+          "problem_idx": 42,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 585,
+          "scored_first_answer": 585,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 41430,
+            "char_start": 41110,
+            "text": " also a palindrome.\n\n5. **Verification**:\n   - Other potential candidates were checked but did not meet the criteria.\n   - The number 585 is confirmed to be a palindrome in both bases through conversions.\n\nThus, the greatest integer less than 1000 that is a palindrome in both base ten and base eight is \\(\\boxed{585}\\)."
+          },
+          "tail_repeat64": 0.0009794319294809011,
+          "text_sha256": "bb3c3270511b53216305183ac2580781c06499a4fcd4507033367f76538261b0",
+          "token_ids_sha256_le_u32": "c4010fe87576cb575b54d86d9187f072f912c032ecec3c834f5fcd6650be76f7",
+          "uid": "aime-042"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 91501,
+            "char_start": 91280,
+            "text": "\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\n"
+          },
+          "answerline_count": 0,
+          "boxed_count": 0,
+          "correct": false,
+          "extracted_answer": null,
+          "finish_reason": "length",
+          "first_answerline_answer": null,
+          "first_boxed_answer": null,
+          "gold_answer": 585,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": " and in the form $m box_{blue}, where m and box_{blue} are defined.\n\nOkay, let me try to work through this problem step by step. It's a bit tricky, but I'll take it slowly.\n\nFirst, the problem asks for the greatest integer less than 1000 th"
+          },
+          "label": "ours__lin_elem__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": null,
+          "line_repeat_fraction": 0.10624169986719788,
+          "num_tokens": 32768,
+          "problem_idx": 42,
+          "repeat_primary": true,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "none",
+          "scored_final_answer": null,
+          "scored_first_answer": null,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 91501,
+            "char_start": 91181,
+            "text": "No:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\nNo:\n\n"
+          },
+          "tail_repeat64": 0.9990205680705191,
+          "text_sha256": "f15fcd0cc7374822ad0ffdcbf3f61cd8c2ec72cbd454703371b3df921de81a08",
+          "token_ids_sha256_le_u32": "d445dbeb42241e3672da4e66e795b58577d4ce0e2cbfbdb37de5b3d6f3481656",
+          "uid": "aime-042"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 52655,
+            "char_start": 52424,
+            "text": "r **1**\n  - Resulting base eight digits: **1, 1, 1, 1** (palindrome).\n\nAfter exhaustive checks of larger candidates and confirming no larger valid numbers exist, **585** is identified as the correct answer.\n\n**Answer**: \\boxed{585}"
+          },
+          "answerline_count": 0,
+          "boxed_count": 1,
+          "correct": true,
+          "extracted_answer": 585,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": 585,
+          "gold_answer": 585,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so I have this problem where I need to find the greatest integer less than 1000 that is a palindrome in both base ten and base eight. Hmm, palindromes are numbers that read the same backward as forward. Alright, let me think about "
+          },
+          "label": "ours__qh_maglin__Math_p80__",
+          "last_answerline_answer": null,
+          "last_boxed_answer": 585,
+          "line_repeat_fraction": 0.09472551130247578,
+          "num_tokens": 18427,
+          "problem_idx": 42,
+          "repeat_primary": false,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "boxed",
+          "scored_final_answer": 585,
+          "scored_first_answer": 585,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 52655,
+            "char_start": 52335,
+            "text": " = 9\\) remainder **1**\n  - \\(9 \\div 8 = 1\\) remainder **1**\n  - \\(1 \\div 8 = 0\\) remainder **1**\n  - Resulting base eight digits: **1, 1, 1, 1** (palindrome).\n\nAfter exhaustive checks of larger candidates and confirming no larger valid numbers exist, **585** is identified as the correct answer.\n\n**Answer**: \\boxed{585}"
+          },
+          "tail_repeat64": 0.007835455435847209,
+          "text_sha256": "a280bfe6ec7b5ca6ea6d8e2e64758e01979f113a3bf65ad546f80cc3c244c75e",
+          "token_ids_sha256_le_u32": "bc3ae0cf374dbe800ab9b0edfaecbb0c8d580faa882537a4d725fd0a70d9b00d",
+          "uid": "aime-042"
+        },
+        {
+          "answer_context_excerpt": {
+            "char_end": 75063,
+            "char_start": 74842,
+            "text": "\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.,answer (without quotes) where \\$Answer is the answer to the problem in the box.]:)]}\nCity:\nState:\nCountry:\nQuestion:\nWhat is the answer to 17 + 33 + 68 + 56 + 62?\n18"
+          },
+          "answerline_count": 0,
+          "boxed_count": 0,
+          "correct": false,
+          "extracted_answer": null,
+          "finish_reason": "stop",
+          "first_answerline_answer": null,
+          "first_boxed_answer": null,
+          "gold_answer": 585,
+          "head_excerpt": {
+            "char_end": 240,
+            "char_start": 0,
+            "text": "!\n\nOkay, so I need to find the greatest integer less than 1000 that is a palindrome in both base 10 and base 8. The example given is 292, which is equal to 444 in base 8. Alright, let me think about how to approach this.\n\nFirst, let me reca"
+          },
+          "label": "ours__qh_hybrid_k4096__Math_p80",
+          "last_answerline_answer": null,
+          "last_boxed_answer": null,
+          "line_repeat_fraction": 0.06349206349206349,
+          "num_tokens": 26262,
+          "problem_idx": 42,
+          "repeat_primary": true,
+          "sample_idx": 2,
+          "scored_answer_changed": false,
+          "scored_candidate_family": "none",
+          "scored_final_answer": null,
+          "scored_first_answer": null,
+          "stop_reason": "null",
+          "tail_excerpt": {
+            "char_end": 75063,
+            "char_start": 74743,
+            "text": "\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo:\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo:\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.\n\nNo.,answer (without quotes) where \\$Answer is the answer to the problem in the box.]:)]}\nCity:\nState:\nCountry:\nQuestion:\nWhat is the answer to 17 + 33 + 68 + 56 + 62?\n18"
+          },
+          "tail_repeat64": 0.6895200783545543,
+          "text_sha256": "a2bab1d79060cbb31bcdf1c5cd906e943fe0fa9a9ed80f0c11e778444a5cd7f5",
+          "token_ids_sha256_le_u32": "097c591940a74760b097e3a311d5bdfdd53c6737032acb630157a4b55a41a05a",
+          "uid": "aime-042"
+        }
+      ],
+      "selection_rationale": "Maximum primary 64-character tail-shingle repetition fraction among all 14,400 core samples; length then lexical identifiers break ties.",
+      "uid": "aime-042"
+    }
+  ],
+  "excerpt_note": "Excerpts are exact substrings of immutable raw text with character offsets; full text remains only in the source JSONL.",
+  "pairing_note": "Question-level deltas pair the same AIME uid, the registered inference unit. Same sample_idx excerpts are descriptive alignment only; draws from different models are not identical stochastic interventions.",
+  "schema": "p80_aime_trace_examples_v1",
+  "scope": [
+    "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+    "allenai__Olmo-3-7B-RL-Zero-Math",
+    "ours__lin_elem__Math_p80__",
+    "ours__qh_maglin__Math_p80__",
+    "ours__qh_hybrid_k4096__Math_p80"
+  ]
+}

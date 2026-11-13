@@ -1,0 +1,450 @@
+[
+ {
+  "name": "anchor: same u64 bytes, new job",
+  "bench": "math500",
+  "diff": 0.0125,
+  "p_boot": 0.1006,
+  "p_holm": 1.0,
+  "q_bh": 0.15225945945945946
+ },
+ {
+  "name": "anchor: same u64 bytes, new job",
+  "bench": "gsm8k",
+  "diff": 0.0003790750568612585,
+  "p_boot": 0.9318,
+  "p_holm": 1.0,
+  "q_bh": 0.9663111111111111
+ },
+ {
+  "name": "s64 mag c1.19: SR vs saved RNE",
+  "bench": "math500",
+  "diff": -0.00575,
+  "p_boot": 0.4738,
+  "p_holm": 1.0,
+  "q_bh": 0.5527666666666667
+ },
+ {
+  "name": "s64 mag c1.19: SR vs saved RNE",
+  "bench": "gsm8k",
+  "diff": 0.003316906747536012,
+  "p_boot": 0.534,
+  "p_holm": 1.0,
+  "q_bh": 0.5863529411764706
+ },
+ {
+  "name": "s64 mag c1.19 SR vs donor u64",
+  "bench": "math500",
+  "diff": 0.001,
+  "p_boot": 0.9032,
+  "p_holm": 1.0,
+  "q_bh": 0.9543245283018867
+ },
+ {
+  "name": "s64 mag c1.19 SR vs donor u64",
+  "bench": "gsm8k",
+  "diff": 0.004075056861258529,
+  "p_boot": 0.4626,
+  "p_holm": 1.0,
+  "q_bh": 0.5511829787234043
+ },
+ {
+  "name": "s40 mag c1.88: SR vs saved RNE",
+  "bench": "math500",
+  "diff": -0.00825,
+  "p_boot": 0.2622,
+  "p_holm": 1.0,
+  "q_bh": 0.34959999999999997
+ },
+ {
+  "name": "s40 mag c1.88: SR vs saved RNE",
+  "bench": "gsm8k",
+  "diff": -0.003316906747536012,
+  "p_boot": 0.5002,
+  "p_holm": 1.0,
+  "q_bh": 0.5716571428571429
+ },
+ {
+  "name": "s40 mag c1.88 SR vs donor u40",
+  "bench": "math500",
+  "diff": 0.02275,
+  "p_boot": 0.003,
+  "p_holm": 0.084,
+  "q_bh": 0.0056
+ },
+ {
+  "name": "s40 mag c1.88 SR vs donor u40",
+  "bench": "gsm8k",
+  "diff": 0.03449583017437453,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 c1.25 SR vs donor",
+  "bench": "math500",
+  "diff": 0.00725,
+  "p_boot": 0.385,
+  "p_holm": 1.0,
+  "q_bh": 0.49000000000000005
+ },
+ {
+  "name": "s40 c1.25 SR vs donor",
+  "bench": "gsm8k",
+  "diff": 0.0035064442759666415,
+  "p_boot": 0.5326,
+  "p_holm": 1.0,
+  "q_bh": 0.5863529411764706
+ },
+ {
+  "name": "s40 dose c1.5 vs donor",
+  "bench": "math500",
+  "diff": 0.011,
+  "p_boot": 0.125,
+  "p_holm": 1.0,
+  "q_bh": 0.18421052631578946
+ },
+ {
+  "name": "s40 dose c1.5 vs donor",
+  "bench": "gsm8k",
+  "diff": 0.01923805913570887,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 dose c2 vs donor",
+  "bench": "math500",
+  "diff": 0.03,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 dose c2 vs donor",
+  "bench": "gsm8k",
+  "diff": 0.03610689916603488,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 dose c3 vs donor",
+  "bench": "math500",
+  "diff": 0.04325,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 dose c3 vs donor",
+  "bench": "gsm8k",
+  "diff": 0.09628506444275967,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 dose c4 vs donor",
+  "bench": "math500",
+  "diff": 0.02975,
+  "p_boot": 0.009,
+  "p_holm": 0.22499999999999998,
+  "q_bh": 0.01575
+ },
+ {
+  "name": "s40 dose c4 vs donor",
+  "bench": "gsm8k",
+  "diff": 0.13495072024260804,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 dose c2 vs donor",
+  "bench": "math500",
+  "diff": 0.00475,
+  "p_boot": 0.6066,
+  "p_holm": 1.0,
+  "q_bh": 0.6532615384615384
+ },
+ {
+  "name": "s64 dose c2 vs donor",
+  "bench": "gsm8k",
+  "diff": 0.0155420773313116,
+  "p_boot": 0.012,
+  "p_holm": 0.2784,
+  "q_bh": 0.019200000000000002
+ },
+ {
+  "name": "random sign vs real sign (c2)",
+  "bench": "math500",
+  "diff": -0.0415,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "random sign vs real sign (c2)",
+  "bench": "gsm8k",
+  "diff": -0.03620166793025019,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "random sign c2 vs donor",
+  "bench": "math500",
+  "diff": -0.0115,
+  "p_boot": 0.133,
+  "p_holm": 1.0,
+  "q_bh": 0.190974358974359
+ },
+ {
+  "name": "random sign c2 vs donor",
+  "bench": "gsm8k",
+  "diff": -9.476876421531463e-05,
+  "p_boot": 0.9976,
+  "p_holm": 1.0,
+  "q_bh": 1.0
+ },
+ {
+  "name": "s40 supp(D) vs donor",
+  "bench": "math500",
+  "diff": 0.0195,
+  "p_boot": 0.0118,
+  "p_holm": 0.2784,
+  "q_bh": 0.019200000000000002
+ },
+ {
+  "name": "s40 supp(D) vs donor",
+  "bench": "gsm8k",
+  "diff": 0.021133434420015165,
+  "p_boot": 0.0002,
+  "p_holm": 0.0064,
+  "q_bh": 0.000448
+ },
+ {
+  "name": "s40 comp(D) vs donor",
+  "bench": "math500",
+  "diff": 0.041,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 comp(D) vs donor",
+  "bench": "gsm8k",
+  "diff": 0.06131539044730857,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 comp vs supp",
+  "bench": "math500",
+  "diff": 0.0215,
+  "p_boot": 0.003,
+  "p_holm": 0.084,
+  "q_bh": 0.0056
+ },
+ {
+  "name": "s40 comp vs supp",
+  "bench": "gsm8k",
+  "diff": 0.0401819560272934,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 supp vs target u80",
+  "bench": "math500",
+  "diff": -0.04175,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 supp vs target u80",
+  "bench": "gsm8k",
+  "diff": -0.05724033358605004,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 comp vs target u80",
+  "bench": "math500",
+  "diff": -0.02025,
+  "p_boot": 0.0024,
+  "p_holm": 0.0696,
+  "q_bh": 0.0048
+ },
+ {
+  "name": "s40 comp vs target u80",
+  "bench": "gsm8k",
+  "diff": -0.017058377558756634,
+  "p_boot": 0.0014,
+  "p_holm": 0.042,
+  "q_bh": 0.0029037037037037035
+ },
+ {
+  "name": "s64 supp(D) vs donor",
+  "bench": "math500",
+  "diff": 0.035,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 supp(D) vs donor",
+  "bench": "gsm8k",
+  "diff": 0.04747915087187263,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 comp(D) vs donor",
+  "bench": "math500",
+  "diff": 0.0455,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 comp(D) vs donor",
+  "bench": "gsm8k",
+  "diff": 0.06008339651250948,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 comp vs supp",
+  "bench": "math500",
+  "diff": 0.0105,
+  "p_boot": 0.1684,
+  "p_holm": 1.0,
+  "q_bh": 0.23575999999999997
+ },
+ {
+  "name": "s64 comp vs supp",
+  "bench": "gsm8k",
+  "diff": 0.012604245640636846,
+  "p_boot": 0.0116,
+  "p_holm": 0.2784,
+  "q_bh": 0.019200000000000002
+ },
+ {
+  "name": "s64 supp vs target u80",
+  "bench": "math500",
+  "diff": -0.04,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 supp vs target u80",
+  "bench": "gsm8k",
+  "diff": -0.05525018953752843,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 comp vs target u80",
+  "bench": "math500",
+  "diff": -0.0295,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s64 comp vs target u80",
+  "bench": "gsm8k",
+  "diff": -0.04264594389689159,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 par(D) vs donor",
+  "bench": "math500",
+  "diff": -0.00825,
+  "p_boot": 0.2744,
+  "p_holm": 1.0,
+  "q_bh": 0.3573581395348837
+ },
+ {
+  "name": "s40 par(D) vs donor",
+  "bench": "gsm8k",
+  "diff": -0.004075056861258529,
+  "p_boot": 0.4418,
+  "p_holm": 1.0,
+  "q_bh": 0.5378434782608695
+ },
+ {
+  "name": "s40 orth(D) vs donor",
+  "bench": "math500",
+  "diff": 0.06125,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 orth(D) vs donor",
+  "bench": "gsm8k",
+  "diff": 0.08235405610310842,
+  "p_boot": 0.0001,
+  "p_holm": 0.0056,
+  "q_bh": 0.00023333333333333333
+ },
+ {
+  "name": "s40 orth vs target u80",
+  "bench": "math500",
+  "diff": 0.0,
+  "p_boot": 1.0,
+  "p_holm": 1.0,
+  "q_bh": 1.0
+ },
+ {
+  "name": "s40 orth vs target u80",
+  "bench": "gsm8k",
+  "diff": 0.003980288097043215,
+  "p_boot": 0.4036,
+  "p_holm": 1.0,
+  "q_bh": 0.5022577777777778
+ },
+ {
+  "name": "s40 oracle magnitude vs donor",
+  "bench": "math500",
+  "diff": 0.0135,
+  "p_boot": 0.0864,
+  "p_holm": 1.0,
+  "q_bh": 0.1344
+ },
+ {
+  "name": "s40 oracle magnitude vs donor",
+  "bench": "gsm8k",
+  "diff": 0.0200909780136467,
+  "p_boot": 0.0004,
+  "p_holm": 0.012400000000000001,
+  "q_bh": 0.0008615384615384615
+ },
+ {
+  "name": "oracle magnitude vs fitted c1.88",
+  "bench": "math500",
+  "diff": -0.00925,
+  "p_boot": 0.2426,
+  "p_holm": 1.0,
+  "q_bh": 0.3313560975609756
+ },
+ {
+  "name": "oracle magnitude vs fitted c1.88",
+  "bench": "gsm8k",
+  "diff": -0.014404852160727824,
+  "p_boot": 0.007,
+  "p_holm": 0.182,
+  "q_bh": 0.01264516129032258
+ }
+]

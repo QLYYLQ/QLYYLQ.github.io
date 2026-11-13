@@ -1,0 +1,137 @@
+[
+ {
+  "a": "sh_real_runA_u80",
+  "b": "sh_real_runA_u0",
+  "bench": "math500",
+  "dpass1": 0.10350000000000004,
+  "finishing": 0.07176519941944787,
+  "acc_if_finished": 0.011905044714330867,
+  "credit_if_capped": 0.019829755866221297
+ },
+ {
+  "a": "sh_real_runA_u80",
+  "b": "sh_real_runA_u0",
+  "bench": "gsm8k",
+  "dpass1": 0.11770280515542075,
+  "finishing": 0.10317639260051024,
+  "acc_if_finished": 0.006443101189750743,
+  "credit_if_capped": 0.008083311365159718
+ },
+ {
+  "a": "sh_real_runA_u80",
+  "b": "sh_real_runA_u40",
+  "bench": "math500",
+  "dpass1": 0.06125000000000003,
+  "finishing": 0.05069429578594389,
+  "acc_if_finished": 0.004985383509307979,
+  "credit_if_capped": 0.005570320704748113
+ },
+ {
+  "a": "sh_real_runA_u80",
+  "b": "sh_real_runA_u40",
+  "bench": "gsm8k",
+  "dpass1": 0.07837376800606521,
+  "finishing": 0.07825610905566258,
+  "acc_if_finished": -0.002919843410086463,
+  "credit_if_capped": 0.0030375023604889864
+ },
+ {
+  "a": "sh_real_runA_u80",
+  "b": "sh_real_runA_u64",
+  "bench": "math500",
+  "dpass1": 0.07499999999999996,
+  "finishing": 0.06287782911899788,
+  "acc_if_finished": 0.0011521357581703105,
+  "credit_if_capped": 0.010970035122831807
+ },
+ {
+  "a": "sh_real_runA_u80",
+  "b": "sh_real_runA_u64",
+  "bench": "gsm8k",
+  "dpass1": 0.10272934040940107,
+  "finishing": 0.09864762103813225,
+  "acc_if_finished": 7.34966758291904e-05,
+  "credit_if_capped": 0.004008222695439577
+ },
+ {
+  "a": "sh_real_runA_u40",
+  "b": "sh_real_runA_u0",
+  "bench": "math500",
+  "dpass1": 0.04225000000000001,
+  "finishing": 0.0202451302493851,
+  "acc_if_finished": 0.006663953392351832,
+  "credit_if_capped": 0.015340916358263115
+ },
+ {
+  "a": "sh_real_runA_u40",
+  "b": "sh_real_runA_u0",
+  "bench": "gsm8k",
+  "dpass1": 0.03932903714935554,
+  "finishing": 0.025036719399597226,
+  "acc_if_finished": 0.008697792718967855,
+  "credit_if_capped": 0.005594525030790516
+ },
+ {
+  "a": "sh_qh_maglin_runA_P40_T80",
+  "b": "sh_real_runA_u40",
+  "bench": "math500",
+  "dpass1": 0.031000000000000028,
+  "finishing": 0.018078845388658844,
+  "acc_if_finished": 0.003758438567518155,
+  "credit_if_capped": 0.009162716043822954
+ },
+ {
+  "a": "sh_qh_maglin_runA_P40_T80",
+  "b": "sh_real_runA_u40",
+  "bench": "gsm8k",
+  "dpass1": 0.03781273692191056,
+  "finishing": 0.030266206691867182,
+  "acc_if_finished": -0.0006779354770077423,
+  "credit_if_capped": 0.00822446570705107
+ },
+ {
+  "a": "sh_qh_maglin_runA_P40_T80",
+  "b": "sh_randctl_runA_P40_T80",
+  "bench": "math500",
+  "dpass1": 0.036250000000000004,
+  "finishing": 0.022677674868804225,
+  "acc_if_finished": -0.0010660057722708862,
+  "credit_if_capped": 0.014638330903466622
+ },
+ {
+  "a": "sh_qh_maglin_runA_P40_T80",
+  "b": "sh_randctl_runA_P40_T80",
+  "bench": "gsm8k",
+  "dpass1": 0.03544351781652766,
+  "finishing": 0.026215434965405224,
+  "acc_if_finished": 0.0004735258939335351,
+  "credit_if_capped": 0.008754556957188846
+ },
+ {
+  "a": "dg_runA_s64_scale_c1p19_sr_seed0",
+  "b": "sh_real_runA_u64",
+  "bench": "math500",
+  "dpass1": 0.014499999999999957,
+  "finishing": 0.0007960529638663121,
+  "acc_if_finished": 0.002592171382000212,
+  "credit_if_capped": 0.011111775654133453
+ },
+ {
+  "a": "sh_old_lin_elem_Math_p80",
+  "b": "sh_real_runA_u0",
+  "bench": "math500",
+  "dpass1": -0.34274999999999994,
+  "finishing": -0.32267706725689793,
+  "acc_if_finished": 0.004199665901038077,
+  "credit_if_capped": -0.024272598644140088
+ },
+ {
+  "a": "sh_old_lin_elem_Math_p80",
+  "b": "sh_real_runA_u0",
+  "bench": "gsm8k",
+  "dpass1": -0.46218726307808944,
+  "finishing": -0.4353026338669133,
+  "acc_if_finished": -0.0011708590072931494,
+  "credit_if_capped": -0.025713770203883043
+ }
+]

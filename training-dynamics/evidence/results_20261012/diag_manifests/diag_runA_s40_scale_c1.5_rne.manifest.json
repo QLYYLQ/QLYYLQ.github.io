@@ -1,0 +1,39 @@
+{
+ "label": "diag_runA_s40_scale_c1.5_rne",
+ "spec": {
+  "kind": "scale",
+  "c": 1.5,
+  "round": "rne",
+  "seed": 0
+ },
+ "w0": "$DATA_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1600",
+ "start": {
+  "step": 40,
+  "path": "$DATA_ROOT/models/experiments/rlvr_shorthorizon_20261011/real__runA_u40"
+ },
+ "target": {
+  "step": 80,
+  "path": "$DATA_ROOT/models/experiments/rlvr_shorthorizon_20261011/real__runA_u80"
+ },
+ "out_dir": "$DATA_ROOT/models/experiments/rlvr_diag_20261012/diag_runA/diag_runA_s40_scale_c1.5_rne",
+ "totals": {
+  "n": 7298011136.0,
+  "nz": 938521353.0,
+  "sq_saved": 0.6392466654821385,
+  "sq_nominal": 0.36190425751769295,
+  "ip_delta": 0.725827186959725,
+  "ip_D": -0.09042581177298109,
+  "sq_delta": 1.4476170300707722,
+  "sq_D": 2.1816297532281204,
+  "rounded_away": 452167396.0
+ },
+ "derived": {
+  "frac_elements_changed_vs_start": 0.1285996054966831,
+  "frac_nominal_changes_rounded_away": 0.061957619353240734,
+  "push_saved_over_delta": 0.6645189862155719,
+  "push_nominal_over_delta": 0.4999999999999999,
+  "c_eff_saved_along_delta": 1.5013944792596425,
+  "cos_saved_push_vs_real_later_update": -0.07657158847509038,
+  "saved_push_over_real_later_update": 0.541307085262989
+ }
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "protocol_version": "matched-rw-four-metrics-top512-v1",
+  "platform": {
+    "run_id": "64925637",
+    "app_id": "[运行节点]",
+    "terminal_state": "FAILED",
+    "update_time": "2026-10-26 12:15:31",
+    "scientific_completion": "The last 32 deterministic CPU replicas were resumed locally from the frozen runner; no replacement HOPE job was submitted."
+  },
+  "coverage": {
+    "configs": 18,
+    "matched_draw_files": 576,
+    "matched_metric_rows": 2304,
+    "matched_summary_rows": 72,
+    "drift_triggered": true,
+    "drift_trigger_statistic": 0.13914325,
+    "drift_threshold": 0.05,
+    "drift_draw_files": 2880,
+    "drift_summary_rows": 90,
+    "draws_per_cell": 32
+  },
+  "formula_replay_max_abs_difference": {
+    "traj_EVR1": 1.0000000000287557e-06,
+    "traj_diff_EVR1": 1.000000000001e-06,
+    "beta": 3.885780586188048e-15,
+    "alpha": 1.0172775053218786e-05
+  },
+  "artifacts": {
+    "rw_matched.csv": "a05749a02ed5ee34042050a3945717aae8880ad21112259ee122603e6b038afe",
+    "rw_matched_draws.csv": "4eff8d7810165d6ba6ba059b0fdde3d738dcc5d1f8757fa5ae30eabb15b99941",
+    "rw_drift.csv": "822b2ddef6834b4e01e2f2a0534dcf234da610fa6e2c1f4033a1c4cb6186e1bd",
+    "rw_drift_draws.csv": "fc2eebb090e149a37569a4cb458f6e08ec13b6c7386322766fcd883f7d49f41d",
+    "drift_decision.json": "769a8299c72c960140f16e388fb75e235a7e997bc15efacc96f8c93644cc7a98",
+    "RESULT.json": "0863e1ec8a57f0803bcada0409ebba7229c3b561aa884c7dee3e8965cd323e5b",
+    "rw_validation_independent.json": "45f8b5028a15cf3e359aeb199392157f3c21401df41e5e735248dc8241b6697d"
+  },
+  "frozen_inputs": {
+    "runner_sha256": "ffd099e1adee620d5a4deb70bf81fda69aeb07ad08903738057b588e66ecb257",
+    "input_manifest_sha256": "62eb4f95ba1ce537608d3a2f6d547af268d2f0df2539cc71c6e27bc535992bf7",
+    "ready_sha256": "2ee1d0543574c5f3a917e0d42af211672d257de7607cb6d9566d01d3b0c3fad2"
+  },
+  "independent_validation": {
+    "status": "PASS",
+    "errors": [],
+    "natural_key_and_seed_checks": "PASS",
+    "per_replica_formula_replay": "PASS within registered cross-LAPACK tolerances",
+    "summary_reaggregation": "PASS",
+    "output_sha256_gate": "PASS"
+  },
+  "local_tail_recovery_receipt": "evidence/rw_local_tail_recovery.json"
+}

@@ -9,10 +9,23 @@
 - `scripts/build_cases.py`：从 JSON 生成案例详情页、案例索引及项目页案例数。
 - `assets/site.css`：主页、项目索引和案例页共用的样式。
 - `cu-model/`：与 Omnifex 同级的 CU Model 项目页、25 份研究报告、23 张实验图和 14 例 AGW 画廊。
+- `training-dynamics/`：训练动力学阶段成果，8 份阅读页、30 张原报告内嵌图及紧凑证据数据。
 
 站点没有 npm 依赖或服务端。Python 3 标准库即可构建 Omnifex 案例、检查和预览全站；CU Model 报告转换使用下文固定版本的 Markdown。浏览器的 3D 模型使用 `assets/vendor/model-viewer/` 中的固定版本，加载失败时保留静态预览。
 
 本仓库已独立放在 `~/QLY/code/QLYYLQ.github.io`，拥有自己的 `.git` 和原 GitHub remote，不依赖 Omnifex 工程的目录层级。网页和已收录资料都随仓库保存，预览和发布不需要挂载研究工程。
+
+## 更新训练动力学
+
+来源为 `~/QLY/report/training_dynamics` 的两份 HTML、数据字典、10 月 12—13 日诊断表，以及 10 月 27 日两个补充 ZIP。`reports.json` 登记来源；`sources/` 保留已泛化机器路径的正文快照；`evidence/` 保存正文引用及补充结果表。HTML 保留原排版，内嵌图提取为本地资源；短程诊断页与 14 格评测汇总从交付表生成。原研究目录只读。
+
+```sh
+uv run scripts/build_training_dynamics.py --source ~/QLY/report/training_dynamics
+python3 scripts/check_training_dynamics.py
+python3 scripts/check_site.py
+```
+
+从本站快照重建时省略 `--source`。`provenance.json` 记录原始与公开副本哈希，`manifest.json` 覆盖全部发布文件。总报告缺失的 90 个证据路径以虚线文字显示，并登记在 `unbundled-references.json`；p80 专项的正文引用已收录。发布保留原实验日期及统计限制，未重新执行训练、生成或统计推断。原报告的完整模型权重、语料、集群环境与原包校验清单不随站点发布。
 
 ## 更新 CU Model
 

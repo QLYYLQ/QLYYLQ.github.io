@@ -1,0 +1,10 @@
+/* Add site navigation without changing the research artifacts' own presentation. */
+.archive-nav { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; padding:14px max(18px,calc((100% - 1180px)/2)); background:#163e34; color:#c9ddd6; font:14px/1.7 system-ui,sans-serif; }
+.archive-nav a { color:#fff; text-decoration:none; border:0; }
+.archive-nav a:hover { text-decoration:underline; }
+.archive-note { margin:0; padding:12px max(18px,calc((100% - 1180px)/2)); background:#e5eeea; color:#37534a; font:13px/1.8 system-ui,sans-serif; }
+.unbundled { text-decoration:underline dotted #77868c; text-underline-offset:3px; cursor:help; }
+body { overflow-wrap:anywhere; }
+@media(max-width:600px) { .archive-nav { font-size:13px; gap:6px 12px; } }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+@media print { .archive-nav,.archive-note { display:none; } }

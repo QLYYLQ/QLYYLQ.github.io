@@ -1,0 +1,66 @@
+{
+  "schema": "p80_t06_duplicate_recovery_review_v1",
+  "status": "ACCEPT_WITH_SCOPE",
+  "cell": "ours__qh_elem__Mix_p80__",
+  "source_artifacts": {
+    "results": {
+      "path": "$DATA_ROOT/output/aime_pass16_math_mix/ours__qh_elem__Mix_p80__.results.jsonl",
+      "sha256": "8d363ad055b72897675b8a8af47d5dd93c8cd2c71eebbeac39b27e41380b6a59",
+      "rows": 95
+    },
+    "samples": {
+      "path": "$DATA_ROOT/output/aime_pass16_math_mix/samples/ours__qh_elem__Mix_p80__.jsonl",
+      "sha256": "3d2ea4a42f5af43b9f6f7ae0c3fa2effe40c972a8d5ed5aef59079c071e5078f",
+      "rows": 3040
+    },
+    "final": {
+      "path": "$DATA_ROOT/output/aime_pass16_math_mix/ours__qh_elem__Mix_p80__.json",
+      "sha256": "8a35638241a1fb741b53577634954cbf685d4abffa9c3bde6cade841aea4de87"
+    }
+  },
+  "anomaly": {
+    "duplicate_problem_indices": [
+      60,
+      61,
+      62,
+      63,
+      64
+    ],
+    "duplicate_sample_keys": 160,
+    "attempts_per_duplicated_problem": 2,
+    "attempts_are_byte_identical": false,
+    "attempts_have_equal_stored_correct_and_pass_at_16": true,
+    "attempts_have_equal_length_and_cap_metrics": false
+  },
+  "recovery_authority": {
+    "rule": "last results row in file order for each problem_idx, then the 32 sample rows with that result row's run_id",
+    "evaluator_source": "$REMOTE_HOME/vllm/vllm_job/eval_one_ckpt.py",
+    "evaluator_sha256": "d77bcfa6f88f70871371e340521a2d44d159a41c5b8b7f1fba93548a8e92bd9e",
+    "source_semantics": "the evaluator reads results sequentially and assigns per_problem[problem_idx] = row, so a later row replaces an earlier row before final aggregation",
+    "source_provenance_strength": "the evaluator path is named in the experiment report and its hash is retained by a later audit, but the historical run itself has no immutable source-manifest attestation",
+    "final_binding": "the historical final's pass@16, mean_len, max_tokens_hit_rate and all 90 per_problem correct/pass@16 entries equal the last-write reconstruction",
+    "branch_uniqueness": "length and cap totals identify the last-write choices for problems 60, 61, 62 and 64; the two problem-63 attempts have identical aggregate fields, while file order resolves the sample branch",
+    "sample_epoch_check": "each selected result row has exactly sample_idx 0..31 under the same run_id; correct, sum_tokens and cap_hits recompute exactly"
+  },
+  "derived_artifacts": {
+    "results": {
+      "path": "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/statistics/existing_analyzer/staging_t06/aime_pass16_math_mix/ours__qh_elem__Mix_p80__.results.jsonl",
+      "sha256": "b0e7607cd4ad23a81c4bb2d189b5b40655cfc6f707d39032b63e421d2c5aa902",
+      "rows": 90
+    },
+    "samples": {
+      "path": "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/statistics/existing_analyzer/staging_t06/aime_pass16_math_mix/samples/ours__qh_elem__Mix_p80__.jsonl",
+      "sha256": "7e03fc561b9630ae3909de8cb87aef9651b2dfa00ae44d995671b4dae1e0becf",
+      "rows": 2880,
+      "unique_problem_sample_keys": 2880
+    },
+    "raw_immutability": "the source artifacts were not changed"
+  },
+  "impact": {
+    "new_T1_run": "none; the new run has no duplicate or missing compact result rows and its strict gate checked full samples",
+    "registered_primary_tests": "none; both primary comparisons are Math lin_elem or Math qh_maglin versus Math step1600",
+    "historical_qh_elem_Mix_pass_metrics": "the two attempts have the same correct count on every duplicated problem, so pass@1 and pass@16 are invariant to branch choice",
+    "historical_qh_elem_Mix_trajectory_metrics": "use only the disclosed last-write derived staging; raw duplicate rows must not be pooled as extra observations",
+    "fallback_if_source_authority_is_rejected": "mark only this cell's cross-protocol trajectory and length comparisons unavailable; other cells and both registered primary tests remain usable"
+  }
+}

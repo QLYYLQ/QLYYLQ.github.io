@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>训练动力学 · QLYYLQ</title>
+<meta name="description" content="OLMo-3-7B RL-Zero 训练动力学阶段成果：权重几何、短程外推、AIME 功能评测、生成轨迹与匹配随机对照。">
+<link rel="icon" href="favicon.svg"><link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="training-dynamics.css">
+</head>
+<body><a class="skip-link" href="#content">跳到正文</a>
+<div class="wrap research-wrap">
+  <nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><span>训练动力学</span></nav>
+  <header class="top">
+    <div class="eyebrow">Research notes · OLMo-3-7B RL-Zero · 2026.10</div>
+    <h1>训练轨迹能预测下一步吗？</h1>
+    <p class="lead">从权重变化出发，检验前缀外推能否保留模型功能，再回到生成轨迹与测量口径解释差异。</p>
+    <p class="muted">这里汇集训练动力学的阶段性成果。研究对象为 Math、Code、Mix 三条训练轨迹；资料覆盖 2026 年 10 月 10 日至 27 日，按实验日期保留结论与限制。</p>
+    <nav class="section-nav" aria-label="项目导航"><a href="#findings">主要发现</a><a href="#aime">AIME 主比较</a><a href="#reports">全部报告</a><a href="#materials">资料与来源</a></nav>
+  </header>
+
+  <main id="content">
+    <section class="research-summary" id="findings">
+      <h2><span class="no">01</span>从轨迹描述到功能检验</h2>
+      <div class="figures">
+        <div><div class="v">67</div><div class="k">有效官方 checkpoint · 三条轨迹</div></div>
+        <div><div class="v">672</div><div class="k">赛道 × 层 × 投影配置</div></div>
+        <div><div class="v">32 × 90</div><div class="k">p80 评测条件 × AIME 题目</div></div>
+        <div><div class="v">92,160</div><div class="k">p80 专项已核验生成样本</div></div>
+      </div>
+      <ol class="finding-list">
+        <li><div class="finding-number">A</div><div><h3>累积轨迹低维，留出预测仍然失败</h3><p>累计更新有显著时间主方向；用前 10 个 checkpoint 的系数预测末 5 个时，约 98%–100% 的配置得到负 R²。PC1 方向还使用了全轨迹信息，是对预测有利的条件。<a href="overview.html#4-累积轨迹低维-留出预测失败">总报告 §4</a></p></div></li>
+        <li><div class="finding-number">B</div><div><h3>外推必须与自己的前缀末端比较</h3><p>p80 AIME 的两个 Math 主方法均低于 donor；hybrid k4096 的 pass@1 接近 donor，但 pass@16 较低。不同配方、任务与采样协议的结果分别报告。<a href="p80-aime.html">AIME 专项</a></p></div></li>
+        <li><div class="finding-number">C</div><div><h3>随机参考与测量口径会改变解释</h3><p>后续匹配随机游走中，18 个配置的累计 EVR1 都高于各自随机参考的 97.5% 分位点；漂移扫描没有统一比例能贴合所有配置。隐状态几何则对窗口、样本组成和结束方式敏感。<a href="random-walk.html">随机游走补充</a> · <a href="overview.html#8-推理隐状态几何-定义-窗口与功能关联">总报告 §8</a></p></div></li>
+      </ol>
+    </section>
+
+    <section id="aime">
+      <h2><span class="no">02</span>Math p80：保留了多少功能？</h2>
+      <p class="muted">AIME 90 题，每题 32 次采样；T=1.0、top_p=1.0、32,768-token 上限。donor 为 step1600，target 为 step2000。置信区间按题配对重采样，差值单位为百分点。</p>
+      <div class="tablebox" tabindex="0" role="region" aria-label="Math p80 主比较，可横向滚动">
+        <table><thead><tr><th>条件</th><th>pass@1</th><th>pass@16</th><th>相对 donor 的 pass@1</th><th>95% 区间</th></tr></thead>
+        <tbody>
+          <tr><td>donor · step1600</td><td>34.65%</td><td>66.09%</td><td>参照</td><td>—</td></tr>
+          <tr><td>target · step2000</td><td>33.99%</td><td>63.32%</td><td>−0.66 pp</td><td>[−2.15, +0.83]</td></tr>
+          <tr class="primary"><td>lin_elem · 主比较</td><td>28.92%</td><td>57.18%</td><td>−5.73 pp</td><td>[−7.64, −3.92]</td></tr>
+          <tr class="primary"><td>qh_maglin · 主比较</td><td>32.29%</td><td>61.57%</td><td>−2.36 pp</td><td>[−3.89, −0.94]</td></tr>
+          <tr><td>hybrid k4096</td><td>34.62%</td><td>61.76%</td><td>−0.03 pp</td><td>[−1.49, +1.42]</td></tr>
+        </tbody></table>
+      </div>
+      <p class="source-note">两项主检验经 Holm 校正仍低于 0.05；其他比较属于补充分析。区间跨零不证明等价，静态分数不能换算成训练成本节省。<a href="p80-aime.html">完整报告与统计定义 →</a></p>
+      <figure class="research-figure"><a href="media/paired-contrasts.png"><img src="media/paired-contrasts.png" alt="Math、Mix、Code 各外推方法相对 donor 的 pass@1 与 pass@16 差值及题级配对 95% 区间" loading="lazy" decoding="async"></a><figcaption>原报告图 1。比较均以同赛道 donor 为参照；点击查看原图。只有 Math 的两个 pass@1 比较属于主检验家族。</figcaption></figure>
+    </section>
+
+    <section id="reports">
+      <h2><span class="no">03</span>报告与实验记录</h2>
+      <p class="muted">先读总报告了解问题与方法，再读 p80 专项和 10 月 27 日补充。短程诊断由本地数值表整理，其余研究正文保留原记录。</p>
+      <!-- REPORT_LIST_START -->
+<ul class="doclist"><li><div class="date">2026-10-10</div><div><a class="t" href="overview.html">权重几何、外推与推理流形</a><div class="d">三条官方轨迹、67 个有效 checkpoint：权重更新结构、留出预测、功能评测与隐状态几何。</div><div class="m">研究总览</div></div></li><li><div class="date">2026-10-12—13</div><div><a class="t" href="short-horizon.html">密集续训与短程外推诊断</a><div class="d">从现有结果表整理幅度、舍入与真实后续更新分解的对照，保留多重比较口径。</div><div class="m">研究总览</div></div></li><li><div class="date">2026-10-25</div><div><a class="t" href="p80-aime.html">p80 外推的 AIME 表现与生成轨迹</a><div class="d">32 个 checkpoint、90 道题、92,160 条输出；包含主比较、配方、采样协议与精确 token 前缀分析。</div><div class="m">AIME 专项</div></div></li><li><div class="date">2026-10-27</div><div><a class="t" href="followup.html">补充评测：14 个必做条件</a><div class="d">基座、采样协议、Code 与长预算对照；附由逐题表重算的完整条件汇总。</div><div class="m">后续实验</div></div></li><li><div class="date">2026-10-27</div><div><a class="t" href="random-walk.html">匹配随机游走与漂移扫描</a><div class="d">18 个配置、576 条匹配随机游走与 2,880 条漂移轨迹，检验时间低维性的参考水平。</div><div class="m">后续实验</div></div></li><li><div class="date">2026-10-27</div><div><a class="t" href="dataset-overlap.html">AIME 与训练题面重合核对</a><div class="d">90 道 AIME 中 19 道与 Dolci 训练题面逐字相同；同时保存旧 Code 协议结果的核验说明。</div><div class="m">后续实验</div></div></li><li><div class="date">2026-10-27</div><div><a class="t" href="code-seed.html">Code 末步：C7 独立种子补充</a><div class="d">seed=1 的 90 题、2,880 条样本已经完成，补齐先前必做包未纳入的 C7 条件。</div><div class="m">后续实验</div></div></li><li><div class="date">2026-10-10</div><div><a class="t" href="data-dictionary.html">总报告数据字典</a><div class="d">历史研究包的目录、字段、命名与统计口径；本站的实际收录范围另见资料清单。</div><div class="m">资料说明</div></div></li></ul>
+<!-- REPORT_LIST_END -->
+    </section>
+
+    <section id="materials" class="research-summary">
+      <h2><span class="no">04</span>资料与来源</h2>
+      <p>网页正文、原始图表和已收录的紧凑数据保存在本站，阅读无需 Claude 登录或 artifact 链接。10 月 10 日总报告的 22 张图与 10 月 25 日专项的 8 张图均已保留。报告中的机器与内部存储地址作了泛化，实验数值与协议沿用原文。</p>
+      <p>总报告引用的 90 个数据路径未包含在当前本地包中，以虚线文字标注；p80 专项正文的本地引用文件已收录。模型权重、完整生成语料与集群运行环境不随本站提供，本站资料不能代替完整实验环境。</p>
+      <p>10 月 27 日的必做包有 14 个评测条件，C7 在稍后的独立包中完成。两份快照分别保留；C7 补充页说明最终状态。AIME 题面中有 19/90 与 Dolci 训练题面逐字相同，相关结果应保留这项题集限制。</p>
+      <div class="data-links"><a href="manifest.json">文件与校验值</a><a href="provenance.json">本地来源记录</a><a href="unbundled-references.json">未收录引用</a><a href="data-dictionary.html">历史数据字典</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io/tree/master/training-dynamics">本站源文件</a></div>
+    </section>
+  </main>
+  <footer class="site"><a href="../">主页</a><a href="../omnifex/">Omnifex</a><a href="../cu-model/">CU Model</a><a href="https://github.com/QLYYLQ">GitHub</a></footer>
+</div></body></html>

@@ -1,0 +1,31 @@
+{
+ "source": "runA hydra config.yaml sha 4d8371f5 (attempt [运行节点], 2026-10-09 15-33-29)",
+ "actor.optim": {
+  "optimizer": "AdamW",
+  "lr": 3e-06,
+  "lr_scheduler_type": "constant",
+  "lr_warmup_steps": -1,
+  "lr_warmup_steps_ratio": 0.0,
+  "warmup_style": null,
+  "min_lr_ratio": 0.0,
+  "weight_decay": 0.01,
+  "betas": [
+   0.9,
+   0.999
+  ],
+  "clip_grad": 1.0
+ },
+ "ppo": {
+  "ppo_mini_batch_size": 96,
+  "train_batch_prompts": 96,
+  "ppo_epochs": 1,
+  "updates_per_step": 1,
+  "clip_ratio": 0.2,
+  "use_kl_loss": false,
+  "entropy_coeff": 0,
+  "loss_agg_mode": "token-mean"
+ },
+ "runB_lr": 1e-06,
+ "optimizer_state_at_start": "fresh (checkpoints carry no optimizer state; no resume) -> Adam m/v start at zero at u0",
+ "verdict": "no warmup: constant LR from update 1 with a freshly initialised Adam state"
+}

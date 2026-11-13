@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>匹配随机游走与漂移扫描 · 训练动力学</title><meta name="description" content="18 个配置、576 条匹配随机游走与 2,880 条漂移轨迹，检验时间低维性的参考水平。">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="training-dynamics.css"><link rel="icon" href="favicon.svg">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a> / <a href="./">训练动力学</a> / 研究记录</nav>
+<header class="top"><div class="eyebrow">2026-10-27 · 后续实验</div><h1>匹配随机游走与漂移扫描</h1><p class="lead">18 个配置、576 条匹配随机游走与 2,880 条漂移轨迹，检验时间低维性的参考水平。</p>
+<p class="source-note">按原研究日期归档；后续补充见<a href="./#reports">报告目录</a>。<a href="sources/random-walk.md" download>Markdown</a></p></header>
+<details class="report-toc"><summary>章节目录</summary><div class="toc">
+<ul>
+<li><a href="#_1">四项实测读数</a></li>
+<li><a href="#_2">匹配随机游走</a></li>
+<li><a href="#_3">条件漂移扫描</a></li>
+<li><a href="#matched-null">实际 matched-null 门值</a></li>
+<li><a href="#_4">实际漂移扫描结果</a></li>
+<li><a href="#_5">终验</a></li>
+</ul>
+</div>
+</details><main id="content" class="prose"><p>本项覆盖固定的 18 个配置：Math、Code、Mix 三条轨迹，L0、L16、L31 三层，<code>q_proj</code> 与 <code>down_proj</code> 两类模块。每个配置使用 32 条随机游走。终态数值表是交付根的 <code>rw_matched.csv</code>；只有累计 EVR1 的 18 个 <code>observed-rw_median</code> 中位数严格大于 0.05 时，才生成 <code>rw_drift.csv</code>。</p>
+<h2 id="_1">四项实测读数</h2>
+<p><code>traj_EVR1</code> 与 <code>traj_diff_EVR1</code> 直接取 canonical <code>K4096/trajectory_metrics_w0.csv</code>。累计轨迹的每个矩阵先取自身的精确 SVD top-512 重构，再组成时间 Gram。相邻增量 Gram 是这个累计 top-512 Gram 的 <code>D G D^T</code>，不是对原始相邻增量另做一次 top-512 SVD。</p>
+<p><code>alpha</code> 与 <code>beta</code> 直接取 canonical <code>K4096/p6_scaling_diagnosis.csv</code>。<code>alpha</code> 是上述 top-512 累计 Gram 的 PC1 系数绝对值对真实 checkpoint step 的 log-log OLS 斜率；<code>beta</code> 是未截断累计更新 Frobenius 范数对真实 step 的同类斜率。输出 <code>rank</code> 因而依次为 512、512、4096、512。</p>
+<p>Math 与 Mix 各用 20 个 checkpoint；Code 丢弃误标的 100、200、300，使用 400 至 3000 的 27 个 checkpoint。72 项读数全部从源表导出，并从 Gram/cache 与逐步范数表独立重放。<code>beta</code>、<code>alpha</code> 和增量 EVR1 与源值一致；Code 累计 EVR1 的 canonical CSV 只保留五位小数，重放最大差为 0.000004，在该序列化精度内通过。</p>
+<h2 id="_2">匹配随机游走</h2>
+<p>随机游走复用报告 5.4 节的 Pass9 构造与 <code>rw-v1</code> seed：在真实基座 SVD 的 W0 坐标中生成 4096×4096 的独立 float32 Gaussian 增量，把每个增量缩放到该配置的真实逐区间投影范数，再累加。Math、Code、Mix 的首区间分别跨 100、400、50 个训练步；之后的间隔分别为 100、100、50。</p>
+<p>真实基谱的 4096 个 float32 值逐配置保留 SHA256；逐步投影范数、步号和轨迹长度冻结在 <code>code/rw_frozen/inputs/</code>。这四个时间轨迹指标不调用 OFT 求解器，基谱数值本身不进入公式，但真实基谱决定匹配空间的 rank，并把本次随机游走绑定到 5.4 节的 W0 投影坐标。<code>down_proj</code> 的原权重矩阵是 4096×11008；Pass9 匹配随机游走使用其 W0 投影后的 4096×4096 矩阵，这一点与原协议一致。</p>
+<p>每条随机游走的累计矩阵也按实测口径取 top-512。实现以 <code>X X^T</code> 的精确对称特征分解得到前 512 个左奇异方向，并计算 <code>U(U^T X)</code>；它在代数上等于 top-512 SVD 重构。生产前用同一 Brownian 路径的四个 4096×4096 矩阵与 literal full SVD 双算：重构相对差最大 <code>1.294e-5</code>，时间 Gram 归一化最大差 <code>2.820e-7</code>，累计 EVR1 差 <code>7.276e-8</code>，增量 EVR1 差 <code>3.183e-8</code>。门限分别为 <code>5e-5</code>、<code>5e-5</code>、<code>5e-6</code>、<code>5e-6</code>，全部通过。</p>
+<p>另用 Math/L0/<code>q_proj</code> 的 draw 0 重放原 Pass9 OFT 稳定性路径，左、右稳定性与历史 5.4 结果分别只差 <code>3.28e-7</code>、<code>2.99e-7</code>，证明冻结逐步范数与 <code>rw-v1</code> seed 确实重建了登记随机轨迹，而不只是复用了同名 seed。</p>
+<p>时间 Gram 先以分块 float64 点积累计，再按原 Pass2 代码转成 float32；累计 EVR 与 <code>D G D^T</code> 都从该 float32 Gram 计算，EVR 每 replica 保留六位小数。Math/Mix 的 PC1 使用 torch float32 eig；Code 按 p6 的修复路径用 NumPy float64 eig。每个 replica 单独原子落盘，保存 seed、完整 Gram、特征值、PC1 系数、逐步目标/实测范数与耗时，可按 replica 断点续跑。</p>
+<h2 id="_3">条件漂移扫描</h2>
+<p>门禁只看 <code>traj_EVR1</code>：先对每个配置计算 <code>observed-rw_median</code>，再取 18 格中位数，未四舍五入地与 0.05 作严格比较。</p>
+<p>若触发，ratio 为 0.01、0.02、0.025、0.03、0.05。每个配置生成一个独立随机单位方向 S，并在该配置的 32 个 replica 和五个 ratio 间固定。跨 d 个训练步的每个区间，在匹配噪声增量之外加入</p>
+<p><code>ratio × sqrt(d) × ||该区间噪声增量||_F × S</code>。</p>
+<p>漂移扫描仍对每个累计矩阵使用同一 top-512 测量，不用 full-rank EVR 代替。每个 ratio、配置、replica 的噪声 seed 与方向 seed均保留；<code>rw_drift.csv</code> 只汇总累计 EVR1 中位数。</p>
+<h2 id="matched-null">实际 matched-null 门值</h2>
+<p>576 条 matched replica（18 配置×32）全部完成。累计 EVR1 的实测中位数为 0.725435，随机游走中位数的跨配置中位数为 0.587335；18 个 <code>observed-rw_median</code> 的中位数为 <strong>0.13914325</strong>，严格大于 0.05，因此漂移扫描按注册规则触发。18/18 个配置的实测累计 EVR1 都高于各自 32 次随机游走的 97.5% 分位点；单格差值范围为 0.090797 至 0.2117545。</p>
+<p>其余三项是辅助对照，不参与漂移门：相邻增量 EVR1 的 <code>observed-rw_median</code> 跨配置中位数为 -0.00027025（8 格高于 97.5% 分位，9 格低于 2.5% 分位）；总更新范数指数与 PC1 系数指数的实测值在 18/18 格均低于随机游走 2.5% 分位点，其中跨配置中位差分别为 -0.1715734 与 -0.6184827。总范数比较须保留前述口径限制：实测 <code>beta</code> 来自原权重完整 Frobenius 范数，而 Pass9 null 由 W0 投影后的匹配区间范数构造，尤其不能把 <code>down_proj</code> 的差值解释为同形状全矩阵效应。</p>
+<p>独立终验从 576 个 JSON 中重算四项指标、32 次分位数、72 行汇总与门值，状态为 <code>PASS_BASELINE</code>。跨 PyTorch/LAPACK 版本重放的最大数值差为：EVR 两项各 <code>1e-6</code>，<code>beta</code> 为 <code>3.89e-15</code>，<code>alpha</code> 为 <code>1.02e-5</code>；每条 worker 原始 EVR 与其未舍入值的六位舍入关系逐条精确通过。</p>
+<h2 id="_4">实际漂移扫描结果</h2>
+<p>90 个 ratio×配置单元、每格 32 条，共 2,880 条漂移 replica 全部完成。跨 18 个配置汇总时，各 ratio 的累计 EVR1 中位数及其相对实测值的中位差如下：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th style="text-align: right;">ratio</th>
+<th style="text-align: right;">漂移中位数</th>
+<th style="text-align: right;">漂移减实测的中位差</th>
+<th style="text-align: right;">绝对差的中位数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.619911</td>
+<td style="text-align: right;">-0.107901</td>
+<td style="text-align: right;">0.107901</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.020</td>
+<td style="text-align: right;">0.689729</td>
+<td style="text-align: right;">-0.043286</td>
+<td style="text-align: right;">0.043286</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">0.725307</td>
+<td style="text-align: right;">-0.006410</td>
+<td style="text-align: right;">0.031836</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">0.757777</td>
+<td style="text-align: right;">+0.022948</td>
+<td style="text-align: right;">0.037816</td>
+</tr>
+<tr>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">0.850089</td>
+<td style="text-align: right;">+0.109096</td>
+<td style="text-align: right;">0.109096</td>
+</tr>
+</tbody>
+</table></div>
+<p>这只是便于定位的描述性汇总；逐配置判断应使用 <code>rw_drift.csv</code>。按五个离散 ratio 中绝对差最小的一档计，18 格分别落在 0.02（5 格）、0.025（5 格）、0.03（7 格）与 0.05（1 格），没有配置以 0.01 最接近。层间差异明显，例如 Math L0 <code>down_proj</code> 在 0.025 时几乎精确贴合（+0.000155），而 Math L31 两格即使在 0.03 仍低 0.0381 至 0.0422。因此本面板没有一个统一 ratio 同时贴合所有配置。</p>
+<p>独立终验逐条重放 576 个 matched JSON 与 2,880 个 drift JSON，验证自然键、seed、固定方向、区间漂移系数、Gram 公式、72/90 行汇总和所有终态 SHA，结论 <code>PASS</code>、0 errors。</p>
+<p>平台状态与内容终态分开记录：HOPE run <code>64925637</code> 在 2,848/2,880 条漂移结果后于 2026-10-26 12:15:31 进入 <code>FAILED</code>，六个 worker 均不可达。没有提交替代 HOPE 作业。剩余 32 条仅涉及 ratio 0.05 的 Mix/L31 两个配置，使用同一冻结 runner、输入 manifest、seed 与已有原子 resume 机制在开发机完成；恢复回执列出精确 draw 范围、日志和末行 SHA。最终 <code>RESULT.json</code> 为 <code>PASS</code>，但不把内容完成写成平台 <code>Succeeded</code>。</p>
+<h2 id="_5">终验</h2>
+<p>冻结 payload 的 <code>READY.json</code> 对入口、实现和全部输入逐文件列 SHA256。运行端在启动前逐项复验。终态门要求 <code>rw_matched.csv</code> 恰有 72 个自然键，逐 replica 指标表恰有 2,304 行；如果漂移门触发，还要求 <code>rw_drift.csv</code> 90 行和逐 replica 漂移表 2,880 行。所有值必须有限、rank 与指标匹配、32 个 seed 完整，终态文件的 SHA256 写入 <code>evidence/rw_validation.json</code>。</p><h2 id="evidence-files">随页证据</h2><ul><li><a href="evidence/followup_20261025_required/rw_matched.csv">rw_matched.csv</a></li><li><a href="evidence/followup_20261025_required/rw_drift.csv">rw_drift.csv</a></li><li><a href="evidence/followup_20261025_required/rw_matched_draws.csv">rw_matched_draws.csv</a></li><li><a href="evidence/followup_20261025_required/rw_drift_draws.csv">rw_drift_draws.csv</a></li><li><a href="evidence/followup_20261025_required/evidence/rw_validation.json">evidence/rw_validation.json</a></li></ul></main>
+<footer class="site"><a href="./">训练动力学</a><a href="./#materials">资料与来源</a><a href="../">主页</a></footer></div></body></html>

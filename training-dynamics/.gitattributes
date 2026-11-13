@@ -1,0 +1,2 @@
+# Preserve the published bytes used by manifest.json, including archival CSV CRLF.
+* -text

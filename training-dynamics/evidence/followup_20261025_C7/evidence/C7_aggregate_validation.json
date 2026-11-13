@@ -1,0 +1,28 @@
+{
+  "aime_rows": 90,
+  "cells": [
+    "C7"
+  ],
+  "created_at": 1793076888.5646033,
+  "expected_aime_rows": 90,
+  "expected_math500_rows": 0,
+  "input_hashes": {
+    "C7": {
+      "final": "f985e8e7aef902bf52a9da849eae63635158e98fee454f1ad2eb0ff3baab049b",
+      "pass_receipt": "535300d3c3b3d3e0e755a5ecf8a2f1bc44ef468cd0ed2e9ab1192554862957e2",
+      "results": "b4c79acc17c2e056ab19bd8dbad9890de13753ba6747e3a7e6fa15f4011ab8bc",
+      "samples": "54785c469f4047491dba1d04ee8195bc374e60418f3882547993d230055a85b0"
+    }
+  },
+  "math500_rows": 0,
+  "optional_c7_included": true,
+  "output_hashes": {
+    "followup_cells_aime.csv": "49aef370d515ca7c1a88efa6cbe6eb7ec3a7a3bcb7678b325822db497e0c8ab9",
+    "followup_cells_math500.csv": "1cfcd4395fce45391ad430c307d94f9d63839be729cda0cc156964730c11a420",
+    "run_records.json": "470f9882a65cdb3a5280e70579f934afd96de22257497d0a77dce3f8cafc1c90"
+  },
+  "schema": "followup_20261025_eval_aggregate_gate_v1",
+  "source_manifest_sha256": "f18220a62071d776be7186b8a8b51b7100a91d6b9271b1a60ed75472bb6eb780",
+  "status": "PASS",
+  "total_samples": 2880
+}

@@ -1,0 +1,5 @@
+A: official 1600 -> u42: changed=9738701/45088768 = 21.60%  relFro=7.474e-04
+B: official 1000 -> u40: changed=3285045/45088768 = 7.29%  relFro=1.465e-04
+official 1600 -> 1700: changed=7935462/45088768 = 17.60%  relFro=9.609e-04
+official 1000 -> 1100: changed=7824339/45088768 = 17.35%  relFro=8.590e-04
+DONE

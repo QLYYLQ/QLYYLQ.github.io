@@ -1,0 +1,75 @@
+{
+  "source_model": "$DATA_ROOT/models/allenai/Olmo-3-7B-RL-Zero-Math-step_1600",
+  "indexed_tensors": 355,
+  "total_parameters": 7298011136,
+  "categories": {
+    "projection_formula": {
+      "tensors": 224,
+      "parameters": 6476005376,
+      "parameter_fraction": 0.8873657843648431
+    },
+    "lm_head_lin_elem": {
+      "tensors": 1,
+      "parameters": 410738688,
+      "parameter_fraction": 0.05628090726991185
+    },
+    "copied_from_donor": {
+      "tensors": 130,
+      "parameters": 411267072,
+      "parameter_fraction": 0.056353308365245006
+    }
+  },
+  "formula_generated_parameter_fraction": 0.943646691634755,
+  "observed_shapes": {
+    "down_proj": [
+      [
+        4096,
+        11008
+      ]
+    ],
+    "gate_proj": [
+      [
+        11008,
+        4096
+      ]
+    ],
+    "k_proj": [
+      [
+        4096,
+        4096
+      ]
+    ],
+    "lm_head": [
+      [
+        100278,
+        4096
+      ]
+    ],
+    "o_proj": [
+      [
+        4096,
+        4096
+      ]
+    ],
+    "q_proj": [
+      [
+        4096,
+        4096
+      ]
+    ],
+    "up_proj": [
+      [
+        11008,
+        4096
+      ]
+    ],
+    "v_proj": [
+      [
+        4096,
+        4096
+      ]
+    ]
+  },
+  "shape_source": "olmo_analysis/extrapolate_ckpt.py:66-73; selected model shard headers",
+  "source": "olmo_analysis/extrapolate_ckpt.py:525-559,594-608,626-716; model shard headers"
+}

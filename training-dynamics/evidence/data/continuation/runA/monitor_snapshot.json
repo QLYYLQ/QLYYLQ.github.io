@@ -1,0 +1,13 @@
+{
+  "run_id": 63076805,
+  "app_id": "[运行节点]",
+  "arm": "runA",
+  "checked_at": 1791627739.748132,
+  "updates": 42,
+  "record_root": "$DATA_ROOT/output/olmo3_rlvr_retrain_20261009/runA/attempts/[运行节点]",
+  "failures": [],
+  "result": null,
+  "stop_sent": false,
+  "progress_stale_seconds": 1518.048585653305,
+  "platform_state": "RUNNING"
+}

@@ -1,0 +1,5010 @@
+{
+  "schema": "p80_aime_registered_results_analysis_v1",
+  "valid": true,
+  "scope": "T=1.0/top_p=1.0 compact results/final layer only",
+  "protocol": {
+    "bench": "aime",
+    "n": 32,
+    "k": 16,
+    "n_problems": 90,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "seed": 0,
+    "max_tokens": 32768,
+    "max_model_len": 49152,
+    "limit": 0
+  },
+  "denominators": {
+    "cells": 32,
+    "tracks": {
+      "Math": 15,
+      "Mix": 11,
+      "Code": 6
+    },
+    "problems_per_cell": 90,
+    "samples_per_problem": 32,
+    "samples_per_cell": 2880,
+    "samples_total": 92160
+  },
+  "bootstrap": {
+    "unit": "AIME problem paired across checkpoints",
+    "reps": 10000,
+    "seed": 0,
+    "interval": "unadjusted 95% empirical percentile",
+    "coverage_limit": "fixed recorded decoding draws; no independent decoding-seed replication"
+  },
+  "primary_family_inference": {
+    "family": [
+      "Math:ours__lin_elem__Math_p80__-minus-donor",
+      "Math:ours__qh_maglin__Math_p80__-minus-donor"
+    ],
+    "method": "one-sided paired t tests with Holm step-down adjustment",
+    "family_alpha": 0.05,
+    "zero_margin": true,
+    "tests": {
+      "Math:ours__lin_elem__Math_p80__-minus-donor": {
+        "hypotheses": "H0: E[method-donor] >= 0; H1: E[method-donor] < 0",
+        "test": "one-sided paired t test on 90 problem-level pass@1 differences",
+        "t_statistic": -5.934292488420965,
+        "df": 89,
+        "raw_p": 2.7820206480518724e-08,
+        "unadjusted_percentile_bootstrap_95_ci": {
+          "estimate": -0.057291666666666664,
+          "lo": -0.0763888888888889,
+          "hi": -0.03923611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "holm_adjusted_p": 5.564041296103745e-08,
+        "family_alpha": 0.05,
+        "reject_inferiority_null": true,
+        "ci_decision": "lower"
+      },
+      "Math:ours__qh_maglin__Math_p80__-minus-donor": {
+        "hypotheses": "H0: E[method-donor] >= 0; H1: E[method-donor] < 0",
+        "test": "one-sided paired t test on 90 problem-level pass@1 differences",
+        "t_statistic": -3.130400847745914,
+        "df": 89,
+        "raw_p": 0.0011807658747900443,
+        "unadjusted_percentile_bootstrap_95_ci": {
+          "estimate": -0.02361111111111111,
+          "lo": -0.03888888888888889,
+          "hi": -0.009375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "holm_adjusted_p": 0.0011807658747900443,
+        "family_alpha": 0.05,
+        "reject_inferiority_null": true,
+        "ci_decision": "lower"
+      }
+    },
+    "interpretation": "A non-rejection or an interval crossing zero is inconclusive and is not equivalence."
+  },
+  "cells": [
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_400",
+      "track": "Math",
+      "kind": "official",
+      "method": "",
+      "step": 400,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 829,
+      "cap_hits": 2,
+      "sum_tokens": 34984426,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math-step_400.results.jsonl",
+      "results_sha256": "c492697029bca2b5dbd1831a206e9f7c1761bb8728eb0878b8e3fbe7e89f308b",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math-step_400.json",
+      "final_sha256": "6407f26f57bacfee43e65a358147029f19317bf6660fab32b642590f77914b87",
+      "pass1": 0.2878472222222222,
+      "pass1_lo": 0.21770833333333334,
+      "pass1_hi": 0.359375,
+      "pass16": 0.6370687736497646,
+      "pass16_lo": 0.5460477486214447,
+      "pass16_hi": 0.7232577039598092,
+      "cap_rate": 0.0006944444444444445,
+      "cap_rate_lo": 0.0,
+      "cap_rate_hi": 0.001736111111111111,
+      "mean_tokens": 12147.37013888889,
+      "mean_tokens_lo": 11312.503472222223,
+      "mean_tokens_hi": 12950.444097222222
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1000",
+      "track": "Math",
+      "kind": "official",
+      "method": "",
+      "step": 1000,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 937,
+      "cap_hits": 30,
+      "sum_tokens": 35149594,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math-step_1000.results.jsonl",
+      "results_sha256": "93c2b0fb54f4964cc332042be70b0c2184a293322a07a0208c83f5efd50898c5",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math-step_1000.json",
+      "final_sha256": "e19215a49c5d6e448e5e3d1700d09913f31f0f8f3e0e1e5118486cdfc55f99d1",
+      "pass1": 0.32534722222222223,
+      "pass1_lo": 0.2482638888888889,
+      "pass1_hi": 0.40208333333333335,
+      "pass16": 0.6798957500694892,
+      "pass16_lo": 0.5969730358363545,
+      "pass16_hi": 0.76159319881766,
+      "cap_rate": 0.010416666666666666,
+      "cap_rate_lo": 0.006597222222222222,
+      "cap_rate_hi": 0.014583333333333334,
+      "mean_tokens": 12204.72013888889,
+      "mean_tokens_lo": 11331.064236111111,
+      "mean_tokens_hi": 13068.699305555556
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "track": "Math",
+      "kind": "official",
+      "method": "",
+      "step": 1600,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 998,
+      "cap_hits": 9,
+      "sum_tokens": 32805857,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math-step_1600.results.jsonl",
+      "results_sha256": "beb67106fa69ef25fa2f222d443cc8a1da3c5e7febdab3479575a14756cb9a8a",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math-step_1600.json",
+      "final_sha256": "8dec0953ac505d0fe9d8aa73417d8dffd3072b862240c8f5ccca8c55b2198a38",
+      "pass1": 0.34652777777777777,
+      "pass1_lo": 0.26979166666666665,
+      "pass1_hi": 0.4236111111111111,
+      "pass16": 0.6609379929289584,
+      "pass16_lo": 0.5700762342842915,
+      "pass16_hi": 0.7474760202116133,
+      "cap_rate": 0.003125,
+      "cap_rate_lo": 0.001388888888888889,
+      "cap_rate_hi": 0.005208333333333333,
+      "mean_tokens": 11390.922569444445,
+      "mean_tokens_lo": 10621.125,
+      "mean_tokens_hi": 12154.506597222222
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "track": "Math",
+      "kind": "official",
+      "method": "",
+      "step": 2000,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 979,
+      "cap_hits": 17,
+      "sum_tokens": 32638144,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math.results.jsonl",
+      "results_sha256": "b88a1124358fa58b353b2ab0394bcb2ccf1a092ebf3288f3dae5cf1425aa57da",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Math.json",
+      "final_sha256": "7f83a1c0125e0b1a1814e5316e7809b5f85bb467e845296149aea05a79031863",
+      "pass1": 0.33993055555555557,
+      "pass1_lo": 0.26284722222222223,
+      "pass1_hi": 0.4170138888888889,
+      "pass16": 0.6332188319916557,
+      "pass16_lo": 0.5416027705822621,
+      "pass16_hi": 0.7224329286470318,
+      "cap_rate": 0.005902777777777778,
+      "cap_rate_lo": 0.001736111111111111,
+      "cap_rate_hi": 0.011805555555555555,
+      "mean_tokens": 11332.68888888889,
+      "mean_tokens_lo": 10537.406944444445,
+      "mean_tokens_hi": 12138.220833333333
+    },
+    {
+      "label": "ours__lin_elem__Math_p80__",
+      "track": "Math",
+      "kind": "extrapolation",
+      "method": "lin_elem",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 833,
+      "cap_hits": 76,
+      "sum_tokens": 33316185,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__lin_elem__Math_p80__.results.jsonl",
+      "results_sha256": "ed72574c0a282e37670f69d3e75d757a3eb96e5eb279c801a84e8edce2cc406e",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__lin_elem__Math_p80__.json",
+      "final_sha256": "44cabf876efec3df5d265bc5a3147771fdfffe6a1136937b3c001a6d444cd7b4",
+      "pass1": 0.28923611111111114,
+      "pass1_lo": 0.21666666666666667,
+      "pass1_hi": 0.36354166666666665,
+      "pass16": 0.5717866037112865,
+      "pass16_lo": 0.47720747750378095,
+      "pass16_hi": 0.6644622790158088,
+      "cap_rate": 0.02638888888888889,
+      "cap_rate_lo": 0.015625,
+      "cap_rate_hi": 0.03923611111111111,
+      "mean_tokens": 11568.119791666666,
+      "mean_tokens_lo": 10857.685763888889,
+      "mean_tokens_hi": 12284.347916666668
+    },
+    {
+      "label": "ours__qh_elem__Math_p80__",
+      "track": "Math",
+      "kind": "extrapolation",
+      "method": "qh_elem",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 904,
+      "cap_hits": 34,
+      "sum_tokens": 32162821,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_elem__Math_p80__.results.jsonl",
+      "results_sha256": "0002d0af15eab97b49a209388cfb232d3ad28db521bf329785be8aaaa12ac0b7",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_elem__Math_p80__.json",
+      "final_sha256": "7bbf71f567835835e89d9fde553ec387cedbb49ac2fef6d3e363361377d5e5bb",
+      "pass1": 0.3138888888888889,
+      "pass1_lo": 0.23680555555555555,
+      "pass1_hi": 0.390625,
+      "pass16": 0.5951333466763442,
+      "pass16_lo": 0.5015835869401022,
+      "pass16_hi": 0.6860860549414659,
+      "cap_rate": 0.011805555555555555,
+      "cap_rate_lo": 0.00798611111111111,
+      "cap_rate_hi": 0.01597222222222222,
+      "mean_tokens": 11167.646180555555,
+      "mean_tokens_lo": 10508.698958333332,
+      "mean_tokens_hi": 11826.75486111111
+    },
+    {
+      "label": "ours__qh_maglin__Math_p80__",
+      "track": "Math",
+      "kind": "extrapolation",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 930,
+      "cap_hits": 12,
+      "sum_tokens": 32019218,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Math_p80__.results.jsonl",
+      "results_sha256": "971dca3e8254c6670f74d0085c60da7ce17b799a3a4eba41dfd0f4feaae83f09",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Math_p80__.json",
+      "final_sha256": "43b4b2ade39be86d31e1d50d028c88750771c425885da8cbe265865956001399",
+      "pass1": 0.3229166666666667,
+      "pass1_lo": 0.24583333333333332,
+      "pass1_hi": 0.40208333333333335,
+      "pass16": 0.6156582395280309,
+      "pass16_lo": 0.5261520493863465,
+      "pass16_hi": 0.7036335117430058,
+      "cap_rate": 0.004166666666666667,
+      "cap_rate_lo": 0.0020833333333333333,
+      "cap_rate_hi": 0.006597222222222222,
+      "mean_tokens": 11117.784027777778,
+      "mean_tokens_lo": 10398.570833333333,
+      "mean_tokens_hi": 11835.123958333334
+    },
+    {
+      "label": "ours__qh_hybrid_k4096__Math_p80",
+      "track": "Math",
+      "kind": "extrapolation",
+      "method": "qh_hybrid_k4096",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 997,
+      "cap_hits": 9,
+      "sum_tokens": 32924715,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Math_p80.results.jsonl",
+      "results_sha256": "6cd19640494dbd792a5efe018f2e9709aac8b69d2fab3cb0bfd94ea22cc6a9c9",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Math_p80.json",
+      "final_sha256": "1d7fe7fd68173da38bdb7028da0a3da0f299c83a1ab1153e64ee967700d3fcc1",
+      "pass1": 0.34618055555555555,
+      "pass1_lo": 0.26493055555555556,
+      "pass1_hi": 0.42604166666666665,
+      "pass16": 0.6175633034894236,
+      "pass16_lo": 0.5242375259581427,
+      "pass16_hi": 0.7073057742649772,
+      "cap_rate": 0.003125,
+      "cap_rate_lo": 0.001388888888888889,
+      "cap_rate_hi": 0.005208333333333333,
+      "mean_tokens": 11432.192708333334,
+      "mean_tokens_lo": 10646.037152777777,
+      "mean_tokens_hi": 12226.21875
+    },
+    {
+      "label": "ours__qh_maglin__Math_p80__freeze1800",
+      "track": "Math",
+      "kind": "direction_diagnostic",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": true,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 944,
+      "cap_hits": 19,
+      "sum_tokens": 31987262,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Math_p80__freeze1800.results.jsonl",
+      "results_sha256": "70d8933cfe6699be72bf1b51c0bf1d3bae3bf6bf4869ba1cdda0810f323d6585",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Math_p80__freeze1800.json",
+      "final_sha256": "733792413f8d883a316cdfc742664f572f2445a1c00170cb21a6215295b0e3f4",
+      "pass1": 0.3277777777777778,
+      "pass1_lo": 0.24722222222222223,
+      "pass1_hi": 0.4076388888888889,
+      "pass16": 0.5906587628911926,
+      "pass16_lo": 0.49701767456873225,
+      "pass16_hi": 0.6817080291595161,
+      "cap_rate": 0.006597222222222222,
+      "cap_rate_lo": 0.001736111111111111,
+      "cap_rate_hi": 0.01423611111111111,
+      "mean_tokens": 11106.688194444445,
+      "mean_tokens_lo": 10362.725347222222,
+      "mean_tokens_hi": 11843.624305555555
+    },
+    {
+      "label": "ours__qh_maglin__Math_p80__freeze2000",
+      "track": "Math",
+      "kind": "direction_diagnostic",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": true,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 973,
+      "cap_hits": 13,
+      "sum_tokens": 32846946,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Math_p80__freeze2000.results.jsonl",
+      "results_sha256": "a1e3ca3f8bbdf271e565128bc317c7cd83d054a28dfb7b65ab033c043cf1abcc",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Math_p80__freeze2000.json",
+      "final_sha256": "121cfd6b5c5a176e121dd84cf6edf695749a64926e8490017bf26056680d475f",
+      "pass1": 0.33784722222222224,
+      "pass1_lo": 0.25972222222222224,
+      "pass1_hi": 0.4152777777777778,
+      "pass16": 0.6545273627856814,
+      "pass16_lo": 0.5674235915062505,
+      "pass16_hi": 0.7410564242496749,
+      "cap_rate": 0.0045138888888888885,
+      "cap_rate_lo": 0.001736111111111111,
+      "cap_rate_hi": 0.007638888888888889,
+      "mean_tokens": 11405.189583333333,
+      "mean_tokens_lo": 10632.634722222223,
+      "mean_tokens_hi": 12192.629513888889
+    },
+    {
+      "label": "ours__qh_hybrid_k4096__Math_p80__freeze1800",
+      "track": "Math",
+      "kind": "direction_diagnostic",
+      "method": "qh_hybrid_k4096",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": true,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 971,
+      "cap_hits": 7,
+      "sum_tokens": 32251750,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Math_p80__freeze1800.results.jsonl",
+      "results_sha256": "49b739df96bee630791d68f2bf89ab52384a6b417ee316b1abdb433b6c1cf6f4",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Math_p80__freeze1800.json",
+      "final_sha256": "2d66b131ebd1c62621de57af3e53d516b42e4042e69c87d469c12fff3da729ee",
+      "pass1": 0.3371527777777778,
+      "pass1_lo": 0.25833333333333336,
+      "pass1_hi": 0.41597222222222224,
+      "pass16": 0.6317695572578348,
+      "pass16_lo": 0.5390529406557415,
+      "pass16_hi": 0.7215466101704706,
+      "cap_rate": 0.0024305555555555556,
+      "cap_rate_lo": 0.0006944444444444445,
+      "cap_rate_hi": 0.0045138888888888885,
+      "mean_tokens": 11198.524305555555,
+      "mean_tokens_lo": 10471.045833333334,
+      "mean_tokens_hi": 11923.177777777777
+    },
+    {
+      "label": "ours__qh_hybrid_k4096__Math_p80__freeze2000",
+      "track": "Math",
+      "kind": "direction_diagnostic",
+      "method": "qh_hybrid_k4096",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": true,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 984,
+      "cap_hits": 15,
+      "sum_tokens": 32703286,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Math_p80__freeze2000.results.jsonl",
+      "results_sha256": "8b5c2d2d68a9283439632133b91175071d4369be335aae62b05269d8899cc232",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Math_p80__freeze2000.json",
+      "final_sha256": "3cd072d61aba061fda759fc5678e44b80541f40ec06373c54089b812ebdd7b48",
+      "pass1": 0.3416666666666667,
+      "pass1_lo": 0.2638888888888889,
+      "pass1_hi": 0.4201388888888889,
+      "pass16": 0.654359779488989,
+      "pass16_lo": 0.5644609236600338,
+      "pass16_hi": 0.7402563174804473,
+      "cap_rate": 0.005208333333333333,
+      "cap_rate_lo": 0.0010416666666666667,
+      "cap_rate_hi": 0.011111111111111112,
+      "mean_tokens": 11355.30763888889,
+      "mean_tokens_lo": 10545.940972222223,
+      "mean_tokens_hi": 12195.894097222223
+    },
+    {
+      "label": "ours__qh_hybrid_k96__Math_p80",
+      "track": "Math",
+      "kind": "extrapolation",
+      "method": "qh_hybrid_k96",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 918,
+      "cap_hits": 25,
+      "sum_tokens": 31273827,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k96__Math_p80.results.jsonl",
+      "results_sha256": "47883379b06079e0193930d8a53e231c3319ee470c7a3478773bf34aa85d1d01",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k96__Math_p80.json",
+      "final_sha256": "1a35aef56e6f0bef5268b9813dcc0576f9ccc30c65a2ee7cb3ea4f92349bbde9",
+      "pass1": 0.31875,
+      "pass1_lo": 0.24131944444444445,
+      "pass1_hi": 0.39618055555555554,
+      "pass16": 0.6016923133101122,
+      "pass16_lo": 0.505704626150108,
+      "pass16_hi": 0.6915256347176975,
+      "cap_rate": 0.008680555555555556,
+      "cap_rate_lo": 0.004166666666666667,
+      "cap_rate_hi": 0.014583333333333334,
+      "mean_tokens": 10858.967708333334,
+      "mean_tokens_lo": 10177.359722222222,
+      "mean_tokens_hi": 11547.050694444444
+    },
+    {
+      "label": "ours__qh_hybrid_k1024__Math_p80",
+      "track": "Math",
+      "kind": "extrapolation",
+      "method": "qh_hybrid_k1024",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 932,
+      "cap_hits": 24,
+      "sum_tokens": 31540716,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k1024__Math_p80.results.jsonl",
+      "results_sha256": "ed79e1c7a72b4bb093ac8e714c206593a0b70c02fad7bc45e0b809bde75ed8c8",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k1024__Math_p80.json",
+      "final_sha256": "6cb56ee04a8a394c4559d60a39f24aea809ca51aa61fd9e1530d84b221e6733c",
+      "pass1": 0.3236111111111111,
+      "pass1_lo": 0.2465277777777778,
+      "pass1_hi": 0.40069444444444446,
+      "pass16": 0.5990463103353687,
+      "pass16_lo": 0.506280411325495,
+      "pass16_hi": 0.6893945233256478,
+      "cap_rate": 0.008333333333333333,
+      "cap_rate_lo": 0.004861111111111111,
+      "cap_rate_hi": 0.012152777777777778,
+      "mean_tokens": 10951.6375,
+      "mean_tokens_lo": 10252.478819444445,
+      "mean_tokens_hi": 11641.943055555555
+    },
+    {
+      "label": "ours__qh_hybrid_k2048__Math_p80",
+      "track": "Math",
+      "kind": "extrapolation",
+      "method": "qh_hybrid_k2048",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Math",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 949,
+      "cap_hits": 16,
+      "sum_tokens": 31692155,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k2048__Math_p80.results.jsonl",
+      "results_sha256": "4a0229c98dfa897d98fdc2d683f86f04b9df73f2eff78e0fa070d469e6ffea83",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k2048__Math_p80.json",
+      "final_sha256": "d6cc254606e6174d6cdcdcb3f6b7758015c6e9c9183a3c27bd0d4727f1daa4be",
+      "pass1": 0.3295138888888889,
+      "pass1_lo": 0.2503472222222222,
+      "pass1_hi": 0.40902777777777777,
+      "pass16": 0.6018720209602727,
+      "pass16_lo": 0.5090910338779957,
+      "pass16_hi": 0.6908375262417062,
+      "cap_rate": 0.005555555555555556,
+      "cap_rate_lo": 0.002777777777777778,
+      "cap_rate_hi": 0.008680555555555556,
+      "mean_tokens": 11004.220486111111,
+      "mean_tokens_lo": 10280.06736111111,
+      "mean_tokens_hi": 11725.720833333333
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_200",
+      "track": "Mix",
+      "kind": "official",
+      "method": "",
+      "step": 200,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 686,
+      "cap_hits": 46,
+      "sum_tokens": 37802741,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix-step_200.results.jsonl",
+      "results_sha256": "04457d5daebcd254b732b0f750391b6674a4b652724a481ac56d4c7b5e5c6034",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix-step_200.json",
+      "final_sha256": "5e608aac97c8381057bc7056bf89b44cf6ae42ca8f11c63d1c9d0783ea3d494a",
+      "pass1": 0.23819444444444443,
+      "pass1_lo": 0.17118055555555556,
+      "pass1_hi": 0.3079861111111111,
+      "pass16": 0.5425567769913623,
+      "pass16_lo": 0.4506064109180323,
+      "pass16_hi": 0.6326828753212935,
+      "cap_rate": 0.01597222222222222,
+      "cap_rate_lo": 0.011458333333333333,
+      "cap_rate_hi": 0.020833333333333332,
+      "mean_tokens": 13125.95173611111,
+      "mean_tokens_lo": 12208.267708333333,
+      "mean_tokens_hi": 14020.522916666667
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_500",
+      "track": "Mix",
+      "kind": "official",
+      "method": "",
+      "step": 500,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 893,
+      "cap_hits": 185,
+      "sum_tokens": 47961810,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix-step_500.results.jsonl",
+      "results_sha256": "6499850baf021736071ff8212877136474c8707e5705f441c84059539b3d375d",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix-step_500.json",
+      "final_sha256": "f9613a927befd1d8174296425cad177c9e7390eef6779a23b13da98b2d03e494",
+      "pass1": 0.31006944444444445,
+      "pass1_lo": 0.23819444444444443,
+      "pass1_hi": 0.3836805555555556,
+      "pass16": 0.668709849295052,
+      "pass16_lo": 0.5813896088748536,
+      "pass16_hi": 0.7517330031900281,
+      "cap_rate": 0.0642361111111111,
+      "cap_rate_lo": 0.050347222222222224,
+      "cap_rate_hi": 0.07881944444444444,
+      "mean_tokens": 16653.40625,
+      "mean_tokens_lo": 15465.789236111112,
+      "mean_tokens_hi": 17829.828125
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "track": "Mix",
+      "kind": "official",
+      "method": "",
+      "step": 800,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 938,
+      "cap_hits": 322,
+      "sum_tokens": 48864166,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix-step_800.results.jsonl",
+      "results_sha256": "33c638915a1c3cfa5078afa967573c3740922ddc1fc645cf6c046eebc5e62439",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix-step_800.json",
+      "final_sha256": "a4d5ef7dd5a03a59737ffc44580ec86c4babf88796001ae6fdafaff4b0c151b4",
+      "pass1": 0.32569444444444445,
+      "pass1_lo": 0.25243055555555555,
+      "pass1_hi": 0.39895833333333336,
+      "pass16": 0.6523999233742724,
+      "pass16_lo": 0.5614357818076362,
+      "pass16_hi": 0.7385823490080734,
+      "cap_rate": 0.11180555555555556,
+      "cap_rate_lo": 0.09097222222222222,
+      "cap_rate_hi": 0.13472222222222222,
+      "mean_tokens": 16966.724305555555,
+      "mean_tokens_lo": 15737.100694444445,
+      "mean_tokens_hi": 18165.225694444445
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "track": "Mix",
+      "kind": "official",
+      "method": "",
+      "step": 1000,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 878,
+      "cap_hits": 387,
+      "sum_tokens": 48771065,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix.results.jsonl",
+      "results_sha256": "c9e8be6480442f6532c15cf3a7320844174d2319554adfa5603b43fab093fc1d",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Mix.json",
+      "final_sha256": "b9c8e36cff80713ddb4fdd70ec21f0b345fade4a02f2e225c9a8bfe6b043a327",
+      "pass1": 0.30486111111111114,
+      "pass1_lo": 0.2309027777777778,
+      "pass1_hi": 0.3795138888888889,
+      "pass16": 0.6266462219434206,
+      "pass16_lo": 0.53689237755517,
+      "pass16_hi": 0.7136049764214291,
+      "cap_rate": 0.134375,
+      "cap_rate_lo": 0.11354166666666667,
+      "cap_rate_hi": 0.15659722222222222,
+      "mean_tokens": 16934.397569444445,
+      "mean_tokens_lo": 15742.587152777778,
+      "mean_tokens_hi": 18106.692708333332
+    },
+    {
+      "label": "ours__lin_elem__Mix_p80__",
+      "track": "Mix",
+      "kind": "extrapolation",
+      "method": "lin_elem",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 816,
+      "cap_hits": 476,
+      "sum_tokens": 50881818,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__lin_elem__Mix_p80__.results.jsonl",
+      "results_sha256": "a80a3e5b7a5772ce3c5bd2fd30e88e022941040dfd631d47c0933e183d13bb04",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__lin_elem__Mix_p80__.json",
+      "final_sha256": "2dcc8870f59d6cc8b9e102418f819c7e37f9f41826e1360853b2c302f1317804",
+      "pass1": 0.2833333333333333,
+      "pass1_lo": 0.21770833333333334,
+      "pass1_hi": 0.3486111111111111,
+      "pass16": 0.6497365474783756,
+      "pass16_lo": 0.5585088075601112,
+      "pass16_hi": 0.736349229944286,
+      "cap_rate": 0.16527777777777777,
+      "cap_rate_lo": 0.13645833333333332,
+      "cap_rate_hi": 0.19652777777777777,
+      "mean_tokens": 17667.297916666666,
+      "mean_tokens_lo": 16358.619444444445,
+      "mean_tokens_hi": 18933.682638888888
+    },
+    {
+      "label": "ours__qh_elem__Mix_p80__",
+      "track": "Mix",
+      "kind": "extrapolation",
+      "method": "qh_elem",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 902,
+      "cap_hits": 429,
+      "sum_tokens": 51859699,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_elem__Mix_p80__.results.jsonl",
+      "results_sha256": "cdf504a6e6872186143ace100f506389c652f6192021e99a39c16c38b4b7d0c3",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_elem__Mix_p80__.json",
+      "final_sha256": "3e4f2b0eb9fb1ff0a0f49be8044ba9d633ecabca2566deb18319a57214656298",
+      "pass1": 0.31319444444444444,
+      "pass1_lo": 0.24270833333333333,
+      "pass1_hi": 0.3836805555555556,
+      "pass16": 0.6841536670327907,
+      "pass16_lo": 0.5968396088509152,
+      "pass16_hi": 0.7656617063225842,
+      "cap_rate": 0.14895833333333333,
+      "cap_rate_lo": 0.12430555555555556,
+      "cap_rate_hi": 0.175,
+      "mean_tokens": 18006.839930555554,
+      "mean_tokens_lo": 16721.772569444445,
+      "mean_tokens_hi": 19260.60625
+    },
+    {
+      "label": "ours__qh_maglin__Mix_p80__",
+      "track": "Mix",
+      "kind": "extrapolation",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 928,
+      "cap_hits": 312,
+      "sum_tokens": 50526295,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__.results.jsonl",
+      "results_sha256": "2cb472a966057ab12faf827724e0ea88b497d8484aa6bbf2bfbc1e3eff530ea2",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__.json",
+      "final_sha256": "5a19bbaf80809800134ed16377189d97563325b5d501593f210c3d5805787703",
+      "pass1": 0.32222222222222224,
+      "pass1_lo": 0.2503472222222222,
+      "pass1_hi": 0.3951388888888889,
+      "pass16": 0.6840694049445052,
+      "pass16_lo": 0.5983783078592125,
+      "pass16_hi": 0.7643917885370818,
+      "cap_rate": 0.10833333333333334,
+      "cap_rate_lo": 0.08888888888888889,
+      "cap_rate_hi": 0.1295138888888889,
+      "mean_tokens": 17543.852430555555,
+      "mean_tokens_lo": 16321.638194444444,
+      "mean_tokens_hi": 18749.86076388889
+    },
+    {
+      "label": "ours__qh_hybrid_k4096__Mix_p80",
+      "track": "Mix",
+      "kind": "extrapolation",
+      "method": "qh_hybrid_k4096",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 917,
+      "cap_hits": 309,
+      "sum_tokens": 50251229,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Mix_p80.results.jsonl",
+      "results_sha256": "dc83f0965a77176af1f5c664ac76387675188d0f73be779d85fbd4ecefa41a4a",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_hybrid_k4096__Mix_p80.json",
+      "final_sha256": "1ca365a4950bb15bfe352814a2efabe5ffab605e30c9389559cae7e5537e8d16",
+      "pass1": 0.31840277777777776,
+      "pass1_lo": 0.2454861111111111,
+      "pass1_hi": 0.39166666666666666,
+      "pass16": 0.6617628929985739,
+      "pass16_lo": 0.5719900312058647,
+      "pass16_hi": 0.7458228158133724,
+      "cap_rate": 0.10729166666666666,
+      "cap_rate_lo": 0.08958333333333333,
+      "cap_rate_hi": 0.12708333333333333,
+      "mean_tokens": 17448.343402777777,
+      "mean_tokens_lo": 16218.236458333333,
+      "mean_tokens_hi": 18651.068055555555
+    },
+    {
+      "label": "ours__qh_maglin__Mix_p80__freeze500",
+      "track": "Mix",
+      "kind": "direction_diagnostic",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 847,
+      "cap_hits": 645,
+      "sum_tokens": 59231876,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__freeze500.results.jsonl",
+      "results_sha256": "2d114158e740d5e6424b702e9263671958c6a471c5a14c2dcf5b6387696b4baf",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__freeze500.json",
+      "final_sha256": "6d6bdc3485637c81b9bb22e7e4c59435430569dea2eb4394ce041ff3b3c50ae1",
+      "pass1": 0.29409722222222223,
+      "pass1_lo": 0.221875,
+      "pass1_hi": 0.36666666666666664,
+      "pass16": 0.5874982935310866,
+      "pass16_lo": 0.49021888946779096,
+      "pass16_hi": 0.6817162952196794,
+      "cap_rate": 0.22395833333333334,
+      "cap_rate_lo": 0.18854166666666666,
+      "cap_rate_hi": 0.2607638888888889,
+      "mean_tokens": 20566.62361111111,
+      "mean_tokens_lo": 19263.686458333334,
+      "mean_tokens_hi": 21829.846180555556
+    },
+    {
+      "label": "ours__qh_maglin__Mix_p80__freeze900",
+      "track": "Mix",
+      "kind": "direction_diagnostic",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": true,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 946,
+      "cap_hits": 309,
+      "sum_tokens": 49929742,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__freeze900.results.jsonl",
+      "results_sha256": "2f8f8c77f2df348a114e5da8d243a0e38c549c8c1d244f67b79acf0a37b944a6",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__freeze900.json",
+      "final_sha256": "c529944756df6132853600b1a80fcaedfd04d54f8cae97f17e6efa645ea348c7",
+      "pass1": 0.3284722222222222,
+      "pass1_lo": 0.25381944444444443,
+      "pass1_hi": 0.40381944444444445,
+      "pass16": 0.6480531886924475,
+      "pass16_lo": 0.5546503029505107,
+      "pass16_hi": 0.7358953130305174,
+      "cap_rate": 0.10729166666666666,
+      "cap_rate_lo": 0.08784722222222222,
+      "cap_rate_hi": 0.128125,
+      "mean_tokens": 17336.71597222222,
+      "mean_tokens_lo": 16087.160763888889,
+      "mean_tokens_hi": 18543.59548611111
+    },
+    {
+      "label": "ours__qh_maglin__Mix_p80__freeze1000",
+      "track": "Mix",
+      "kind": "direction_diagnostic",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": true,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Mix",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 881,
+      "cap_hits": 412,
+      "sum_tokens": 49136975,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__freeze1000.results.jsonl",
+      "results_sha256": "d5b414e6186c2107734b6b0cc6d83208dc5bffd1623a47346cb7537676fcc070",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Mix_p80__freeze1000.json",
+      "final_sha256": "529b69964f7bc305f083abb1a2d5439442e73d3a33e4b9db7c5f07b55b449433",
+      "pass1": 0.3059027777777778,
+      "pass1_lo": 0.23368055555555556,
+      "pass1_hi": 0.3795138888888889,
+      "pass16": 0.6367481243787263,
+      "pass16_lo": 0.5465488629011281,
+      "pass16_hi": 0.7228888117980729,
+      "cap_rate": 0.14305555555555555,
+      "cap_rate_lo": 0.12222222222222222,
+      "cap_rate_hi": 0.16527777777777777,
+      "mean_tokens": 17061.449652777777,
+      "mean_tokens_lo": 15879.337847222223,
+      "mean_tokens_hi": 18225.600347222222
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Code-step_800",
+      "track": "Code",
+      "kind": "official",
+      "method": "",
+      "step": 800,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 733,
+      "cap_hits": 36,
+      "sum_tokens": 34817442,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code-step_800.results.jsonl",
+      "results_sha256": "72f86aac035adcf712791a2a315602387f3fb6c946474a1b06dff2ca50728852",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code-step_800.json",
+      "final_sha256": "3759c598b65072087a72a4d94ccf2de4058a28e8f9a2da919fdc724d7968d80d",
+      "pass1": 0.2545138888888889,
+      "pass1_lo": 0.18854166666666666,
+      "pass1_hi": 0.3229166666666667,
+      "pass16": 0.5922599424679286,
+      "pass16_lo": 0.4975341182455367,
+      "pass16_hi": 0.6830984331766706,
+      "cap_rate": 0.0125,
+      "cap_rate_lo": 0.00798611111111111,
+      "cap_rate_hi": 0.017708333333333333,
+      "mean_tokens": 12089.389583333334,
+      "mean_tokens_lo": 11215.154166666667,
+      "mean_tokens_hi": 12947.93263888889
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Code-step_1700",
+      "track": "Code",
+      "kind": "official",
+      "method": "",
+      "step": 1700,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 697,
+      "cap_hits": 64,
+      "sum_tokens": 26462387,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code-step_1700.results.jsonl",
+      "results_sha256": "ada04e580e1273e1e5b3c1af7e26964bf14ccc6ca337391b0cb80f0897e46631",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code-step_1700.json",
+      "final_sha256": "9772be2a967c08c30d2b791448e26574dc37ce82d921f0b9c9a0b9df3d182156",
+      "pass1": 0.2420138888888889,
+      "pass1_lo": 0.17604166666666668,
+      "pass1_hi": 0.3107638888888889,
+      "pass16": 0.5346172644043318,
+      "pass16_lo": 0.43965402006284793,
+      "pass16_hi": 0.6274138262567138,
+      "cap_rate": 0.022222222222222223,
+      "cap_rate_lo": 0.01597222222222222,
+      "cap_rate_hi": 0.029166666666666667,
+      "mean_tokens": 9188.328819444445,
+      "mean_tokens_lo": 8521.802430555555,
+      "mean_tokens_hi": 9836.546180555555
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "track": "Code",
+      "kind": "official",
+      "method": "",
+      "step": 2500,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 799,
+      "cap_hits": 24,
+      "sum_tokens": 27804281,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code-step_2500.results.jsonl",
+      "results_sha256": "424d00bda9d955eb90a093583c1b5359a0d1653cd8325bf267da94ae09bd8497",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code-step_2500.json",
+      "final_sha256": "17ea1e0d8ca61c1aea03e1205658802e15d10804c96c98e5e582af0ef720ca17",
+      "pass1": 0.27743055555555557,
+      "pass1_lo": 0.2065972222222222,
+      "pass1_hi": 0.35138888888888886,
+      "pass16": 0.6003488009500877,
+      "pass16_lo": 0.5091919065933925,
+      "pass16_hi": 0.686340351486836,
+      "cap_rate": 0.008333333333333333,
+      "cap_rate_lo": 0.005208333333333333,
+      "cap_rate_hi": 0.011805555555555555,
+      "mean_tokens": 9654.26423611111,
+      "mean_tokens_lo": 8993.197222222223,
+      "mean_tokens_hi": 10315.617708333333
+    },
+    {
+      "label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "track": "Code",
+      "kind": "official",
+      "method": "",
+      "step": 3000,
+      "prefix": "",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 577,
+      "cap_hits": 51,
+      "sum_tokens": 23510922,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code.results.jsonl",
+      "results_sha256": "bcad1059ea5cb35009b3929726632f4053df804bee69e31e8ce2843e729801c0",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/allenai__Olmo-3-7B-RL-Zero-Code.json",
+      "final_sha256": "41ad1afd3e4b807da2bb396e91d72e2ba9531a03e43e446c05d630a7a9272eee",
+      "pass1": 0.20034722222222223,
+      "pass1_lo": 0.13923611111111112,
+      "pass1_hi": 0.2652777777777778,
+      "pass16": 0.47303420536551594,
+      "pass16_lo": 0.3775320762372937,
+      "pass16_hi": 0.568243369262323,
+      "cap_rate": 0.017708333333333333,
+      "cap_rate_lo": 0.012847222222222222,
+      "cap_rate_hi": 0.022916666666666665,
+      "mean_tokens": 8163.514583333334,
+      "mean_tokens_lo": 7629.610069444445,
+      "mean_tokens_hi": 8711.763888888889
+    },
+    {
+      "label": "ours__qh_elem__Code_p80__",
+      "track": "Code",
+      "kind": "extrapolation",
+      "method": "qh_elem",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 713,
+      "cap_hits": 7,
+      "sum_tokens": 22618787,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_elem__Code_p80__.results.jsonl",
+      "results_sha256": "fb3edbf9b50b6462430f3201b7616c5fd1f5daf5acba6ddd6c70c22fd7150c8b",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_elem__Code_p80__.json",
+      "final_sha256": "0929c4a24d10fd64b11b56e239cb5fbae0fcb4665818e0901d5ffe93c5007ae8",
+      "pass1": 0.24756944444444445,
+      "pass1_lo": 0.17847222222222223,
+      "pass1_hi": 0.31979166666666664,
+      "pass16": 0.5081228083503292,
+      "pass16_lo": 0.41194549676717207,
+      "pass16_hi": 0.6011471265561963,
+      "cap_rate": 0.0024305555555555556,
+      "cap_rate_lo": 0.0010416666666666667,
+      "cap_rate_hi": 0.004166666666666667,
+      "mean_tokens": 7853.745486111111,
+      "mean_tokens_lo": 7325.460069444444,
+      "mean_tokens_hi": 8376.092013888889
+    },
+    {
+      "label": "ours__qh_maglin__Code_p80__",
+      "track": "Code",
+      "kind": "extrapolation",
+      "method": "qh_maglin",
+      "step": "",
+      "prefix": "p80",
+      "uses_future_direction": false,
+      "donor_label": "allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "target_label": "allenai__Olmo-3-7B-RL-Zero-Code",
+      "problems": 90,
+      "samples": 2880,
+      "correct": 782,
+      "cap_hits": 22,
+      "sum_tokens": 26437846,
+      "results_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Code_p80__.results.jsonl",
+      "results_sha256": "779baf8e8ec2cda611c44c20ae597a06568fad60619522bda5f86125cf979904",
+      "final_path": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime/ours__qh_maglin__Code_p80__.json",
+      "final_sha256": "3c42c1c6366a956a95ddd62a63f831b5afd1ededfaed64ca78f12f3bdc949f23",
+      "pass1": 0.27152777777777776,
+      "pass1_lo": 0.20104166666666667,
+      "pass1_hi": 0.3451388888888889,
+      "pass16": 0.5630414321858752,
+      "pass16_lo": 0.4690901109842488,
+      "pass16_hi": 0.6538215913737151,
+      "cap_rate": 0.007638888888888889,
+      "cap_rate_lo": 0.0045138888888888885,
+      "cap_rate_hi": 0.011111111111111112,
+      "mean_tokens": 9179.80763888889,
+      "mean_tokens_lo": 8542.050347222223,
+      "mean_tokens_hi": 9812.903125
+    }
+  ],
+  "contrasts": [
+    {
+      "name": "Math:target-minus-donor",
+      "category": "official_target_minus_donor",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.006597222222222222,
+          "lo": -0.021527777777777778,
+          "hi": 0.008333333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.02771916093730269,
+          "lo": -0.07331912364223583,
+          "hi": 0.01789016355846992,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.002777777777777778,
+          "lo": -0.001736111111111111,
+          "hi": 0.008333333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -58.23368055555556,
+          "lo": -307.16041666666666,
+          "hi": 213.89097222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:allenai__Olmo-3-7B-RL-Zero-Math-step_400-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_400": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.058680555555555555,
+          "lo": -0.08506944444444445,
+          "hi": -0.034027777777777775,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.023869219279193808,
+          "lo": -0.07002290154011956,
+          "hi": 0.023288390056740625,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0024305555555555556,
+          "lo": -0.0045138888888888885,
+          "hi": -0.0006944444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 756.4475694444444,
+          "lo": 439.9,
+          "hi": 1071.4628472222223,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:allenai__Olmo-3-7B-RL-Zero-Math-step_400-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_400": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.052083333333333336,
+          "lo": -0.07777777777777778,
+          "hi": -0.028125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.0038499416581088833,
+          "lo": -0.044432144407321114,
+          "hi": 0.05353228337172449,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.005208333333333333,
+          "lo": -0.011111111111111112,
+          "hi": -0.0006944444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 814.68125,
+          "lo": 427.0878472222222,
+          "hi": 1198.3159722222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:allenai__Olmo-3-7B-RL-Zero-Math-step_1000-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.021180555555555557,
+          "lo": -0.040625,
+          "hi": -0.003125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.01895775714053083,
+          "lo": -0.03137460670332854,
+          "hi": 0.0719775071277164,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.007291666666666667,
+          "lo": 0.003125,
+          "hi": 0.011458333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 813.7975694444444,
+          "lo": 565.9486111111111,
+          "hi": 1068.338888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:allenai__Olmo-3-7B-RL-Zero-Math-step_1000-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.014583333333333334,
+          "lo": -0.034722222222222224,
+          "hi": 0.0045138888888888885,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.04667691807783352,
+          "lo": 0.00012682960575188435,
+          "hi": 0.09668115197258943,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0045138888888888885,
+          "lo": -0.0010416666666666667,
+          "hi": 0.009722222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 872.03125,
+          "lo": 525.678125,
+          "hi": 1201.6763888888888,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__lin_elem__Math_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__lin_elem__Math_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": true,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.057291666666666664,
+          "lo": -0.0763888888888889,
+          "hi": -0.03923611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.08915138921767188,
+          "lo": -0.1465580028322002,
+          "hi": -0.032951314068174996,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.02326388888888889,
+          "lo": 0.0125,
+          "hi": 0.03611111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 177.19722222222222,
+          "lo": -331.7347222222222,
+          "hi": 720.2260416666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__lin_elem__Math_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__lin_elem__Math_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.050694444444444445,
+          "lo": -0.07152777777777777,
+          "hi": -0.03125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.06143222828036918,
+          "lo": -0.11682352181803093,
+          "hi": -0.009774317985430643,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.02048611111111111,
+          "lo": 0.009027777777777777,
+          "hi": 0.034027777777777775,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 235.4309027777778,
+          "lo": -331.5777777777778,
+          "hi": 838.8618055555555,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_elem__Math_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_elem__Math_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.03263888888888889,
+          "lo": -0.04791666666666667,
+          "hi": -0.017708333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.06580464625261412,
+          "lo": -0.12105334178160244,
+          "hi": -0.013038013157164111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.008680555555555556,
+          "lo": 0.0045138888888888885,
+          "hi": 0.013194444444444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -223.2763888888889,
+          "lo": -496.9038194444444,
+          "hi": 62.816319444444446,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_elem__Math_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_elem__Math_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.026041666666666668,
+          "lo": -0.043402777777777776,
+          "hi": -0.009375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.03808548531531143,
+          "lo": -0.09084233743029133,
+          "hi": 0.010222594795792062,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.005902777777777778,
+          "lo": -0.0010416666666666667,
+          "hi": 0.012152777777777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -165.04270833333334,
+          "lo": -533.1552083333333,
+          "hi": 187.29791666666668,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_maglin__Math_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": true,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.02361111111111111,
+          "lo": -0.03888888888888889,
+          "hi": -0.009375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.045279753400927505,
+          "lo": -0.09524065360227624,
+          "hi": 0.0032121413169968046,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0010416666666666667,
+          "lo": -0.0020833333333333333,
+          "hi": 0.004166666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -273.13854166666664,
+          "lo": -451.49097222222224,
+          "hi": -93.9625,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_maglin__Math_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.017013888888888887,
+          "lo": -0.034375,
+          "hi": -0.0006944444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.017560592463624822,
+          "lo": -0.07342009998584936,
+          "hi": 0.0355583916524414,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.001736111111111111,
+          "lo": -0.007291666666666667,
+          "hi": 0.003125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -214.9048611111111,
+          "lo": -493.78194444444443,
+          "hi": 44.40138888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k4096__Math_p80-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.00034722222222222224,
+          "lo": -0.014930555555555556,
+          "hi": 0.01423611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.04337468943953478,
+          "lo": -0.08587177705871331,
+          "hi": -0.0015385258386338505,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0,
+          "lo": -0.002777777777777778,
+          "hi": 0.002777777777777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 41.27013888888889,
+          "lo": -128.20034722222223,
+          "hi": 215.54340277777777,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k4096__Math_p80-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.00625,
+          "lo": -0.011458333333333333,
+          "hi": 0.023958333333333335,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.015655528502232084,
+          "lo": -0.07008781970078912,
+          "hi": 0.037060538792674826,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.002777777777777778,
+          "lo": -0.009027777777777777,
+          "hi": 0.0020833333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 99.50381944444445,
+          "lo": -144.38020833333334,
+          "hi": 329.56944444444446,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_maglin__Math_p80__freeze1800-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__freeze1800": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.01875,
+          "lo": -0.03680555555555556,
+          "hi": -0.001736111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.07027923003776583,
+          "lo": -0.11957393469449239,
+          "hi": -0.02126052867348853,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.003472222222222222,
+          "lo": -0.001736111111111111,
+          "hi": 0.011458333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -284.234375,
+          "lo": -480.190625,
+          "hi": -77.44826388888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_maglin__Math_p80__freeze1800-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__freeze1800": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.012152777777777778,
+          "lo": -0.029861111111111113,
+          "hi": 0.005208333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.04256006910046313,
+          "lo": -0.09140707398186419,
+          "hi": 0.004247840847599993,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0006944444444444445,
+          "lo": -0.004166666666666667,
+          "hi": 0.005555555555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -226.00069444444443,
+          "lo": -471.10625,
+          "hi": 0.2878472222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_maglin__Math_p80__freeze2000-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__freeze2000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.008680555555555556,
+          "lo": -0.024305555555555556,
+          "hi": 0.006597222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.006410630143276956,
+          "lo": -0.043049025697803174,
+          "hi": 0.029985541682517526,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.001388888888888889,
+          "lo": -0.001736111111111111,
+          "hi": 0.0045138888888888885,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 14.267013888888888,
+          "lo": -200.18402777777777,
+          "hi": 243.6670138888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_maglin__Math_p80__freeze2000-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__freeze2000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.0020833333333333333,
+          "lo": -0.017708333333333333,
+          "hi": 0.012847222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.02130853079402574,
+          "lo": -0.018501203677967638,
+          "hi": 0.06332439579707838,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.001388888888888889,
+          "lo": -0.005208333333333333,
+          "hi": 0.001736111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 72.50069444444445,
+          "lo": -86.89409722222223,
+          "hi": 235.48611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k4096__Math_p80__freeze1800-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze1800": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.009375,
+          "lo": -0.024652777777777777,
+          "hi": 0.005208333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.02916843567112361,
+          "lo": -0.07993451022046781,
+          "hi": 0.02165856140030343,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0006944444444444445,
+          "lo": -0.003472222222222222,
+          "hi": 0.0020833333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -192.3982638888889,
+          "lo": -370.75104166666665,
+          "hi": -12.937847222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k4096__Math_p80__freeze1800-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze1800": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.002777777777777778,
+          "lo": -0.01875,
+          "hi": 0.013194444444444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.0014492747338209155,
+          "lo": -0.05617805101096562,
+          "hi": 0.05315180555318251,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.003472222222222222,
+          "lo": -0.009722222222222222,
+          "hi": 0.001388888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -134.16458333333333,
+          "lo": -399.03541666666666,
+          "hi": 102.30416666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k4096__Math_p80__freeze2000-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze2000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.004861111111111111,
+          "lo": -0.01840277777777778,
+          "hi": 0.008680555555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.006578213439969323,
+          "lo": -0.052214353113954254,
+          "hi": 0.03834518507582655,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0020833333333333333,
+          "lo": -0.0020833333333333333,
+          "hi": 0.00798611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -35.61493055555555,
+          "lo": -271.48819444444445,
+          "hi": 225.9142361111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k4096__Math_p80__freeze2000-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze2000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.001736111111111111,
+          "lo": -0.013541666666666667,
+          "hi": 0.016666666666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.021140947497333373,
+          "lo": -0.03302296843263252,
+          "hi": 0.07447131337771457,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0006944444444444445,
+          "lo": -0.003472222222222222,
+          "hi": 0.0020833333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 22.61875,
+          "lo": -157.21770833333332,
+          "hi": 205.40277777777777,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k96__Math_p80-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k96__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.027777777777777776,
+          "lo": -0.043402777777777776,
+          "hi": -0.0125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.059245679618846185,
+          "lo": -0.1140935094296529,
+          "hi": -0.0055081583273005425,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.005555555555555556,
+          "lo": 0.0010416666666666667,
+          "hi": 0.011111111111111112,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -531.9548611111111,
+          "lo": -773.8739583333333,
+          "hi": -285.9690972222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k96__Math_p80-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k96__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.021180555555555557,
+          "lo": -0.03993055555555555,
+          "hi": -0.0020833333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.031526518681543485,
+          "lo": -0.08579479075816945,
+          "hi": 0.019226515497092384,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.002777777777777778,
+          "lo": -0.0024305555555555556,
+          "hi": 0.00798611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -473.7211805555556,
+          "lo": -794.3118055555556,
+          "hi": -168.48472222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k1024__Math_p80-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k1024__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.022916666666666665,
+          "lo": -0.03854166666666667,
+          "hi": -0.007638888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.061891682593589716,
+          "lo": -0.10634679987554486,
+          "hi": -0.017494084498969154,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.005208333333333333,
+          "lo": 0.0010416666666666667,
+          "hi": 0.009722222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -439.28506944444445,
+          "lo": -662.078125,
+          "hi": -210.28715277777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k1024__Math_p80-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k1024__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.016319444444444445,
+          "lo": -0.035069444444444445,
+          "hi": 0.001736111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.034172521656287015,
+          "lo": -0.08107122881405819,
+          "hi": 0.009300229153485886,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0024305555555555556,
+          "lo": -0.004166666666666667,
+          "hi": 0.008333333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -381.0513888888889,
+          "lo": -690.9173611111111,
+          "hi": -84.65763888888888,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k2048__Math_p80-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k2048__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.017013888888888887,
+          "lo": -0.03090277777777778,
+          "hi": -0.003125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.059065971968685696,
+          "lo": -0.11089522144543022,
+          "hi": -0.009769959722026525,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0024305555555555556,
+          "lo": -0.0010416666666666667,
+          "hi": 0.00625,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -386.70208333333335,
+          "lo": -603.6288194444444,
+          "hi": -170.64166666666668,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:ours__qh_hybrid_k2048__Math_p80-minus-target",
+      "category": "cell_minus_target",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k2048__Math_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.010416666666666666,
+          "lo": -0.02638888888888889,
+          "hi": 0.005208333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.031346811031382996,
+          "lo": -0.08954748966458731,
+          "hi": 0.02316863136689218,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.00034722222222222224,
+          "lo": -0.006597222222222222,
+          "hi": 0.005208333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -328.4684027777778,
+          "lo": -670.3996527777778,
+          "hi": -9.376041666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:target-minus-donor",
+      "category": "official_target_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.020833333333333332,
+          "lo": -0.03819444444444445,
+          "hi": -0.004166666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.02575370143085187,
+          "lo": -0.08037613018414688,
+          "hi": 0.030288525244795726,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.022569444444444444,
+          "lo": 0.0038194444444444443,
+          "hi": 0.041666666666666664,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -32.32673611111111,
+          "lo": -423.85381944444447,
+          "hi": 368.8020833333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:allenai__Olmo-3-7B-RL-Zero-Mix-step_200-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_200": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.0875,
+          "lo": -0.11180555555555556,
+          "hi": -0.0642361111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.10984314638291005,
+          "lo": -0.1757771981769915,
+          "hi": -0.0448027278939437,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.09583333333333334,
+          "lo": -0.11805555555555555,
+          "hi": -0.07569444444444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -3840.7725694444443,
+          "lo": -4400.162847222222,
+          "hi": -3300.1114583333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:allenai__Olmo-3-7B-RL-Zero-Mix-step_200-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_200": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.06666666666666667,
+          "lo": -0.08993055555555556,
+          "hi": -0.04513888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.08408944495205818,
+          "lo": -0.1464274185798453,
+          "hi": -0.025396303313105918,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.11840277777777777,
+          "lo": -0.13958333333333334,
+          "hi": -0.09861111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -3808.445833333333,
+          "lo": -4399.914930555556,
+          "hi": -3255.023263888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:allenai__Olmo-3-7B-RL-Zero-Mix-step_500-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_500": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.015625,
+          "lo": -0.034027777777777775,
+          "hi": 0.001388888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.016309925920779636,
+          "lo": -0.032492518125015975,
+          "hi": 0.06365137785017778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.04756944444444444,
+          "lo": -0.06701388888888889,
+          "hi": -0.029513888888888888,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -313.31805555555553,
+          "lo": -691.9121527777778,
+          "hi": 59.72430555555555,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:allenai__Olmo-3-7B-RL-Zero-Mix-step_500-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_500": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.005208333333333333,
+          "lo": -0.010763888888888889,
+          "hi": 0.020833333333333332,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.04206362735163151,
+          "lo": -0.011146613720374784,
+          "hi": 0.0935833689770219,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.07013888888888889,
+          "lo": -0.08715277777777777,
+          "hi": -0.05451388888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -280.99131944444446,
+          "lo": -684.7128472222222,
+          "hi": 117.09895833333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__lin_elem__Mix_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "ours__lin_elem__Mix_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.04236111111111111,
+          "lo": -0.0625,
+          "hi": -0.022916666666666665,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.002663375895896757,
+          "lo": -0.04778966550177718,
+          "hi": 0.04127818377172478,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.05347222222222222,
+          "lo": 0.03194444444444444,
+          "hi": 0.07534722222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 700.5736111111111,
+          "lo": 98.85833333333333,
+          "hi": 1277.3395833333334,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__lin_elem__Mix_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "ours__lin_elem__Mix_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.021527777777777778,
+          "lo": -0.043055555555555555,
+          "hi": -0.001736111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.023090325534955117,
+          "lo": -0.02964783220501411,
+          "hi": 0.07524182698941669,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.03090277777777778,
+          "lo": 0.008680555555555556,
+          "hi": 0.053125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 732.9003472222222,
+          "lo": 165.00972222222222,
+          "hi": 1273.2770833333334,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_elem__Mix_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_elem__Mix_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.0125,
+          "lo": -0.03090277777777778,
+          "hi": 0.005208333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.031753743658518324,
+          "lo": -0.007257195737901955,
+          "hi": 0.07402158543958562,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.03715277777777778,
+          "lo": 0.019097222222222224,
+          "hi": 0.05486111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 1040.115625,
+          "lo": 619.2326388888889,
+          "hi": 1450.6572916666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_elem__Mix_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_elem__Mix_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.008333333333333333,
+          "lo": -0.009375,
+          "hi": 0.02673611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.05750744508937019,
+          "lo": 0.001868018703972544,
+          "hi": 0.11339421809008497,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.014583333333333334,
+          "lo": -0.0020833333333333333,
+          "hi": 0.03125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 1072.442361111111,
+          "lo": 639.8954861111112,
+          "hi": 1489.3826388888888,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.003472222222222222,
+          "lo": -0.02013888888888889,
+          "hi": 0.012847222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.03166948157023278,
+          "lo": -0.013390013771701983,
+          "hi": 0.0775070887865025,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.003472222222222222,
+          "lo": -0.022222222222222223,
+          "hi": 0.014930555555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 577.128125,
+          "lo": 265.2295138888889,
+          "hi": 902.4444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.017361111111111112,
+          "lo": 0.0020833333333333333,
+          "hi": 0.03298611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.05742318300108465,
+          "lo": 0.009152091859866611,
+          "hi": 0.10728821434720606,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.026041666666666668,
+          "lo": -0.043402777777777776,
+          "hi": -0.009027777777777777,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 609.4548611111111,
+          "lo": 283.4329861111111,
+          "hi": 942.7451388888888,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_hybrid_k4096__Mix_p80-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_hybrid_k4096__Mix_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.007291666666666667,
+          "lo": -0.024305555555555556,
+          "hi": 0.009375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.009362969624301564,
+          "lo": -0.04105601757454699,
+          "hi": 0.06247870566309219,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0045138888888888885,
+          "lo": -0.024305555555555556,
+          "hi": 0.014930555555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 481.6190972222222,
+          "lo": 88.40625,
+          "hi": 882.4732638888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_hybrid_k4096__Mix_p80-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_hybrid_k4096__Mix_p80": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.013541666666666667,
+          "lo": -0.001736111111111111,
+          "hi": 0.029513888888888888,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.03511667105515343,
+          "lo": -0.013859975941727932,
+          "hi": 0.08376487886346708,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.027083333333333334,
+          "lo": -0.044444444444444446,
+          "hi": -0.010416666666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 513.9458333333333,
+          "lo": 100.715625,
+          "hi": 918.6222222222223,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__freeze500-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze500": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.03159722222222222,
+          "lo": -0.04791666666666667,
+          "hi": -0.016319444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.06490162984318584,
+          "lo": -0.11397641115303507,
+          "hi": -0.01667377784340774,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.11215277777777778,
+          "lo": 0.08506944444444445,
+          "hi": 0.14097222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 3599.8993055555557,
+          "lo": 2986.1506944444445,
+          "hi": 4207.772569444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__freeze500-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze500": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.010763888888888889,
+          "lo": -0.028819444444444446,
+          "hi": 0.006597222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.03914792841233395,
+          "lo": -0.08799406245440443,
+          "hi": 0.005407225313073353,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.08958333333333333,
+          "lo": 0.06458333333333334,
+          "hi": 0.11597222222222223,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 3632.226041666667,
+          "lo": 3093.744097222222,
+          "hi": 4163.378472222223,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__freeze900-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze900": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.002777777777777778,
+          "lo": -0.0125,
+          "hi": 0.017708333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.004346734681824805,
+          "lo": -0.04634906141441598,
+          "hi": 0.038000548238739836,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0045138888888888885,
+          "lo": -0.025,
+          "hi": 0.014583333333333334,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 369.9916666666667,
+          "lo": -20.767708333333335,
+          "hi": 752.6878472222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__freeze900-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze900": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.02361111111111111,
+          "lo": 0.008680555555555556,
+          "hi": 0.03854166666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.021406966749027076,
+          "lo": -0.031627591259280455,
+          "hi": 0.0753435537595525,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.027083333333333334,
+          "lo": -0.044444444444444446,
+          "hi": -0.010069444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 402.3184027777778,
+          "lo": 10.258680555555555,
+          "hi": 796.5753472222223,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__freeze1000-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze1000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.019791666666666666,
+          "lo": -0.035069444444444445,
+          "hi": -0.004861111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.015651798995546078,
+          "lo": -0.0587376999051103,
+          "hi": 0.027922575547673415,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.03125,
+          "lo": 0.014930555555555556,
+          "hi": 0.04756944444444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 94.72534722222223,
+          "lo": -293.26006944444447,
+          "hi": 488.0159722222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:ours__qh_maglin__Mix_p80__freeze1000-minus-target",
+      "category": "cell_minus_target",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze1000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.0010416666666666667,
+          "lo": -0.015277777777777777,
+          "hi": 0.017708333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.010101902435305794,
+          "lo": -0.046674229067947326,
+          "hi": 0.06697893523212611,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.008680555555555556,
+          "lo": -0.005902777777777778,
+          "hi": 0.02361111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 127.05208333333333,
+          "lo": -222.05416666666667,
+          "hi": 467.3065972222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:target-minus-donor",
+      "category": "official_target_minus_donor",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_2500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.07708333333333334,
+          "lo": -0.10520833333333333,
+          "hi": -0.05173611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.12731459558457175,
+          "lo": -0.18469479089884205,
+          "hi": -0.07297264129493376,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.009375,
+          "lo": 0.003125,
+          "hi": 0.015625,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -1490.7496527777778,
+          "lo": -1874.8319444444444,
+          "hi": -1108.373263888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:allenai__Olmo-3-7B-RL-Zero-Code-step_800-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_800": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_2500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.022916666666666665,
+          "lo": -0.043055555555555555,
+          "hi": -0.003472222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.008088858482159287,
+          "lo": -0.04946453233799375,
+          "hi": 0.032147230164079124,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.004166666666666667,
+          "lo": -0.001736111111111111,
+          "hi": 0.010416666666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 2435.1253472222224,
+          "lo": 2028.1006944444443,
+          "hi": 2867.7791666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:allenai__Olmo-3-7B-RL-Zero-Code-step_800-minus-target",
+      "category": "cell_minus_target",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_800": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.05416666666666667,
+          "lo": 0.03298611111111111,
+          "hi": 0.07604166666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.11922573710241247,
+          "lo": 0.06143938537442925,
+          "hi": 0.18007426745549146,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.005208333333333333,
+          "lo": -0.011805555555555555,
+          "hi": 0.001388888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 3925.875,
+          "lo": 3287.0489583333333,
+          "hi": 4569.147222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:allenai__Olmo-3-7B-RL-Zero-Code-step_1700-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_1700": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_2500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.035416666666666666,
+          "lo": -0.05243055555555556,
+          "hi": -0.019791666666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.06573153654575592,
+          "lo": -0.12147021439918287,
+          "hi": -0.013144499560569962,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.013888888888888888,
+          "lo": 0.006597222222222222,
+          "hi": 0.021527777777777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -465.93541666666664,
+          "lo": -742.3375,
+          "hi": -190.8684027777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:allenai__Olmo-3-7B-RL-Zero-Code-step_1700-minus-target",
+      "category": "cell_minus_target",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_1700": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.041666666666666664,
+          "lo": 0.021180555555555557,
+          "hi": 0.06458333333333334,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.06158305903881583,
+          "lo": -0.005038114082839693,
+          "hi": 0.12898105938504795,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0045138888888888885,
+          "lo": -0.002777777777777778,
+          "hi": 0.011805555555555555,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 1024.814236111111,
+          "lo": 594.8274305555556,
+          "hi": 1458.7979166666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:ours__qh_elem__Code_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Code",
+      "weights": {
+        "ours__qh_elem__Code_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_2500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.029861111111111113,
+          "lo": -0.04791666666666667,
+          "hi": -0.012152777777777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.09222599259975856,
+          "lo": -0.14547589972856118,
+          "hi": -0.041416824443214484,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.005902777777777778,
+          "lo": -0.009722222222222222,
+          "hi": -0.0020833333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -1800.51875,
+          "lo": -2068.3972222222224,
+          "hi": -1533.736111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:ours__qh_elem__Code_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Code",
+      "weights": {
+        "ours__qh_elem__Code_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.04722222222222222,
+          "lo": 0.02638888888888889,
+          "hi": 0.07083333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.03508860298481318,
+          "lo": -0.01397383148330255,
+          "hi": 0.08892329288377994,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.015277777777777777,
+          "lo": -0.02048611111111111,
+          "hi": -0.010416666666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -309.76909722222223,
+          "lo": -616.6340277777778,
+          "hi": -4.028125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:ours__qh_maglin__Code_p80__-minus-donor",
+      "category": "cell_minus_donor",
+      "track": "Code",
+      "weights": {
+        "ours__qh_maglin__Code_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_2500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.005902777777777778,
+          "lo": -0.020833333333333332,
+          "hi": 0.009722222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.037307368764212506,
+          "lo": -0.08530922836387253,
+          "hi": 0.009374956928251589,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0006944444444444445,
+          "lo": -0.005208333333333333,
+          "hi": 0.0038194444444444443,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -474.45659722222223,
+          "lo": -692.5517361111112,
+          "hi": -257.0423611111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:ours__qh_maglin__Code_p80__-minus-target",
+      "category": "cell_minus_target",
+      "track": "Code",
+      "weights": {
+        "ours__qh_maglin__Code_p80__": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.07118055555555555,
+          "lo": 0.04826388888888889,
+          "hi": 0.09618055555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.09000722682035925,
+          "lo": 0.03569651446012626,
+          "hi": 0.14719873951561713,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.010069444444444445,
+          "lo": -0.015625,
+          "hi": -0.0045138888888888885,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 1016.2930555555556,
+          "lo": 686.9065972222222,
+          "hi": 1360.4979166666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:sqrt-mag-minus-qh-maglin",
+      "category": "registered_recipe_contrast",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80": 1.0,
+        "ours__qh_maglin__Math_p80__": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.02326388888888889,
+          "lo": 0.010416666666666666,
+          "hi": 0.03680555555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.0019050639613927365,
+          "lo": -0.0461607396641238,
+          "hi": 0.05107729603726088,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0010416666666666667,
+          "lo": -0.0038194444444444443,
+          "hi": 0.001736111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 314.4086805555556,
+          "lo": 146.19756944444444,
+          "hi": 487.409375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:sqrt-mag-minus-qh-maglin",
+      "category": "registered_recipe_contrast",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_hybrid_k4096__Mix_p80": 1.0,
+        "ours__qh_maglin__Mix_p80__": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.0038194444444444443,
+          "lo": -0.019791666666666666,
+          "hi": 0.012847222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.022306511945931223,
+          "lo": -0.07641383731273171,
+          "hi": 0.02933675811834605,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0010416666666666667,
+          "lo": -0.018055555555555554,
+          "hi": 0.01597222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -95.50902777777777,
+          "lo": -444.1010416666667,
+          "hi": 249.62152777777777,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:qh-elem-minus-lin-elem",
+      "category": "recipe_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_elem__Math_p80__": 1.0,
+        "ours__lin_elem__Math_p80__": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.024652777777777777,
+          "lo": 0.012152777777777778,
+          "hi": 0.0375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.023346742965057742,
+          "lo": -0.01564769649382691,
+          "hi": 0.0638299598235844,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.014583333333333334,
+          "lo": -0.02638888888888889,
+          "hi": -0.004861111111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -400.4736111111111,
+          "lo": -763.1454861111112,
+          "hi": -69.51423611111112,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:qh-maglin-minus-qh-elem",
+      "category": "recipe_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__": 1.0,
+        "ours__qh_elem__Math_p80__": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.009027777777777777,
+          "lo": -0.003472222222222222,
+          "hi": 0.021875,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.02052489285168661,
+          "lo": -0.02899559275257674,
+          "hi": 0.07140400465679252,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.007638888888888889,
+          "lo": -0.011805555555555555,
+          "hi": -0.003472222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -49.86215277777778,
+          "lo": -274.0083333333333,
+          "hi": 167.96701388888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:qh-elem-minus-lin-elem",
+      "category": "recipe_secondary",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_elem__Mix_p80__": 1.0,
+        "ours__lin_elem__Mix_p80__": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.029861111111111113,
+          "lo": 0.012152777777777778,
+          "hi": 0.04826388888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.03441711955441508,
+          "lo": -0.009761035975755443,
+          "hi": 0.07851243499134025,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.016319444444444445,
+          "lo": -0.034375,
+          "hi": 0.001388888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 339.5420138888889,
+          "lo": -148.71145833333333,
+          "hi": 824.5163194444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:qh-maglin-minus-qh-elem",
+      "category": "recipe_secondary",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__": 1.0,
+        "ours__qh_elem__Mix_p80__": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.009027777777777777,
+          "lo": -0.010069444444444445,
+          "hi": 0.029166666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -8.426208828554592e-05,
+          "lo": -0.051059682419887675,
+          "hi": 0.05016018840859392,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.040625,
+          "lo": -0.060069444444444446,
+          "hi": -0.021527777777777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -462.9875,
+          "lo": -893.9524305555556,
+          "hi": -38.981944444444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:qh-maglin-minus-qh-elem",
+      "category": "recipe_secondary",
+      "track": "Code",
+      "weights": {
+        "ours__qh_maglin__Code_p80__": 1.0,
+        "ours__qh_elem__Code_p80__": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.023958333333333335,
+          "lo": 0.008333333333333333,
+          "hi": 0.04097222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.05491862383554608,
+          "lo": 0.018367469467954374,
+          "hi": 0.09634433588640097,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.005208333333333333,
+          "lo": 0.001736111111111111,
+          "hi": 0.009027777777777777,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 1326.0621527777778,
+          "lo": 1097.6486111111112,
+          "hi": 1561.19375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:hybrid-k1024-minus-k96",
+      "category": "parameter_sweep_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k1024__Math_p80": 1.0,
+        "ours__qh_hybrid_k96__Math_p80": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.004861111111111111,
+          "lo": -0.009375,
+          "hi": 0.019444444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.0026460029747435295,
+          "lo": -0.04214287593045582,
+          "hi": 0.03623896880082879,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.00034722222222222224,
+          "lo": -0.006597222222222222,
+          "hi": 0.005208333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 92.66979166666667,
+          "lo": -74.43784722222222,
+          "hi": 261.3520833333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:hybrid-k2048-minus-k1024",
+      "category": "parameter_sweep_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k2048__Math_p80": 1.0,
+        "ours__qh_hybrid_k1024__Math_p80": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.005902777777777778,
+          "lo": -0.00798611111111111,
+          "hi": 0.019791666666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.002825710624904006,
+          "lo": -0.04039290704895932,
+          "hi": 0.047135693890573725,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.002777777777777778,
+          "lo": -0.006597222222222222,
+          "hi": 0.0010416666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 52.58298611111111,
+          "lo": -109.81527777777778,
+          "hi": 218.35347222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:hybrid-k4096-minus-k2048",
+      "category": "parameter_sweep_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80": 1.0,
+        "ours__qh_hybrid_k2048__Math_p80": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.016666666666666666,
+          "lo": 0.004861111111111111,
+          "hi": 0.028819444444444446,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.015691282529150922,
+          "lo": -0.02748825673347583,
+          "hi": 0.0605958760912718,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0024305555555555556,
+          "lo": -0.005902777777777778,
+          "hi": 0.0006944444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 427.97222222222223,
+          "lo": 201.73506944444443,
+          "hi": 660.7222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:hybrid-k4096-minus-k96",
+      "category": "parameter_sweep_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80": 1.0,
+        "ours__qh_hybrid_k96__Math_p80": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.027430555555555555,
+          "lo": 0.0125,
+          "hi": 0.043402777777777776,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.015870990179311404,
+          "lo": -0.03193335797673697,
+          "hi": 0.06556159322087055,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.005555555555555556,
+          "lo": -0.011805555555555555,
+          "hi": -0.0006944444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 573.225,
+          "lo": 342.86319444444445,
+          "hi": 807.3104166666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:mag:freeze1800-minus-native",
+      "category": "direction_diagnostic_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__freeze1800": 1.0,
+        "ours__qh_maglin__Math_p80__": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.004861111111111111,
+          "lo": -0.007638888888888889,
+          "hi": 0.018055555555555554,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.024999476636838318,
+          "lo": -0.07509840633241531,
+          "hi": 0.025642246437101186,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0024305555555555556,
+          "lo": -0.0024305555555555556,
+          "hi": 0.009375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -11.095833333333333,
+          "lo": -178.69722222222222,
+          "hi": 163.36493055555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:hybrid:freeze1800-minus-native",
+      "category": "direction_diagnostic_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze1800": 1.0,
+        "ours__qh_hybrid_k4096__Math_p80": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.009027777777777777,
+          "lo": -0.021875,
+          "hi": 0.003472222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.014206253768411168,
+          "lo": -0.01750120160947006,
+          "hi": 0.0497811692228241,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0006944444444444445,
+          "lo": -0.003472222222222222,
+          "hi": 0.0020833333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -233.66840277777777,
+          "lo": -404.4215277777778,
+          "hi": -60.411458333333336,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:recipe-by-direction-freeze1800-minus-native",
+      "category": "registered_direction_recipe_interaction",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze1800": 1.0,
+        "ours__qh_maglin__Math_p80__freeze1800": -1.0,
+        "ours__qh_hybrid_k4096__Math_p80": -1.0,
+        "ours__qh_maglin__Math_p80__": 1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle interaction; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.013888888888888888,
+          "lo": -0.030555555555555555,
+          "hi": 0.0024305555555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.03920573040524949,
+          "lo": -0.017387986840015055,
+          "hi": 0.09765507805037525,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.003125,
+          "lo": -0.010416666666666666,
+          "hi": 0.0024305555555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -222.57256944444444,
+          "lo": -470.45520833333336,
+          "hi": 7.853472222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:mag:freeze2000-minus-native",
+      "category": "direction_diagnostic_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_maglin__Math_p80__freeze2000": 1.0,
+        "ours__qh_maglin__Math_p80__": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.014930555555555556,
+          "lo": -0.0010416666666666667,
+          "hi": 0.03090277777777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.03886912325765056,
+          "lo": -0.009633477589689233,
+          "hi": 0.09101569281495497,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.00034722222222222224,
+          "lo": -0.003125,
+          "hi": 0.0038194444444444443,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 287.40555555555557,
+          "lo": 71.92152777777778,
+          "hi": 521.6930555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:hybrid:freeze2000-minus-native",
+      "category": "direction_diagnostic_secondary",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze2000": 1.0,
+        "ours__qh_hybrid_k4096__Math_p80": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.0045138888888888885,
+          "lo": -0.021527777777777778,
+          "hi": 0.012152777777777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.03679647599956545,
+          "lo": -0.008295087820486413,
+          "hi": 0.08300260861206195,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.0020833333333333333,
+          "lo": -0.002777777777777778,
+          "hi": 0.008333333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -76.88506944444444,
+          "lo": -290.1826388888889,
+          "hi": 141.85486111111112,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:recipe-by-direction-freeze2000-minus-native",
+      "category": "registered_direction_recipe_interaction",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze2000": 1.0,
+        "ours__qh_maglin__Math_p80__freeze2000": -1.0,
+        "ours__qh_hybrid_k4096__Math_p80": -1.0,
+        "ours__qh_maglin__Math_p80__": 1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle interaction; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.019444444444444445,
+          "lo": -0.040625,
+          "hi": 0.0006944444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.0020726472580850992,
+          "lo": -0.07568096856395531,
+          "hi": 0.06903098476469088,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.001736111111111111,
+          "lo": -0.002777777777777778,
+          "hi": 0.007291666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -364.290625,
+          "lo": -581.5579861111111,
+          "hi": -150.51805555555555,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:recipe-by-direction-freeze2000-minus-freeze1800",
+      "category": "registered_direction_recipe_interaction",
+      "track": "Math",
+      "weights": {
+        "ours__qh_hybrid_k4096__Math_p80__freeze2000": 1.0,
+        "ours__qh_maglin__Math_p80__freeze2000": -1.0,
+        "ours__qh_hybrid_k4096__Math_p80__freeze1800": -1.0,
+        "ours__qh_maglin__Math_p80__freeze1800": 1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle interaction; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.005555555555555556,
+          "lo": -0.023958333333333335,
+          "hi": 0.013194444444444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.041278377663334594,
+          "lo": -0.1212744941192013,
+          "hi": 0.03304782839077111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.004861111111111111,
+          "lo": -0.002777777777777778,
+          "hi": 0.016319444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -141.71805555555557,
+          "lo": -396.378125,
+          "hi": 113.01388888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:qh-maglin:freeze500-minus-native",
+      "category": "direction_diagnostic_secondary",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze500": 1.0,
+        "ours__qh_maglin__Mix_p80__": -1.0
+      },
+      "primary": false,
+      "note": "direction diagnostic",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.028125,
+          "lo": -0.04722222222222222,
+          "hi": -0.009722222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.0965711114134186,
+          "lo": -0.15238770700131402,
+          "hi": -0.044824535514939826,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.115625,
+          "lo": 0.08923611111111111,
+          "hi": 0.14201388888888888,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 3022.7711805555555,
+          "lo": 2458.6930555555555,
+          "hi": 3552.4100694444446,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:qh-maglin:freeze900-minus-native",
+      "category": "direction_diagnostic_secondary",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze900": 1.0,
+        "ours__qh_maglin__Mix_p80__": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.00625,
+          "lo": -0.009722222222222222,
+          "hi": 0.022222222222222223,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.03601621625205758,
+          "lo": -0.08509789375538714,
+          "hi": 0.010645877777956909,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.0010416666666666667,
+          "lo": -0.016319444444444445,
+          "hi": 0.013541666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -207.13645833333334,
+          "lo": -579.5767361111111,
+          "hi": 147.80381944444446,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:qh-maglin:freeze1000-minus-native",
+      "category": "direction_diagnostic_secondary",
+      "track": "Mix",
+      "weights": {
+        "ours__qh_maglin__Mix_p80__freeze1000": 1.0,
+        "ours__qh_maglin__Mix_p80__": -1.0
+      },
+      "primary": false,
+      "note": "future-direction oracle diagnostic; not deployable",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.016319444444444445,
+          "lo": -0.034027777777777775,
+          "hi": 0.0006944444444444445,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.04732128056577885,
+          "lo": -0.09939374273122512,
+          "hi": 0.0035143501631564925,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.034722222222222224,
+          "lo": 0.01840277777777778,
+          "hi": 0.05138888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -482.40277777777777,
+          "lo": -839.8565972222223,
+          "hi": -117.5375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:target-minus-step500",
+      "category": "registered_official_secondary",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.005208333333333333,
+          "lo": -0.020833333333333332,
+          "hi": 0.010763888888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.04206362735163151,
+          "lo": -0.09353166873772444,
+          "hi": 0.011196754027822761,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.07013888888888889,
+          "lo": 0.05451388888888889,
+          "hi": 0.08715277777777777,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 280.99131944444446,
+          "lo": -116.99791666666667,
+          "hi": 685.4868055555555,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:official:allenai__Olmo-3-7B-RL-Zero-Math-step_1000-minus-allenai__Olmo-3-7B-RL-Zero-Math-step_400",
+      "category": "official_adjacent",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1000": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_400": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.0375,
+          "lo": 0.020833333333333332,
+          "hi": 0.05451388888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.04282697641972463,
+          "lo": 0.002613351527830669,
+          "hi": 0.08607943626678992,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.009722222222222222,
+          "lo": 0.005555555555555556,
+          "hi": 0.01423611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 57.35,
+          "lo": -216.30034722222223,
+          "hi": 329.89722222222224,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:official:allenai__Olmo-3-7B-RL-Zero-Math-step_1600-minus-allenai__Olmo-3-7B-RL-Zero-Math-step_1000",
+      "category": "official_adjacent",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1000": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.021180555555555557,
+          "lo": 0.003125,
+          "hi": 0.040625,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.01895775714053083,
+          "lo": -0.07189656567124629,
+          "hi": 0.03148862376886986,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.007291666666666667,
+          "lo": -0.011458333333333333,
+          "hi": -0.003125,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -813.7975694444444,
+          "lo": -1068.3378472222223,
+          "hi": -565.9163194444444,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Math:official:allenai__Olmo-3-7B-RL-Zero-Math-minus-allenai__Olmo-3-7B-RL-Zero-Math-step_1600",
+      "category": "official_adjacent",
+      "track": "Math",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Math": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Math-step_1600": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.006597222222222222,
+          "lo": -0.021527777777777778,
+          "hi": 0.008333333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.02771916093730269,
+          "lo": -0.07331912364223583,
+          "hi": 0.01789016355846992,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.002777777777777778,
+          "lo": -0.001736111111111111,
+          "hi": 0.008333333333333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -58.23368055555556,
+          "lo": -307.16041666666666,
+          "hi": 213.89097222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:official:allenai__Olmo-3-7B-RL-Zero-Mix-step_500-minus-allenai__Olmo-3-7B-RL-Zero-Mix-step_200",
+      "category": "official_adjacent",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_500": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_200": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.071875,
+          "lo": 0.051041666666666666,
+          "hi": 0.09375,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.1261530723036897,
+          "lo": 0.06016850217914372,
+          "hi": 0.19310250617595798,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.04826388888888889,
+          "lo": 0.034375,
+          "hi": 0.06284722222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 3527.454513888889,
+          "lo": 3080.4371527777776,
+          "hi": 3984.918402777778,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:official:allenai__Olmo-3-7B-RL-Zero-Mix-step_800-minus-allenai__Olmo-3-7B-RL-Zero-Mix-step_500",
+      "category": "official_adjacent",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.015625,
+          "lo": -0.001388888888888889,
+          "hi": 0.034027777777777775,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.016309925920779636,
+          "lo": -0.06364500072204245,
+          "hi": 0.03251573576262126,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.04756944444444444,
+          "lo": 0.029513888888888888,
+          "hi": 0.06701388888888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 313.31805555555553,
+          "lo": -59.435763888888886,
+          "hi": 691.9322916666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Mix:official:allenai__Olmo-3-7B-RL-Zero-Mix-minus-allenai__Olmo-3-7B-RL-Zero-Mix-step_800",
+      "category": "official_adjacent",
+      "track": "Mix",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Mix": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Mix-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.020833333333333332,
+          "lo": -0.03819444444444445,
+          "hi": -0.004166666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.02575370143085187,
+          "lo": -0.08037613018414688,
+          "hi": 0.030288525244795726,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.022569444444444444,
+          "lo": 0.0038194444444444443,
+          "hi": 0.041666666666666664,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -32.32673611111111,
+          "lo": -423.85381944444447,
+          "hi": 368.8020833333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:official:allenai__Olmo-3-7B-RL-Zero-Code-step_1700-minus-allenai__Olmo-3-7B-RL-Zero-Code-step_800",
+      "category": "official_adjacent",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_1700": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_800": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.0125,
+          "lo": -0.029513888888888888,
+          "hi": 0.004166666666666667,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.05764267806359664,
+          "lo": -0.11448072857239243,
+          "hi": -0.0035125809414980657,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.009722222222222222,
+          "lo": 0.002777777777777778,
+          "hi": 0.016666666666666666,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -2901.0607638888887,
+          "lo": -3310.5680555555555,
+          "hi": -2508.5177083333333,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:official:allenai__Olmo-3-7B-RL-Zero-Code-step_2500-minus-allenai__Olmo-3-7B-RL-Zero-Code-step_1700",
+      "category": "official_adjacent",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_2500": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_1700": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": 0.035416666666666666,
+          "lo": 0.019791666666666666,
+          "hi": 0.05243055555555556,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": 0.06573153654575592,
+          "lo": 0.013272714708482392,
+          "hi": 0.12151048383247225,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": -0.013888888888888888,
+          "lo": -0.021527777777777778,
+          "hi": -0.006597222222222222,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": 465.93541666666664,
+          "lo": 191.32256944444444,
+          "hi": 742.41875,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    },
+    {
+      "name": "Code:official:allenai__Olmo-3-7B-RL-Zero-Code-minus-allenai__Olmo-3-7B-RL-Zero-Code-step_2500",
+      "category": "official_adjacent",
+      "track": "Code",
+      "weights": {
+        "allenai__Olmo-3-7B-RL-Zero-Code": 1.0,
+        "allenai__Olmo-3-7B-RL-Zero-Code-step_2500": -1.0
+      },
+      "primary": false,
+      "note": "",
+      "metrics": {
+        "pass1": {
+          "estimate": -0.07708333333333334,
+          "lo": -0.10520833333333333,
+          "hi": -0.05173611111111111,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "pass16": {
+          "estimate": -0.12731459558457175,
+          "lo": -0.18469479089884205,
+          "hi": -0.07297264129493376,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "cap_rate": {
+          "estimate": 0.009375,
+          "lo": 0.003125,
+          "hi": 0.015625,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        },
+        "mean_tokens": {
+          "estimate": -1490.7496527777778,
+          "lo": -1874.8319444444444,
+          "hi": -1108.373263888889,
+          "reps": 10000,
+          "seed": 0,
+          "n_problems": 90
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "analysis_plan": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/analysis_plan.json",
+    "analysis_plan_sha256": "7c7114e5a2d354c28728d3970df870dd8f5b43c8a7925a03e204eff06353f9ea",
+    "inventory": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/input_audit/matrix32.json",
+    "inventory_sha256": "e02addf0cee823acc2707f179f6ad6cb28c92484e28ec2441b0c7fde58994e67",
+    "completion_receipt": "$REMOTE_HOME/mask_analysis/local_results/p80_long_eval_20261014/resume_20261022/completion_receipt.json",
+    "completion_receipt_sha256": "cbfca5e462492ace0be516b4ddc46f63a7aa3a78aa6802f35418140761277946",
+    "results_root": "$DATA_ROOT/output/p80_aime_trainproto_20261014_v1/aime",
+    "aime_test": "$DATA_ROOT/data/aimo-aime/test.jsonl",
+    "aime_test_sha256": "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe",
+    "aime_train": "$DATA_ROOT/data/aimo-aime/train.jsonl",
+    "aime_train_sha256": "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da",
+    "script": "$REMOTE_HOME/mask_analysis/local_results/p80_aime_report_20261025/statistics/analyze_registered_results.py",
+    "script_sha256": "3f32cfdbefe0d8a7994425552e2948b923249206760d7c6fefeb73dad413b34c",
+    "software": {
+      "python": "3.8.19",
+      "numpy": "1.24.4",
+      "scipy": "1.10.1"
+    }
+  }
+}

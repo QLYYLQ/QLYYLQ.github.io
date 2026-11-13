@@ -1,0 +1,59 @@
+{
+  "schema": "p80_aime_dataset_source_verification_v1",
+  "status": "PASS",
+  "local": {
+    "test": {
+      "path": "$DATA_ROOT/data/aimo-aime/test.jsonl",
+      "rows": 20,
+      "sha256": "c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe"
+    },
+    "train": {
+      "path": "$DATA_ROOT/data/aimo-aime/train.jsonl",
+      "rows": 70,
+      "sha256": "76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da"
+    },
+    "combined_rows": 90,
+    "unique_problem_texts": 90,
+    "cross_file_problem_overlap": 0
+  },
+  "upstream_current": {
+    "dataset": "AI-MO/aimo-validation-aime",
+    "revision": "c4d0fdc4f2729a36c218fcfd3532efe97477ad59",
+    "url": "https://huggingface.co/datasets/AI-MO/aimo-validation-aime/tree/c4d0fdc4f2729a36c218fcfd3532efe97477ad59",
+    "file": "data/train-00000-of-00001-6a482bba24408a44.parquet",
+    "download_sha256": "43bcf7f36c4461957c9ed2c88b66d8060ce7384066762e5d850d6ebf86416edb",
+    "rows": 90,
+    "official_splits": {
+      "train": 90
+    },
+    "local_union_matches_exact_problem_answer_set": true
+  },
+  "upstream_year_provenance": {
+    "dataset_revision": "8c6be017548b0fe2eb9fdf2239fca99700b9bccf",
+    "commit_url": "https://huggingface.co/datasets/AI-MO/aimo-validation-aime/commit/8c6be017548b0fe2eb9fdf2239fca99700b9bccf",
+    "file": "data/train-00000-of-00001.parquet",
+    "download_sha256": "025484a99fea498e7d0c3b0ee42afcbec0176405c19c5dbf557b9f6ca6445675",
+    "rows": 90,
+    "fields": [
+      "id",
+      "problem",
+      "solution",
+      "answer",
+      "url"
+    ],
+    "local_union_matches_exact_problem_answer_set": true,
+    "year_counts_from_url": {
+      "2022": 30,
+      "2023": 30,
+      "2024": 30
+    },
+    "unclassified_urls": 0
+  },
+  "matching_rule": "set equality on exact problem text and answer normalized to a three-digit string",
+  "interpretation": {
+    "dataset_scope": "90 public AIME problems, 30 each from 2022, 2023 and 2024",
+    "local_split": "the local 20-row test and 70-row train files are a partition and reorder of the upstream 90-row train split; both local files are concatenated for evaluation",
+    "held_out_claim": "unsupported: neither the local filenames nor this verification establishes that the problems were unseen during model pretraining or RL training",
+    "generalization_claim": "results describe this fixed 90-problem public panel and do not by themselves establish general mathematical ability"
+  }
+}

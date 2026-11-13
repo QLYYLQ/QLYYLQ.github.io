@@ -1,0 +1,34 @@
+{
+  "registered_before_new_generation": true,
+  "authorized_scope": "32 checkpoints, predominantly p80, on the same 90 AIME problems",
+  "sampling": {"temperature": 1.0, "top_p": 1.0, "n": 32, "k": 16, "max_tokens": 32768, "seed": 0},
+  "primary_question": "Does Math p80 lin_elem or qh_maglin remain below its own official step1600 donor?",
+  "primary_comparisons": [
+    {"a": "ours__lin_elem__Math_p80__", "b": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600"},
+    {"a": "ours__qh_maglin__Math_p80__", "b": "allenai__Olmo-3-7B-RL-Zero-Math-step_1600"}
+  ],
+  "primary_metric": "pass@1 at the full 32768-token budget",
+  "uncertainty": {
+    "unit": "problem, paired across compared checkpoints",
+    "replicates": 10000,
+    "seed": 0,
+    "interval": "95 percent percentile bootstrap",
+    "limits": "Fixed recorded decoding draws; no independent decoding-seed replication. Report unadjusted intervals explicitly and a Holm correction for the two primary inferiority tests if a family-level claim is made."
+  },
+  "decision": {
+    "entire_interval_below_zero": "Evidence of lower pass@1 for this method under the registered protocol.",
+    "interval_crosses_zero": "Inconclusive difference; not equivalence, not proof that the original gap was caused by truncation.",
+    "entire_interval_above_zero": "Evidence of higher pass@1 for this method under the registered protocol; still not proof of actual training cost savings."
+  },
+  "secondary": [
+    "pass@16 using the unbiased n=32 estimator, with paired intervals",
+    "Each extrapolation minus its own donor and its official final target, within track only",
+    "Official target minus donor; do not report an unstable recovery fraction when this gap is near zero",
+    "Math sqrt minus qh_maglin and the direction-by-recipe difference-in-differences; future-direction arms are oracle diagnostics",
+    "Mix final minus step500 and step800, without claiming step500 is globally optimal",
+    "Full-text 16384-token prefix rescoring using saved original token IDs",
+    "Cap rate, repetition classification, conditional correctness by finish category, and output lengths",
+    "Historical T0.6/top_p0.95 comparison only after common-scorer replay and problem identity verification; report runtime differences and treat this as a joint sampling-protocol comparison"
+  ],
+  "no_posthoc_selection": "Retain all 32 registered cells regardless of score. No replacing checkpoints, dropping capped samples, changing answer normalization or selecting a favorable budget after reading new results."
+}

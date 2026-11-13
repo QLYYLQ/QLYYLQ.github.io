@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIME 与训练题面重合核对 · 训练动力学</title><meta name="description" content="90 道 AIME 中 19 道与 Dolci 训练题面逐字相同；同时保存旧 Code 协议结果的核验说明。">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="training-dynamics.css"><link rel="icon" href="favicon.svg">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a> / <a href="./">训练动力学</a> / 研究记录</nav>
+<header class="top"><div class="eyebrow">2026-10-27 · 后续实验</div><h1>AIME 与训练题面重合核对</h1><p class="lead">90 道 AIME 中 19 道与 Dolci 训练题面逐字相同；同时保存旧 Code 协议结果的核验说明。</p>
+<p class="source-note">按原研究日期归档；后续补充见<a href="./#reports">报告目录</a>。<a href="sources/dataset-overlap.md" download>Markdown</a></p></header>
+<details class="report-toc"><summary>章节目录</summary><div class="toc">
+<ul>
+<li><a href="#_1">结论</a></li>
+<li><a href="#_2">匹配与编号规则</a></li>
+<li><a href="#19">19 个命中</a></li>
+<li><a href="#gold">Gold 与来源核验</a></li>
+<li><a href="#code-t06">旧 Code T=0.6 逐题结果</a></li>
+</ul>
+</div>
+</details><main id="content" class="prose"><h2 id="_1">结论</h2>
+<p><code>dolci_overlap.csv</code> 有 90 个数据行，覆盖 <code>problem_idx=0..89</code> 和
+<code>uid=aime-000..aime-089</code>。其中 19 题与 Dolci-RL-Zero-Math-7B 的训练集题面
+逐字相同，另外 71 题没有逐字相同的训练题。19 题的 <code>problem_idx</code> 为：</p>
+<p><code>2, 3, 11, 14, 15, 20, 25, 28, 29, 32, 48, 49, 56, 58, 60, 68, 70, 77, 83</code></p>
+<p>这与最终报告使用的 19/71 分层和已有注册映射完全一致。</p>
+<h2 id="_2">匹配与编号规则</h2>
+<ul>
+<li>AIME 顺序是 <code>test.jsonl</code> 的 20 行在前、<code>train.jsonl</code> 的 70 行在后，按物理行序组成
+  <code>problem_idx=0..89</code>；<code>uid</code> 是对应的 <code>aime-000..aime-089</code>。</li>
+<li>重合判据沿用报告注册口径：AIME 的完整 <code>problem</code> 字符串与 Dolci train parquet
+  中单条 user prompt 的完整 <code>content</code> 做 Python 字符串完全相等比较。不去首尾空白，
+  不做任何归一化、模糊匹配或改写匹配。</li>
+<li><code>dolci_row_id</code> 是 Dolci train parquet 的零起始物理行号；19 个命中各自都只有一条
+  匹配行。未命中行留空。</li>
+</ul>
+<h2 id="19">19 个命中</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th style="text-align: right;">problem_idx</th>
+<th>uid</th>
+<th style="text-align: right;">dolci_row_id</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">2</td>
+<td>aime-002</td>
+<td style="text-align: right;">5075</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>aime-003</td>
+<td style="text-align: right;">5052</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td>aime-011</td>
+<td style="text-align: right;">5081</td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td>aime-014</td>
+<td style="text-align: right;">5077</td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td>aime-015</td>
+<td style="text-align: right;">5071</td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td>aime-020</td>
+<td style="text-align: right;">5085</td>
+</tr>
+<tr>
+<td style="text-align: right;">25</td>
+<td>aime-025</td>
+<td style="text-align: right;">5041</td>
+</tr>
+<tr>
+<td style="text-align: right;">28</td>
+<td>aime-028</td>
+<td style="text-align: right;">5064</td>
+</tr>
+<tr>
+<td style="text-align: right;">29</td>
+<td>aime-029</td>
+<td style="text-align: right;">5076</td>
+</tr>
+<tr>
+<td style="text-align: right;">32</td>
+<td>aime-032</td>
+<td style="text-align: right;">5069</td>
+</tr>
+<tr>
+<td style="text-align: right;">48</td>
+<td>aime-048</td>
+<td style="text-align: right;">5067</td>
+</tr>
+<tr>
+<td style="text-align: right;">49</td>
+<td>aime-049</td>
+<td style="text-align: right;">5087</td>
+</tr>
+<tr>
+<td style="text-align: right;">56</td>
+<td>aime-056</td>
+<td style="text-align: right;">5083</td>
+</tr>
+<tr>
+<td style="text-align: right;">58</td>
+<td>aime-058</td>
+<td style="text-align: right;">5042</td>
+</tr>
+<tr>
+<td style="text-align: right;">60</td>
+<td>aime-060</td>
+<td style="text-align: right;">5062</td>
+</tr>
+<tr>
+<td style="text-align: right;">68</td>
+<td>aime-068</td>
+<td style="text-align: right;">5068</td>
+</tr>
+<tr>
+<td style="text-align: right;">70</td>
+<td>aime-070</td>
+<td style="text-align: right;">5043</td>
+</tr>
+<tr>
+<td style="text-align: right;">77</td>
+<td>aime-077</td>
+<td style="text-align: right;">5058</td>
+</tr>
+<tr>
+<td style="text-align: right;">83</td>
+<td>aime-083</td>
+<td style="text-align: right;">5054</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="gold">Gold 与来源核验</h2>
+<ul>
+<li>回放 <code>statistics/problem_metrics.csv</code> 有 32 个 label × 90 题 = 2,880 行；每个
+  <code>problem_idx</code> 的 <code>uid</code> 和 <code>gold_answer</code> 在 32 个 label 间一致。</li>
+<li>AIME 原始 90 个答案与回放逐题表的 <code>gold_answer</code> 全部按整数相等。</li>
+<li>19 个题面命中的 Dolci <code>ground_truth</code> 与对应 AIME 答案也全部按整数相等。</li>
+<li>其中 5 个 AIME 原始答案保留三位数前导零：<code>049</code>、<code>081</code>、<code>033</code>、<code>012</code>、
+  <code>072</code>；Dolci 和回放表存成 <code>49</code>、<code>81</code>、<code>33</code>、<code>12</code>、<code>72</code>。这是字符串表示差异，
+  整数答案相同。题面重合标记不使用答案字段。</li>
+<li>当前 AIME 的 90 组题面/原始答案哈希与 2026-09-27 注册映射逐行一致；本次独立重算
+  的 90 个重合标记和 Dolci 行号也与注册映射逐行一致。</li>
+</ul>
+<p>关键输入 SHA256：</p>
+<ul>
+<li>AIME test：<code>c9d73d754416d619b4aa926fdb34975709c298eaead84507c02ad3eb9b378bfe</code></li>
+<li>AIME train：<code>76edecd54e39fdd88a3bf90d38115d8c3ab608a6d0bf14f8aea74df678dbc8da</code></li>
+<li>Dolci train parquet：<code>1e15f56845e70dad480fb5e6833bffea974ecf6c4341ea4530586694b7a1675c</code></li>
+<li>回放 problem_metrics：<code>31e3516387b56d6ee4dd3233681ead134766034ec21751f6cc3d253c65740d90</code></li>
+<li>已注册 overlap map：<code>67b2c58eea0095a27b903a8886819438fc197cf7e4f3708b326f297aa28078ec</code></li>
+</ul>
+<p>输出 <code>dolci_overlap.csv</code> SHA256：
+<code>5b369724b9c29e50edea5a6534c5c9e66ab6db55bdc445534dc5dae43780eba4</code>。
+完整逐行证据见 <code>evidence/dolci_validation.json</code>，重算代码见
+<code>build_dolci_overlap.py</code>。</p>
+<p>重算命令（开发机的 pyarrow 需要使用虚拟环境自带的新版 <code>libgcc_s</code>）：</p>
+<pre><code class="language-bash">LD_LIBRARY_PATH=$REMOTE_HOME/.venv/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} \
+  $REMOTE_HOME/.venv/bin/python \
+  local_results/followup_20261025/dolci_oldcode/build_dolci_overlap.py
+</code></pre>
+<h2 id="code-t06">旧 Code T=0.6 逐题结果</h2>
+<p><code>old_code_t06/</code> 保存了 C5、C6 配对所需的两份旧结果，均从指定源目录逐字节复制，
+每份都是 1 条协议 meta + 90 条逐题记录：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>label</th>
+<th style="text-align: right;">bytes</th>
+<th>SHA256</th>
+<th style="text-align: right;">汇总 correct samples</th>
+<th style="text-align: right;">汇总 cap hits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>allenai__Olmo-3-7B-RL-Zero-Code-step_2500</td>
+<td style="text-align: right;">58,580</td>
+<td><code>3b4bad995569c709d77703bcbb7cf93f86f6e02799393019a0f6401e0e1226c7</code></td>
+<td style="text-align: right;">803</td>
+<td style="text-align: right;">334</td>
+</tr>
+<tr>
+<td>allenai__Olmo-3-7B-RL-Zero-Code</td>
+<td style="text-align: right;">58,407</td>
+<td><code>bfec4125ae1513e2a8eb9345a19ac2af68642c61542410a93acb26b1c34664ab</code></td>
+<td style="text-align: right;">862</td>
+<td style="text-align: right;">252</td>
+</tr>
+</tbody>
+</table></div>
+<p>两份 meta 均确认 <code>temperature=0.6</code>、<code>top_p=0.95</code>、<code>seed=0</code>、<code>n=32</code>、
+<code>k=16</code>、<code>max_tokens=32768</code>、<code>max_model_len=49152</code> 和 <code>thinking</code> 模板。
+源/副本 <code>cmp</code>、大小及 SHA256 全相同；题号、UID、每题样本数组长度和
+<code>correct == sum(correct_vec)</code> 全部通过。详见 <code>old_code_t06/manifest.json</code> 与
+<code>old_code_t06/validation_evidence.json</code>。</p><h2 id="evidence-files">随页证据</h2><ul><li><a href="evidence/followup_20261025_required/dolci_overlap.csv">dolci_overlap.csv</a></li><li><a href="evidence/followup_20261025_required/evidence/dolci_validation.json">evidence/dolci_validation.json</a></li></ul></main>
+<footer class="site"><a href="./">训练动力学</a><a href="./#materials">资料与来源</a><a href="../">主页</a></footer></div></body></html>

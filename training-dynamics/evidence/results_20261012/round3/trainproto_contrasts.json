@@ -1,0 +1,110 @@
+{
+ "contrasts": [
+  {
+   "contrast": "u80-u0",
+   "protocol": "tp_full",
+   "diff": 0.019375,
+   "lo": 0.003125,
+   "hi": 0.035625
+  },
+  {
+   "contrast": "u80-u0",
+   "protocol": "tp_cut6144",
+   "diff": 0.004375,
+   "lo": -0.015625,
+   "hi": 0.024375
+  },
+  {
+   "contrast": "u80-u0",
+   "protocol": "eval",
+   "diff": 0.104375,
+   "lo": 0.0725,
+   "hi": 0.136875
+  },
+  {
+   "contrast": "u40-u0",
+   "protocol": "tp_full",
+   "diff": 0.014375,
+   "lo": -0.000625,
+   "hi": 0.029375
+  },
+  {
+   "contrast": "u40-u0",
+   "protocol": "tp_cut6144",
+   "diff": 0.015,
+   "lo": -0.004375,
+   "hi": 0.034375
+  },
+  {
+   "contrast": "u40-u0",
+   "protocol": "eval",
+   "diff": 0.0475,
+   "lo": 0.020625,
+   "hi": 0.075
+  },
+  {
+   "contrast": "u64-u0",
+   "protocol": "tp_full",
+   "diff": 0.015625,
+   "lo": -0.00125,
+   "hi": 0.0325
+  },
+  {
+   "contrast": "u64-u0",
+   "protocol": "tp_cut6144",
+   "diff": 0.005,
+   "lo": -0.015,
+   "hi": 0.025
+  },
+  {
+   "contrast": "u64-u0",
+   "protocol": "eval",
+   "diff": 0.024375,
+   "lo": -0.005,
+   "hi": 0.053125
+  },
+  {
+   "contrast": "u80-u64",
+   "protocol": "tp_full",
+   "diff": 0.00375,
+   "lo": -0.00875,
+   "hi": 0.01625
+  },
+  {
+   "contrast": "u80-u64",
+   "protocol": "tp_cut6144",
+   "diff": -0.000625,
+   "lo": -0.016875,
+   "hi": 0.015625
+  },
+  {
+   "contrast": "u80-u64",
+   "protocol": "eval",
+   "diff": 0.08,
+   "lo": 0.054375,
+   "hi": 0.10625
+  },
+  {
+   "contrast": "mag40-u40",
+   "protocol": "tp_full",
+   "diff": 0.00375,
+   "lo": -0.0075,
+   "hi": 0.015
+  },
+  {
+   "contrast": "mag40-u40",
+   "protocol": "tp_cut6144",
+   "diff": -0.014375,
+   "lo": -0.0325,
+   "hi": 0.00375
+  },
+  {
+   "contrast": "mag40-u40",
+   "protocol": "eval",
+   "diff": 0.035625,
+   "lo": 0.01,
+   "hi": 0.060625
+  }
+ ],
+ "note": "tp_cut6144 = training-protocol samples re-tokenized and cut at 6144 tokens, re-scored with eval_pass8 math scorer"
+}

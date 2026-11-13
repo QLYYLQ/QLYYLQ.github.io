@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>总报告数据字典 · 训练动力学</title><meta name="description" content="历史研究包的目录、字段、命名与统计口径；本站的实际收录范围另见资料清单。">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="training-dynamics.css"><link rel="icon" href="favicon.svg">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a> / <a href="./">训练动力学</a> / 研究记录</nav>
+<header class="top"><div class="eyebrow">2026-10-10 · 资料说明</div><h1>总报告数据字典</h1><p class="lead">历史研究包的目录、字段、命名与统计口径；本站的实际收录范围另见资料清单。</p>
+<p class="source-note">按原研究日期归档；后续补充见<a href="./#reports">报告目录</a>。<a href="sources/data-dictionary.md" download>Markdown</a></p></header>
+<details class="report-toc"><summary>章节目录</summary><div class="toc">
+<ul>
+<li><a href="#1">1. 通用约定</a><ul>
+<li><a href="#11-checkpoint">1.1 赛道与 checkpoint</a></li>
+<li><a href="#12-label">1.2 label 命名</a></li>
+<li><a href="#13-label">1.3 没有保存权重的 label</a></li>
+<li><a href="#14">1.4 生成协议</a></li>
+<li><a href="#15-cell">1.5 逐题文件与 cell 聚合</a></li>
+</ul>
+</li>
+<li><a href="#2-datainputs">2. data/inputs</a></li>
+<li><a href="#3-dataweight_geometry">3. data/weight_geometry</a></li>
+<li><a href="#4-dataextrapolation">4. data/extrapolation</a></li>
+<li><a href="#5-datafunctional">5. data/functional</a></li>
+<li><a href="#6-dataruntime_geometry">6. data/runtime_geometry</a></li>
+<li><a href="#7-datacontinuation">7. data/continuation</a></li>
+<li><a href="#8-code">8. code</a></li>
+<li><a href="#9">9. 规模</a></li>
+</ul>
+</div>
+</details><main id="content" class="prose"><p>本包收录 OLMo-3-7B RL-Zero 三条训练赛道的权重几何、外推 checkpoint 的功能评测、推理隐状态几何以及两条密集续训的监测数据。根目录下 <code>data/</code> 放数据，<code>code/</code> 放分析、评测与统计代码，<code>figures/</code> 放图与绘图脚本。每个文件的相对路径、字节数与 SHA-256 见包根的 <code>MANIFEST.tsv</code>；<code>SHA256SUMS</code> 可直接用于校验，macOS 上运行 <code>shasum -a 256 -c SHA256SUMS</code>，Linux 上运行 <code>sha256sum -c SHA256SUMS</code>，结果应全部为 OK。</p>
+<p>包内不含生成全文、SVD 因子和模型权重。cell 聚合文件里的 <code>ckpt</code> 与 <code>samples_file</code> 字段记录了权重目录和生成全文在 DolphinFS 或 HDFS 上的位置，需要文本级复核时按这两个字段取用。以 <code>$CHECKPOINT_STORAGE/</code> 开头的路径是容器内的 HDFS 挂载路径，在 codelab 上对应 <code>$CHECKPOINT_STORAGE/</code>。</p>
+<h2 id="1">1. 通用约定</h2>
+<h3 id="11-checkpoint">1.1 赛道与 checkpoint</h3>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>赛道</th>
+<th>有效训练步</th>
+<th style="text-align: right;">checkpoint 数</th>
+<th>末步 label</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Math</td>
+<td>100 至 2000，每 100 步</td>
+<td style="text-align: right;">20</td>
+<td><code>allenai__Olmo-3-7B-RL-Zero-Math</code>（step 2000）</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>400 至 3000，每 100 步</td>
+<td style="text-align: right;">27</td>
+<td><code>allenai__Olmo-3-7B-RL-Zero-Code</code>（step 3000）</td>
+</tr>
+<tr>
+<td>Mix</td>
+<td>50 至 1000，每 50 步</td>
+<td style="text-align: right;">20</td>
+<td><code>allenai__Olmo-3-7B-RL-Zero-Mix</code>（step 1000）</td>
+</tr>
+</tbody>
+</table></div>
+<p>Code 赛道的官方 step100、step200、step300 目录装的是 step1000、step2000、step3000 的权重，不是有效训练步。<code>data/weight_geometry/K4096/</code> 的逐步表里包含这三步的行，统计前需要排除；相邻差分表中 Code step400 的行以 step300 目录为前驱，同样排除。排除后累计矩阵有 15,008 个有效行，相邻配对有 14,336 个有效行。</p>
+<p>外推使用的前缀按有效 checkpoint 个数取：p20、p50、p80 分别用前 20%、50%、80% 的有效 checkpoint 外推到该赛道真实末步；Code 的前缀末端是 step800、step1700、step2500。p100 用整段轨迹外推到末步的 1.25 倍，这个目标步没有真实 checkpoint。</p>
+<h3 id="12-label">1.2 label 命名</h3>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>label 形式</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allenai__Olmo-3-7B-RL-Zero-&lt;赛道&gt;-step_&lt;n&gt;</code></td>
+<td>官方 checkpoint，训练步 n；不带 <code>-step_&lt;n&gt;</code> 的是该赛道末步</td>
+</tr>
+<tr>
+<td><code>ours__&lt;方法&gt;__&lt;赛道&gt;_p&lt;前缀&gt;__</code></td>
+<td>外推 checkpoint，方法为 lin_elem、qh_elem、qh_maglin、relex_r1、relex_r2</td>
+</tr>
+<tr>
+<td><code>ours__qh_hybrid_k&lt;K&gt;__&lt;赛道&gt;_p&lt;前缀&gt;</code></td>
+<td>冻结 H 的前 K 个谱方向、其余部分外推，K 为 96、1024、2048、4096；幅度配方见 <code>data/functional/aime_grid/tables/expbde_master.tsv</code> 的 <code>magnitude</code> 列</td>
+</tr>
+<tr>
+<td><code>ours__&lt;方法&gt;__&lt;赛道&gt;_p&lt;前缀&gt;__freeze&lt;step&gt;</code></td>
+<td>方向替换：保留该方法的幅度配方，更新方向取自官方 step 的 checkpoint；step 超出前缀时用到了前缀之外的信息</td>
+</tr>
+<tr>
+<td><code>ours__relex_freeze_r2__Mix_p80__freeze500</code></td>
+<td>relex_r2 的方向替换构造，方向取自 Mix step500</td>
+</tr>
+<tr>
+<td><code>pcaq_signfix_403a6893__qh_extrapQ__&lt;赛道&gt;_p&lt;前缀&gt;</code></td>
+<td>qh_extrapQ（PCA-Q 外推）checkpoint，Math/Mix×p20/p50/p80 共 6 个；403a6893 是生成这批权重的 <code>code/olmo_analysis/extrapolate_ckpt.py</code> 的 SHA-256 前缀</td>
+</tr>
+<tr>
+<td><code>pcaq_baseline__qh_elem__&lt;赛道&gt;_p&lt;前缀&gt;</code></td>
+<td>与上一行逐条件配对的同前缀 qh_elem checkpoint，权重与 <code>ours__qh_elem__&lt;赛道&gt;_p&lt;前缀&gt;__</code> 相同</td>
+</tr>
+</tbody>
+</table></div>
+<p>方法的构造如下。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>构造</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lin_elem</td>
+<td>对累积更新的每个元素做线性回归</td>
+</tr>
+<tr>
+<td>relex_r1、relex_r2</td>
+<td>从前缀学习 1 或 2 个时间 PCA 方向，外推其系数</td>
+</tr>
+<tr>
+<td>qh_elem</td>
+<td>固定前缀末端的 Q，在该基中逐元素拟合 H</td>
+</tr>
+<tr>
+<td>qh_maglin</td>
+<td>固定更新方向，只线性外推幅度</td>
+</tr>
+<tr>
+<td>qh_hybrid_k</td>
+<td>冻结部分 H 谱方向，对其余部分外推</td>
+</tr>
+<tr>
+<td>qh_extrapQ</td>
+<td>用 Q 的时间 PCA 模态预测旋转，在预测的 Q 基中重新拟合 H</td>
+</tr>
+</tbody>
+</table></div>
+<p>文件名就是 label。PCA-Q 配对中的 qh_elem 臂是与 qh_extrapQ 臂同协议、同批生成的一组 rollout，它与 <code>aime_grid</code>、<code>grid_8bench</code> 里同名方法的 cell 不是同一次生成，跨目录比较时按各自目录读。</p>
+<h3 id="13-label">1.3 没有保存权重的 label</h3>
+<p>relex_r1 与 relex_r2 两族的全部 label（各赛道、各前缀）与 <code>ours__relex_freeze_r2__Mix_p80__freeze500</code> 只有本包中的输出表，没有保存权重，不能重新前向或重新生成。其余 label 的权重在 DolphinFS 与 HDFS 的 <code>models/</code> 下：官方 checkpoint 在 <code>allenai/</code>，lin_elem、qh_elem、qh_maglin 各 12 格（3 个赛道×4 个前缀）与 qh_hybrid_k96/1024/2048/4096 各 8 格在 <code>ours/</code>（方向替换构造是对应格下的 <code>freeze&lt;step&gt;</code> 子目录），PCA-Q 外推臂的 6 格在 <code>experiments/</code> 下的 <code>qh_extrapQ/</code> 子目录，完整路径见 <code>data/functional/pcaq_aime/qh_extrapQ/</code> 中聚合文件的 <code>ckpt</code> 字段。</p>
+<h3 id="14">1.4 生成协议</h3>
+<p>功能评测的采样参数为 temperature 0.6、top_p 0.95，记录在逐题文件的 <code>_meta</code> 行或同名 <code>.json</code> 中；seed 只在 Code AIME 与 PCA-Q AIME 的 <code>_meta</code> 中有记录，为 0；其余评测的输出没有记录 seed，评测脚本的默认值也是 0。Math 赛道使用 dapo 模板，Mix 与 Code 赛道使用 thinking 模板。<code>code_aime/relex_r2_p80_p100.json</code> 中的两个 cell 没有记录 seed、模板与存储上限。生成引擎为 vLLM 0.22.0（CUDA）与 vllm-ascend 0.22.1，二者都按 <code>config.layer_types</code> 对 sliding-attention 层施加 4,096-token 滑窗。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>benchmark</th>
+<th style="text-align: right;">题数</th>
+<th style="text-align: right;">每题样本</th>
+<th>生成上限（tokens）</th>
+<th>所在目录</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIME90</td>
+<td style="text-align: right;">90</td>
+<td style="text-align: right;">32</td>
+<td>32,768</td>
+<td>aime_grid、code_aime、pcaq_aime</td>
+</tr>
+<tr>
+<td>MATH-500</td>
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">8</td>
+<td>6,144</td>
+<td>grid_8bench、code16_8bench、pcaq_clean3</td>
+</tr>
+<tr>
+<td>GSM8K</td>
+<td style="text-align: right;">1,319</td>
+<td style="text-align: right;">8</td>
+<td>5,120</td>
+<td>grid_8bench、code16_8bench、pcaq_clean3</td>
+</tr>
+<tr>
+<td>HumanEval</td>
+<td style="text-align: right;">164</td>
+<td style="text-align: right;">8</td>
+<td>2,048；code16_8bench 为 4,096</td>
+<td>grid_8bench、code16_8bench、pcaq_clean3</td>
+</tr>
+<tr>
+<td>MBPP（附测试用例）</td>
+<td style="text-align: right;">257</td>
+<td style="text-align: right;">8</td>
+<td>6,144</td>
+<td>code16_8bench、mbpp_standard</td>
+</tr>
+<tr>
+<td>GPQA-main</td>
+<td style="text-align: right;">448</td>
+<td style="text-align: right;">8</td>
+<td>3,072</td>
+<td>grid_8bench、code16_8bench</td>
+</tr>
+<tr>
+<td>GPQA-diamond</td>
+<td style="text-align: right;">198</td>
+<td style="text-align: right;">8</td>
+<td>3,072</td>
+<td>grid_8bench、code16_8bench</td>
+</tr>
+<tr>
+<td>BBH</td>
+<td style="text-align: right;">6,507</td>
+<td style="text-align: right;">8</td>
+<td>1,224</td>
+<td>grid_8bench、code16_8bench</td>
+</tr>
+<tr>
+<td>MMLU（57 个学科，每学科至多 150 题）</td>
+<td style="text-align: right;">7,687</td>
+<td style="text-align: right;">8</td>
+<td>3,072</td>
+<td>code16_8bench、mmlu_true_pass1</td>
+</tr>
+<tr>
+<td>first50 预算对照</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">8</td>
+<td>8,192</td>
+<td>budget_8192</td>
+</tr>
+</tbody>
+</table></div>
+<p>MMLU-Math 指 Math 赛道 label 在上表 MMLU 题集上的 true pass@1 评测（<code>mmlu_true_pass1/</code>），不是 MMLU 的数学学科子集；Code 赛道在同一题集上的评测在 <code>code16_8bench/mmlu/</code>。</p>
+<p>AIME 的 pass@16 是逐题无偏估计 1−C(32−c,16)/C(32,16) 的 90 题均值，c 是该题 32 个样本中的正确数；8 样本任务的 pass@8 是 8 个样本至少一次正确的题目比例；pass@1 是全部样本的正确率。</p>
+<h3 id="15-cell">1.5 逐题文件与 cell 聚合</h3>
+<p>功能评测的每个 cell（label×benchmark）有两份文件。多任务目录按 <code>&lt;benchmark&gt;/&lt;label&gt;.results.jsonl</code> 与 <code>&lt;benchmark&gt;/&lt;label&gt;.json</code> 存放；AIME 类目录没有 benchmark 子目录，文件直接放在目录下。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;label&gt;.results.jsonl</code></td>
+<td>逐题一行。8 样本任务的字段为 <code>uid</code>、<code>idx</code>、<code>subset</code>、<code>n</code>、<code>k</code>、<code>correct</code>（正确样本数）、<code>correct_vec</code>（逐样本对错）、<code>pass@8</code>、<code>n_samples</code>、<code>sum_tokens</code>、<code>cap_hits</code>（撞生成上限的样本数）、<code>extracted</code>（逐样本抽取到的答案或代码执行结果，BBH 为截取的文本片段）；Code AIME 与 PCA-Q AIME 的字段为 <code>uid</code>、<code>problem_idx</code>、<code>gold_answer</code>、<code>n</code>、<code>k</code>、<code>correct</code>、<code>correct_vec</code>、<code>pass@16</code>、<code>n_samples</code>、<code>sum_tokens</code>、<code>cap_hits</code>、<code>extracted</code>；<code>aime_grid</code> 的逐题行为 <code>problem_idx</code>、<code>n</code>、<code>k</code>、<code>correct</code>、<code>pass@16</code>、<code>n_samples</code>、<code>sum_tokens</code>、<code>cap_hits</code>，没有 <code>uid</code>、<code>correct_vec</code> 与 <code>extracted</code>。各行另有 <code>run_id</code> 与 <code>ts</code>，是生成记录的标识与时间戳，分析不使用</td>
+</tr>
+<tr>
+<td><code>&lt;label&gt;.json</code></td>
+<td>cell 聚合：模型路径、采样参数、<code>pass@1</code>（<code>aime_grid</code> 无此字段，可由逐题 <code>correct</code> 求出）、<code>pass@k</code>、<code>mean_tokens</code>（或 <code>mean_len</code>）、<code>cap_rate</code>（或 <code>max_tokens_hit_rate</code>）、按子任务的 <code>per_subset</code>，AIME 另有逐题的 <code>per_problem</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><code>aime_grid</code> 以外的逐题文件开头有一行或多行 <code>_meta</code>，记录 benchmark、label、采样数、温度、top_p、生成上限与模板；<code>grid_8bench</code> 以外的目录还记录 <code>sample_chars</code>（生成文本的存储上限，按字符计），<code>code_aime</code> 与 <code>pcaq_aime</code> 另记录 seed。<code>grid_8bench</code> 中有 4 个逐题文件含无法解析的行（BBH 3 个文件共 592 行，GSM8K 1 个文件 1 行）；<code>grid_8bench</code> 的 3 个文件与 <code>aime_grid</code> 的 1 个文件含重复的题键。读取时跳过 <code>_meta</code> 行和无法解析的行，再按 <code>uid</code>（<code>aime_grid</code> 按 <code>problem_idx</code>）去重并保留最后一条，这样每题都有一条记录，算出的 pass@1、pass@k 与同名 <code>.json</code> 一致。</p>
+<p>达到 <code>sample_chars</code> 存储上限的样本在登记分数中按错计，相应 cell 的分数是保守下界：Code AIME 有 5 个 label 共 15 个这样的样本，清单见 <code>data/functional/code_aime/storage_cap_hits.csv</code>；PCA-Q AIME 的 <code>pcaq_baseline__qh_elem__Math_p50</code> 有 3 个，清单见 <code>data/functional/pcaq_paired/storage_cap_hits.csv</code>。标准 MBPP 的 <code>ours__relex_r2__Math_p50__</code> 有 2 条样本超出 65,536 字符的存储上限，该 checkpoint 不进入标准 MBPP 的几何与分数联合分析。token 撞上限（<code>finish_reason=length</code>，即生成达到上表的上限）与存储上限是两件事。</p>
+<h2 id="2-datainputs">2. data/inputs</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>benchmarks/&lt;benchmark&gt;.jsonl</code></td>
+<td>8 个多任务 benchmark 的评测输入（题面、参考答案、MBPP 的测试用例）。<code>mmlu.jsonl</code> 有 57 个学科共 14,015 题，MMLU 评测使用其中每个学科至多 150 题，共 7,687 题</td>
+</tr>
+<tr>
+<td><code>aime/test.jsonl</code>、<code>aime/train.jsonl</code></td>
+<td>AIME 题集，两部分合计 90 题</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-dataweight_geometry">3. data/weight_geometry</h2>
+<p>权重几何的对象是累积更新 ΔW_t=W_t−W_base 与相邻增量 δW_t=W_t−W_(t−1)，每个 checkpoint 覆盖 32 层×7 类投影（q、k、v、o、gate、up、down）共 224 个矩阵，三条赛道合计 672 个“赛道×层×投影”配置。SVD 为全秩（K=4096），基座因子以 FP32 保存，checkpoint 的 U/V 为 FP16、奇异值为 FP32。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+<th>粒度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>K4096/</code></td>
+<td>Pass1 至 Pass9 的逐配置原始表</td>
+<td>赛道×层×投影×训练步，或再细分到谱带、窗口、帧</td>
+</tr>
+<tr>
+<td><code>K4096/bf16/</code></td>
+<td>bf16 往返后改变的坐标：掩码摘要、与几何掩码的重叠、行列集中度、跨赛道 Jaccard（相对阈值 η=10⁻³，全部有效步）</td>
+<td>赛道×层×投影×步</td>
+</tr>
+<tr>
+<td><code>K4096/pass7_sensitivity/</code></td>
+<td>Pass7 谱带漂移在 ktop=48、192 与 k_traj=256、1024 下的敏感性表</td>
+<td>同 Pass7 主表</td>
+</tr>
+<tr>
+<td><code>derived/</code></td>
+<td>由 <code>K4096/</code> 与 SVD 因子派生的汇总与重构结果，见下表</td>
+<td>各表不同</td>
+</tr>
+<tr>
+<td><code>bf16_eta/</code></td>
+<td>bf16 相对阈值 η 的全扫描（η=10⁻⁴、10⁻³、3.8×10⁻³、4×10⁻³、10⁻²）：<code>bf16_eta_summary.csv</code> 146,720 行、<code>bf16_eta_overlap.csv</code> 300,160 行、<code>bf16_eta_rowcol.csv</code> 6,720 行、<code>bf16_eta_jaccard.csv</code> 3,360 行，<code>RESULTS_SUMMARY.json</code> 与 <code>figure_data.csv</code> 为汇总</td>
+<td>矩阵×步×η</td>
+</tr>
+<tr>
+<td><code>oft_null/</code></td>
+<td>OFT 式参数化的 matched-null 面板：18 个配置（3 赛道×L0/L16/L31×q_proj/down_proj）×3 个更新帧，Gaussian-X 与 permuted-spectrum 两种 null 各 32 次抽样（<code>anchor_draws.csv</code>），累计生成元稳定性对匹配随机游走的 32 次抽样（<code>rw_draws.csv</code>），以及 frame-cell 与配置级汇总、heart 带非退化判定</td>
+<td>配置×帧×抽样</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>K4096/</code> 的文件按前缀归类如下。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>文件前缀</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>coord_metrics</code>、<code>coord_accel_*</code></td>
+<td>Pass1：坐标掩码与主子空间、低幅值坐标的重叠与 lift</td>
+</tr>
+<tr>
+<td><code>per_step_metrics*</code>、<code>trajectory_metrics*</code>、<code>layer_module_summary*</code>、<code>pass2_low_quadrant_traj_*</code></td>
+<td>Pass2：逐步谱指标、四块（PP/PO/OP/OO）能量、时间 Gram 的 EVR、RELEX 拟合；后缀 <code>kmain256</code>、<code>tr256/512/1024</code> 为截断秩变体</td>
+</tr>
+<tr>
+<td><code>low_principal_*</code>、<code>pass3_interval_shortcut</code></td>
+<td>Pass3：后部谱方向捕获与区间 lift</td>
+</tr>
+<tr>
+<td><code>pass4_*</code></td>
+<td>Pass4：cross-Gram、稳健拟合、留一与时间残差</td>
+</tr>
+<tr>
+<td><code>pass5_*</code></td>
+<td>Pass5：top-1024 核内的谱带组成、稳定子空间与 k 扫描</td>
+</tr>
+<tr>
+<td><code>pass6_*</code></td>
+<td>Pass6：右极分解 ΔW=QH 的逐步量、谱带旋转、能量捕获、非正规性与随机基线</td>
+</tr>
+<tr>
+<td><code>pass7_*</code></td>
+<td>Pass7：谱带漂移、谱带四块轨迹、模块分层与行为代理</td>
+</tr>
+<tr>
+<td><code>pass8_*</code></td>
+<td>Pass8：生长子空间漂移（<code>pass8_growth_dir_drift.csv</code>，约 366 MB）、子空间交换率、与 RELEX 的关联</td>
+</tr>
+<tr>
+<td><code>pass9_*</code></td>
+<td>Pass9：OFT 拟合的 λ 扫描、lag 洗牌稳定性、δ 扫描与 Q_inf 谱带结构</td>
+</tr>
+<tr>
+<td><code>p6_*</code>、<code>rotation_bands</code>、<code>decay_law_*</code>、<code>rot_decay_mechanism_results</code></td>
+<td>幅度标度指数与谱带旋转衰减的经验拟合</td>
+</tr>
+<tr>
+<td><code>gate_*</code>、<code>holdout_r2_stats</code></td>
+<td>PC1 系数的门控信号与前 10 点预测末 5 点的留出 R²</td>
+</tr>
+<tr>
+<td><code>md3_*</code>、<code>verify_heart_band_energy</code>、<code>layer_bin_sensitivity</code>、<code>mc_random_baseline</code></td>
+<td>模块动力学、后半谱带能量核对、层分组敏感性与随机基线</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>gate_*</code> 与 <code>holdout_r2_stats</code> 先用整条轨迹求 PC1，再在该方向上预测系数，方向含未来 checkpoint 的信息，属于回顾性诊断。Pass7 中 <code>top_0_96</code> 带的对齐为 1 由构造决定。后半谱带 [2048:4096] 的能量占比有投影内与全矩阵两种分母，数值见 <code>derived/energy_coordinates_summary.json</code>。<code>low_principal_metrics.csv</code> 的 <code>LSRR_ratio_norm96</code> 列有 17.39% 的行被谱隙下限写成 0、最大值约 9,455，不作为指标使用。</p>
+<p><code>derived/</code> 的内容如下。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pass1_5_summary.json</code></td>
+<td>Pass1 至 Pass5 在有效行上的汇总数值：坐标 lift、四块绝对能量、累计矩阵参与秩、轨迹 EVR、Pass5 同分母组成比 1.064614 等</td>
+</tr>
+<tr>
+<td><code>energy_coordinates_summary.json</code></td>
+<td>能量分母、四块份额与 lift、bf16 末步坐标、Pass5 组成比与 Pass7 漂移端点</td>
+</tr>
+<tr>
+<td><code>pass3_sss_sensitivity.csv</code></td>
+<td>综合分 SSS 在四种 C2 处理下的逐配置探索性结果</td>
+</tr>
+<tr>
+<td><code>fixedq/</code></td>
+<td>已知目标 H 时冻结前缀 Q 的 oracle 重构（rank-512，672 配置、7,392 个目标步）：逐步、逐配置与分组汇总，<code>blocks/</code> 为按块分解，<code>lowdim/</code> 为用含目标的完整 Q 轨迹学习少数 PCA 模态后的低维 Q 重构（63 条轨迹，3 与 5 个模态），<code>ktraj256/</code>、<code>ktraj1024/</code> 为 k_traj 敏感性，<code>summary_tables/</code> 为图用汇总</td>
+</tr>
+<tr>
+<td><code>tau/</code></td>
+<td>相邻 Q 相似度的指数与线性时标拟合（<code>pass8_tau_refit_all.csv</code>，672 配置×2 谱带=1,344 行）、共用 H 下有限目标 Q 预测与冻结 Q 的比较（<code>pass9_q_gapint_all.csv</code> 189 行，<code>pass9_q_gapint_prefix_all.csv</code> 63 行）、晚期相邻 Q 相似度的特征、相关与分层回归</td>
+</tr>
+<tr>
+<td><code>geometry/</code></td>
+<td>Pass8 漂移的池化汇总、能量分母核对、后半谱带 Q 持久性描述、幅度标度中位数、RELEX 与漂移关联、精确 SVD 下谱带旋转端点</td>
+</tr>
+<tr>
+<td><code>scaling/</code></td>
+<td>PC1 系数、总范数与旋转率的幂指数及留出 R² 按赛道、层、投影的汇总</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="4-dataextrapolation">4. data/extrapolation</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>recon/recon_&lt;赛道&gt;_p&lt;前缀&gt;.csv</code></td>
+<td>外推权重相对真实末步的逐层逐投影重构 cosine 与相对误差，p20、p50、p80。Code 与 Mix 含 lin_elem、qh_elem、qh_maglin、relex_r1、relex_r2；Math 含 qh_elem、qh_maglin、relex_r2</td>
+</tr>
+<tr>
+<td><code>pcaq_weight_delta.csv</code></td>
+<td>qh_extrapQ（PCA-Q 外推）与同前缀 qh_elem 权重在 L0、L16、L31 七类投影上的相对 Frobenius 差与最大绝对差，6 个前缀条件共 126 行；<code>shape_class</code> 区分 4096×4096 方阵与矩形 MLP 投影</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-datafunctional">5. data/functional</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+<th>规模</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aime_grid/</code></td>
+<td>Math 与 Mix 赛道 AIME90 的外推网格：官方 checkpoint、五种外推方法×4 个前缀、qh_hybrid K 轴与方向替换构造</td>
+<td>64 个 label</td>
+</tr>
+<tr>
+<td><code>aime_grid/tables/</code></td>
+<td>Math、Mix 主表（pass@1/16/32、撞上限率、失败类别占比、与起点及末步之差），Exp A 方向滞后度 S、Exp B/D/E 方向来源与幅度函数、Exp C 解题重叠，失败类别与文本形态统计，前缀与末步对照点、方向×幅度六格</td>
+<td>每 label 一行或每配置一行</td>
+</tr>
+<tr>
+<td><code>grid_8bench/</code></td>
+<td>多任务网格的六个 benchmark（MATH-500、GSM8K、HumanEval、GPQA-main、GPQA-diamond、BBH）；<code>cells.csv</code> 为 label×benchmark 汇总（pass@1、pass@8、平均长度、撞上限率）；<code>behavior_probe_p80.csv</code> 为 p80 前缀条件下各外推构造的文本行为指标（前段 “Wait” 比例、开头 “Wait” 密度、撞上限率、短输出比例）及其相对起点与末步的变化</td>
+<td>89 个 label×6 个 benchmark</td>
+</tr>
+<tr>
+<td><code>code16_8bench/</code></td>
+<td>Code 赛道 16 个 checkpoint（官方 step800、1700、2500、3000，qh_elem、qh_maglin、relex_r2 各 p20/p50/p80/p100）在 8 个 benchmark 上的评测</td>
+<td>128 个 cell</td>
+</tr>
+<tr>
+<td><code>mbpp_standard/</code></td>
+<td>标准 MBPP（附测试用例，6,144 tokens）</td>
+<td>89 个 label</td>
+</tr>
+<tr>
+<td><code>mmlu_true_pass1/</code></td>
+<td>MMLU-Math 的逐题结果（<code>mmlu/</code>，45 个 label），<code>cells.csv</code> 为这 45 个 label 的 true pass@1、置信区间、pass@8、撞上限率、结束方式计数、不同答案抽取下的分数差，以及 <code>T_fixed=m_sub=448</code> 的 D_stim、V、V×D、H_health 与底物比例；<code>geometry_correlations.csv</code>、<code>derived_correlations.csv</code> 为几何量、撞上限率与 true pass@1 的秩相关</td>
+<td>45 个 label，2,767,320 个样本</td>
+</tr>
+<tr>
+<td><code>code_aime/</code></td>
+<td>Code 赛道 AIME90：14 个 label 的逐题文件；<code>relex_r2_p80_p100.json</code> 为 <code>ours__relex_r2__Code_p80__</code>、<code>ours__relex_r2__Code_p100__</code> 两个 cell 的逐题结果，用与其余 label 相同的 thinking-first boxed-integer 答案抽取评分，没有记录 seed、模板与存储上限；<code>metrics.csv</code> 为 16 个 label 在保守口径与删除存储上限样本两种处理下的 pass@1、pass@16，以及存储上限样本数与 token 撞上限率</td>
+<td>16 个 label</td>
+</tr>
+<tr>
+<td><code>pcaq_aime/qh_extrapQ/</code>、<code>pcaq_aime/qh_elem/</code></td>
+<td>PCA-Q 配对 AIME90 的两臂</td>
+<td>各 6 个 label</td>
+</tr>
+<tr>
+<td><code>pcaq_clean3/qh_extrapQ/</code>、<code>pcaq_clean3/qh_elem/</code></td>
+<td>PCA-Q 配对在 MATH-500、GSM8K、HumanEval 上的两臂</td>
+<td>各 6 个 label×3 个 benchmark</td>
+</tr>
+<tr>
+<td><code>pcaq_paired/</code></td>
+<td><code>paired_cells.csv</code>（AIME 6 格与 clean3 18 格的两臂分数、token 撞上限率与差值，登记 primary 口径），<code>registered_scorers.csv</code>（全部登记评分口径），<code>clean3_paired_cells.csv</code>（逐格配对差与按题 bootstrap 区间，10,000 次），<code>clean3_paired_summary.csv</code>（按赛道、前缀的汇总），<code>storage_cap_hits.csv</code></td>
+<td>24 个配对条件</td>
+</tr>
+<tr>
+<td><code>budget_8192/</code></td>
+<td>first50 预算对照：<code>code/</code> 为 Code 的 6 个 checkpoint（4 个官方、qh_elem p20 与 p50）×4 个 benchmark 在 8,192 tokens 下的结果，<code>mbpp_standard/</code> 为 Math 线 8 个 checkpoint（4 个官方、4 个 lin_elem）；参考预算一侧取自 <code>code16_8bench/</code> 与 <code>mbpp_standard/</code> 的同题结果；<code>budget_effects.csv</code>、<code>budget_group_effects.csv</code>、<code>paired_question_effects.csv</code> 为逐 cell、逐组与逐题的配对差及 bootstrap 区间</td>
+<td>32 个配对 cell</td>
+</tr>
+<tr>
+<td><code>scoring/</code></td>
+<td>Code16 在同一批保存文本上的三种评分口径：<code>gsm8k/</code>（16 个 cell）、<code>math500_bbh/</code>（32 个 cell）、<code>multiple_choice/</code>（MMLU 与两个 GPQA，48 个 cell）</td>
+<td>逐样本</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>scoring/</code> 的逐样本表 <code>cells/.../sample_rescore.csv</code> 中，前缀 <code>old_</code> 的列是 production 评分器的抽取与判分，<code>new_</code>（MATH-500、BBH）或 <code>conservative_</code>（GSM8K）的列是 suite 口径；<code>value_conflict</code> 或 <code>marker_value_conflict</code> 为真的样本在 conflict-excluded 口径下剔除。<code>multiple_choice/per_cell.csv</code> 中 <code>base_</code> 与 <code>adapter_</code> 两组列分别对应不使用和使用 Markdown 答案标题适配器的抽取。HumanEval 与 MBPP 用单元测试判分，三种口径相同。<code>data/runtime_geometry/code_mbpp_join/</code> 中名称以 <code>production</code>、<code>suite</code>、<code>conflict_excluded</code> 开头的列或取值分别对应这三种口径。Code 与 MBPP 的自动评分没有人工语义裁决，三种口径并列，没有一种被指定为语义金标准。</p>
+<p><code>grid_8bench/</code>、<code>code16_8bench/</code>、<code>mbpp_standard/</code> 中 <code>cap_hits</code> 与 <code>cap_rate</code> 统计的是撞生成上限的样本。<code>mmlu_true_pass1/cells.csv</code> 的 <code>in_domain_030</code> 标记底物比例至少 0.30 的 43 个 label，<code>geometry_forward</code> 记录几何前向的 RoPE 设置。</p>
+<h2 id="6-dataruntime_geometry">6. data/runtime_geometry</h2>
+<p>运行时几何复用已保存的 completion，对 prompt 与指定 completion 前缀做一次前向，取最后一层逐 token 隐状态，在固定窗口内计算四个指标。前向使用 BF16 参数与 FP32 RoPE buffer，按层设置 RoPE：sliding-attention 层用未缩放 RoPE（θ=500,000），full-attention 层用 YaRN（factor 8）。所核查的 17 个 Transformers 发行版中，5.0.0 至 5.12.1 的 14 个对 OLMo3 的所有层使用 YaRN，复现时需按层设置，实现见 <code>code/geometry/olmo3_per_layer_rope.py</code>。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D_world</code></td>
+<td>固定词表嵌入子样本的局部本征维度，checkpoint 级</td>
+</tr>
+<tr>
+<td><code>D_stim</code></td>
+<td>去均值轨迹点云的 TLE 局部维度估计，近邻数 k=20</td>
+</tr>
+<tr>
+<td><code>V</code></td>
+<td>½Σlog(1+dσ_i²/T)，σ_i 为去均值轨迹矩阵的奇异值，d=4096</td>
+</tr>
+<tr>
+<td><code>H</code></td>
+<td>H_health=log(D_world)×V/exp(0.1·D_stim)，由 cell 平均 D_stim、V 与 D_world 代入</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>t_fixed</code> 是截取的 completion token 窗口，<code>m_sub</code> 是取样点数，本包的主比较都满足 <code>t_fixed=m_sub</code>。<code>n_used</code> 是达到窗口要求且成功计算的样本数，<code>n_dropped</code> 是不足窗口或不在固定 cohort 中的样本数，底物比例为 n_used/(n_used+n_dropped)；正式解释只用底物比例至少 0.30 的 cell。cell 级 D_stim、V 是 used 样本的算术均值。逐样本表的 <code>n_avail</code> 是该样本可用的隐状态点数，<code>correct</code>、<code>n_tokens</code>、<code>finish_reason</code> 来自对应的功能评测。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+<th>规模</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>grid_m448/</code></td>
+<td>89×8 网格的 89 个 label×7 个 benchmark（MATH-500、GSM8K、HumanEval、GPQA-main、GPQA-diamond、BBH、MMLU）的 cohort，<code>T_fixed=m_sub=448</code>：<code>grid_m448_cells.csv</code>（cell 级）与 <code>grid_m448_persample.csv</code>（逐样本）</td>
+<td>623 个 cell，606 个有几何值，474 个底物至少 0.30；927,941 个逐样本行</td>
+</tr>
+<tr>
+<td><code>grid_m448/official/</code></td>
+<td>official checkpoint 的 D_stim/V 与分数相关（各筛选切片、逐 benchmark 4 点），以及外推损伤按文本出口方向（变长、变短）分组的组内相关与范围汇总</td>
+<td>7 个 benchmark×2 条赛道，共 14 组</td>
+</tr>
+<tr>
+<td><code>aime_m2048/</code></td>
+<td>AIME 的 64 个 Math/Mix checkpoint，<code>T_fixed=m_sub=2048</code>，每题取第 0 个样本：cell 级与逐样本</td>
+<td>64 行；5,670 个逐样本行</td>
+</tr>
+<tr>
+<td><code>mgrid/</code></td>
+<td>固定样本窗口网格：16 个 Math/Mix label×7 个 benchmark（与 <code>grid_m448/</code> 相同）×7 个窗口（m=64、96、128、192、256、320、448），每个 cell 固定使用达到 448 tokens 的样本；<code>analysis/</code> 为 cell 表、组内跨窗口秩相关、V∝m^α 指数、受限分数敏感性与各窗口秩相关汇总</td>
+<td>784 个 cell；1,321,418 个样本×窗口行；m448 下 96/112 个单元在域内</td>
+</tr>
+<tr>
+<td><code>short128/</code></td>
+<td>89 个 label×5 个 benchmark（MMLU、GPQA-main、HumanEval、GPQA-diamond、BBH），<code>T_fixed=m_sub=128</code>，候选样本只要求达到 128 tokens；<code>analysis/</code> 为 cell 表、分组统计、行为对照（短且自停对长且撞预算）与推断统计</td>
+<td>445 个 cell，428 个有几何值；724,118 个逐样本行</td>
+</tr>
+<tr>
+<td><code>code16/</code></td>
+<td>Code16×8 的匹配几何，m128 与 m448 两窗使用同一批 <code>n_avail≥448</code> 样本：cell 级、底物与域内判定、逐样本</td>
+<td>256 个 cell（每窗 128 个，全部在域内）；539,738 个样本×窗口行</td>
+</tr>
+<tr>
+<td><code>mbpp_standard/</code></td>
+<td>标准 MBPP 89 个 checkpoint 的匹配几何，设计同上</td>
+<td>178 个 cell，128 个在域内（64 个 checkpoint）；256,936 个样本×窗口行</td>
+</tr>
+<tr>
+<td><code>code_mbpp_join/</code></td>
+<td>Code16 与标准 MBPP 的几何、三种评分口径与结束方式的 cell 级合表，同窗 D/V–分数相关（全部、按 benchmark、按赛道），结束方式对照（同一 cell 内自停组减撞预算组的 D 与准确率差），Code 外推 checkpoint 相关符号的 benchmark 计数，以及图数据</td>
+<td>每窗 128 个 Code cell、89 个 MBPP checkpoint</td>
+</tr>
+<tr>
+<td><code>t1/</code></td>
+<td>时间自相关与层深控制，固定 6 个 label（Math、Mix 末步，Math p80 的 lin_elem、qh_elem、qh_maglin、relex_r2）×30 题：<code>block_control.csv</code> 3,600 行、<code>cross_within.csv</code> 186 行、<code>eligibility.csv</code> 180 行、<code>layer_depth_matched.csv</code> 5,940 行；<code>inputs/</code> 为前向用的登记 completion 与题目清单，<code>summary/</code> 为按 label 的汇总</td>
+<td>层深表含 5,610 个测量行与 330 个显式 NA</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>mbpp_standard/</code> 的 <code>_domain_gate.csv</code> 用 1/0 表示 <code>in_domain</code>，<code>code16/</code> 用 True/False。<code>short128/analysis/</code> 与 <code>mgrid/analysis/</code> 中 MMLU 行的 <code>pass1</code>、<code>pass8</code> 使用与 <code>mmlu_true_pass1/</code> 不同的答案抽取，MMLU 分数以后者为准；<code>pass1c</code> 在 MMLU 与 GPQA 上只按完整保存的文本判分，是下界。</p>
+<p>T1 的层深 D_stim 要求每个 label×题目单元至少有 96 个唯一 embedding 点。10 个单元不满足，它们都生成到 32,768 tokens 并高度重复，在 33 个层位置各记一行显式 NA（<code>layer_status=NA</code>），block 与 cross 指标仍覆盖全部 180 个单元。层深最后一个位置是 Transformers 5.5.4 的 <code>hidden_states[-1]</code>，即经过 final norm 的状态。</p>
+<h2 id="7-datacontinuation">7. data/continuation</h2>
+<p>两条从官方 Math checkpoint 出发、每 2 个 update 存一次盘的续训。runA 从 step1600 出发、学习率 3×10⁻⁶，runB 从 step1000 出发、学习率 1×10⁻⁶，各计划 250 个 update，每个 update 采样 96 题×8 个回答，回答上限 16,384 tokens；存盘只有 BF16 HF 权重与数据加载状态，没有优化器状态。update 从各自起点开始计数，<code>global_step_&lt;n&gt;</code> 与 <code>u_&lt;update&gt;</code> 中的编号是 update 数，不是官方训练步数。本包收录 2026-10-10 18:22（北京时间）快照时的进度：runA 42 个 update、21 次存盘，runB 40 个 update、20 次存盘。续训的训练代码不在包内，在 <code>my_rl_job</code> 目录（codelab 上的 <code>$REMOTE_HOME/my_rl_job/</code>）。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>protocol.json</code></td>
+<td>起点、学习率、update 数、存盘频率、批大小、回答上限与资源设置；<code>checkpoint_root</code> 是训练容器内的 HDFS 挂载路径</td>
+</tr>
+<tr>
+<td><code>&lt;run&gt;/monitor_snapshot.json</code></td>
+<td>快照时点 <code>checked_at</code>（Unix 时间）、已完成的 update 数与运行状态</td>
+</tr>
+<tr>
+<td><code>&lt;run&gt;/update_gates/u_&lt;update&gt;.json</code></td>
+<td>每个 update 的 actor 与 rollout log-prob 一致性读数：mean|Δlogp|、超过 1 nat 的 token 比例（门限 0.2 nat 与 0.01），按上下文长度分桶</td>
+</tr>
+<tr>
+<td><code>&lt;run&gt;/checkpoints/global_step_&lt;n&gt;.json</code></td>
+<td>每次存盘的文件清单、字节数与 SHA-256</td>
+</tr>
+<tr>
+<td><code>rollout_correctness.json</code></td>
+<td>训练 rollout 对数据集答案的逐 update 正确数与总数</td>
+</tr>
+<tr>
+<td><code>bf16_probe_adjacent.txt</code>、<code>bf16_probe_cumulative.txt</code></td>
+<td>第 7 层 down_proj 单张量（45,088,768 个元素）上相邻存盘与自起点累计的 BF16 元素改变比例和相对 Frobenius 位移，并与官方 100 步间隔对照；相邻存盘取每臂最近两对（runA 为第 38→40、40→42 个 update，runB 为第 36→38、38→40 个 update）</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-code">8. code</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="数据表，可横向滚动"><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>olmo_analysis/</code></td>
+<td>权重几何 Pass1 至 Pass9、外推 checkpoint 构造（<code>extrapolate_ckpt.py</code>）、AIME 样本分析与绘图脚本；<code>inference_manifold/</code> 为运行时几何指标（<code>manifold_metrics.py</code>）、前向与 T1 控制；路径常量在 <code>olmo_utils.py</code></td>
+</tr>
+<tr>
+<td><code>evaluation/</code></td>
+<td>多任务生成评测与 production 评分器（<code>eval_pass8.py</code>）、AIME 分片评测（<code>eval_aime_sharded.py</code>）、多选题 Markdown 答案标题适配器、MATH-500/BBH 与 GSM8K 的替代评分器，<code>fixtures/</code> 为评分器测试夹具</td>
+</tr>
+<tr>
+<td><code>geometry/olmo3_per_layer_rope.py</code></td>
+<td>运行时几何前向的按层 RoPE 设置</td>
+</tr>
+<tr>
+<td><code>continuation/</code></td>
+<td>续训数据的统计脚本：逐 update 正确率、BF16 改变比例抽样；训练代码见第 7 节</td>
+</tr>
+</tbody>
+</table></div>
+<p>代码中的绝对路径指向 codelab 与 DolphinFS 上的存储位置；在本包内运行时，需要把数据路径换成 <code>data/</code> 下对应的目录。</p>
+<h2 id="9">9. 规模</h2>
+<p>各文件的字节数与 SHA-256 以 <code>MANIFEST.tsv</code> 为准。包内最大的是 <code>data/functional/</code>（约 2.0 GB），其次是 <code>data/weight_geometry/</code>（约 0.7 GB）与 <code>data/runtime_geometry/</code>（约 0.5 GB）；全部数据、代码与图合计约 3 GB。</p></main>
+<footer class="site"><a href="./">训练动力学</a><a href="./#materials">资料与来源</a><a href="../">主页</a></footer></div></body></html>
