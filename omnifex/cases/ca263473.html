@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>补全 19 英寸机架机箱：切片切在孔轴上 · SBC Case Builder（hominoids/SBC_Case_Builder）</title>
+<meta name="description" content="Sonnet 写出了能渲染、分三件打印的机架机箱，初判 4 条失败，复核发现全是判分检查的问题：切片恰好切在孔轴上、拿 1U 的壳高去量 4U、要求六角槽封闭。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="module" src="../../assets/vendor/model-viewer/model-viewer.min.js"></script>
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>ca263473</span></div>
+  <div class="eyebrow">判分本身会出错 · SBC Case Builder（hominoids/SBC_Case_Builder）</div>
+  <h1>SBC Case Builder：补全 19 英寸机架机箱（OpenSCAD）</h1>
+  <div class="chips"><span class="chip dom">CAD</span><span class="chip">难</span><span class="chip warn">初判 19/23</span><span class="chip good">修检查后通过</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这道题取自单板机外壳生成器 SBC Case Builder 的一次真实提交：主文件已经把 <code>rack</code>（19 英寸机架机箱）接进来了，但 <code>mod/case_rack.scad</code> 和 <code>lib/panel_clamp.scad</code> 两个文件还不存在，渲染出来是空的。要补的是机箱本体、分段紧固结构和一个小夹具零件。项目用 OpenSCAD 写，是代码 CAD。</p>
+<p>Sonnet 交的解可以渲染，1U 到 4U 都能出三件互不相连的壳体。初判 23 条必需检查过了 19 条。Sonnet 复核逐条看了 4 条失败，结论是全部出在检查上，用 Sonnet 的文件在修正后的条件下复算都通过。这道题的看点是几何检查对建模方式很敏感，切片要避开孔轴这类特殊位置。</p></div>
+</header>
+<div class="figures"><div><span class="v">19<small>/23</small></span><span class="k">初判通过的必需检查</span></div><div><span class="v">4</span><span class="k">初判失败条数，复核认定全是检查的问题</span></div><div><span class="v">23<small>/23</small></span><span class="k">修检查后重判（v2）必需项全过</span></div><div><span class="v">3</span><span class="k">壳体分件数，接缝间隙 0.4 mm</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>题面给的是一份断网的仓库快照（含补入的 <code>SBC_Model_Framework</code> 子模块内容），要求新增两个 OpenSCAD 文件并接入库。判分用命令行 OpenSCAD 重新渲染，不看上游的坐标，只量几何。</p><div class="ticket"><div class="k">起点</div><div>SBC Case Builder 的中间状态：<code>sbc_case_builder_library.scad</code> 已经 include 了不存在的 <code>mod/case_rack.scad</code>，机架耳模块 <code>rack_end_bracket</code> 已有，不许改。</div><div class="k">要做</div><div><ul><li><code>case_rack(case_design, side)</code>：上端敞口的矩形壳，高度为 U 数 × 44.45 mm（1U 到 4U），两端各装一个机架耳，贴齐后面。</li><li>打印床只有 200 mm，所以整件沿 x 方向分成互不相连的几件，每件不超过 200 mm，缝隙 0.1 到 0.6 mm。</li><li>每条接缝靠前后壁各有一处 M2 螺钉紧固：贯穿孔直径 2.0 到 2.6 mm，一侧带六角螺母槽。</li><li>每条接缝靠前后壁内侧上沿各放一个 <code>panel_clamp</code> 夹具，用来固定顶盖。</li><li>选了单板电脑（SBC）的机位要做底部支柱，并按板子接口在壁上开孔，板体不得与机箱相交。</li><li><code>panel_clamp(face, screw, style, dia_x, dia_y, height, mask)</code>：一个圆台夹具，在底面以上 3 mm 沿 x 轴穿一根螺钉孔，一端六角螺母槽，另一端螺钉头沉口。</li></ul></div><div class="k">隐形条件</div><div>快照里 <code>mod/case_side.scad</code> 第 239 行有一个多余的逗号，新版 OpenSCAD 解析不了，导出 STL 会报错。题面只说“如果快照里有别的东西挡着，你需要自己找出来”，没有指出位置。</div><div class="k">判分</div><div>对 1U 到 4U 各渲染一次，对夹具单独渲染。把 STL 在指定平面上切片，再做连通件、孔径、槽宽、体积等测量。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">改前</div><h3>主文件已接好，两个模块文件缺失，机箱是空的</h3><div class="text"><p>仓库在上游提交 <code>859192bd</code> 的状态。<code>case_design = "rack"</code> 已经能走到 <code>case_rack(...)</code>，但文件不存在，所以现在选 rack 什么也画不出来。这一步没有可渲染的改前图。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">上游答案</div><h3>维护者的版本：也是三件，缝隙 0.2 mm</h3><div class="text"><p>上游提交 <code>ca263473</code> 新增了 <code>mod/case_rack.scad</code>（约 800 行）和 <code>lib/panel_clamp.scad</code>。它没有修第 239 行的多余逗号，所以拿上游原样渲染会报错。</p>
+<p>下面这张是本页重算的：从 GitHub 取上游这几个文件，把第 239 行的 <code>,,</code> 改成 <code>,</code>，用 OpenSCAD 渲染 2U。结果同样是三件，接缝在 x = 147 和 297 附近，间隙 0.2 mm。判分不拿它比对布局，只用它确认题目可解，以及帮助校准检查的阈值。</p></div><figure><div class="model-frame"><model-viewer id="mv1" class="mv" src="img/ca263473/rack_up_2u.glb" poster="img/ca263473/rack_up_2u.png" camera-controls touch-action="pan-y" shadow-intensity="0.6" exposure="1.05" environment-image="neutral" interaction-prompt="none" alt="3D 模型" camera-orbit="-35deg 40deg auto"></model-viewer><img class="model-fallback" src="img/ca263473/rack_up_2u.png" alt="上游 2U · 静态预览" loading="lazy"></div><figcaption id="mv1-cap"><b>上游答案渲染的 2U 机箱</b>（本页重算，只改了第 239 行的逗号）。三种颜色是三个互不相连的零件，左右两端的带孔板是机架耳。看接缝处和壁内侧的加厚。（可拖动旋转、滚轮缩放）</figcaption><p class="model-help">3D 加载前显示静态图。拖动旋转，双指或滚轮缩放。</p></figure></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">模型的解</div><h3>Sonnet 的版本：三件，接缝在 x = 139 和 305，间隙 0.4 mm</h3><div class="text"><p>Sonnet 新增了两个文件，改了 <code>sbc_case_builder_library.scad</code>，并发现快照缺 <code>SBC_Model_Framework</code> 子模块内容（题面说已放进快照，实际没有），自己从题包的 <code>materials/</code> 拷了进来。第 239 行的多余逗号它也修了，这是题里埋的隐形条件。</p>
+<p>分件、孔、夹具三块要求它都做了：接缝处前后壁各有一个 5 mm 厚的壁内加厚块，里面是直径 2.4 mm 的贯穿孔，+x 侧是对边 4.4 mm 的六角槽，-x 侧是螺钉头沉口；接缝旁各有一个 <code>panel_clamp("m2")</code> 夹具。壳高随 U 数变化：本页重算 1U 是 44.45 mm，4U 是 177.8 mm。</p>
+<p>Sonnet 自己写的“没确定”清单：没单独检查壁块、夹具与板体的碰撞，旋转 90/180/270 度时支柱孔位没做数值核对，夹具六角槽的朝向和余量没核。</p></div><figure><div class="model-frame"><model-viewer id="mv2" class="mv" src="img/ca263473/rack_2u.glb" poster="img/ca263473/rack_2u.png" camera-controls touch-action="pan-y" shadow-intensity="0.6" exposure="1.05" environment-image="neutral" interaction-prompt="none" alt="3D 模型" camera-orbit="-35deg 40deg auto"></model-viewer><img class="model-fallback" src="img/ca263473/rack_2u.png" alt="Sonnet 2U · 静态预览" loading="lazy"></div><figcaption id="mv2-cap"><b>Sonnet 的 2U 机箱</b>（本页用交付的文件重新渲染，OpenSCAD Manifold 后端，不到 1 秒）。三种颜色是三个互不相连的零件，每件 165 mm 左右，小于 200 mm 的打印床。看两条接缝处壁上的小凸台，那是顶盖夹具。（可拖动旋转、滚轮缩放）</figcaption><p class="model-help">3D 加载前显示静态图。拖动旋转，双指或滚轮缩放。</p></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">放大看</div><h3>接缝处：0.4 mm 间隙、一根贯穿孔、一侧沉口、另一侧六角槽</h3><div class="text"><p>下图是 Sonnet 的 2U 模型在第一条接缝后壁处的俯视截面，由本页重算。截面取 z = 8.03 mm，略高于孔轴（孔轴在 z = 8），这样孔看起来是一条窄缝。左边是螺钉头沉口，中间是 0.4 mm 的接缝，右边是六角螺母槽。</p>
+<p>六角槽的对边是 4.4 mm，角对角约 5.08 mm，沿 y 方向摆；加厚块厚 5.0 mm（y 从 -3 到 2），孔心在 y = -0.5。六角的两个尖角因此各越出块表面约 0.04 mm，在图里就是右边那一段把块从外到内整个断开。这正是 C6b 初判认为“没有六角槽”的原因，后面细说。</p></div><figure><div class="frame"><a href="img/ca263473/seam_plan.svg" title="打开原图"><img src="img/ca263473/seam_plan.svg" alt="**第一条接缝后壁处的俯视截面**（x 128 到 150 mm，上方是机箱外侧，蓝色是实体）。看中间的 0.4 mm 接缝，以及右侧六角槽的位置：它在块的整个厚度上都是空的。" loading="lazy"></a></div><figcaption><b>第一条接缝后壁处的俯视截面</b>（x 128 到 150 mm，上方是机箱外侧，蓝色是实体）。看中间的 0.4 mm 接缝，以及右侧六角槽的位置：它在块的整个厚度上都是空的。</figcaption></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">自动检查</div><h3>初判 19/23，4 条失败，复核认定全是检查出错</h3><div class="text"><p>必需检查 23 条过了 19 条；另有 1 条非必需的 C11x 没过，这一条连上游答案也没过（上游只给 4 个角孔做支柱，6 孔的板子第 5、6 个孔没有支柱），所以在判分代码里标成非必需。</p>
+<p>Sonnet 复核逐条重算，每条失败的原因如下。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">C1–C5</td><td>1U 到 4U 渲染无 ERROR、分件数与长度、左右机架耳、壁厚和高度</td><td class="st"><span class="chip good">通过</span></td><td>第 239 行的逗号 Sonnet 自己修好了，不然 C1 就过不了。</td></tr><tr><td class="id">C6a、C14</td><td>接缝贯穿孔直径、两件孔轴线对齐</td><td class="st"><span class="chip good">通过</span></td><td>孔直径 2.4 mm，轴线偏差在 0.3 mm 以内。</td></tr><tr><td class="id">C6b</td><td>孔的一侧有封闭的六角螺母槽</td><td class="st"><span class="chip info">检查太严</span></td><td>检查要求六角槽在截面里是封闭空腔。Sonnet 的六角槽尖角越出加厚块 0.04 mm，形成约 0.14 mm 高的细缝，空腔被判为不封闭。复核在 x = 142.5、143.5、308.5、309.5 四个截面复算：24 个弦方向只有 1 个从细缝逃出，其余 23 个方向的弦长最小 4.40、最大 5.10，是标准六边形。题面没要求封闭。后来改成允许最多 2 个方向开口。</td></tr><tr><td class="id">C7</td><td>每条接缝前后壁内侧上沿有夹具凸台</td><td class="st"><span class="chip info">检查有误</span></td><td>检查用 1U 模型量出的壳顶 44.45 mm，去扫 4U 模型 z 在 19.45 到 44.45 的窗口。Sonnet 的夹具放在壳顶下 10 mm，4U 时在 z = 167.8，窗口里什么都没有，体积记成 0。改用 4U 自己的壳顶 177.8 复算，每条缝前后壁体积 445 mm³、凸出 5.95 mm，通过。</td></tr><tr><td class="id">C8b</td><td>panel_clamp 的孔径、螺母槽和沉口随螺钉规格变化</td><td class="st"><span class="chip info">检查有误</span></td><td>两个问题。一是切片恰好在 z = 3.0，正好切在孔轴上，截面退化（下一节展开）。二是 M4 的槽宽测量把大于 7.5 mm 的宽度记成无效，而允许上限是 8.89 mm，Sonnet 的 M4 槽对边 7.3 mm，角对角 8.4 mm 被截掉。</td></tr><tr><td class="id">C8c</td><td>left、right 面的夹具也有通孔</td><td class="st"><span class="chip info">检查有误</span></td><td>同样是切在 x = ±3.0 的孔轴上。偏到 ±2.97、±3.03 复算，两面都是直径 2.50 mm、长 24 mm 的通孔。</td></tr><tr><td class="id">C9–C12</td><td>SBC 开孔跟随位置和旋转、板体不穿插、安装支柱、空机位</td><td class="st"><span class="chip good">通过</span></td><td>这些都过了，SBC 相关的检查没有受子模块缺失的影响。</td></tr><tr><td class="id">C11x</td><td>第 5 个及以后安装孔的支柱（非必需）</td><td class="st"><span class="chip bad">非必需未过</span></td><td>上游答案同样没做，题面写“每个安装孔”，所以保留为非必需。</td></tr></tbody></table></div><div class="text"><p>修检查后重判（<code>sonnet_v2.json</code>）：必需 23 条全部通过，25 条里只有 C11x 没过。复核给出的总判断是 false_reject，也就是检查把一份合理的解误拒了。</p></div></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">放大看</div><h3>为什么 z = 3.0 的截面会“漏”：切面恰好穿过孔的顶点</h3><div class="text"><p>夹具在底面以上 3 mm 处有一根沿 x 方向的孔，题面这样写，Sonnet 也照做，孔轴就在 z = 3.0。OpenSCAD 里这个孔是 48 边的多边形圆柱，边上的顶点正好落在孔轴所在的水平面上。检查程序在 z = 3.0 切一刀，三角形的顶点和切面重合，判分代码里的切片函数把落在平面上的顶点一律算在切面上方，和切面重合的三角形不产生交线，孔壁和槽壁的几段就丢了（这是对代码和重算结果的解读，复核报告只写了“顶点或棱正好落在这个平面上，截面丢段”）。</p>
+<p>下图用 Sonnet 的 <code>panel_clamp("bottom","m2","sloped",6,18,5,...)</code> 重算，用判分代码里同样的切片和扫描线填充。z = 3.0 时截出 166 段，填充面积 79.8 mm²，实体沿 +x 一直漏到窗口边；偏移 0.03 mm 到 z = 3.03，截出 183 段，填充面积 57.8 mm²，孔、六角槽和沉口都正常。复核报告里的 166、183 到 190 段与本页重算一致。</p>
+<p>修法很小：切面避开孔轴，在 3.0 的两侧各 0.03 mm 切一次，两次都要合格。</p></div><figure><div class="frame"><a href="img/ca263473/section_degenerate.svg" title="打开原图"><img src="img/ca263473/section_degenerate.svg" alt="**同一个 M2 夹具在两个高度的水平截面**（本页重算，24 × 24 mm 窗口，蓝色虚线是 x、y 轴）。黑线是切出的轮廓，粉色是检查程序用扫描线填出的实体。看左图：右半边的轮廓缺段，粉色一直延伸到窗口边缘；右图只偏移了 0.03 mm，轮廓完整。" loading="lazy"></a></div><figcaption><b>同一个 M2 夹具在两个高度的水平截面</b>（本页重算，24 × 24 mm 窗口，蓝色虚线是 x、y 轴）。黑线是切出的轮廓，粉色是检查程序用扫描线填出的实体。看左图：右半边的轮廓缺段，粉色一直延伸到窗口边缘；右图只偏移了 0.03 mm，轮廓完整。</figcaption></figure></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>这一例里模型没有错，错的是检查。三个问题都有共同点：判分用的是一个具体的测量动作，而题面只规定了结果。切片位置、用哪一件的壳高、六角槽要不要封闭，这些都是测量方式的选择，题面没有规定，合理的建模方式会因此被误拒。</p>
+<p>对几何类检查，较稳的做法是切面避开题面写明的特殊位置（孔轴、对称面、边线），在两侧各切一次；随参数变化的量要用各自配置自己的值，不要复用别的配置的；形状上的“封闭”“相切”要允许微小容差。这一道也说明复核这一步有用：4 条失败如果不复核，就会被记成模型做不到。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>C/ca263473/trials/sonnet_review.json</span><span>C/ca263473/trials/sonnet.json</span><span>C/ca263473/trials/sonnet_v2.json</span><span>C/ca263473/trials/sonnet_report.json</span><span>C/ca263473/task.md</span><span>C/ca263473/checks/README.md</span><span>C/trials_wsA1_20261111.md</span><span><a href="https://github.com/hominoids/SBC_Case_Builder/commit/ca26347358e319c3a3fa052c0f685ecd69f8fab4">https://github.com/hominoids/SBC_Case_Builder/commit/ca26347358e319c3a3fa052c0f685ecd69f8fab4</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="4916b729.html"><span class="eyebrow">上一个</span><span>X 轴改双电机：基线认错带轮</span></a><a href="489f2861.html"><span class="eyebrow">下一个</span><span>Corne v3 升 v4：整板没布通</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

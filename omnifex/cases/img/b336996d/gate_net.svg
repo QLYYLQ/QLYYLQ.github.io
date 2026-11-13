@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="Menlo, monospace" font-size="15">
+<rect width="1000" height="560" fill="#0c1411"/>
+<g stroke="#e8ebe4" stroke-width="2" fill="none">
+<line x1="40" y1="120" x2="200" y2="120"/>
+<rect x="200" y="85" width="120" height="70" fill="#173a2d"/>
+<line x1="320" y1="120" x2="380" y2="120"/>
+<rect x="380" y="85" width="120" height="70" fill="#173a2d"/>
+<line x1="500" y1="120" x2="580" y2="120"/>
+<rect x="580" y="100" width="70" height="40" fill="#173a2d"/>
+<line x1="650" y1="120" x2="760" y2="120"/>
+<!-- gate rail -->
+<line x1="260" y1="155" x2="260" y2="230"/><line x1="440" y1="155" x2="440" y2="230"/>
+<line x1="260" y1="230" x2="440" y2="230" stroke="#ffd23f"/>
+<line x1="350" y1="230" x2="350" y2="260" stroke="#ffd23f"/>
+<!-- MID -->
+<line x1="320" y1="120" x2="320" y2="120"/>
+<line x1="350" y1="120" x2="350" y2="60"/><line x1="350" y1="60" x2="720" y2="60"/>
+<!-- R6 from gate to MID -->
+<rect x="120" y="290" width="40" height="90" stroke="#ff3d6e" fill="#173a2d"/>
+<line x1="140" y1="260" x2="140" y2="290" stroke="#ffd23f"/><line x1="140" y1="260" x2="350" y2="260" stroke="#ffd23f"/>
+<line x1="140" y1="380" x2="140" y2="520" stroke="#5ff2ff"/>
+<!-- R7 gate to GN -->
+<rect x="530" y="290" width="40" height="90" stroke="#ff3d6e" fill="#173a2d"/>
+<line x1="550" y1="260" x2="550" y2="290" stroke="#ffd23f"/><line x1="350" y1="260" x2="550" y2="260" stroke="#ffd23f"/>
+<line x1="550" y1="380" x2="550" y2="430" stroke="#c7b8ff"/>
+<!-- Q3 -->
+<rect x="500" y="430" width="100" height="60" fill="#173a2d"/>
+<line x1="550" y1="490" x2="550" y2="530"/>
+</g>
+<g fill="#e8ebe4">
+<text x="40" y="108">VBUS</text>
+<text x="212" y="116">Q1 AO4407A</text><text x="212" y="136" fill="#9fb">D=VBUS  S=MID</text>
+<text x="392" y="116">Q2 AO4407A</text><text x="392" y="136" fill="#9fb">S=MID  D=VOUT_SW</text>
+<text x="585" y="105" font-size="13">RS1 5mR</text>
+<text x="770" y="124">VOUT</text>
+<text x="360" y="52" fill="#5ff2ff">MID（两颗管子的源极）</text>
+<text x="262" y="222" fill="#ffd23f">GATE（两颗管子的栅极）</text>
+<text x="172" y="340" fill="#ff3d6e">R6 100k</text><text x="172" y="360" fill="#ff3d6e">GATE 到 MID</text>
+<text x="580" y="340" fill="#ff3d6e">R7 220k</text><text x="580" y="360" fill="#ff3d6e">GATE 到 GN</text>
+<text x="612" y="465">Q3 2N7002</text><text x="612" y="485" fill="#c7b8ff">D=GN  S=GND  G=EN</text>
+<text x="500" y="420" fill="#c7b8ff">GN</text>
+<text x="552" y="548">GND</text>
+<text x="40" y="540" fill="#5ff2ff">（R6 的另一端接 MID）</text>
+</g>
+<text x="40" y="30" fill="#fff" font-size="17">按网表重画：Q3 导通时 GATE 被 R6、R7 分压</text>
+</svg>

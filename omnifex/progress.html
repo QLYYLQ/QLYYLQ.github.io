@@ -276,25 +276,25 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
     <article class="case">
       <div class="top"><span class="id">Peak #4</span><span class="ttl">稚晖君 Peak：充电电路的电源路径设计失误</span></div>
       <div class="tags"><span class="pill plain">PCB</span><span class="pill warn">维护者承认，仓库未修</span><span class="pill plain">上游无答案</span></div>
-      <p>有人指出：充电芯片的输出同时给电池充电和给系统供电，外部供电时没有切断电池和负载，会干扰充电判断，电池充不满。稚晖君在评论里回复“这里确实是一个设计失误，感谢指出”。评论里有具体改法：U1 第 3 脚改接 VCC_SYS，去掉 Q4、R7，CHG_DET 的上拉从 10k 改 1k。仓库里唯一一次改 PcbDoc（5daf5a7）早于这个 issue，所以一直没修。</p>
-      <p class="why"><b>看点</b>　需求明确、证据扎实，适合做“改电源路径”的半成品题。上游没有答案，参考解要我们自己做，评论里的方案可作起点。源文件是 Altium，转 KiCad 已验证。</p>
-      <span class="src">data/peng_zhihui_20261112/github_meta/hw_issue_review.md · github.com/peng-zhihui/Peak/issues/4</span>
+      <p>有人指出：充电芯片的输出同时给电池充电和给系统供电，外部供电时没有切断电池和负载，会干扰充电判断，电池充不满。稚晖君在评论里回复“这里确实是一个设计失误，感谢指出”。评论建议 U1 第 3 脚改接 VCC_SYS、去掉 Q4 和 R7、CHG_DET 上拉从 10k 改 1k，但位号和网络名不能直接套到仓库文件：仓库的 Q4 是背光开关，R7 是 Q2 栅极的 20k 下拉，没有 VCC_SYS 网络；CHG_DET 的 10k 上拉实际是 R11。采集记录中唯一一次改 PcbDoc（5daf5a7）早于这个 issue，未找到对应修复提交。</p>
+      <p class="why"><b>看点</b>　适合做“改电源路径”的半成品题，但要先按仓库文件重写需求、核对评论电路图的版本。上游没有答案，参考解要我们自己做，评论里的方案不能原样使用。源文件是 Altium，转 KiCad 已验证。</p>
+      <span class="src">data/peng_zhihui_20261112/github_meta/hw_issue_review.md · github.com/peng-zhihui/Peak/issues/4 · <a href="https://qlyylq.github.io/omnifex/cases/peak-4.html">案例中的网表核对与电源路径图</a></span>
     </article>
 
     <article class="case">
       <div class="top"><span class="id">8d76bd3f</span><span class="ttl">Dummy 机械臂 42 步进驱动板：加双编码器支持</span></div>
-      <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">大改版</span><span class="pill good">有上游答案</span></div>
-      <p>一次提交同时改了原理图和 PCB：新增 P5、U8，删去 R18、R19，14 个元件有改动，其中三个 SH1.0 连接器换了针数（P1 6P→5P，P3 3P→6P，P4 5P→6P）。47 个原理图引脚换了网络，比如 P1.1 从 VCC_IN 改成 UART1_RX，P1.3 从 CAN_L 改成 GND；15 个元件挪了位置，焊盘数 248→255。</p>
-      <p class="why"><b>看点</b>　改动大，牵动连接器定义、编码器接口和布局，上游答案现成，适合做难题。同一块板在 A 批里还有 879f203f（把 42 驱动板缩成 20），之前卡在 Altium 转换，现在可以用转换后的 KiCad 工程做底版。两道题属于同一项目族，划分训练和测试时要放在同一侧。</p>
-      <span class="src">data/peng_zhihui_20261112/revisions_export/Dummy-Robot__8d76bd3f/diff.json</span>
+      <div class="tags"><span class="pill plain">PCB</span><span class="pill warn">位号重排</span><span class="pill good">有上游答案</span></div>
+      <p>一次提交同时改了原理图和 PCB。案例页按封装和坐标重新匹配两版 KiCad 板：79 个元件中 76 个原地没动，其中 14 个只换了位号；真正删掉 3 个 USB 电阻，新增一个 6 脚座、TL431 和 120R 电阻，旧 5 脚座重新分配脚位。采集时按位号得到的“14 个元件改动、47 个引脚换网、15 个元件挪位”混入了位号重排，不能直接代表实际改动；也不能据此说三个连接器都换了针数。</p>
+      <p class="why"><b>看点</b>　牵动连接器定义、编码器接口和布局，上游答案现成；难度要按实际功能改动评估。同一块板在 A 批里还有 879f203f（把 42 驱动板缩成 20），之前卡在 Altium 转换，现在可以用转换后的 KiCad 工程做底版。两道题属于同一项目族，划分训练和测试时要放在同一侧。</p>
+      <span class="src">data/peng_zhihui_20261112/revisions_export/Dummy-Robot__8d76bd3f/diff.json（按位号统计） · <a href="https://qlyylq.github.io/omnifex/cases/8d76bd3f.html">案例中的封装、坐标和脚位复核</a></span>
     </article>
 
     <article class="case">
       <div class="top"><span class="id">31d91345</span><span class="ttl">HoloCubic：为装进 Steam 版外壳改板</span></div>
       <div class="tags"><span class="pill plain">PCB 受外壳约束</span><span class="pill warn">板壳联动线索</span><span class="pill good">有上游答案</span></div>
-      <p>两块板一起改。去掉两板之间的板对板连接器 CON1；主板的 TF 卡座 J1 换成 8P 弹簧连接器，8 个引脚全部重新定义（如 J1.6 由 GND 改为 3V3，J1.2 由 GPIO15 改为 DC）；新增 D2–D4 和 J2；C7 从 0.1 µF 改成 1 µF；6 个元件挪了位置，D1 移了 7 mm。C7 的改法和 HoloCubic #13 的建议一致。</p>
-      <p class="why"><b>看点</b>　一个外壳需求牵动了连接方式、引脚定义和布局，是板壳联动题的好素材。仓库里有 Bilibili、Ironman、Metal、Naive 几版外壳模型，哪一版对应 Steam-Case 还没核实。</p>
-      <span class="src">data/peng_zhihui_20261112/revisions_export/HoloCubic__31d91345/diff.json</span>
+      <p>两块板一起改。主板的 FFC 连接器 CON1 换成 8P 弹簧触点座 J1，扩展板改用对应触点；原来的 TF 卡座仍在，改名为 J2 并挪了约 1.5 mm，各脚网络未变。新 J1 的 8 个信号与旧 CON1 一一对应，只是脚序重排。新增 D2–D4，C7 从 0.1 µF 改成 1 µF，D1 移了 7 mm。以上按案例页的封装、位置和焊盘网络复核；旧统计把前后不同器件的 J1 当成同一个，才出现“TF 卡座被替换、8 脚全部重新定义”的说法。C7 的改法和 HoloCubic #13 的建议一致。</p>
+      <p class="why"><b>看点</b>　一个外壳需求牵动了连接方式、板外形和布局，是板壳联动题的好素材。仓库里有 Bilibili、Ironman、Metal、Naive 几版外壳模型，哪一版对应 Steam-Case 还没核实。</p>
+      <span class="src">data/peng_zhihui_20261112/revisions_export/HoloCubic__31d91345/diff.json（按位号统计） · <a href="https://qlyylq.github.io/omnifex/cases/31d91345.html">案例中的卡座与 8P 信号对照</a></span>
     </article>
 
     <article class="case">
@@ -324,9 +324,9 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
     <article class="case">
       <div class="top"><span class="id">d0342ffd</span><span class="ttl">HACKberry 义手：“fix some interference”</span></div>
       <div class="tags"><span class="pill plain">CAD（STEP 装配）</span><span class="pill plain">难</span><span class="pill plain">专有格式重筛</span></div>
-      <p>整机 STEP 有 254 个实体，前后有 48 个实体变化，约 7 个手指或传动件沿 z 移动约 1.5 mm。</p>
-      <p class="why"><b>看点</b>　可以做“消除装配干涉”题，用干涉体积判分，上游答案现成。尚未造题。</p>
-      <span class="src">data/step_rescreen_20261112/merged.json（sha d0342ffd）</span>
+      <p>本次重新配对右手 STEP，两版各 254 个实体，按位置、尺寸或体积差阈值筛出 31 个变化候选；MJ074N 组件内 6 个实体沿 z 移动约 1.5 mm，另有 10 个实体沿 y 移动 −0.3 mm。旧重筛的“48 个变化、约 7 个手指或传动件”与本次口径不同。变化件及邻居中确认 6 对交集归零，包括手掌底座与两颗螺钉的 2.207、1.826 mm³ 重叠。前后各有一对布尔运算超时，已单独记为出错。</p>
+      <p class="why"><b>看点</b>　可以做指定局部的“消除装配干涉”题，并用零件、安装位置和功能约束防止删件取巧。改后仍有重叠，允许的装配配合和运动范围尚未核实，不能把局部修复当作整机无干涉。尚未造题。</p>
+      <span class="src">data/step_rescreen_20261112/merged.json（旧重筛） · data/website_cases_20261113/d0342ffd/（本次重算） · <a href="https://qlyylq.github.io/omnifex/cases/d0342ffd.html">前后 3D 与局部干涉图</a></span>
     </article>
   </div>
 
@@ -527,7 +527,7 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
   <p>结论：KiCad 10 的 Altium 导入可以直接用来做“半成品”底版，转换规则是“导入后把过孔设为只保留起止层的焊环”。另外两个坑：<span class="mono">pcbnew.SaveBoard()</span> 在 10.0.7 写完板子后会崩，要用 KiCad 格式插件自己的 SaveBoard；<span class="mono">pcbnew.LoadBoard()</span> 不认 PcbDoc，要显式找 Altium 插件。</p>
 
   <h3>14 个改电路的提交，前后对比</h3>
-  <p>动过设计文件的 15 个提交里，14 个改了原理图或 PCB（另一个只改了 ElectronBot 的整机 STEP）。对每个提交的前后两版各跑一次 Altium 导出，比较元件、网络和布局，不用打开二进制文件就能看出实际改了什么。“换网络的引脚”只数真正换了连接的引脚，不把同组的其他引脚算进去。有两处说明里没写的改动：0e281c0c 说是修丝印，实际还改了上拉电阻；99fbfe36 的说明只有一个词，实际改了四处。</p>
+  <p>动过设计文件的 15 个提交里，14 个改了原理图或 PCB（另一个只改了 ElectronBot 的整机 STEP）。对每个提交的前后两版各跑一次 Altium 导出，比较元件、网络和布局。最初的“换网络的引脚”按位号匹配；HoloCubic 31d91345 和 Dummy 8d76bd3f 存在位号重排，原来的 8 和 47 不能当作实际换网数量，下面两行已按案例复核更正。有两处说明里没写的改动：0e281c0c 说是修丝印，实际还改了上拉电阻；99fbfe36 的说明只有一个词，实际改了四处。</p>
   <div class="tablebox"><table>
     <thead><tr><th>提交</th><th>日期</th><th>说明</th><th>实际改了什么</th><th>换网络的引脚</th><th>可出的题</th></tr></thead>
     <tbody>
@@ -536,13 +536,13 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
 <tr><td class="mono">ST-Link ff23d4cf</td><td>2020-12-29</td><td class="wide">Nothing big deal, adjust silk</td><td class="wide">元件、网络、焊盘都没变</td><td class="num">0</td><td class="wide">只改丝印，不出题</td></tr>
 <tr><td class="mono">ST-Link 99fbfe36</td><td>2023-03-05</td><td class="wide">Update.</td><td class="wide">稳压器 U2 从 LP2992 换成 SPX3819M5；新增 R14、R15；J1.1 和 J2.1 的 JTCK、JTMS 对调；U1 的 SWDIO、SWCLK 两脚连接改变</td><td class="num">4</td><td class="wide">多段修改，适合“看差异写需求”</td></tr>
 <tr><td class="mono">HoloCubic 7b861ebd</td><td>2021-01-11</td><td class="wide">Add SD-Card to MainBoard PCB</td><td class="wide">新增卡座 J1 和 R8–R11；焊盘 194→216</td><td class="num">3</td><td class="wide">加功能</td></tr>
-<tr><td class="mono">HoloCubic 31d91345</td><td>2021-02-16</td><td class="wide">Update PCB to fit Steam-Case</td><td class="wide">见案例：去掉板对板连接器，TF 卡座换 8P 弹簧连接器，增 D2–D4、J2，C7 改 1 µF，6 个元件挪位</td><td class="num">8</td><td class="wide">板壳联动</td></tr>
+<tr><td class="mono">HoloCubic 31d91345</td><td>2021-02-16</td><td class="wide">Update PCB to fit Steam-Case</td><td class="wide">见案例：CON1 换为 8P 弹簧触点座，信号沿用、脚序重排；TF 卡座改名 J2 并挪约 1.5 mm，增 D2–D4，C7 改 1 µF</td><td>原 8 不适用</td><td class="wide">板壳联动</td></tr>
 <tr><td class="mono">HoloCubic bd8452a2</td><td>2021-03-01</td><td class="wide">Remove 2 x RGB</td><td class="wide">删 D3、D4、U5、R11、C11；LED 链在 D1 截断</td><td class="num">1</td><td class="wide">减功能</td></tr>
 <tr><td class="mono">HoloCubic ec084e53</td><td>2021-03-19</td><td class="wide">Modified MainBoard connector hole size</td><td class="wide">元件、网络、焊盘都没变；孔径不在导出范围内，要另比钻孔</td><td class="num">0</td><td class="wide">机械约束小修</td></tr>
 <tr><td class="mono">HoloCubic ec0ea5b0</td><td>2021-03-19</td><td class="wide">Move ExtendBoard's MOSFET to MainBoard</td><td class="wide">扩展板删 Q1、R1；主板加 Q1、R11，J1.1 由 GPIO5 改为 LCD_BL_VCC</td><td class="num">2</td><td class="wide">跨板改动</td></tr>
 <tr><td class="mono">Peak 5daf5a79</td><td>2021-10-10</td><td class="wide">Update Peak.PcbDoc</td><td class="wide">元件、网络、走线、过孔、铺铜、元件位置都没变</td><td class="num">0</td><td class="wide">可能只改丝印或重存，不出题</td></tr>
 <tr><td class="mono">Dummy f762a100</td><td>2021-11-10</td><td class="wide">Fix StepMotor-Drive-42 connector net missing</td><td class="wide">只改 PCB：P1、P2 外壳焊盘 SH1 补接 VCC_IN，SH2 补接 GND</td><td class="num">4</td><td class="wide">修漏网</td></tr>
-<tr><td class="mono">Dummy 8d76bd3f</td><td>2022-01-18</td><td class="wide">Update Motor-42 hardware, add dual-encoder support</td><td class="wide">见案例：增 P5、U8，删 R18、R19，改 14 个，三个连接器换针数，15 个元件挪位</td><td class="num">47</td><td class="wide">大改版，难题</td></tr>
+<tr><td class="mono">Dummy 8d76bd3f</td><td>2022-01-18</td><td class="wide">Update Motor-42 hardware, add dual-encoder support</td><td class="wide">见案例：76/79 个元件原地未动，14 个只改位号；删 3 个 USB 电阻，增 6 脚座、TL431 和 120R，旧 5 脚座重排脚位</td><td>待按器件对应重算</td><td class="wide">编码器接口改版</td></tr>
 <tr><td class="mono">ElectronBot 3b59b542</td><td>2022-03-13</td><td class="wide">Modify ServoDrive MCU to STM32F030F6/STM32F04x</td><td class="wide">两块舵机板只把 U4 从 STM32F030F4P6 换成 STM32F030F6/STM32F042F6，网络和焊盘没动</td><td class="num">0</td><td class="wide">换引脚兼容的料，低档</td></tr>
 <tr><td class="mono">ElectronBot a1fa04b7</td><td>2022-03-14</td><td class="wide">Remove redundant VCC_BUS</td><td class="wide">见案例：只动 VBUS_IN，删 2 段走线、1 个过孔、1 块铺铜</td><td class="num">0</td><td class="wide">修清单，对应 issue #28</td></tr>
     </tbody>

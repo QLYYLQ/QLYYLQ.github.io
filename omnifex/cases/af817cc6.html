@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Corne 换 TRS：缺口被填平 · Corne 分体键盘（foostan/crkbd）</title>
+<meta name="description" content="Sonnet 把 Corne 的 TRRS 插座换成 TRS，改好单线串口、主从检测和 mini 切割，只挂了一条要求保留插座缺口的检查；复核员判这条检查太严，Opus 审计核实新插座是沉板件，缺口填平后装不上。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>af817cc6</span></div>
+  <div class="eyebrow">第二轮的新问题 · Corne 分体键盘（foostan/crkbd）</div>
+  <h1>Corne Cherry v4.1.0：TRRS 换 TRS 插座，模型把插座缺口填平了</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip dom">外壳</span><span class="chip">难</span><span class="chip bad">插座装不上</span><span class="chip warn">复核被推翻</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>题目取自 Corne 维护者的 v4.1.0 改版（PR #237）：停产的 4 极 TRRS 插座换成 3 极 TRS 插座 PJ-399B-6A，两半之间改成单线串口，用 GP13 读本侧 USB 有没有接主机来定主从，再修好沿长槽掰成 mini 版后板子失效的问题。Sonnet 的网表、DRC、主从检测和 mini 切割都做对了，15 条必需检查过了 14 条，唯一不过的 C04 要求插座本体落在板外，也就是保留插座下方的板边缺口。它把缺口整个填平了。</p>
+<p>Sonnet 复核员认为题面只说缺口“可以按新器件的需要修改”，手册也没画开槽，判 C04 太严。Opus 审计按手册侧视图核了尺寸：插座本体有 1.95 mm 在贴装面另一侧，比 1.6 mm 的板还厚，必须沉进缺口；填平后插座放不平、焊不上。复核结论被推翻，C04 保持 critical。审计另外查出一个检查没拦住的 major：主从检测的分压电阻太大，从机侧读低没有保证。</p></div>
+</header>
+<div class="figures"><div><span class="v">14<small>/15</small></span><span class="k">必需检查通过，唯一不过的是 C04</span></div><div><span class="v">73.8</span><span class="k">插座本体矩形压在板上的面积 mm²（C04，整个矩形都在板内）</span></div><div><span class="v">1.95</span><span class="k">插座本体须穿过板子的高度 mm，板厚只有 1.6（手册侧视图 4.20 − 2.25）</span></div><div><span class="v">2.35</span><span class="k">填平后插孔轴线比外壳开孔低的距离 mm（审计估算）</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>题面给的是 Corne v4.0.0 的仓库快照（断网、无 git 历史），只交付 Cherry 轴热插拔版。左右两半在同一个 PCB 文件里，各有一颗 RP2040、一个 USB-C，两半之间用 3.5 mm 音频线连接，线上走 5 V、地和通信。判分只看最终的原生文件。</p><div class="ticket"><div class="k">起点</div><div><code>pcbs/corne-cherry/hotswap/</code> 下的 v4.0.0 工程，两张共用子图 <code>pcbs/common/left.kicad_sch</code>、<code>right.kicad_sch</code>。音频插座 J2/rJ2 是 4 极的 ST-0277D00-052-142，焊在板子背面，沉在板边一个 13.5 × 6.7 mm 的缺口里。</div><div class="k">要做</div><div><p>插座换成 3 极的 PJ-399B-6A，封装按它的手册做，“能装上、能焊”；T 接 5 V，S 接地，剩下的触点走通信。插孔口和插入轴线不变，好让现有外壳的开孔对上。插座本体下方的板边缺口“可以按新器件的需要修改”，此外板框不许动。</p>
+<p>按 v4.1 固件的约定：两半都用 GP12 做单线半双工串口；GP13 改为 USB 检测，本侧 USB-C 接着主机时必须可靠读高，没接时必须可靠读低，电压不超出 RP2040 的 IO 要求。</p>
+<p>沿最外侧一列旁边那排长槽掰成 3x5 的 mini 版后，剩下的电路要完整可用。</p>
+<p>丝印和标题栏的版本号改成 4.1.0。</p></div><div class="k">约束</div><div>键轴座、LED、USB-C、OLED 座不许动。原理图和 PCB 一致。KiCad 10 重新灌铜后 DRC 无未连接，间距、孔距、铜到板边、短路、走线交叉都为零；ERC 错误不比改前多。外壳不在本题范围内。</div><div class="k">判分</div><div>17 条检查（15 条必需）：插座三个触点的网络、封装和手册推荐焊盘的拟合、插座位置、本体是否落在板外（C04）、板框、GP12/GP13 的直流节点分析、mini 切割后的连通性、DRC/ERC、回归网表、固定器件位置、版本号。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">改前</div><h3>v4.0.0：插座焊在背面，本体沉在板边缺口里</h3><div class="text"><p>两半的插座都在靠中间的那条板边上，插孔朝外。缺口 13.5 × 6.7 mm，审计核对过，正是旧插座 ST-0277 手册里推荐的开槽尺寸。插座焊在背面，本体一部分沉进缺口，插孔轴线因此几乎贴着板子底面，对准外壳侧壁上的开孔。</p>
+<p>改前板子还有两处要自己找原因的问题（出题时记为隐性条件）：USB 的 VBUS 经保险丝直通 5 V 轨，而 5 V 轨经音频线和另一半相连，不插 USB 的那一半会被倒灌，GP13 两边都读高；背面的地铺铜被走线切成几块，只靠最外侧一列连通，掰掉这一列后地就断了。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">上游答案</div><h3>维护者保留缺口，收窄到 13.0 × 6.3 mm</h3><div class="text"><p>新插座 PJ-399B 的焊盘比旧件靠里，旧缺口原样留着会切到铜。上游把缺口收窄到 6.3 mm 宽，仍比 5.9 mm 宽的插座本体宽，通信线绕着缺口走。主从检测用小信号肖特基二极管 RB521S30T1G 挡住倒灌，再用 5.6k/10k 分压接到 GP13。</p>
+<p>PR #237 的说明里写了 PJ-399B 的插头口比旧件长，外壳要跟着改。本页量了改前、改后两版外壳 STEP（<code>cases/3x6/left.step</code>）：侧壁上的插孔从 ø4.6 mm 扩到 ø5.5 mm，孔心高度没变。上游答案只用来确认需求可行，判分不拿它比对布局。</p></div><figure><div class="frame"><a href="img/af817cc6/k_notch_upstream.svg" title="打开原图"><img src="img/af817cc6/k_notch_upstream.svg" alt="**上游 v4.1.0 的左半插座区**（提交 `af817cc6`）。黄色实线是收窄后的缺口，红色焊盘是新插座，红色虚线框是 C04 用来判定的本体矩形，黄色走线是通信线 `/left/TX`。铜色是正面，蓝色是背面。" loading="lazy"></a></div><figcaption><b>上游 v4.1.0 的左半插座区</b>（提交 <code>af817cc6</code>）。黄色实线是收窄后的缺口，红色焊盘是新插座，红色虚线框是 C04 用来判定的本体矩形，黄色走线是通信线 <code>/left/TX</code>。铜色是正面，蓝色是背面。</figcaption></figure></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">模型的解</div><h3>电路和 mini 切割做对了</h3><div class="text"><p>Sonnet 按 PJ-399B 手册新建了封装（通孔中心、槽孔、贴片焊盘都和手册一致，C02 的拟合偏差为 0），T/R/S 的分配是从手册电路图和焊盘前后位置推出来的，左右一致。GP12 做单线串口，GP13 接 33k/47k 分压，在 VBUS 4.40 V 和 5.50 V 时分别是 2.58 V 和 3.23 V，落在 RP2040 的高电平范围内。它自己发现了倒灌问题，在保险丝和 5 V 轨之间加了肖特基二极管 B5819W。</p>
+<p>mini 切割这个隐性条件也找到了原因，补了几段地线和过孔把被切开的地铺铜接回去。审计按切割线删掉外侧一列后重跑 DRC：改前 5 处未连接，解 0 处。</p></div><figure><div class="frame"><a href="img/af817cc6/k_minicut_before.svg" title="打开原图"><img src="img/af817cc6/k_minicut_before.svg" alt="**改前板沿长槽切掉外侧一列后的 DRC**（审计的切割仿真）。红色虚线是切割线，黄色是地网络 GND/GNDR 的铺铜和走线，青色线是 5 处未连接，全是地。同样切法下 Sonnet 的解和上游答案都是 0 处。" loading="lazy"></a></div><figcaption><b>改前板沿长槽切掉外侧一列后的 DRC</b>（审计的切割仿真）。红色虚线是切割线，黄色是地网络 GND/GNDR 的铺铜和走线，青色线是 5 处未连接，全是地。同样切法下 Sonnet 的解和上游答案都是 0 处。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">放大看</div><h3>插座下方的缺口被整个填平</h3><div class="text"><p>Sonnet 删掉了两侧缺口各 3 条边线，在原板边位置补一条直线封口，缺口就没了。原缺口的范围里还新走了一段通信线 <code>/left/TX</code>（右半同样）。它的解题报告没说为什么填平，只在不确定项里写了一句：插座本体是否需要下沉槽，没有查证。</p>
+<p>旧缺口确实不能原样留：按板文件坐标，新插座通孔焊盘的内缘伸进旧缺口 0.10 mm，后部贴片焊盘伸进 0.50 mm（本页计算），会切到铜，检查的故障样本 f08 保留了旧的宽缺口，就被 DRC 的铜到板边拦下。正确做法是收窄缺口，Sonnet 直接填平了。</p></div><figure><div class="compare" style="--pos:50%"><img src="img/af817cc6/k_notch_before.svg" alt="改前 v4.0.0"><div class="after"><img src="img/af817cc6/k_notch_sol.svg" alt="Sonnet 的解"></div><div class="bar"></div><span class="tag l">改前 v4.0.0</span><span class="tag r">Sonnet 的解</span><input type="range" min="0" max="100" value="50" aria-label="拖动对比" id="cmp1"></div><figcaption><b>左半插座区，同一裁剪</b>，左右拖动对比。黄色线框是 13.5 × 6.7 mm 的原缺口，红色虚线框是 C04 判定用的插座本体矩形（12.3 × 6.0 mm，位置取改前插座前端面）。改前它悬在缺口里；Sonnet 的解里它整个压在板上，C04 算出交叠 73.8 mm²。右半 rJ2 是镜像，情况相同。</figcaption></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">自动检查</div><h3>15 条必需检查过 14 条，只有 C04 不过</h3><div class="text"><p>C09 是软检查（不计成绩）：它假设阻断二极管直接接在 VBUS 上，这份解在二极管前面还串着保险丝，于是转人工。审计看过，二极管方向和位置都对，不算问题。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">C01–C03</td><td>插座三个触点的网络、封装与手册推荐焊盘的拟合、插座前端面和轴线</td><td class="st"><span class="chip good">通过</span></td><td>S=地、R=GP12、T=5 V，两半一致；焊盘偏差 0；位置偏差 0.10 mm。</td></tr><tr><td class="id">C04</td><td>插座本体矩形必须在板外</td><td class="st"><span class="chip bad">不过</span></td><td>J2、rJ2 的本体矩形与板子各交叠 73.800 mm²，整个矩形都在板内。</td></tr><tr><td class="id">C05</td><td>缺口以外的板框不变</td><td class="st"><span class="chip good">通过</span></td><td>差异面积 0.0002 mm²。</td></tr><tr><td class="id">C07</td><td>GP13 直流分析：接主机读高、不接读低</td><td class="st"><span class="chip warn">漏判</span></td><td>算出 2.58/3.23 V 和 0.00 V，通过。但模型把截止的二极管当成断开，不算反向漏电，审计据此查出一个 major（见下）。</td></tr><tr><td class="id">C09</td><td>阻断二极管是否为肖特基（软）</td><td class="st"><span class="chip bad">转人工</span></td><td>检查的假设不覆盖保险丝在前的接法，审计判不算问题。</td></tr><tr><td class="id">C10</td><td>沿长槽切掉外侧一列后无未连接</td><td class="st"><span class="chip good">通过</span></td><td>切后 0，不切 0。</td></tr><tr><td class="id">C11–C16</td><td>DRC 与一致性、ERC、回归网表、固定器件位置、库封装、版本号</td><td class="st"><span class="chip good">通过</span></td><td>DRC 违规类别和数量与改前相同；ERC 3 条，和改前一样。</td></tr></tbody></table></div></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">复核</div><h3>复核员：C04 太严，题面没要求保留缺口</h3><div class="text"><p>Sonnet 复核员的理由有三条：C04 的本体矩形是检查代码里的常数（长 12.3、半宽 3.0），12.3 还是从替代件 PJ-398A 借来的；PJ-399B 手册的推荐布局只画了焊盘，没画缺口或禁布区；题面只说缺口“可以按新器件的需要修改”，没说必须保留。它建议把 C04 降为加权项，或者把“必须留缺口”写进题面。</p>
+<p>它也留了一条保留意见：填平后整机厚度和外壳开孔能不能对上，没有真值可核。</p></div></div></li><li class="step"><div class="num">07</div><div class="main"><div class="label">审计</div><h3>Opus：PJ-399B 是沉板件，填平后插座装不上</h3><div class="text"><p>审计去量了手册侧视图：插座本体高 4.20 mm，贴片脚底面在本体顶面下 2.25 mm，通孔脚尖在 3.65 mm。贴片脚底面就是贴装面，所以本体有 1.95 mm 在贴装面另一侧，比 1.6 mm 的板还厚，只能穿进板上的开口。佐证还有三条：替代件 SJ-3501 的手册首页写明 mid mount（沉板安装），布局图画了缺口和板边；旧件 ST-0277 推荐的 13.50 × 6.70 开槽就是改前的缺口；上游 v4.1.0 也保留了缺口。</p>
+<p>填平之后，本体顶在板面上，贴片脚悬空约 1.95 mm，通孔脚尖离板面约 0.55 mm、进不了孔，插座放不平也焊不上。不插 USB 的那一半因此既没电也没通信。审计又拿改前仓库里的外壳 STEP 核了高度：就算硬装上去，插孔轴线也比外壳开孔低约 2.35 mm，本体会顶进底板约 1.7 mm。</p>
+<p>另有一个检查没拦住的 major：GP13 的分压对地共 80 kΩ，配的又是 1 A 的功率肖特基 B5819W。不插 USB 的一侧，二极管的反向漏电从 5 V 轨流进 VBUS 节点，只经 80 kΩ 到地；漏电超过 17 µA，GP13 就超过 RP2040 的低电平上限 0.8 V。B5819W 的公开规格只保证 40 V 下漏电不超过 1 mA，5 V 下的上限没给，温度高了还会成倍增加。上游用小信号肖特基配 5.6k/10k，对漏电的敏感度低约 5 倍。两个 minor：新加的 6 个器件封装 ID 缺库名，和原理图不一致；5 V 主供电路径的线宽从 0.508 mm 降到 0.2 mm。</p></div><figure><div class="frame"><a href="img/af817cc6/k_pj399b_section.svg" title="打开原图"><img src="img/af817cc6/k_pj399b_section.svg" alt="**沿插入方向看的截面示意**，按 PJ-399B-6A 手册尺寸画（本页绘制）。左边是沉板：本体 4.20 mm 高，贴装面以上 1.95 mm 穿过缺口，通孔脚插进槽孔 1.40 mm。右边是缺口填平：本体只能顶在板面上，整只插座被顶开 1.95 mm，贴片脚悬空，通孔脚尖离孔口还差 0.55 mm。" loading="lazy"></a></div><figcaption><b>沿插入方向看的截面示意</b>，按 PJ-399B-6A 手册尺寸画（本页绘制）。左边是沉板：本体 4.20 mm 高，贴装面以上 1.95 mm 穿过缺口，通孔脚插进槽孔 1.40 mm。右边是缺口填平：本体只能顶在板面上，整只插座被顶开 1.95 mm，贴片脚悬空，通孔脚尖离孔口还差 0.55 mm。</figcaption></figure></div></li><li class="step"><div class="num">08</div><div class="main"><div class="label">结论</div><h3>C04 是真错，保持 critical；复核判断被推翻</h3><div class="text"><p>这道题记为 Sonnet 不通过。审计对检查的建议：C04 不降级，把依据从“数据手册”写具体（侧视图的 2.25/4.20 和板厚），本体长度改用 PJ-399B 实测约 12.4 mm；本体矩形里不许走线和打过孔，这次通信线正好横穿；再补一项插孔轴线离板面高度和改前一致的检查。C07 给截止的二极管加反向漏电流，或限制 GP13 节点对地的等效电阻。复核文件已加注，以审计结论为准。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>复核员说“检查太严”，这个结论本身也要核实。手册上没有“开槽”两个字，但侧视图的尺寸已经决定了必须开槽；判断检查严不严，要回到器件的几何和装配，不能只对题面字句。这是本轮第二次推翻复核：另一次是 5c5054c5（The Open Book），题面要的是屏幕固定焊盘，解题者拿连接器的固定脚凑数。</p>
+<p>同一份解里，检查一边拦对了致命错误（C04），一边放过了一个 major（C07 的直流模型不算二极管漏电）。缺口这件事也说明隐性条件的难处：旧缺口不能原样留，该做的是收窄；模型直接填平，报告里承认没查证插座是否需要下沉槽。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>C/af817cc6/task.md</span><span>C/af817cc6/trials/sonnet.json</span><span>C/af817cc6/trials/sonnet_review.json</span><span>C/af817cc6/trials/sonnet_audit.json</span><span>C/af817cc6/trials/sonnet_report.json</span><span>C/af817cc6/checks/README.md</span><span>C/af817cc6/grader_notes.json</span><span><a href="https://github.com/foostan/crkbd/pull/237">https://github.com/foostan/crkbd/pull/237</a></span><span><a href="https://github.com/foostan/crkbd/commit/af817cc610bf369fbeaaeac256309425c60d6f2b">https://github.com/foostan/crkbd/commit/af817cc610bf369fbeaaeac256309425c60d6f2b</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="21dd5861.html"><span class="eyebrow">上一个</span><span>Kobold 宏键盘：误拒三条，漏掉灯接错</span></a><a href="3e9a8a34.html"><span class="eyebrow">下一个</span><span>Flipper One 天线：检查全过，4 处功能问题</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

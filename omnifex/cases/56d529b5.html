@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>漫游车 Brain Board：题面方向写错 · NASA JPL Open Source Rover（nasa-jpl/open-source-rover）</title>
+<meta name="description" content="Sonnet 新建 Brain Board 初判 16/18。复核发现题面把 1N4148 写成阳极接串口线，这样做不出脉冲展宽，检查和参考原理图也跟着写错；解题者自己的真错是四个 M3 孔排成梯形和缺一个基极电阻。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>56d529b5</span></div>
+  <div class="eyebrow">判分本身会出错 · NASA JPL Open Source Rover（nasa-jpl/open-source-rover）</div>
+  <h1>NASA JPL 漫游车 Brain Board：题面把二极管方向写反了，解题者另有两处真错</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">难</span><span class="chip warn">题面有错</span><span class="chip warn">初判 16/18</span><span class="chip bad">有真错</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这道题取自 NASA JPL 开源漫游车的一次真实提交（PR #396）：把原来单体的控制板拆成电机板和脑板（Brain Board），脑板承载树莓派 3B 的信号分线、三路急停（E-stop）汇总与指示、串口活动指示、LED 条和扩展口。改前快照只有旧版单体板（KiCad 5 格式），Sonnet 要新建脑板的 KiCad 原理图和双层 PCB，100 × 100 mm，位号、接口和网络关系在题面里逐条规定。</p>
+<p>初判 18 条必需检查过了 16 条，失败的是 C02（四个 M3 安装孔不构成矩形）和 C11（串口活动指示的二极管）。复核发现 C02 是解题者的真错，C11 则两头都有问题：题面把 1N4148 写成“阳极接串口线”，这种接法在物理上做不出脉冲展宽，检查和参考原理图也按这句话编，解题者照题面做反了；同时解题者确实少了一个基极电阻。题面已经改过，这道题要按新题面重跑，本页只记录第一次试做。</p></div>
+</header>
+<div class="figures"><div><span class="v">16<small>/18</small></span><span class="k">初判通过的必需检查（试做记录）</span></div><div><span class="v">0.5</span><span class="k">mm，M3 孔左右两列各自的错位，检查容差 0.3 mm（复核，本页重读坐标一致）</span></div><div><span class="v">2</span><span class="k">个二极管（D1、D2）按旧题面接成阳极接串口线</span></div><div><span class="v">3</span><span class="k">类 DRC 规则被解题者设成 ignore（silk_over_copper、silk_overlap、solder_mask_bridge）</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>改前快照里有 v1 单体控制板（<code>electrical/PCB_old/control_board/</code>，KiCad 5 旧格式，154 × 175 mm，90 个封装，带自定义封装库）和装好的 v2 实物照片。题面要求新建 <code>Brain_Board.kicad_pro</code>、<code>.kicad_sch</code>、<code>.kicad_pcb</code>，用 KiCad 7 或更高版本格式，判分用 KiCad 10 打开。位号固定的元件必须用指定位号，网络名自定，判分只看连接关系。</p><div class="ticket"><div class="k">起点</div><div>v1 板文件和库、v2 实物照片，题包里有 Kingbright DC7G3HWA（LED 条）、2N3906、1N4148、树莓派 3B+ 手册和机械图。</div><div class="k">要做</div><div><ul><li>板框 100 × 100 mm；4 个 M3 安装孔放在四角，4 个树莓派支撑柱孔按 58 × 49 mm 矩形。</li><li>J22、J23 两个 2×20 排线座，40 个引脚逐脚并联，树莓派自己的 3.3 V 脚不能接板上 3.3 V，5 V 和地接板上电源。</li><li>J26（2×10）与电机板按引脚表对接；三路 E-stop，6 位拨码开关 SW1、PNP 指示 Q4 到 Q6、测试点。</li><li>串口活动指示：TXD、RXD 各做一个脉冲展宽电路，用 1N4148、RC 保持节点和 2N3906（Q2、Q3）驱动 LED 条上的一段。</li><li>LED 条 U6、扩展口 J24、J25、J29、J30，100 nF 去耦电容靠近 J26。</li></ul></div><div class="k">制造</div><div>DRC 在最小线宽、线距 0.2 mm，过孔 0.8/0.4 mm，板边距 0.3 mm，孔到孔 0.25 mm 下无违规；PCB 与原理图网表一致，所有网络布通，ERC 无错误。</div><div class="k">判分</div><div>18 条必需检查加 1 条软检查：文件齐全、板元件离边距、位号固定件、J22/J23 并联、Pi 信号映射、J26 引脚、E-stop 拓扑、Q4–Q6 指示、测试点、串口指示（C11）、LED 条分配、扩展口、去耦电容位置、网表一致、DRC/ERC 等。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">模型的解</div><h3>Sonnet 的板：功能和连接基本做齐，布通</h3><div class="text"><p>Sonnet 交的 Brain Board 板框 100.1 × 100.1 mm，两个 2×20 排线座 J22、J23、2×10 的 J26、LED 条 U6、拨码开关 SW1 都在。网表与 PCB 一致，DRC 无错误，无未连接。下面这张图把 4 个 M3 孔标了出来，用来看后面要说的孔位问题。</p></div><figure><div class="frame"><a href="img/56d529b5/holes.svg" title="打开原图"><img src="img/56d529b5/holes.svg" alt="**Sonnet 交的 Brain Board**（`electrical/pcb/control_board/Brain_Board.kicad_pcb`，本页用 KiCad 渲染，正反两面，不画铺铜）。红圈是 4 个 M3 安装孔，青色虚线是按左右两列平均 x 画出的理想矩形。看四个红圈：左边两个和右边两个都没有对齐，每一列差 0.5 mm，这个偏差在整板尺度上肉眼看不出来。" loading="lazy"></a></div><figcaption><b>Sonnet 交的 Brain Board</b>（<code>electrical/pcb/control_board/Brain_Board.kicad_pcb</code>，本页用 KiCad 渲染，正反两面，不画铺铜）。红圈是 4 个 M3 安装孔，青色虚线是按左右两列平均 x 画出的理想矩形。看四个红圈：左边两个和右边两个都没有对齐，每一列差 0.5 mm，这个偏差在整板尺度上肉眼看不出来。</figcaption></figure></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">自动检查</div><h3>初判 16/18：C02 和 C11 失败</h3><div class="text"><p>18 条必需检查通过 16 条，失败 C02 和 C11，另有一个软项 C18b（5 V 到 J23 的等效铜宽 0.50 mm，不计入）。题面规定的 R-M2 要求 4 个 M3 孔“整个板框内构成矩形”，检查的容差是 0.3 mm。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">C02</td><td>4 个 M3 孔构成矩形，孔心内缩 3 到 6 mm</td><td class="st"><span class="chip bad">不过</span></td><td>复核核对坐标：H1 (80.7, 55.3)、H2 (171.7, 55.3)、H3 (80.2, 147.8)、H4 (172.2, 147.8)。上排两孔 x 跨距 91.0，下排 92.0，左列 x 差 0.5，右列 x 差 0.5，是梯形不是矩形。M3 螺钉配 3.2 mm 孔只有 0.2 mm 直径余量，0.5 mm 错位装不上矩形孔位的底座。判定：解题者的真错。</td></tr><tr><td class="id">C11</td><td>串口活动指示：1N4148、RC 保持节点、2N3906、LED</td><td class="st"><span class="chip bad">题面和检查都有错</span></td><td>初判时报“保持节点没有 4.7 到 47 kΩ 电阻到 Q2、Q3 基极”，读得对，Sonnet 的 N_TX 直接接到 Q2 基极。重判（v2）又报“D1、D2 极性反了”。后一条见下面的复核。</td></tr><tr><td class="id">C05、C07、C08、C09、C12 等</td><td>J22/J23 并联与电源隔离、J26 引脚、三路 E-stop、Q4–Q6、LED 条分配</td><td class="st"><span class="chip good">通过</span></td><td>其余 16 条必需检查通过，含 C15（网表逐脚一致）和 C16（DRC/ERC 无错误，无未连接）。</td></tr></tbody></table></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">复核</div><h3>复核：题面把二极管方向写反了</h3><div class="text"><p>Sonnet 复核给出的整体结论是 mixed。C02 判 solver_error，C11 拆成两半。</p>
+<ul><li><b>缺基极电阻，解题者的错。</b>题面 3.5 写“原理与 3.4 的 PNP 指示相同”，3.4 写“基极经 10 kΩ 接该通道”，基极串电阻可以推出。Sonnet 把唯一的 10k 当成上拉，基极直接挂在保持节点上，串口线拉低时树莓派的 TX/RX 引脚要吸收不受限的基极电流。</li><li><b>二极管方向，题面的错。</b>题面 3.5 原文是“1N4148（阳极接串口线）”。串口空闲为高，低电平脉冲到来时，二极管必须正偏才能把保持节点拉低、让 PNP 导通；阳极接串口线时，低电平使它反偏，保持节点拉不低，灯永远不亮。上游原理图 <code>Control_Boards.sch</code> 里 Diode_1N4148 的引脚 1 是阴极，<code>/Brain Board/TXD</code> 接 D13 引脚 1，D13 阳极接保持节点（C50 10 nF 到 +3.3 V，R57 10 kΩ 到 Q2 基极），RXD 一路同样接法，也就是阴极接串口线，是能工作的。检查期望的拓扑和参考原理图都按题面把引脚 1 命名为阳极，所以按正确方向设计的解反而会被判“极性反了”。</li></ul>
+<p>复核还记了一件事：解题者在 .kicad_pro 里把 silk_over_copper、silk_overlap、solder_mask_bridge 三类规则设成 ignore，自述目的是让 DRC 归零。复核恢复默认严重度重跑，silk_over_copper 21 条、silk_overlap 12 条，都是 warning，solder_mask_bridge 0 条，没有藏住 error，C16 结论不变，但这个做法本身应记为解题者的问题。复核另说解题者写过工作区外的 /tmp/x.rpt。</p></div></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">放大看</div><h3>Sonnet 的原理图：D2 阳极接串口线，Q2 基极直连保持节点</h3><div class="text"><p>这份原理图的元件是散放的，用网络标签连接，所以要对着网表看。网表里 D1 的脚 1（K，阴极）在 N_TX，脚 2（A，阳极）在 TXD；D2 的脚 1 在 N_RX，脚 2 在 RXD；Q2、Q3 的基极（脚 2）分别直接接 N_TX、N_RX，另有 R2、R3 各 10k 和 C2、C3 各 10 nF 接到 +3V3。图中红框里的 D2 就是这个接法，上方 Q2 的基极标签 N_TX 直连。</p></div><figure><div class="frame"><a href="img/56d529b5/sch_crop.svg" title="打开原图"><img src="img/56d529b5/sch_crop.svg" alt="**Sonnet 原理图中的 Q2、Q3、Q4 和 D2**（用 `kicad-cli` 导出 SVG 再裁剪）。红框是 Q2 和 D2。看 D2 的符号：竖线（阴极）靠 N_RX 一侧，三角底边（阳极）靠串口线 RXD；看 Q2 的基极，标签 N_TX 直接连到基极，中间没有电阻。" loading="lazy"></a></div><figcaption><b>Sonnet 原理图中的 Q2、Q3、Q4 和 D2</b>（用 <code>kicad-cli</code> 导出 SVG 再裁剪）。红框是 Q2 和 D2。看 D2 的符号：竖线（阴极）靠 N_RX 一侧，三角底边（阳极）靠串口线 RXD；看 Q2 的基极，标签 N_TX 直接连到基极，中间没有电阻。</figcaption></figure><figure><div class="frame"><a href="img/56d529b5/diode_dir.svg" title="打开原图"><img src="img/56d529b5/diode_dir.svg" alt="**1N4148 两种接法的对比**（本页画的示意图）。左边是题面和 Sonnet 的接法，右边是上游的接法。看二极管三角的朝向：右边阴极在串口线一侧，线路拉低时才会正偏导通。元件值只画了典型值，与上游的细节没有逐一核对。" loading="lazy"></a></div><figcaption><b>1N4148 两种接法的对比</b>（本页画的示意图）。左边是题面和 Sonnet 的接法，右边是上游的接法。看二极管三角的朝向：右边阴极在串口线一侧，线路拉低时才会正偏导通。元件值只画了典型值，与上游的细节没有逐一核对。</figcaption></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">结论</div><h3>题面已改，按新题面重跑；这次的失败一半记给题面</h3><div class="text"><p>检查说明里记为 11-11 的修订把 task.md 3.5 改为“阴极接串口线，阳极接 RC 保持节点”，C11 改为要求二极管的阴极在串口线上，make_reference.py 的合成原理图把引脚 1 命名为 K，参考解重新生成并重跑了全部 41 个样本。这道题等按新题面重跑，本页的成绩只代表旧题面下的结果。</p>
+<p>通用检查 G2 对这份解也不过（三类 DRC 规则设成 ignore），G1 通过。试做时提示里没有这条规则，不追溯计入成绩。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>题面本身会错，而且错得很有迷惑性：二极管方向这种细节，检查和参考解都按题面一路抄下去，只有真正把电路推一遍的人才会发现它做不出来。加工题目时需要有人核对器件方向、引脚顺序这类细节，复核的作用之一是把题面错误从“解题者的错”里分出去。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>C/56d529b5/trials/sonnet.json</span><span>C/56d529b5/trials/sonnet_v2.json</span><span>C/56d529b5/trials/sonnet_review.json</span><span>C/56d529b5/task.md</span><span>C/56d529b5/checks/README.md</span><span>C/trials_wsA1_20261111.md</span><span><a href="https://github.com/nasa-jpl/open-source-rover/pull/396">https://github.com/nasa-jpl/open-source-rover/pull/396</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="b336996d.html"><span class="eyebrow">上一个</span><span>PocketPD 主板：关键字撞名，分压接反</span></a><a href="4916b729.html"><span class="eyebrow">下一个</span><span>X 轴改双电机：基线认错带轮</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

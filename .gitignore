@@ -1,0 +1,6 @@
+_poster_tmp_*.html
+_thumb_tmp_*.html
+_t/
+.DS_Store
+__pycache__/
+*.py[cod]

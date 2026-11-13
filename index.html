@@ -2,29 +2,37 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>QLYYLQ</title>
 <meta name="description" content="QLYYLQ 的个人主页">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f6f4a'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='16' font-weight='700' text-anchor='middle' fill='%23fff'%3EQ%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 <div class="wrap">
-  <h1>QLYYLQ</h1>
-  <p class="sub">个人主页</p>
+  <header class="top">
+    <div class="eyebrow">github.com/QLYYLQ</div>
+    <h1>QLYYLQ</h1>
+    <p class="lead">这里放我在做的项目和公开材料。</p>
+  </header>
 
-  <p class="lede">这里放我在做的项目和公开材料。</p>
+  <section>
+    <h2><span class="no">项目</span>Omnifex</h2>
+    <a class="feature" href="omnifex/">
+      <div class="txt">
+        <div class="eyebrow">PCB → CAD · agent 工具包和评测基准 · 2026-10 起</div>
+        <div class="t" style="font-weight:700;font-size:1.1rem">让 agent 走完硬件设计的整条链</div>
+        <p class="muted" style="font-size:.95rem">查手册、选料、画原理图和 PCB、做配得上板子的外壳、导出下单包。评测仿照 SWE-bench，从开源硬件仓库的真实修订里出题，在原生 KiCad / CAD 文件上自动判分。</p>
+        <span class="go">提案、验证报告、题源、进展和案例 →</span>
+      </div>
+      <div class="pic"><img src="omnifex/cases/img/_feature_home.jpg" alt="一块键盘主板 RP2040 周围的布线特写，青色线是没布通的连接"></div>
+    </a>
+  </section>
 
-  <h2>项目</h2>
-  <a class="card" href="omnifex/">
-    <div class="title">Omnifex</div>
-    <div class="desc">PCB 到 CAD 的 agent 工具包和评测 gym：让 agent 查手册、选料、画原理图和 PCB、做配套外壳、导出下单包，并用开源硬件的真实修订出题、自动判分。</div>
-    <div class="go">提案、验证报告、题源总览、进展 →</div>
-  </a>
-
-  <footer>
-    <a href="https://github.com/QLYYLQ">github.com/QLYYLQ</a>
-  </footer>
+  <footer class="site"><a href="https://github.com/QLYYLQ">GitHub</a><a href="omnifex/">Omnifex</a><a href="omnifex/cases/">Omnifex 案例</a></footer>
 </div>
 </body>
 </html>

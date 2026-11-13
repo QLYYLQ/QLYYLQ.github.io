@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>moteus r4.5b：答案藏在改前里 · moteus 控制板（mjbots/moteus）</title>
+<meta name="description" content="Sonnet 一打开工作区就发现顶层文件已经是改后的 r4.5b，拒绝作答。原因是上游那次提交只是把改好的文件归档进新目录，搭题时只看了有没有这个目录。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>4892d559</span></div>
+  <div class="eyebrow">第二轮的新问题 · moteus 控制板（mjbots/moteus）</div>
+  <h1>moteus 控制板 r4.5 升 r4.5b：工作区泄题</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">难</span><span class="chip bad">工作区泄题</span><span class="chip info">已修，待重跑</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这道题取自 moteus 电机控制板的一次提交（2021-04，“Capture r4.5b as sent for eval”）：r4.5 改成 r4.5b，驱动芯片从 DRV8323RS 换成 DRV8353S，因为新芯片没有内置降压，所以要自备 3.3 V 降压，再加第二路编码器接口。文件是 Eagle 原生格式。</p>
+<p>Sonnet 一打开工作区就发现，顶层的 <code>controller.sch</code>、<code>controller.brd</code> 里已经有 DRV8353S、MAX15062 这些改后才有的东西，拒绝作答，没有交板。核对后的原因在工作区，不在模型：上游这次提交只是把改好的顶层文件复制归档成 <code>r4.5b/</code> 目录。搭题时只检查了“改前仓库里有没有 r4.5b 目录”，没有比较文件内容。</p></div>
+</header>
+<div class="figures"><div><span class="v">2<small>/2</small></span><span class="k">个顶层文件与上游 r4.5b 逐字节相同（本页用 GitHub 原文件重算 sha256）</span></div><div><span class="v">0</span><span class="k">Sonnet 交的板（拒答）</span></div><div><span class="v">105 → 122</span><span class="k">个封装，r4.5 到 r4.5b（本页用 KiCad 导入重算）</span></div><div><span class="v">47</span><span class="k">条必需检查，上游 r4.5b 全过（题包 README）</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>题面给的是 mjbots/moteus 的仓库快照（断网、无 git 历史），设计文件是 Eagle 的 <code>.sch</code> 和 <code>.brd</code>。要在新目录 <code>hw/controller/r4.5b/</code> 里交付改好的两个文件，旧的 r4.5 不能改。</p><div class="ticket"><div class="k">R1 换驱动</div><div>DRV8323RS 换成 DRV8353S（SPI 版，不带降压模块），栅极、电流采样、SPI、使能、故障等连接保持 r4.5 的定义，按手册配电荷泵和 DVDD、VGLS、VCP 的电容。旧降压外围（D1、R11、R12）不应留下。</div><div class="k">R2 自备 3.3 V</div><div>新加降压稳压器（推荐 MAX15062A），输出固定 3.3 V、不低于 300 mA，输入耐压不低于 60 V；电感、电容按手册；输出并入原来的 +3V3 网络，开关节点叫 VSW。</div><div class="k">R3 第二编码器</div><div>新增 6 脚 Pico-SPOX 贴片直角座，位号 ENC，信号 1 到 6 为 +3V3、SECONDARY_ENC_CS、GND、AS5047_SCK、AS5047_MISO、AS5047_MOSI；CS 是新网络，接 MCU 上一个原来没用的 GPIO。</div><div class="k">R4 母线电容</div><div>V+ 与 V- 之间加至少 1 颗 100 V 的 1 µF 陶瓷电容，再加至少 10 个 1206 的未贴电容位，沿板边成排。</div><div class="k">R5 不变</div><div>板框、安装孔、电机焊盘、电源接口、CAN 收发器、MCU、编码器和三相 MOSFET 位置不变；r4.5 的 67 条网络除 R1、R2 明确更换的外都要保留；原理图与 PCB 一致，布通，满足设计规则。</div><div class="k">判分</div><div>题包共 50 条检查，47 条必需、3 条参考。Eagle 的 XML 文件 KiCad 的 DRC 读不了，网表比对、连通和近似 DRC 都是自写的纯标准库代码。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">改前</div><h3>上游父提交里，顶层文件已经是 r4.5b</h3><div class="text"><p>下图画的是 <code>hw/controller/</code> 下相关文件的 sha256 前 8 位，都是本页从 GitHub 原文件重新算的（父提交 <code>4dedffb2</code> 和提交 <code>4892d559</code>）。上游父提交里，顶层的 <code>controller.sch</code>（<code>0bfceb09</code>）、<code>controller.brd</code>（<code>5f3a4a33</code>）和 r4.5 归档里的同名文件（<code>73c70be3</code>、<code>858f20c0</code>）不是同一个东西。上游这次提交新增的 <code>r4.5b/</code> 里，两个文件的哈希恰好等于父提交的顶层文件，顶层本身没有变。也就是说，这次提交的内容是“把已经改好的顶层文件复制归档成 r4.5b”，顶层从提交之前就已经是 r4.5b 的设计了。</p>
+<p>r4.5b 里新增的库文件也一样：<code>r4.5b/controller.lbr</code> 与父提交顶层的 <code>controller.lbr</code> 哈希相同（<code>5dbcdcdf</code>）。</p></div><figure><div class="frame"><a href="img/4892d559/tree.svg" title="打开原图"><img src="img/4892d559/tree.svg" alt="**三种状态下 `hw/controller/` 的文件和哈希前 8 位。**橙色是 r4.5b 的内容，蓝色是 r4.5 的内容。看左边一列：改前提交的顶层 sch、brd 是橙色，也就是答案；中间一列新增的 r4.5b 目录与顶层同色；右边一列是修订后的工作区，顶层换成了蓝色的 r4.5。" loading="lazy"></a></div><figcaption><b>三种状态下 <code>hw/controller/</code> 的文件和哈希前 8 位。</b>橙色是 r4.5b 的内容，蓝色是 r4.5 的内容。看左边一列：改前提交的顶层 sch、brd 是橙色，也就是答案；中间一列新增的 r4.5b 目录与顶层同色；右边一列是修订后的工作区，顶层换成了蓝色的 r4.5。</figcaption></figure></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">模型的解</div><h3>Sonnet 发现泄题，没写任何设计文件</h3><div class="text"><p>Sonnet 在交付说明里写：未交付 r4.5b。工作区顶层的 <code>controller.sch</code> 和 <code>controller.brd</code> 已经是改后的版本，含 DRV8353S（U5）、MAX15062AATA+T（U4）、ENC（PICO-SPOX-6）、SECONDARY_ENC_CS、VSW、1 µF 100 V 电容和 15 个 1206 的未贴电容位，删除了 D1、R11、R12。它没有复制或改用这些内容，只对比了顶层与 r4.5 的元件和网络清单（只读），并建议出题时把顶层的设计文件删掉再重跑。</p>
+<p>这份拒答没法反映模型的真实能力。它也守住了规矩：只读了工作区里的文件，没有用泄漏的内容作答。</p></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">放大看</div><h3>把两版板子导进 KiCad 对比：改动的都在泄漏的文件里</h3><div class="text"><p>Eagle 的 <code>.brd</code> 可以用 <code>kicad-cli pcb import</code> 导入 KiCad，所以本页把上游的 r4.5 和 r4.5b 板各导了一次来画图。导入只用于看图，不是判分用的数据，Eagle 里的一些样子（比如 ENC 座的焊盘形状）导入后会有差异。</p>
+<p>本页重算的差异：封装数 105 个变成 122 个；D1、R11、R12 删除；U4 从 DRV8323RS 变成 MAX15062AATA+T，新增 U5（DRV8353S）、ENC 座和 1 µF 100 V 的 C39（导入后位号是 ENC0）、15 个 1206 的 DNP 电容位 C40 到 C54，另有 C38、C55 两个 0402；板框外形没变（导入后外包 46.04×53.05 mm 一样）。r4.5 的电感 SRN4018-220M 换成了 CBC3225T330KR（33 µH），旧版 R10 变成 DNP，C20 从 0.1 µF 变成 1 µF。</p></div><figure><div class="compare" style="--pos:50%"><img src="img/4892d559/r45_board.svg" alt="r4.5"><div class="after"><img src="img/4892d559/r45b_board.svg" alt="r4.5b"></div><div class="bar"></div><span class="tag l">r4.5</span><span class="tag r">r4.5b</span><input type="range" min="0" max="100" value="50" aria-label="拖动对比" id="cmp1"></div><figcaption><b>r4.5 与 r4.5b 的整板，Eagle 文件经 KiCad 导入后渲染，两面铜都画出。</b>两张图裁剪相同。看中间偏上：r4.5 里是 DRV8323RS 的 48 脚大封装，r4.5b 里换成了 DRV8353S 的 40 脚封装；左上多了 ENC 座。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">放大看</div><h3>答案里新增的东西一眼可见</h3><div class="text"><p>下图是 r4.5b 的同一块板，黄色标出新增的元件：ENC 座、U5、C39，以及两排共 15 个 1206 的未贴电容位。这些都在父提交的顶层文件里，Sonnet 一打开就能看到。</p></div><figure><div class="frame"><a href="img/4892d559/r45b_new.svg" title="打开原图"><img src="img/4892d559/r45b_new.svg" alt="**r4.5b，新增元件高亮，KiCad 导入后渲染。**黄色是 ENC、U5、C39 和 C40 到 C54。看中间两排黄色方块：那是沿母线并联用的未贴电容位。" loading="lazy"></a></div><figcaption><b>r4.5b，新增元件高亮，KiCad 导入后渲染。</b>黄色是 ENC、U5、C39 和 C40 到 C54。看中间两排黄色方块：那是沿母线并联用的未贴电容位。</figcaption></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">自动检查</div><h3>检查本身没问题，问题在题包</h3><div class="text"><p>题包 README 的 11-12 修订里记了核实结果和自测，下面三条是其中和这道题直接相关的。检查只读 <code>r4.5b/</code> 里的两个文件和 r4.5 两个文件的哈希，基线也是从 r4.5 冻结的，所以不需要改检查，也不需要重新冻结。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">改前工作区</td><td>新生成的改前工作区（顶层换成 r4.5）判分</td><td class="st"><span class="chip good">按预期不过</span></td><td>只有 C0_files 失败（没有 r4.5b），符合预期。</td></tr><tr><td class="id">上游 r4.5b</td><td>上游改后的 r4.5b 判分</td><td class="st"><span class="chip good">通过</span></td><td>47 条必需检查全过；参考检查 C2_gnd_domain 不过，因为上游把 AGND 接了 V-，和 r4.5 的习惯相反。</td></tr><tr><td class="id">样本</td><td>64 个样本（58 个故障、4 个应通过、2 个信息样本）</td><td class="st"><span class="chip good">通过</span></td><td>58 个故障样本全被拦下，4 个应通过样本通过，2 个信息样本满足预期。</td></tr><tr><td class="id">无泄漏</td><td>新工作区顶层 sch、brd 的哈希与 r4.5 归档一致，且没有 DRV8353、MAX15062、SECONDARY_ENC、PICO-SPOX 字样</td><td class="st"><span class="chip good">通过</span></td><td>只有顶层库文件和题包材料、题面里出现这些名字。顶层 <code>controller.lbr</code> 保留，因为题面写明“库里已有”DRV8353S 和 PICO-SPOX，库里不含 MAX15062。</td></tr></tbody></table></div></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">结论</div><h3>已改为放入 r4.5 版本，待按新工作区重跑</h3><div class="text"><p>修订做法：<code>workspace.json</code> 加了一个 overlay 目录，用 r4.5 归档里的 <code>controller.sch</code>、<code>controller.brd</code> 覆盖工作区顶层的同名文件（哈希前 8 位 <code>73c70be3</code>、<code>858f20c0</code>），题面在起点一节补了一行，说明顶层两个文件是 r4.5 的工作副本，交付仍放 <code>r4.5b/</code>，没有透露答案。</p>
+<p>另一道 9b0b0f77 是同一改动的就地修改提交，改前顶层本来就是 r4.5，没有泄题，保留为正式题。按题包 README，两题的上游答案文件逐字节相同，所以这两题只计 9b0b0f77。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>版本归档式的提交会把答案藏在“改前”里：提交的内容只是把已经完成的文件复制到新目录，改前状态里的另一份文件早就是答案。搭题时只看“改前有没有答案所在的目录”不够，要把改前的工作文件和上游改后文件逐个比哈希。</p>
+<p>这道题是 Sonnet 自己发现并拒答的，所以没有造成误判。如果模型直接拿顶层文件当答案交上去，检查是会放行的：上游 r4.5b 本身就是 47 条必需检查全过。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>C/4892d559/checks/README.md</span><span>C/4892d559/task.md</span><span>C/4892d559/workspace.json</span><span><a href="https://github.com/mjbots/moteus/commit/4892d5597359b2524649e76cb35f8ba6ba53da1e">https://github.com/mjbots/moteus/commit/4892d5597359b2524649e76cb35f8ba6ba53da1e</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="3e9a8a34.html"><span class="eyebrow">上一个</span><span>Flipper One 天线：检查全过，4 处功能问题</span></a><a href="peak-4.html"><span class="eyebrow">下一个</span><span>Peak 充电电路的电源路径</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

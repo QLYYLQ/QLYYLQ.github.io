@@ -2,65 +2,83 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Omnifex</title>
-<meta name="description" content="Omnifex：PCB 到 CAD 的 agent 工具包和评测 gym。提案、验证报告、题源总览和进展页。">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f6f4a'/%3E%3Cpath d='M8 10h16M8 16h10M8 22h16' stroke='%23fff' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Omnifex：PCB 到 CAD 的 agent 工具包和评测基准。案例、进展、题源、提案和验证报告。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="../assets/site.css">
 </head>
 <body>
 <div class="wrap">
-  <div class="crumb"><a href="../">QLYYLQ</a> / omnifex</div>
+  <header class="top">
+    <div class="crumb"><a href="../">QLYYLQ</a><span>/</span><span>omnifex</span></div>
+    <div class="eyebrow">PCB → CAD · agent 工具包和评测基准 · 2026-10 起</div>
+    <h1>Omnifex</h1>
+    <p class="lead">让 agent 走完硬件的整条链：查手册、选有货的料、算参数、画原理图和 PCB、做配得上板子的外壳，导出嘉立创下单包。</p>
+  </header>
 
-  <h1>Omnifex</h1>
-  <p class="sub">PCB 到 CAD 的 agent 工具包和评测 gym · 2026-10 起</p>
-
-  <p class="lede">让 agent 走完硬件的整条链：查手册、选有货的料、算参数、画原理图和 PCB、做配得上板子的外壳，导出嘉立创下单包。</p>
   <div class="pillars">
-    <div class="pillar"><b>开源工具包</b><span>一个 MCP server、一组 skills、一个命令行，一条命令装进 Claude Code、Codex、Gemini CLI。</span></div>
-    <div class="pillar"><b>Gym</b><span>拿开源硬件的真实修订出题，agent 在原生 KiCad / CAD 文件上完成需求，自动判分。</span></div>
+    <div><b>开源工具包</b><span>一个 MCP server、一组 skills、一个命令行，一条命令装进 Claude Code、Codex、Gemini CLI。</span></div>
+    <div><b>评测基准</b><span>仿照 SWE-bench，从开源硬件仓库的真实修订里取“改前状态 + 需求 + 上游答案”，agent 在原生 KiCad / CAD 文件上完成需求。</span></div>
+    <div><b>验证器</b><span>两样东西共用一套比 DRC 更严的检查（L0 到 L6），从最终原生文件重新导出再判。</span></div>
   </div>
-  <p class="note">两样东西共用一套比 DRC 更严的验证器（L0 到 L6），从最终原生文件重新导出再判。</p>
 
-  <h2>文档</h2>
-  <ul class="list">
-    <li class="item">
-      <div class="date">2026-11-12</div>
-      <div>
-        <a class="title" href="progress.html">硬件设计基准进展</a><span class="tag">第 2 版</span>
-        <div class="desc">基准怎么仿照 SWE-bench 从真实修订取题、流水线、16 个带说明的案例、A 批两轮试做、稚晖君仓库的 Altium 转 KiCad 验证、CAD 专有格式转换和重筛、事故与教训。</div>
-        <div class="meta">85 KB · <a href="https://claude.ai/artifact/6NvXrEkq11p1oacy3Dvrmq">claude.ai 原页</a></div>
+  <section>
+    <h2><span class="no">案例</span>试做里发生了什么</h2>
+    <a class="feature" href="cases/">
+      <div class="txt">
+        <div class="eyebrow" data-case-count="22">22 个案例 · 带原生文件渲染图</div>
+        <div style="font-weight:700;font-size:1.05rem">检查放过的错、模型做不到的布线、还没造题的新题源</div>
+        <p class="muted" style="font-size:.95rem">试做案例展开题目、模型提交、自动检查、复核和审计；新题源案例追踪上游修订与待验证的条件。配图包含 KiCad / STEP 原生文件渲染和证据示意图，问题出在哪就放大到哪。</p>
+        <span class="go">看全部案例 →</span>
       </div>
-    </li>
-    <li class="item">
-      <div class="date">2026-11-03</div>
-      <div>
-        <a class="title" href="task-sources.html">题源总览</a>
-        <div class="desc">四类题（PCB 专项、CAD 专项、联合题、金题）落到具体的板子、零件和开源项目，分题单、项目和素材、修订事件几个视图，可筛选。</div>
-        <div class="meta">1.0 MB · 比 <a href="https://claude.ai/artifact/8nhGkYKYwhAJcbBwAHLLR2">claude.ai 原页</a>新：223 条修订事件（原页 205 条），含复杂项目扩池</div>
-      </div>
-    </li>
-    <li class="item">
-      <div class="date">2026-10-28</div>
-      <div>
-        <a class="title" href="proposal-v2.html">Omnifex 提案</a><span class="tag">第 2 版</span>
-        <div class="desc">为什么做、和已有基准的差别、工具包和 gym 两件交付、以改需求为主的出题方式、“验证过”怎么拆开记、前六周计划和主要风险。</div>
-        <div class="meta">152 KB · <a href="https://claude.ai/artifact/3zowhsEogmzyMFHNhGunrK">claude.ai 原页</a></div>
-      </div>
-    </li>
-    <li class="item">
-      <div class="date">2026-10-28</div>
-      <div>
-        <a class="title" href="validation-report.html">验证报告</a>
-        <div class="desc">用 KiCad 10.0.7 批跑 54 个嘉立创工厂工程和 27 块开源板：导入、断开和短路、原理图对 PCB、和工厂 Gerber 逐孔比对，以及对判分器、外壳补题和金任务的影响。</div>
-        <div class="meta">79 KB · <a href="https://claude.ai/artifact/Sa3GGATBuejjNoLcFC9sNG">claude.ai 原页</a> · 验证脚本和开源板结果在 <a href="https://claude.ai/artifact/E911rTUXj71iMQekT8Dwpf">验证文件</a></div>
-      </div>
-    </li>
-  </ul>
+      <div class="pic"><img src="cases/img/_feature_cases.jpg" alt="Corne 键盘 v4 整板，模型的解叠加未连接线"></div>
+    </a>
+  </section>
 
-  <p class="note">这些页面是 claude.ai artifact 的副本，正文没改，只补了页头，并把互相引用的链接换成站内链接。各页的 sha256 在 <a href="manifest.json">manifest.json</a>。</p>
+  <section>
+    <h2><span class="no">文档</span>报告和数据页</h2>
+    <ul class="doclist">
+      <li>
+        <div class="date">2026-11-12</div>
+        <div>
+          <a class="t" href="progress.html">硬件设计基准进展</a> <span class="chip info">第 2 版</span>
+          <div class="d">流水线、22 个带说明的案例、A 批两轮试做、稚晖君仓库的 Altium 转 KiCad 验证、CAD 专有格式转换和重筛、事故与教训。</div>
+          <div class="m">85 KB · <a href="https://claude.ai/artifact/6NvXrEkq11p1oacy3Dvrmq">claude.ai 原页</a></div>
+        </div>
+      </li>
+      <li>
+        <div class="date">2026-11-03</div>
+        <div>
+          <a class="t" href="task-sources.html">题源总览</a>
+          <div class="d">四类题（PCB 专项、CAD 专项、联合题、金题）落到具体的板子、零件和开源项目，分题单、项目和素材、修订事件几个视图，可筛选。</div>
+          <div class="m">1.0 MB · 比 <a href="https://claude.ai/artifact/8nhGkYKYwhAJcbBwAHLLR2">claude.ai 原页</a>新：241 条修订/问题线索（原页 205 条），含两轮补充与复杂项目扩池</div>
+        </div>
+      </li>
+      <li>
+        <div class="date">2026-10-28</div>
+        <div>
+          <a class="t" href="proposal-v2.html">Omnifex 提案</a> <span class="chip info">第 2 版</span>
+          <div class="d">为什么做、和已有基准的差别、工具包和评测两件交付、以改需求为主的出题方式、“验证过”怎么拆开记、前六周计划和主要风险。</div>
+          <div class="m">152 KB · <a href="https://claude.ai/artifact/3zowhsEogmzyMFHNhGunrK">claude.ai 原页</a></div>
+        </div>
+      </li>
+      <li>
+        <div class="date">2026-10-28</div>
+        <div>
+          <a class="t" href="validation-report.html">验证报告</a>
+          <div class="d">用 KiCad 10.0.7 批跑 54 个嘉立创工厂工程和 27 块开源板：导入、断开和短路、原理图对 PCB、和工厂 Gerber 逐孔比对，以及对判分器、外壳补题和金任务的影响。</div>
+          <div class="m">79 KB · <a href="https://claude.ai/artifact/Sa3GGATBuejjNoLcFC9sNG">claude.ai 原页</a> · 验证脚本和开源板结果在 <a href="https://claude.ai/artifact/E911rTUXj71iMQekT8Dwpf">验证文件</a></div>
+        </div>
+      </li>
+    </ul>
+    <p class="muted" style="font-size:.86rem">文档页是 claude.ai artifact 的副本，正文没改，只补了页头，并把互相引用的链接换成站内链接。各页的 sha256 在 <a href="manifest.json">manifest.json</a>。</p>
+  </section>
 
-  <footer><a href="../">← QLYYLQ</a></footer>
+  <footer class="site"><a href="../">QLYYLQ</a><a href="cases/">案例</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
 </div>
 </body>
 </html>

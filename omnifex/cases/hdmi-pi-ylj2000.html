@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>HDMI-PI ylj2000 原理图与 PCB 不同步 · 稚晖君 HDMI-PI（peng-zhihui/HDMI-PI）</title>
+<meta name="description" content="原理图里有 5 个元件（72 个引脚）在 PCB 上没有，看起来是一个做了一半的变体。同步可以朝两个方向做，这点本身就是出题要先定的事。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>hdmi-pi-ylj2000</span></div>
+  <div class="eyebrow">还没造题的新题源 · 稚晖君 HDMI-PI（peng-zhihui/HDMI-PI）</div>
+  <h1>HDMI-PI MiniDisplay-ylj2000：原理图和 PCB 没对上的半成品</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">难</span><span class="chip info">现成半成品</span><span class="chip warn">高速：范围标记</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>HDMI-PI 是稚晖君的 HDMI 转 MIPI 显示转换板，用东芝的 TC358870XBG。<code>TC358870XBG/MiniDisplay-ylj2000</code> 是其中一个变体工程。用 Altium 自己导出的原理图网表和 PCB 焊盘做对比，29 个工程里只有这个和 MiniRover 的原理图与 PCB 对不上，MiniRover 只差一个充电芯片裸焊盘的接地，无害。这个变体的差别大得多：原理图里的 J1 和 T1 到 T4 共 5 个元件，PCB 上一个也没有，对应 72 个原理图引脚没有焊盘。</p>
+<p>这块板不需要人工制造差错，天然就是“原理图和 PCB 对不上”的半成品。要补的方向有两个：把 PCB 补成原理图的样子，或者把原理图删成 PCB 的样子。读了同目录里没有后缀的 MiniDisplay 工程之后，后一个方向看起来更像作者当时的意图，但这只是推测。MIPI 和 HDMI 都属于高速信号，按规则打范围标记，不进金题。</p></div>
+</header>
+<div class="figures"><div><span class="v">5</span><span class="k">原理图有、PCB 没有的元件（J1、T1 到 T4，Altium 比对结果）</span></div><div><span class="v">72</span><span class="k">这 5 个元件在 PCB 上没有焊盘的原理图引脚数</span></div><div><span class="v">408</span><span class="k">PCB 焊盘数，Altium 导出和 KiCad 导入完全一致，位置残差 0</span></div><div><span class="v">0</span><span class="k">其余 400 个原理图引脚里，网络划分和 PCB 不一致的数量</span></div></div>
+<section><h2><span class="no">题</span>题目（草案）</h2><p>还没有加工成题。要先决定同步的方向，再写题面。</p><div class="ticket"><div class="k">起点</div><div><code>1.Hardware/TC358870XBG/MiniDisplay-ylj2000/</code> 下的 3 张原理图（Connector、HDMI_To_MIPI_PHY、Main）和 MiniDisplay.PcbDoc，转 KiCad 后是一块 48 × 48 mm 的 2 层板，76 个有位号的元件，U3 是 80 球的 TC358870XBG。</div><div class="k">方向一：补 PCB</div><div>按原理图增加 J1（60 脚 0.5 mm 间距 FPC 座）和 T1 到 T4（测试点），连好线。需要新建 J1 的封装，同目录的完整变体里有现成的 <code>FFC_0.5_60</code> 和 <code>TEST_PT</code> 可参考。</div><div class="k">方向二：改原理图</div><div>PCB 上已经有 P2、P4（2×9 排针）、P3（2×5 排针），原理图里的 Connector 页也同时画着这几个排针和 J1。可以删掉原理图里的 J1 和 T1 到 T4，让两边一致。</div><div class="k">判分方向</div><div>原理图和 PCB 的网表一致（元件、引脚、网络都对得上）；ERC、DRC 不新增错误；高速差分线的间距和长度匹配可作加权项。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">线索</div><h3>Altium 自己导出的网表和焊盘对比，只有两个工程对不上</h3><div class="text"><p>稚晖君这批 29 个 Altium 工程，都用 Windows 上的 Altium 22 导出原理图网表和 PCB 焊盘，再和 KiCad 导入结果比对。比对结果里还顺带得到“原理图和 PCB 同步与否”：MiniRover 的 U2（MCP73833）裸焊盘只在 PCB 上接了 GND，无害；<code>MiniDisplay-ylj2000</code> 则缺了 5 个元件。</p>
+<p>这个发现来自比对，没有 issue 或提交，也没有人说过“这块板没做完”。证据只有比对结果，所以哪里不同步是确定的，作者的意图要靠旁证推测。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">改前</div><h3>PCB 上有 HDMI 口、USB-C、STM32、TC358870 和三个排针</h3><div class="text"><p>下图是 HEAD 上的 PcbDoc 转成 KiCad 后的正面。左边是 HDMI 口（位号还是未编号的“HDMI?”），左下是 USB-C（USB1），右上偏中是 TC358870XBG（U3，80 球 BGA），右下是 STM32F103（U2），中间偏下是电源芯片 U1，上边和右边各有一个 2×9 排针（P2、P4），右侧还有一个 2×5 排针（P3）。红色高亮的是 U3、HDMI?、USB1、U1、U2。</p>
+<p>原理图一侧有焊盘可比的 400 个引脚，网络划分全部和 PCB 一致，没有不一致的地方。不同步只在缺元件。</p></div><figure><div class="frame"><a href="img/hdmi-pi-ylj2000/board_full.svg" title="打开原图"><img src="img/hdmi-pi-ylj2000/board_full.svg" alt="**ylj2000 的 PCB 正面**（`MiniDisplay.PcbDoc` 转 KiCad，本页渲染）。红色高亮 U3、HDMI?、USB1、U1、U2，没有画填充铺铜。" loading="lazy"></a></div><figcaption><b>ylj2000 的 PCB 正面</b>（<code>MiniDisplay.PcbDoc</code> 转 KiCad，本页渲染）。红色高亮 U3、HDMI?、USB1、U1、U2，没有画填充铺铜。</figcaption></figure></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">差异</div><h3>原理图有、PCB 没有的 5 个元件</h3><div class="text"><p>比对结果的 JSON 记录了 81 个原理图元件对 76 个 PCB 元件，差的 5 个是 J1 和 T1 到 T4。本页另外去读了这 3 张 SchDoc（用文本匹配抽取元件库名和位号，没有解析连线）：J1 的库名是 FPC60-0.5mm，在 Connector 页；T1 到 T4 的库名是“测试点”，在 Main 页。</p>
+<p>两处材料对不上，需要说明：最初的整理材料里写“J1、T1 到 T4、USB1 共 5 个元件”，但比对 JSON 的缺失清单里没有 USB1，PCB 里 USB1（Type-C，22 个焊盘）和未编号的“HDMI?”（HDMI-SWM-19，23 个焊盘）都有。这里以比对 JSON 为准。另外 J1 的 60 个脚加 4 个测试点只有 64 个，和 72 对不上，差的 8 个可能是 J1 的外壳固定脚，还没核对。</p></div><figure><div class="frame"><a href="img/hdmi-pi-ylj2000/missing_table.svg" title="打开原图"><img src="img/hdmi-pi-ylj2000/missing_table.svg" alt="**原理图有、PCB 没有的元件清单**。数据来自 Altium 的比对结果和对 SchDoc 的粗读。" loading="lazy"></a></div><figcaption><b>原理图有、PCB 没有的元件清单</b>。数据来自 Altium 的比对结果和对 SchDoc 的粗读。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">放大看</div><h3>同目录里没有后缀的 MiniDisplay 工程，板上就有 J1 和 T1 到 T4</h3><div class="text"><p><code>TC358870XBG/</code> 下还有一个没有后缀的 <code>MiniDisplay</code> 工程，它的原理图和 PCB 是同步的。把它的 PCB 转成 KiCad，板上正好有 J1（60 脚 FFC 座，库名 0.5S_A_60PWB，封装 FFC_0.5_60）和 T1 到 T4（封装 TEST_PT），J1 在右侧，和 TC358870 之间是一束带蛇形走线的差分线（应该是 MIPI，本页没有核对网络名）。</p>
+<p>把两块板的元件清单对一下，ylj2000 少了 J1、T1 到 T4、L4、L5 和 Y1（8 MHz 晶振），多了 P2、P3、P4 三个排针、X1（12 MHz 晶振）和 C23、C24 两个 16 pF 电容，R33 从 2.2K 变成 1K 1%，板子从约 43 × 39 mm 变成 48 × 48 mm。以上是本页按位号和封装对比两份 PCB 的结果。</p></div><figure><div class="frame"><a href="img/hdmi-pi-ylj2000/sibling_full.svg" title="打开原图"><img src="img/hdmi-pi-ylj2000/sibling_full.svg" alt="**同目录里的完整变体 MiniDisplay**（本题的板是上一张）。红色是 J1（60 脚 FFC）和 T1 到 T4，右侧那一束蛇形走线是 TC358870 到 J1 的差分线。" loading="lazy"></a></div><figcaption><b>同目录里的完整变体 MiniDisplay</b>（本题的板是上一张）。红色是 J1（60 脚 FFC）和 T1 到 T4，右侧那一束蛇形走线是 TC358870 到 J1 的差分线。</figcaption></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">结论</div><h3>能出“同步原理图和 PCB”的题，但要先决定朝哪个方向补</h3><div class="text"><p>ylj2000 的 PCB 已经用排针代替了 FPC 座，板子也换了尺寸，看起来是在完整变体上继续改出来的；原理图的 Connector 页同时画着 J1 和三个排针，Main 页还留着 4 个测试点。这样看，更像作者改了 PCB 却没来得及清理原理图。这是本页的推测，没有作者的说明。</p>
+<p>两个方向的题有不同的难度：</p>
+<ul><li>方向二（改原理图）较低：删 5 个元件，判分比较两边网表。</li><li>方向一（补 PCB）较高：新建 60 脚 FPC 封装，摆放，布 MIPI 差分对，要满足阻抗和等长这类高速要求，需要打范围标记。J1 的引脚接到哪些网络，本页没有读，不能保证它和排针接的是同一批信号。</li></ul>
+<p>两个方向都不需要人工制造差错，原生文件本身就是半成品。是否收入题库以及要出哪个方向，需要你定。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>多数半成品题要人为注入改动，这一块板自己就带着不一致，原生状态就是题。它也提醒我们：“原理图和 PCB 不同步”不止一种补法，题面必须写清方向，判分只认最终两边一致。</p>
+<p>高速和 BGA 的成分很重，按规则打范围标记，不进金题。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/peng_zhihui_20261112/altium_vs_kicad/HDMI-PI__TC358870XBG__MiniDisplay-ylj2000__MiniDisplay.json（Altium 网表对焊盘的比对结果）</span><span>data/peng_zhihui_20261112/kicad_base/peng-zhihui__HDMI-PI/（HEAD 转好的 KiCad 板，ylj2000 和同目录的 MiniDisplay 两块）</span><span>data/peng_zhihui_20261112/README.md（29 个工程中只有 HDMI-PI ylj2000 和 MiniRover 不同步）</span><span><a href="https://github.com/peng-zhihui/HDMI-PI/tree/main/1.Hardware/TC358870XBG/MiniDisplay-ylj2000">https://github.com/peng-zhihui/HDMI-PI/tree/main/1.Hardware/TC358870XBG/MiniDisplay-ylj2000</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="a1fa04b7.html"><span class="eyebrow">上一个</span><span>ElectronBot 多余的 VBUS_IN 走线</span></a><a href="4bf05d77.html"><span class="eyebrow">下一个</span><span>Miniscope 双色版：板跟着模块改</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

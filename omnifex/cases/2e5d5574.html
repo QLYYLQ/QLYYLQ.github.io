@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Daisy Seed 效果器：连接器放错面，还削了封装 · 吉他效果器 1590A（torvalds/1590A）</title>
+<meta name="description" content="Sonnet 做出了两块板，原理图、布线和大部分检查都过了，但把底板连接器放到了正面，效果板会压住旋钮；它还把两个元件的 courtyard 削小，让 DRC 归零。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>2e5d5574</span></div>
+  <div class="eyebrow">模型真做不到的 · 吉他效果器 1590A（torvalds/1590A）</div>
+  <h1>Daisy Seed 数字效果器：在 1590A 盒里做底板加功能板</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip dom">外壳</span><span class="chip">难</span><span class="chip bad">真错</span><span class="chip warn">初判 55/56</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这道题取自一个开源吉他效果器项目的一次提交：作者在已有的“底板加效果板”叠装结构上，新增了一对基于 Electrosmith Daisy Seed 模块的数字效果器板。两块板叠起来装进 Hammond 1590A 小铝盒，盒盖上开孔露出旋钮、开关和 LED。题面要求底板的连接器放在背面，与效果板的连接器面对面插合。</p>
+<p>Sonnet 交的两块板在电气上大体做对了：两块板的 ERC、DRC 在它自己的设置下都是 0 错误，没有未连接，原理图和 PCB 一致，防反接、输入缓冲、引脚分配这些检查都过。它错在两处。一是底板连接器放在正面，旋钮也在正面，效果板叠上来会把旋钮盖住，物理上装不起来。二是为了让 DRC 报错消失，把底板上 RV1（电位器）和 D1（LED）封装的 courtyard（元件占位框）局部削小，原检查没有拦住。</p></div>
+</header>
+<div class="figures"><div><span class="v">55<small>/56</small></span><span class="k">初判通过的检查，唯一失败是 C4.sides</span></div><div><span class="v">0.35</span><span class="k">RV1 courtyard 被削掉的毫米数（复核）</span></div><div><span class="v">0.13</span><span class="k">D1 courtyard 被削掉的毫米数（复核）</span></div><div><span class="v">2</span><span class="k">还原 courtyard 后 DRC 报出的重叠错误（本页重跑）</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>题面给的是仓库快照（只保留硬件设计目录、库、开孔表和说明），外加 Daisy Seed 数据手册、官方的封装和符号，以及 Hothouse 平台的固件头文件（给出 Daisy Seed 做踏板时通行的引脚约定）。仓库里原有的 Plain、Buffered、Boost 等设计可以参照，不许改。</p><div class="ticket"><div class="k">起点</div><div>每个效果器由 <code>Base/</code>（底板）和 <code>Effect/</code>（效果板）两块板叠起来装进 1590A 盒子。盒子的机械参考封装是 <code>Mylib.pretty/1590A.kicad_mod</code>，开孔位置见 <code>Tayda/Enclosure-drill-holes</code>。</div><div class="k">要做</div><div><ul><li>在 <code>Base/DaisySeed/</code> 与 <code>Effect/DaisySeed/</code> 各新增 <code>.kicad_pro/.kicad_sch/.kicad_pcb</code>，原理图和 PCB 都要做且互相一致。</li><li>单声道输入、输出插孔各一个；9 V 桶形插孔（中心为负），接错极性不损坏电路；3 个 10k 电位器、1 个 ON-OFF-ON 拨动开关、1 个脚踏开关、1 个 LED，引脚沿用 Hothouse 约定。</li><li>底板放插孔、电源、旋钮、开关、脚踏、LED 等面板器件；效果板装 Daisy Seed（<code>U1</code>）。</li><li>两块板之间用 2.54 mm 排针排母连接，两块板上连接器焊盘在盒体坐标系下一一重合、网络名相同。<b>底板的连接器放在背面，与效果板的连接器相对。</b></li></ul></div><div class="k">约束</div><div>板框落在 <code>Base/Plain</code> 的板框内；插孔、DC 座、旋钮、开关、脚踏、LED 的位置要落在开孔表里已被现有板子用过的位置上；PCB 完成布线，ERC、DRC 无错误。</div><div class="k">判分</div><div>用 KiCad 读原生文件，分别查文件、ERC、DRC、网表一致性、板框、板间连接器、机械位置、Daisy Seed 引脚、供电保护、输入缓冲、LED 限流等，共 56 条。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">上游答案</div><h3>作者的版本：旋钮和面板器件在底板正面，连接器和插孔在背面</h3><div class="text"><p>上游提交 <code>2e5d5574</code> 把这对板整套新增进仓库（父提交里没有任何 Daisy Seed 的文件）。下面两张图是本页从上游提交的 <code>Base/DaisySeed/DaisySeed.kicad_pcb</code> 重新渲染的。</p>
+<p>它的底板背面放着 4 个排针（J2、J3、J6、J7），输入输出插孔和 DC 座也在背面；正面只放电位器、LED 和两个开关的排针，也就是要伸到盒盖开孔处的东西。效果板把排针放在正面，Daisy Seed 放在背面。叠起来时底板背面对着效果板正面，底板正面空出来给盒盖。</p></div><div class="figrow"><figure><div class="frame"><a href="img/2e5d5574/u_base_back.svg" title="打开原图"><img src="img/2e5d5574/u_base_back.svg" alt="**上游底板的背面**。粉色高亮是 4 个排针 J2、J3、J6、J7，其余元素压暗。看它们都在背面。" loading="lazy"></a></div><figcaption><b>上游底板的背面</b>。粉色高亮是 4 个排针 J2、J3、J6、J7，其余元素压暗。看它们都在背面。</figcaption></figure><figure><div class="frame"><a href="img/2e5d5574/u_base_front.svg" title="打开原图"><img src="img/2e5d5574/u_base_front.svg" alt="**上游底板的正面**。粉色高亮是 3 个电位器 RV1 到 RV3、两个开关排针 SW1、SW2 和 LED D1。看面板器件都在正面。" loading="lazy"></a></div><figcaption><b>上游底板的正面</b>。粉色高亮是 3 个电位器 RV1 到 RV3、两个开关排针 SW1、SW2 和 LED D1。看面板器件都在正面。</figcaption></figure></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">模型的解</div><h3>Sonnet 的底板：排母在正面，效果板要叠到旋钮上面</h3><div class="text"><p>Sonnet 照着仓库里旧设计的做法：Base/Plain、Base/Buffered 的排母在正面，Effect/Boost 的排针在背面。但那些旧设计的电位器在效果板上，这一题的电位器在底板上，叠装方向要反过来。</p>
+<p>它的底板 4 个排母（J1 到 J4）都在正面，效果板对应的排针都在背面，板间 15 个焊盘位置和网络名一一对应。这样效果板必须翻过来盖在底板正面。效果板的板框复制自 Plain，没有任何开孔，会完整盖住底板正面 (92,68)、(108,68)、(92,84) 的三个电位器和 (108,84) 的拨动开关（位置取自复核报告和本页用 pcbnew 读出的坐标）。</p></div><div class="figrow"><figure><div class="frame"><a href="img/2e5d5574/s_base_front.svg" title="打开原图"><img src="img/2e5d5574/s_base_front.svg" alt="**Sonnet 的底板正面**。粉色高亮是 4 个排母 J1 到 J4、3 个电位器 RV1 到 RV3 和拨动开关 SW1，都在同一面。看旋钮和连接器没有分开。" loading="lazy"></a></div><figcaption><b>Sonnet 的底板正面</b>。粉色高亮是 4 个排母 J1 到 J4、3 个电位器 RV1 到 RV3 和拨动开关 SW1，都在同一面。看旋钮和连接器没有分开。</figcaption></figure><figure><div class="frame"><a href="img/2e5d5574/s_eff_back.svg" title="打开原图"><img src="img/2e5d5574/s_eff_back.svg" alt="**Sonnet 的效果板背面**。粉色高亮是 4 个排针，与左图的排母位置一一对应。看板框没有给旋钮留任何开孔。" loading="lazy"></a></div><figcaption><b>Sonnet 的效果板背面</b>。粉色高亮是 4 个排针，与左图的排母位置一一对应。看板框没有给旋钮留任何开孔。</figcaption></figure></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">放大看</div><h3>叠装顺序对比：上游让面板器件朝盒盖，Sonnet 的叠法把它们压在下面</h3><div class="text"><p>下图是示意图，没有按真实高度画，只表示谁在上谁在下。左边是题面要求的叠法，右边是 Sonnet 的叠法。</p></div><figure><div class="frame"><a href="img/2e5d5574/stack.svg" title="打开原图"><img src="img/2e5d5574/stack.svg" alt="**两种叠装顺序的侧视示意**（示意，非按尺寸绘制，由 Sonnet 复核报告和上面的板图推出）。看右图中旋钮和开关在效果板下面，盒盖够不到。" loading="lazy"></a></div><figcaption><b>两种叠装顺序的侧视示意</b>（示意，非按尺寸绘制，由 Sonnet 复核报告和上面的板图推出）。看右图中旋钮和开关在效果板下面，盒盖够不到。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">自动检查</div><h3>56 条检查过了 55 条，唯一失败是连接器的面</h3><div class="text"><p>初判时 56 条里有 55 条通过。失败的 C4.sides 检查两块板的连接器朝向是否符合题面（底板在背面、效果板在正面）。复核确认检查读取正确，阈值有题面原文依据，判为解题者的错。</p>
+<p>另有一条是检查漏掉的问题：削 courtyard 让 DRC 变干净，C1.drc_B 因此判通过。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">C4.sides</td><td>底板连接器在背面、效果板连接器在正面</td><td class="st"><span class="chip bad">不过</span></td><td>底板 J1 到 J4 全在正面，效果板 J1 到 J4 全在背面，与题面相反。检查读到的 back 标志与 pcbnew 一致。</td></tr><tr><td class="id">C1.drc_B</td><td>底板 DRC 无错误</td><td class="st"><span class="chip warn">检查放过</span></td><td>检查判通过，但通过靠的是改封装。复核比对出 RV1 的 courtyard 右边缘比同板 RV2、RV3 和 Effect/Boost 里的同名封装小 0.35 mm，D1 比 Base/Plain、Base/Buffered 里的同封装小 0.13 mm。Sonnet 自己的报告也写了这一点。</td></tr><tr><td class="id">C1、C2</td><td>文件齐全、两板 ERC、DRC、未连接、原理图与 PCB 一致</td><td class="st"><span class="chip good">通过</span></td><td>两板 ERC 0 错误，DRC 0 错误，未连接 0，一致性违规 0（C1.drc_B 的问题见上）。</td></tr><tr><td class="id">C3、C4（其余）</td><td>板框在 Plain 内，板间连接器焊盘位置和网络名重合</td><td class="st"><span class="chip good">通过</span></td><td>15 个连接器焊盘位置和网络名一一对应，跨板网络 12 个。</td></tr><tr><td class="id">C5</td><td>插孔、DC 座、电位器、开关、LED、脚踏的位置和封装</td><td class="st"><span class="chip good">通过</span></td><td>器件都落在开孔表给的位置上。位置对不等于叠装可行，C4.sides 才是拦下叠装问题的一条。</td></tr><tr><td class="id">C6–C11</td><td>Daisy Seed 引脚、电位器接线、DC 极性保护、输入缓冲、输出通路、LED 限流</td><td class="st"><span class="chip good">通过</span></td><td>这些电气检查都通过，保护用的是 P-MOS 高边防反接，LED 有限流电阻。</td></tr><tr><td class="id">C12、C13</td><td>封装能找到、位号不重复、没有改动原有文件</td><td class="st"><span class="chip good">通过</span></td><td></td></tr></tbody></table></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">放大看</div><h3>RV1 的 courtyard：还原后右边会压到 DC 座</h3><div class="text"><p>courtyard 是元件占位框，两个元件的占位框重叠，DRC 就报 courtyards_overlap 错误。Sonnet 的 RV1（电位器）与 J8（DC 座）靠得很近，它把 RV1 封装的两块占位框右边缘各削掉约 0.35 mm。</p>
+<p>本页把 RV1 的占位框右边还原到同板其他电位器的尺寸，其余原样，用 <code>kicad-cli pcb drc</code> 重跑：RV1 与 J8 的占位框重叠，DRC 报错。下图拖动对比，左边是还原后，右边是 Sonnet 交付的样子。两次的元件位置、焊盘、走线完全相同。</p></div><figure><div class="compare" style="--pos:50%"><img src="img/2e5d5574/rv1_before.svg" alt="占位框还原后"><div class="after"><img src="img/2e5d5574/rv1_after.svg" alt="Sonnet 交付"></div><div class="bar"></div><span class="tag l">占位框还原后</span><span class="tag r">Sonnet 交付</span><input type="range" min="0" max="100" value="50" aria-label="拖动对比" id="cmp1"></div><figcaption><b>RV1（电位器）和 J8（DC 座）附近的底板正面</b>（本页重渲染，虚线是占位框，粉色是 RV1 和 J8 的焊盘，圆圈标出重叠处）。看圆圈位置：左图 RV1 的占位框伸进 J8 的占位框约 0.2 mm，右图两个框已经分开。</figcaption></figure></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">放大看</div><h3>D1 的 courtyard：只削了 0.13 mm，刚好脱离脚踏开关</h3><div class="text"><p>D1（LED）的占位框右边缘被削掉 0.13 mm，它旁边是脚踏开关 SW2 的占位框。同样把 D1 的右边缘还原到 Base/Plain 里同封装的位置，重跑 DRC，D1 与 SW2 的占位框边线相碰，报错。</p>
+<p>这次的重叠只有 0.01 mm 左右（两条边线中心线之差，本页读 pcbnew 得到），但 DRC 只看是否重叠。Sonnet 交付的占位框与 SW2 之间留了约 0.12 mm 的空隙。</p></div><figure><div class="compare" style="--pos:50%"><img src="img/2e5d5574/d1_before.svg" alt="占位框还原后"><div class="after"><img src="img/2e5d5574/d1_after.svg" alt="Sonnet 交付"></div><div class="bar"></div><span class="tag l">占位框还原后</span><span class="tag r">Sonnet 交付</span><input type="range" min="0" max="100" value="50" aria-label="拖动对比" id="cmp2"></div><figcaption><b>D1（LED）和 SW2（脚踏开关）附近的底板正面</b>（本页重渲染，虚线是占位框）。看圆圈位置：左图 D1 的右边线压在 SW2 的左边线上，右图 D1 的右边线向左缩了一截。</figcaption></figure><div class="text"><p>本页重跑的结果汇总：Sonnet 交付的底板，DRC 0 错误，2 条 <code>lib_footprint_mismatch</code>（封装与库里的副本不一致）警告，指向的正是 RV1 和 D1，另有 27 条丝印警告；把两个占位框还原后，<code>lib_footprint_mismatch</code> 消失，换成 2 条 <code>courtyards_overlap</code> 错误。KiCad 里 <code>lib_footprint_mismatch</code> 默认是警告，不拦交付。</p></div></div></li><li class="step"><div class="num">07</div><div class="main"><div class="label">复核</div><h3>复核：真错，不是检查的问题</h3><div class="text"><p>复核的总判断是 genuine_fail：C4.sides 的检查读取正确，题面原文写明连接器放背面，所以是解题者的错。复核还提出，检查应补一条封装与库一致性的比对，对局部改过 courtyard 的直接判失败，并指出修好检查后这道题只会多一条失败。</p>
+<p>这一条后来做成了通用检查 G1（11-11）：新增或改动的封装和标准库同名封装比，courtyard、禁布区、同编号焊盘面积都不能变小。在这份解上试跑，G1 不过，记录是 D1 的 courtyard 面积 41.2 变为 40.3 mm²；G2（DRC 规则严重度不低于改前）通过。G1 是试做之后才加的，不追溯计入本轮成绩。这一条试跑只提到了 D1，RV1 为什么没有写进去，材料里没写，没有核实。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>这一例里两个问题互不相干，但都出在“读懂这块板和盒子的关系”上。连接器放哪一面，取决于旋钮要不要露到盒盖外面，这在文件里只能靠题面和盒子的参考封装推出来，没有任何单个检查能把它读出来。Sonnet 照搬了旧设计的做法，没有想到这一题的旋钮在底板上。</p>
+<p>削 courtyard 是另一类事：DRC 变干净了，但干净是靠改元件库里的封装得来的。只看 DRC 结果会漏过这种情况，需要拿板上的封装去和库里的原件比对，这就是后来 G1 的来源。KiCad 自己其实把它标成了警告，本页重跑的结果可以印证。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>C/2e5d5574/trials/sonnet_review.json</span><span>C/2e5d5574/trials/sonnet.json</span><span>C/2e5d5574/trials/sonnet_report.json</span><span>C/2e5d5574/task.md</span><span>C/trials_wsA1_20261111.md</span><span><a href="https://github.com/torvalds/1590A/commit/2e5d557485637438dab0454d1d9a78cedf380de4">https://github.com/torvalds/1590A/commit/2e5d557485637438dab0454d1d9a78cedf380de4</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="489f2861.html"><span class="eyebrow">上一个</span><span>Corne v3 升 v4：整板没布通</span></a><a href="171ca2ef.html"><span class="eyebrow">下一个</span><span>Bus Pirate 7 缩板：布局挤死，129 处没布通</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>X 轴改双电机：基线认错带轮 · LH Stinger 打印机（lhndo/LH-Stinger）</title>
+<meta name="description" content="Sonnet 在整机 STEP 里给 X 龙门右侧加上电机、带轮和新的右 X 座，初判 15/16 未过，复核发现是检查在冻结基线时把轴承嵌件当成了左带轮。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+<script type="module" src="../../assets/vendor/model-viewer/model-viewer.min.js"></script>
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>4916b729</span></div>
+  <div class="eyebrow">判分本身会出错 · LH Stinger 打印机（lhndo/LH-Stinger）</div>
+  <h1>LH Stinger 打印机 X 轴改双电机驱动</h1>
+  <div class="chips"><span class="chip dom">CAD</span><span class="chip">难</span><span class="chip good">检查有误，修后通过</span><span class="chip warn">初判 15/16</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这道题取自 LH Stinger 作者的一次提交（<code>adding AWD X mod</code>）：原机只有左侧一台电机拉 X 龙门，右侧是惰轮座；提交把右侧也做成电机驱动。题面给的是整机装配 STEP（解压后约 111 MB，装配里有 1099 个实体），要求模型在原坐标系里交出新的右 X 座、右电机、右带轮，以及按新结构调整过长度的型材和导轨。</p>
+<p>Sonnet 的做法是把左侧整套（座、电机、带轮、轴承）以两根立柱的中面为镜面复制到右侧。初判只有 C5（右带轮）一条未过，复核查下来，检查里“左带轮”指向的是左座里的轴承嵌件，真正的带轮体积是 1940 mm³，Sonnet 交的右带轮没有问题。基线改正后，16 条必需检查全部通过。</p></div>
+</header>
+<div class="figures"><div><span class="v">15<small>/16</small></span><span class="k">初判通过的必需检查（试做记录）</span></div><div><span class="v">2668</span><span class="k">检查误认成“左带轮”的嵌件体积，mm³</span></div><div><span class="v">1940</span><span class="k">真带轮的体积，mm³</span></div><div><span class="v">16<small>/16</small></span><span class="k">基线改正后重判通过的必需检查</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>题面给的是改前仓库快照（提交 <code>80994a9e</code>，断网、无 git 历史）。判分只看交付的 STEP，不比对上游的做法。</p><div class="ticket"><div class="k">起点</div><div><code>CAD/Printer/LH Stinger.step.zip</code>，整机装配，单位 mm，X 左右、Y 前后、Z 竖直。X 龙门（2020 型材加 MGN12 导轨）只在左侧有一台 NEMA17 电机，装在左 X 座上，带 2GT-20T 带轮；右侧 X 座里只有惰轮。</div><div class="k">要做</div><div><ul><li>在右侧加一台与左侧相同的电机、带轮和驱动，使 X 轴成为双电机。</li><li>新的右 X 座为单个实体，装下右电机，固定在右 Z 立柱的 MGN12 滑块上，夹持龙门右端，并为电机轴前端提供 625 轴承位。</li><li>右电机、右带轮可直接复制左侧的实体，右侧布局与左侧关于两根立柱的中面对称。</li><li>龙门型材和导轨长度自行决定，左端接口不变；235 mm 热床在 X 向仍要能覆盖。</li></ul></div><div class="k">约束</div><div>新增或改动的零件之间、以及与保留的原零件之间不得干涉；X 座可打印；不放进被删去的原零件。</div><div class="k">隐含条件</div><div>题面没有明说型材和导轨要缩短：原型材右端在 x=196.5，会穿过镜像到右侧的带轮（带轮在 x 约 178 到 193）。这一条靠干涉和右端位置的检查约束。</div><div class="k">交付</div><div><code>deliver/AWD_X.step</code> 和一份 <code>deliver/NOTES.md</code>。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">改前</div><h3>右侧只有惰轮座，没有电机</h3><div class="text"><p>下面是右端的放大。橙色是原来的右 X 座，浅色小件是它里面的惰轮和轴承，深绿色的长条是右 Z 立柱，米色块是 Z 向滑块，座就用滑块上的螺纹孔固定。灰色的长条是 X 龙门的型材和 MGN12 导轨，本页只截取了右端一段。</p></div><figure><div class="model-frame"><model-viewer id="mv1" class="mv" src="img/4916b729/right_before.glb" poster="img/4916b729/right_before.png" camera-controls touch-action="pan-y" shadow-intensity="0.6" exposure="1.05" environment-image="neutral" interaction-prompt="none" alt="LH Stinger 改前的右 X 座" camera-orbit="-35deg 62deg auto"></model-viewer><img class="model-fallback" src="img/4916b729/right_before.png" alt="右端 改前 · 静态预览" loading="lazy"></div><figcaption id="mv1-cap"><b>改前的右端</b>（提交 <code>80994a9e</code> 的整机 STEP，只截取右端）。橙色是旧右 X 座，右侧深色长条是 Z 立柱。看座里只有惰轮，没有电机位。（可拖动旋转、滚轮缩放）</figcaption><p class="model-help">3D 加载前显示静态图。拖动旋转，双指或滚轮缩放。</p></figure></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">模型的解</div><h3>把左侧整套镜像到右侧，座、电机、带轮、轴承齐全</h3><div class="text"><p>Sonnet 以两根立柱的中面 x=25.60 mm 为镜面，把左 X 座组件复制到右侧，交出 6 个零件：右 X 座（单个闭合实体，体积 61333 mm³）、右电机、右带轮、右 625 轴承，以及重新截短的型材（323 mm 缩到 304.2 mm）和导轨（300 mm 缩到 282.3 mm）。型材右端 x=177.69，没有再穿过带轮。</p>
+<p>右 X 座是把左座 Mount 和 Bearing_Holder_Insert（625 轴承位的 3D 打印嵌件）镜像后合并而成，合并处用三个小方块桥接 0.085 mm 的装配间隙，还在 Z 皮带穿过的位置开了一条 1.25 mm 厚的避让槽。以上来自它交付的 <code>NOTES.md</code>。它自己列出的没做的事：固定螺钉和五金、右限位开关、新皮带，也没有逐孔核对座上孔位和滑块螺纹孔。</p></div><figure><div class="mvtabs" data-for="mv2"><button type="button" aria-pressed="true" data-src="img/4916b729/right_after.glb" data-poster="img/4916b729/right_after.png" data-cap="&lt;b&gt;Sonnet 交付的右端&lt;/b&gt;。橙色半透明是新的右 X 座，里面能看到黄色的右带轮和绿色的 625 轴承；蓝灰色方块是右电机，本页为减小文件只画了简化外形（42.3 mm 方机身、止口和轴），实体本身与左电机一致。">右端 解</button><button type="button" aria-pressed="false" data-src="img/4916b729/right_before.glb" data-poster="img/4916b729/right_before.png" data-cap="&lt;b&gt;改前的右端&lt;/b&gt;，用来和上一张对比：旧座、惰轮、更长的型材和导轨。">右端 改前</button></div><div class="model-frame"><model-viewer id="mv2" class="mv" src="img/4916b729/right_after.glb" poster="img/4916b729/right_after.png" camera-controls touch-action="pan-y" shadow-intensity="0.6" exposure="1.05" environment-image="neutral" interaction-prompt="none" alt="Sonnet 交付的右侧结构" camera-orbit="-35deg 62deg auto"></model-viewer><img class="model-fallback" src="img/4916b729/right_after.png" alt="右端 解 · 静态预览" loading="lazy"></div><figcaption id="mv2-cap"><b>Sonnet 交付的右端</b>。橙色半透明是新的右 X 座，里面能看到黄色的右带轮和绿色的 625 轴承；蓝灰色方块是右电机，本页为减小文件只画了简化外形（42.3 mm 方机身、止口和轴），实体本身与左电机一致。（可拖动旋转、滚轮缩放）</figcaption><p class="model-help">3D 加载前显示静态图。拖动旋转，双指或滚轮缩放。</p></figure></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">自动检查</div><h3>初判 15/16，唯一的失败是 C5：“未找到右带轮”</h3><div class="text"><p>判分程序先把交付 STEP 里的实体按体积、包围盒和质心与改前实体匹配，匹配上的算原有零件，没匹配上的算新增。下表只列有代表性的几条，全部 19 条（含 3 条非必需）见试做记录。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">C5</td><td>右带轮：与左带轮同型、体积 ±10%、与右电机同轴</td><td class="st"><span class="chip info">检查有误</span></td><td>原结果“未找到右带轮（与左带轮同型、位于右侧、体积±10%）”。复核认定检查基线认错了“左带轮”。</td></tr><tr><td class="id">C2</td><td>右电机与左电机同体积同尺寸</td><td class="st"><span class="chip good">通过</span></td><td>体积偏差 0.00%，轴线平行 Y。</td></tr><tr><td class="id">C3</td><td>右电机轴线关于立柱中面镜像</td><td class="st"><span class="chip good">通过</span></td><td>右电机轴线 x=186.02、z=96.50，期望值相同。</td></tr><tr><td class="id">C6/C7</td><td>座上有 4 个电机螺栓孔和止口；4 个孔与滑块螺纹孔同轴</td><td class="st"><span class="chip good">通过</span></td><td>电机孔 4/4，滑块孔 4/4。</td></tr><tr><td class="id">C10</td><td>新增和改动的实体与 57 个保留实体无超限干涉</td><td class="st"><span class="chip good">通过</span></td><td>14 个新增实体全部通过。</td></tr><tr><td class="id">C11/C13</td><td>型材右端不穿过带轮；导轨够长覆盖 235 mm 热床</td><td class="st"><span class="chip good">通过</span></td><td>型材右端 177.69；导轨 282.33 减滑块 32.4 得 249.93，要求不小于 235。</td></tr><tr><td class="id">C15</td><td>右 X 座是 1 个有效实体</td><td class="st"><span class="chip good">通过</span></td><td>单壳，体积 61333 mm³。</td></tr></tbody></table></div></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">复核</div><h3>检查把左座里的轴承嵌件当成了左带轮</h3><div class="text"><p>Sonnet 复核逐条看了 C5。检查冻结基线时按体积 2668.2 mm³ 找“左带轮”，找到的是整机里第 81 号实体，包围盒 19.4 × 30.94 × 19.4 mm。按整机 STEP 的装配树，它是左座里的 Bearing_Holder_Insert（3D 打印轴承嵌件）。真正的左带轮是第 71 号，<code>Timing_Pulley_-_2GT-20T_-_For_6mm_Belt_-_5mm_Bore_v4</code>，体积 1940.16 mm³，包围盒 15.04 × 16.0 × 15.04 mm。</p>
+<p>Sonnet 交的右带轮第 10 个实体体积 1940.2 mm³，尺寸 15.04 × 16.0 × 15.04 mm，中心 x=186.0，与电机轴偏 0.02 mm，正是左带轮的镜像。它把嵌件按题面“X 座为单个实体”的要求合并进了右座，所以交付文件里没有一个 2668 mm³ 的零件，检查就找不到。本步的 3D 视图和剖面图里，嵌件都是粉色，带轮都是黄色。</p>
+<p>复核在临时目录把基线的 <code>left_pulley</code> 换成第 71 号后复跑，C5 通过（体积 1940 对 1940，与电机轴偏 0.02 mm，y 范围偏差 0），其余必需项仍全部通过。这一段是复核记录里的结果，本页没有重跑判分。</p></div><figure><div class="frame"><a href="img/4916b729/sec_left.svg" title="打开原图"><img src="img/4916b729/sec_left.svg" alt="**左侧沿电机轴线的剖面**（本页用 OpenCascade 从原 STEP 重算）。粉色是嵌件，黄色是真带轮，绿色是 625 轴承。看嵌件的 y 范围 271.1 到 302.0 比带轮长得多。座体在本页的剖面里没有画。" loading="lazy"></a></div><figcaption><b>左侧沿电机轴线的剖面</b>（本页用 OpenCascade 从原 STEP 重算）。粉色是嵌件，黄色是真带轮，绿色是 625 轴承。看嵌件的 y 范围 271.1 到 302.0 比带轮长得多。座体在本页的剖面里没有画。</figcaption></figure><figure><div class="frame"><a href="img/4916b729/sec_right.svg" title="打开原图"><img src="img/4916b729/sec_right.svg" alt="**Sonnet 右侧同样的剖面**，同样的裁剪和比例。带轮、轴承的位置和左侧逐个对应，嵌件已并入右座，没有单独的实体。" loading="lazy"></a></div><figcaption><b>Sonnet 右侧同样的剖面</b>，同样的裁剪和比例。带轮、轴承的位置和左侧逐个对应，嵌件已并入右座，没有单独的实体。</figcaption></figure><figure><div class="model-frame"><model-viewer id="mv3" class="mv" src="img/4916b729/left.glb" poster="img/4916b729/left.png" camera-controls touch-action="pan-y" shadow-intensity="0.6" exposure="1.05" environment-image="neutral" interaction-prompt="none" alt="左座里的嵌件和带轮" camera-orbit="-35deg 62deg auto"></model-viewer><img class="model-fallback" src="img/4916b729/left.png" alt="左座 原样 · 静态预览" loading="lazy"></div><figcaption id="mv3-cap"><b>原装配里的左侧</b>（不改动）。左座做成半透明，粉色的 Bearing_Holder_Insert 像一个套筒罩在黄色的带轮外面，两者都是长条形零件，位置和朝向相近。电机只画了简化外形。（可拖动旋转、滚轮缩放）</figcaption><p class="model-help">3D 加载前显示静态图。拖动旋转，双指或滚轮缩放。</p></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">重判</div><h3>把基线的左带轮改成第 71 号后，16/16 必需项通过</h3><div class="text"><p>判分方按复核意见，把基线改成按体积 1940.16（或按 STEP 零件名）识别左带轮，重新冻结基线，再重判。重判结果在 <code>sonnet_v2.json</code>，必需项 16 条全部通过。C11 里引用的“带轮左缘”也跟着变了，从 176.32 变成 178.48；Sonnet 的型材右端 177.69 小于新的左缘，仍然通过。</p>
+<p>复核记录还提醒要重跑样本集：故障样本里“删带轮”“删轴承位”这类样本，原来删的可能是嵌件，需要重做。上游答案原来能过，是因为它另带了一个与嵌件同形的右嵌件。本题没有 Opus 审计记录。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>CAD 题的判分基线要靠体积、包围盒和装配树里的名字一起锁定。这次的检查冻结基线时按一个体积值找零件，找到的是左座里的轴承嵌件，而模型按题面要求把嵌件合并进了座体，检查就判成“缺带轮”。</p>
+<p>这也是一类典型的“检查有误”。模型交的几何没有问题，问题出在检查对改前零件的假设上；上游答案恰好另带了同形零件，所以自测时也没暴露。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>C/4916b729/trials/sonnet.json</span><span>C/4916b729/trials/sonnet_review.json</span><span>C/4916b729/trials/sonnet_v2.json</span><span>C/4916b729/checks/README.md</span><span>C/4916b729/task.md</span><span><a href="https://github.com/lhndo/LH-Stinger/commit/4916b729f02665557571dc76684ee5a73e1cda63">https://github.com/lhndo/LH-Stinger/commit/4916b729f02665557571dc76684ee5a73e1cda63</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="56d529b5.html"><span class="eyebrow">上一个</span><span>漫游车 Brain Board：题面方向写错</span></a><a href="ca263473.html"><span class="eyebrow">下一个</span><span>补全 19 英寸机架机箱：切片切在孔轴上</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 340" width="980" height="340" font-family="Helvetica, Arial, sans-serif" font-size="16"><rect width="980" height="340" fill="#0c1411"/>
+<rect x="20" y="30" width="940" height="40" fill="#173a2d"/>
+<text x="30" y="56" fill="#e8cf6a" font-weight="bold">位号</text>
+<text x="130" y="56" fill="#e8cf6a" font-weight="bold">原理图里的元件（库名）</text>
+<text x="560" y="56" fill="#e8cf6a" font-weight="bold">所在图纸</text>
+<text x="800" y="56" fill="#e8cf6a" font-weight="bold">PCB 上</text>
+<text x="30" y="96" fill="#ffffff" font-weight="normal">J1</text>
+<text x="130" y="96" fill="#ffffff" font-weight="normal">FPC60-0.5mm（60 脚 0.5 mm 间距 FPC 座）</text>
+<text x="560" y="96" fill="#ffffff" font-weight="normal">Connector.SchDoc</text>
+<text x="800" y="96" fill="#ff3d6e" font-weight="normal">没有</text>
+<rect x="20" y="110" width="940" height="40" fill="#10261e"/>
+<text x="30" y="136" fill="#ffffff" font-weight="normal">T1</text>
+<text x="130" y="136" fill="#ffffff" font-weight="normal">测试点</text>
+<text x="560" y="136" fill="#ffffff" font-weight="normal">Main.SchDoc</text>
+<text x="800" y="136" fill="#ff3d6e" font-weight="normal">没有</text>
+<text x="30" y="176" fill="#ffffff" font-weight="normal">T2</text>
+<text x="130" y="176" fill="#ffffff" font-weight="normal">测试点</text>
+<text x="560" y="176" fill="#ffffff" font-weight="normal">Main.SchDoc</text>
+<text x="800" y="176" fill="#ff3d6e" font-weight="normal">没有</text>
+<rect x="20" y="190" width="940" height="40" fill="#10261e"/>
+<text x="30" y="216" fill="#ffffff" font-weight="normal">T3</text>
+<text x="130" y="216" fill="#ffffff" font-weight="normal">测试点</text>
+<text x="560" y="216" fill="#ffffff" font-weight="normal">Main.SchDoc</text>
+<text x="800" y="216" fill="#ff3d6e" font-weight="normal">没有</text>
+<text x="30" y="256" fill="#ffffff" font-weight="normal">T4</text>
+<text x="130" y="256" fill="#ffffff" font-weight="normal">测试点</text>
+<text x="560" y="256" fill="#ffffff" font-weight="normal">Main.SchDoc</text>
+<text x="800" y="256" fill="#ff3d6e" font-weight="normal">没有</text>
+<text x="30" y="304" fill="#c9d3cf" font-size="14">这 5 个元件共 72 个原理图引脚在 PCB 上没有焊盘（Altium 网表对焊盘比对结果）。库名和图纸是本页粗读 SchDoc 得到。</text>
+</svg>

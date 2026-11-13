@@ -1,0 +1,92 @@
+{
+  "id": "hdmi-pi-ylj2000",
+  "group": "source",
+  "order": 5,
+  "project": "稚晖君 HDMI-PI（peng-zhihui/HDMI-PI）",
+  "short": "HDMI-PI ylj2000 原理图与 PCB 不同步",
+  "title": "HDMI-PI MiniDisplay-ylj2000：原理图和 PCB 没对上的半成品",
+  "description": "原理图里有 5 个元件（72 个引脚）在 PCB 上没有，看起来是一个做了一半的变体。同步可以朝两个方向做，这点本身就是出题要先定的事。",
+  "domain": ["PCB"],
+  "level": "难",
+  "verdict": [{"label": "现成半成品", "tone": "info"}, {"label": "高速：范围标记", "tone": "warn"}],
+  "summary": [
+    "HDMI-PI 是稚晖君的 HDMI 转 MIPI 显示转换板，用东芝的 TC358870XBG。`TC358870XBG/MiniDisplay-ylj2000` 是其中一个变体工程。用 Altium 自己导出的原理图网表和 PCB 焊盘做对比，29 个工程里只有这个和 MiniRover 的原理图与 PCB 对不上，MiniRover 只差一个充电芯片裸焊盘的接地，无害。这个变体的差别大得多：原理图里的 J1 和 T1 到 T4 共 5 个元件，PCB 上一个也没有，对应 72 个原理图引脚没有焊盘。",
+    "这块板不需要人工制造差错，天然就是“原理图和 PCB 对不上”的半成品。要补的方向有两个：把 PCB 补成原理图的样子，或者把原理图删成 PCB 的样子。读了同目录里没有后缀的 MiniDisplay 工程之后，后一个方向看起来更像作者当时的意图，但这只是推测。MIPI 和 HDMI 都属于高速信号，按规则打范围标记，不进金题。"
+  ],
+  "numbers": [
+    {"v": "5", "k": "原理图有、PCB 没有的元件（J1、T1 到 T4，Altium 比对结果）"},
+    {"v": "72", "k": "这 5 个元件在 PCB 上没有焊盘的原理图引脚数"},
+    {"v": "408", "k": "PCB 焊盘数，Altium 导出和 KiCad 导入完全一致，位置残差 0"},
+    {"v": "0", "k": "其余 400 个原理图引脚里，网络划分和 PCB 不一致的数量"}
+  ],
+  "task": {
+    "heading": "题目（草案）",
+    "intro": ["还没有加工成题。要先决定同步的方向，再写题面。"],
+    "rows": [
+      ["起点", "`1.Hardware/TC358870XBG/MiniDisplay-ylj2000/` 下的 3 张原理图（Connector、HDMI_To_MIPI_PHY、Main）和 MiniDisplay.PcbDoc，转 KiCad 后是一块 48 × 48 mm 的 2 层板，76 个有位号的元件，U3 是 80 球的 TC358870XBG。"],
+      ["方向一：补 PCB", "按原理图增加 J1（60 脚 0.5 mm 间距 FPC 座）和 T1 到 T4（测试点），连好线。需要新建 J1 的封装，同目录的完整变体里有现成的 `FFC_0.5_60` 和 `TEST_PT` 可参考。"],
+      ["方向二：改原理图", "PCB 上已经有 P2、P4（2×9 排针）、P3（2×5 排针），原理图里的 Connector 页也同时画着这几个排针和 J1。可以删掉原理图里的 J1 和 T1 到 T4，让两边一致。"],
+      ["判分方向", "原理图和 PCB 的网表一致（元件、引脚、网络都对得上）；ERC、DRC 不新增错误；高速差分线的间距和长度匹配可作加权项。"]
+    ]
+  },
+  "steps": [
+    {
+      "label": "线索",
+      "title": "Altium 自己导出的网表和焊盘对比，只有两个工程对不上",
+      "text": [
+        "稚晖君这批 29 个 Altium 工程，都用 Windows 上的 Altium 22 导出原理图网表和 PCB 焊盘，再和 KiCad 导入结果比对。比对结果里还顺带得到“原理图和 PCB 同步与否”：MiniRover 的 U2（MCP73833）裸焊盘只在 PCB 上接了 GND，无害；`MiniDisplay-ylj2000` 则缺了 5 个元件。",
+        "这个发现来自比对，没有 issue 或提交，也没有人说过“这块板没做完”。证据只有比对结果，所以哪里不同步是确定的，作者的意图要靠旁证推测。"
+      ]
+    },
+    {
+      "label": "改前",
+      "title": "PCB 上有 HDMI 口、USB-C、STM32、TC358870 和三个排针",
+      "text": [
+        "下图是 HEAD 上的 PcbDoc 转成 KiCad 后的正面。左边是 HDMI 口（位号还是未编号的“HDMI?”），左下是 USB-C（USB1），右上偏中是 TC358870XBG（U3，80 球 BGA），右下是 STM32F103（U2），中间偏下是电源芯片 U1，上边和右边各有一个 2×9 排针（P2、P4），右侧还有一个 2×5 排针（P3）。红色高亮的是 U3、HDMI?、USB1、U1、U2。",
+        "原理图一侧有焊盘可比的 400 个引脚，网络划分全部和 PCB 一致，没有不一致的地方。不同步只在缺元件。"
+      ],
+      "figures": [{"src": "img/hdmi-pi-ylj2000/board_full.svg", "caption": "**ylj2000 的 PCB 正面**（`MiniDisplay.PcbDoc` 转 KiCad，本页渲染）。红色高亮 U3、HDMI?、USB1、U1、U2，没有画填充铺铜。"}]
+    },
+    {
+      "label": "差异",
+      "title": "原理图有、PCB 没有的 5 个元件",
+      "text": [
+        "比对结果的 JSON 记录了 81 个原理图元件对 76 个 PCB 元件，差的 5 个是 J1 和 T1 到 T4。本页另外去读了这 3 张 SchDoc（用文本匹配抽取元件库名和位号，没有解析连线）：J1 的库名是 FPC60-0.5mm，在 Connector 页；T1 到 T4 的库名是“测试点”，在 Main 页。",
+        "两处材料对不上，需要说明：最初的整理材料里写“J1、T1 到 T4、USB1 共 5 个元件”，但比对 JSON 的缺失清单里没有 USB1，PCB 里 USB1（Type-C，22 个焊盘）和未编号的“HDMI?”（HDMI-SWM-19，23 个焊盘）都有。这里以比对 JSON 为准。另外 J1 的 60 个脚加 4 个测试点只有 64 个，和 72 对不上，差的 8 个可能是 J1 的外壳固定脚，还没核对。"
+      ],
+      "figures": [{"src": "img/hdmi-pi-ylj2000/missing_table.svg", "caption": "**原理图有、PCB 没有的元件清单**。数据来自 Altium 的比对结果和对 SchDoc 的粗读。"}]
+    },
+    {
+      "label": "放大看",
+      "title": "同目录里没有后缀的 MiniDisplay 工程，板上就有 J1 和 T1 到 T4",
+      "text": [
+        "`TC358870XBG/` 下还有一个没有后缀的 `MiniDisplay` 工程，它的原理图和 PCB 是同步的。把它的 PCB 转成 KiCad，板上正好有 J1（60 脚 FFC 座，库名 0.5S_A_60PWB，封装 FFC_0.5_60）和 T1 到 T4（封装 TEST_PT），J1 在右侧，和 TC358870 之间是一束带蛇形走线的差分线（应该是 MIPI，本页没有核对网络名）。",
+        "把两块板的元件清单对一下，ylj2000 少了 J1、T1 到 T4、L4、L5 和 Y1（8 MHz 晶振），多了 P2、P3、P4 三个排针、X1（12 MHz 晶振）和 C23、C24 两个 16 pF 电容，R33 从 2.2K 变成 1K 1%，板子从约 43 × 39 mm 变成 48 × 48 mm。以上是本页按位号和封装对比两份 PCB 的结果。"
+      ],
+      "figures": [{"src": "img/hdmi-pi-ylj2000/sibling_full.svg", "caption": "**同目录里的完整变体 MiniDisplay**（本题的板是上一张）。红色是 J1（60 脚 FFC）和 T1 到 T4，右侧那一束蛇形走线是 TC358870 到 J1 的差分线。"}]
+    },
+    {
+      "label": "结论",
+      "title": "能出“同步原理图和 PCB”的题，但要先决定朝哪个方向补",
+      "text": [
+        "ylj2000 的 PCB 已经用排针代替了 FPC 座，板子也换了尺寸，看起来是在完整变体上继续改出来的；原理图的 Connector 页同时画着 J1 和三个排针，Main 页还留着 4 个测试点。这样看，更像作者改了 PCB 却没来得及清理原理图。这是本页的推测，没有作者的说明。",
+        "两个方向的题有不同的难度：",
+        [
+          "方向二（改原理图）较低：删 5 个元件，判分比较两边网表。",
+          "方向一（补 PCB）较高：新建 60 脚 FPC 封装，摆放，布 MIPI 差分对，要满足阻抗和等长这类高速要求，需要打范围标记。J1 的引脚接到哪些网络，本页没有读，不能保证它和排针接的是同一批信号。"
+        ],
+        "两个方向都不需要人工制造差错，原生文件本身就是半成品。是否收入题库以及要出哪个方向，需要你定。"
+      ]
+    }
+  ],
+  "lesson": [
+    "多数半成品题要人为注入改动，这一块板自己就带着不一致，原生状态就是题。它也提醒我们：“原理图和 PCB 不同步”不止一种补法，题面必须写清方向，判分只认最终两边一致。",
+    "高速和 BGA 的成分很重，按规则打范围标记，不进金题。"
+  ],
+  "sources": [
+    "data/peng_zhihui_20261112/altium_vs_kicad/HDMI-PI__TC358870XBG__MiniDisplay-ylj2000__MiniDisplay.json（Altium 网表对焊盘的比对结果）",
+    "data/peng_zhihui_20261112/kicad_base/peng-zhihui__HDMI-PI/（HEAD 转好的 KiCad 板，ylj2000 和同目录的 MiniDisplay 两块）",
+    "data/peng_zhihui_20261112/README.md（29 个工程中只有 HDMI-PI ylj2000 和 MiniRover 不同步）",
+    "https://github.com/peng-zhihui/HDMI-PI/tree/main/1.Hardware/TC358870XBG/MiniDisplay-ylj2000"
+  ]
+}

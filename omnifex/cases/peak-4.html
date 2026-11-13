@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Peak 充电电路的电源路径 · 稚晖君 Peak（peng-zhihui/Peak）</title>
+<meta name="description" content="维护者承认充电芯片的输出同时给电池和系统供电是设计失误，评论里有改法，仓库至今没有修复提交，所以这道题没有上游答案。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>peak-4</span></div>
+  <div class="eyebrow">还没造题的新题源 · 稚晖君 Peak（peng-zhihui/Peak）</div>
+  <h1>Peak 的充电电路：issue #4 指出的电源路径设计失误</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">中到难</span><span class="chip info">无上游答案</span><span class="chip warn">位号对不上</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>Peak 是稚晖君的一块 ESP32 小主板。issue #4 的作者指出：锂电池充电芯片的输出既给电池充电，又给整块电路供电，外部供电时没有把电池和后级电路断开，充电芯片没法正确判断电池状态，电池一般充不满。维护者回复“这里确实是一个设计失误，感谢指出”。唯一一次改 PcbDoc 的提交 <code>5daf5a7</code> 在 issue 之前一天，所以一直没人改。</p>
+<p>需求和证据都很扎实，但核对原生文件时发现一个麻烦：评论里的位号（Q4、R7）和网络名（VCC_SYS）和仓库里那份 PcbDoc 对不上。这道题要做，题面得先按仓库文件的位号重写。上游没有答案，参考解要我们自己做。</p></div>
+</header>
+<div class="figures"><div><span class="v">14</span><span class="k">issue 下的评论数（本页用 gh 实查）</span></div><div><span class="v">1 天</span><span class="k">PcbDoc 最后一次更新（2021-10-10）早于 issue（2021-10-11）</span></div><div><span class="v">0</span><span class="k">之后的修复提交（issue 复核记录，本页未另查）</span></div><div><span class="v">2 / 5</span><span class="k">评论提到的 U1、Q4、R7、VCC_SYS、CHG_DET 五个名字里，在仓库文件里能对上的只有 U1 和 CHG_DET（Q4、VCC_SYS 对不上，R7 只有位号相同）</span></div></div>
+<section><h2><span class="no">题</span>题目（草案）</h2><p>还没有加工成题。下面是按 issue 和仓库文件整理的题面方向。</p><div class="ticket"><div class="k">起点</div><div><code>1.Hardware/Peak/Peak.PcbDoc</code> 的 KiCad 转换版（仓库全是 Altium，转换结果已和 Altium 导出的焊盘、网络逐一核对，全部一致）。KiCad 读到 4 个铜层，约 31.5 × 34.1 mm，64 个封装里 61 个在背面。</div><div class="k">需求</div><div>外部 USB 供电时，系统不再靠电池和充电芯片输出的同一个节点供电，充电芯片只管充电；拔掉 USB 时电池照常给系统供电。</div><div class="k">评论里的改法</div><div><ul><li>U1（LP2992 稳压器）第 3 脚改接 VCC_SYS。</li><li>去掉 Q4 和 R7。</li><li>CHG_DET 的上拉电阻从 10K 改 1K（评论者实测：10K 时只有约 1.9 V，MCU 读成低电平；改 1K 后约 2.5 V）。</li></ul></div><div class="k">上游答案</div><div>没有。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">线索</div><h3>issue #4：充电芯片的输出同时给电池和系统供电</h3><div class="text"><p>issue 由一位复刻者在 2021-10-11 提出。大意是：充电时充电芯片的输出既影响电池端电压，又要分走充电电流，充电芯片对电池状态的判断被严重干扰，电池通常充不满。作者建议外部供电时切断电池和后级电路，让整个电路改由充电芯片前端的电源供电。</p>
+<p>评论区一共 14 条。要点有四处：</p>
+<ul><li>维护者 peng-zhihui 回复：“这里确实是一个设计失误，感谢指出”。</li><li>评论者 yuzhou3996 贴了自己改过的电源图，之后回复“U1 的 3 号脚应该接 VCC_SYS，然后 Q4 和 R7 可以去掉”，并给了改后的图。</li><li>评论者 SuperWangRong 实测 CHG_DET 的 10K 上拉只能把电压拉到约 1.9 V，改成 1K 后约 2.5 V，MCU 才读成高电平，屏幕上的电池图标状态才正确。</li><li>另一位复刻者报告只接 USB、不接电池时 ESP32 反复复位，维护者回复“因为充电 IC 的影响导致电压不稳定，电池是必须接的”。</li></ul>
+<p>上面的引文和时间是本页用 <code>gh issue view</code> 读原文核对的。issue 里的三张电路图是 GitHub 上的用户图片，本页不转载，链接见出处。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">改前</div><h3>仓库里的板：电池、稳压器和充电芯片的输出接在同一个节点上</h3><div class="text"><p>下图是 HEAD 上的 PcbDoc 转成 KiCad 后的背面视图，元件都在这一面。黄色是和这次修改有关的网络（VBAT_IN 是充电芯片的输出，VBAT 是电池和稳压器的输入，CHG_DET 是充电状态），红色是相关元件的焊盘。</p>
+<p>整板图里这部分电路集中在板子左半边，5 脚的稳压器 U1 旁边就是充电芯片 U3 和一对 P 型、N 型 MOS 管（Q1、Q2）。</p></div><figure><div class="frame"><a href="img/peak-4/board_full.svg" title="打开原图"><img src="img/peak-4/board_full.svg" alt="**整板背面**，31.5 × 34.1 mm。高亮网络 VBAT_IN、VBAT、CHG_DET 和元件 U3、Q1、Q2、R3、R7、U1、R11、U6。" loading="lazy"></a></div><figcaption><b>整板背面</b>，31.5 × 34.1 mm。高亮网络 VBAT_IN、VBAT、CHG_DET 和元件 U3、Q1、Q2、R3、R7、U1、R11、U6。</figcaption></figure><figure><div class="frame"><a href="img/peak-4/board_zoom.svg" title="打开原图"><img src="img/peak-4/board_zoom.svg" alt="**电源部分特写**。U3 在中下，Q1、Q2 在左上，U1 在中间，R11（CHG_DET 的上拉）在右下。" loading="lazy"></a></div><figcaption><b>电源部分特写</b>。U3 在中下，Q1、Q2 在左上，U1 在中间，R11（CHG_DET 的上拉）在右下。</figcaption></figure></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">放大看</div><h3>按网表整理出来的电源路径</h3><div class="text"><p>下面这张图是本页根据 Altium 导出的网表画的，原理图原图没有用到。仓库文件里的路径是这样的：</p>
+<ul><li>USB 的 5 V（VUSB）进充电芯片 U3（MCP73831T），U3 的输出叫 VBAT_IN。</li><li>VBAT_IN 经一个 P 型 MOS 管 Q1（AO3401A）接到 VBAT。Q1 的栅极由 R3（20K）上拉到 VBAT_IN，再由 N 型 MOS 管 Q2 拉低，Q2 的栅极来自 GPIO21，旁边的 R7（20K）是这个栅极的下拉。</li><li>电池座 U6 的正极、稳压器 U1 的第 1 脚（VIN）和第 3 脚（ON/OFF）、电池电压分压 R2/R4 都接在 VBAT 上。U1 的输出 VCC_3V3 给系统供电。</li><li>CHG_DET 来自 U3 的 STAT 脚，R11（10K）把它上拉到 VCC_3V3，R10（1K）串一颗指示灯到 VUSB。</li></ul>
+<p>也就是说，只要 Q1 导通，充电芯片输出、电池和系统是同一个节点，issue 描述的问题在这个文件里同样存在。</p></div><figure><div class="frame"><a href="img/peak-4/power_chain.svg" title="打开原图"><img src="img/peak-4/power_chain.svg" alt="**仓库 PcbDoc 的电源路径**（本页按网表重画）。红框是和评论改法有关的元件。" loading="lazy"></a></div><figcaption><b>仓库 PcbDoc 的电源路径</b>（本页按网表重画）。红框是和评论改法有关的元件。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">核对</div><h3>评论里的位号和仓库文件对不上</h3><div class="text"><p>把评论的改法逐条放到网表里核对，结果是这样：</p>
+<ul><li>U1 第 3 脚：对得上。U1 是 LP2992，第 3 脚 ON/OFF 现在接 VBAT。</li><li>CHG_DET 上拉 10K 改 1K：对得上。仓库里的 R11 就是 10K，接在 CHG_DET 和 VCC_3V3 之间。</li><li>VCC_SYS：仓库网表里没有这个网络名。issue 图里 VCC_SYS 在一个 P 型 MOS 的输出侧，对应到仓库文件，名字更接近 VBAT。这是本页的推测，没有原理图原图可对。</li><li>Q4：对不上。仓库里的 Q4 是 AO3400A，漏极经 R14 接背光 LCD_LEDK，栅极接 GPIO12，是屏幕背光开关。issue 图里的 Q4 是充电电路里的一个 P 型 MOS。</li><li>R7：只能对上位号，作用对不上。仓库里的 R7 是 Q2 栅极的 20K 下拉，issue 图里的 R7 是 10K，接在另一个 MOS 管的栅极上。</li></ul>
+<p>最可能的解释是 issue 里的图来自另一个版本的原理图，位号和网络名都不同，而仓库的 PcbDoc 是一份简化版：issue 图里充电芯片输出之后还有 Q3、Q4 两个 MOS 管和二极管 D5，仓库文件里没有这一级，只有一个 Q1。这点我没能用原理图原图证实，仓库的 SchDoc 本页也没有逐页读。</p>
+<p>对出题的影响是直接的。评论的方案不能原样当参考解，也不能让题面直接引用 Q4、R7。题面要用仓库文件里的位号重新写需求，参考解要我们自己做。</p></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">上游答案</div><h3>没有</h3><div class="text"><p>Peak 仓库里只有一次提交改过 PcbDoc（<code>5daf5a7</code>，2021-10-10，说明只有“Update Peak.PcbDoc”），早于这个 issue。本页用 KiCad 读它的前后两版，元件、网络、走线、过孔、铺铜、位置都没有变化，所以它和这次修复无关，也没法作为答案。issue 至今是 open。</p></div></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">结论</div><h3>能出一道“改电源路径”的半成品题，判分点可以先列出来</h3><div class="text"><p>判分思路，都从最终的 KiCad 文件重新导出后判：</p>
+<ul><li>USB 供电时，系统稳压器 U1 的输入和电池所在的节点之间要有明确的隔离（用网络连通性判，不比对具体器件）。</li><li>拔掉 USB 时，电池仍能经开关给 U1 供电。</li><li>CHG_DET 的上拉阻值要比 10K 小（评论者实测 1K 可用，具体上限要查 MCP73831 手册里 STAT 脚的驱动能力，还没查）。</li><li>不新增 DRC 错误，未连接数不增加，改动面只在电源区。</li><li>质量库的通用加权项，如去耦、courtyard。</li></ul>
+<p>难度是中到难（本页估计，没有试做）。改法本身不长，但要读懂电源拓扑，并且题面和原图的位号对不上这件事，会考验 agent 是否真的在看网表。因为没有上游答案，参考解和判分都需要人工做一遍并核对。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>有维护者确认、有具体改法的 issue 很少，Peak #4 是其中一个，但“有人给了改法”不等于“改法能直接用”。评论里的位号来自另一版原理图，仓库文件里的 Q4 其实是屏幕背光开关。加工这类题的第一步是把线索里的每个器件名放到原生文件里逐个对一遍。</p>
+<p>这也是一个适合放进 Altium 来源的例子：转换本身已经核实无误，难点在读懂设计，而不在转换。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/peng_zhihui_20261112/github_meta/hw_issue_review.md（issue 归类，Peak #4 一行）</span><span>data/peng_zhihui_20261112/revisions_export/Peak__5daf5a79/（Altium 导出的网表和焊盘，diff.json 显示前后无变化）</span><span>data/peng_zhihui_20261112/kicad_base/peng-zhihui__Peak/（HEAD 转好的 KiCad 板）</span><span><a href="https://github.com/peng-zhihui/Peak/issues/4">https://github.com/peng-zhihui/Peak/issues/4</a></span><span><a href="https://github.com/peng-zhihui/Peak/commit/5daf5a79">https://github.com/peng-zhihui/Peak/commit/5daf5a79</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="4892d559.html"><span class="eyebrow">上一个</span><span>moteus r4.5b：答案藏在改前里</span></a><a href="8d76bd3f.html"><span class="eyebrow">下一个</span><span>Dummy 42 驱动板加双编码器</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

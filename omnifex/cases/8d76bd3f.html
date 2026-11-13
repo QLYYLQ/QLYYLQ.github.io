@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dummy 42 驱动板加双编码器 · 稚晖君 Dummy 机械臂（peng-zhihui/Dummy-Robot）</title>
+<meta name="description" content="一次提交同时改原理图和 PCB，上游答案现成。按位号比对会把改动夸大，按位置和封装比对才看得出真正变了什么。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>8d76bd3f</span></div>
+  <div class="eyebrow">还没造题的新题源 · 稚晖君 Dummy 机械臂（peng-zhihui/Dummy-Robot）</div>
+  <h1>Dummy 的 42 步进电机驱动板：加双编码器支持</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">难</span><span class="chip good">有上游答案</span><span class="chip warn">位号重排</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这是稚晖君 Dummy 机械臂仓库里一次真实的改版（提交 <code>8d76bd3f</code>，2022-01-18，说明是“Update Motor-42 hardware, add dual-encoder support”）。同一次提交改了 4 张原理图和 PCB，是目前这批稚晖君材料里改动面最大的一次。</p>
+<p>采集时的差异统计按位号匹配，给出“14 个元件有改动、47 个引脚换了网络、15 个元件挪了位置”。本页把改前改后两版都转成 KiCad，按“封装加坐标”重新匹配，结果小得多：79 个元件里 76 个原地没动，其中 14 个只是位号变了；真正的元件变化是删 3 个、加 3 个。</p></div>
+</header>
+<div class="figures"><div><span class="v">76 / 79</span><span class="k">改前改后原地没动的元件（本页按封装加坐标重算）</span></div><div><span class="v">14</span><span class="k">只改了位号、位置和封装都没变的元件（本页重算）</span></div><div><span class="v">3 + 3</span><span class="k">真正删掉和新增的元件（本页重算）</span></div><div><span class="v">47</span><span class="k">采集统计里的“换网络引脚数”（按位号，不可直接用）</span></div></div>
+<section><h2><span class="no">题</span>题目（草案）</h2><p>还没有加工成题。上游答案是同一次提交里的改后文件，可作人类参考解，判分不比对布局。</p><div class="ticket"><div class="k">起点</div><div><code>1.Hardware/MotorDriver-42/</code> 在父提交 <code>4528299d</code> 的状态：Altium 工程（Interface、MCU、Port、Power 4 张原理图加 Motor-42.PcbDoc），转成 KiCad 后 79 个封装，41.25 × 41.25 mm，4 层。</div><div class="k">需求（草案）</div><div><ul><li>（推测）增加第二个 MT6816 磁编码器的 SPI 接口：一个 6 脚 SH1.0 连接器，带片选、MISO、MOSI、SCK、地和 3.3 V。</li><li>增加一路模拟编码器输入（ADC_ENC），用一颗 TL431 和 120 欧电阻提供参考，接到 5 脚连接器。</li><li>旧的 USB 接口（D+ 上拉和两个串联电阻）不再需要，5 脚连接器的脚位重新分配，留出串口和模拟输入。</li></ul></div><div class="k">说明</div><div>这是本页根据前后两版对比整理的需求方向，提交说明里只有“add dual-encoder support”一句。需求怎么写、写到多细，由出题时决定。</div><div class="k">判分方向</div><div>功能连接（新接口的信号接到 MCU 上合适的引脚）、ERC、DRC、板框和孔位不变、未连接不增加。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">线索</div><h3>一句提交说明，加一份原理图和 PCB 的整体改动</h3><div class="text"><p>提交 <code>8d76bd3f</code> 改了 36 个文件，其中设计文件是 MotorDriver-42 目录下的 4 张 SchDoc 和 1 个 PcbDoc，其余是制造文件和文档（候选总表的计数）。它没有对应的 issue 或 PR，需求只能从改动本身反推。</p>
+<p>这块板和 A 批里的另一个候选 <code>879f203f</code>（提交说明“Add MotorDriver-20”，据题目整理是把 42 驱动板缩成 20）属于同一个项目族，划分训练集和测试集时要放在同一侧。后者之前卡在 Altium 转换上，现在有了转好的 KiCad 工程，可以做底版。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">改前</div><h3>改前：左缘是一个 5 脚的 USB 兼调试口</h3><div class="text"><p>下图是父提交的 PcbDoc 转成 KiCad 后的正面。板子是 41.25 mm 的方板，四角切角，左缘一排连接器是这次改动的主要区域。红色高亮的是后来被删掉的东西：左缘的 5 脚 SH1.0 连接器 P4，和旁边三个 0402 电阻 R11（1.5K，一端接 VCC_5V，另一端接 USB 的 D+）、R12、R13（22R，D+、D- 的串联电阻，在背面）。</p>
+<p>这 5 脚连接器的脚位是 GND、UART1_RX、UART1_TX、DM、DP，既是串口也是 USB 口。</p></div><figure><div class="frame"><a href="img/8d76bd3f/before_front.svg" title="打开原图"><img src="img/8d76bd3f/before_front.svg" alt="**改前整板正面**（父提交 `4528299d`，`MotorDriver-42/Motor-42.PcbDoc` 转 KiCad，本页渲染）。红色是改后被删的元件，只画了铜皮外形，没画填充铺铜。" loading="lazy"></a></div><figcaption><b>改前整板正面</b>（父提交 <code>4528299d</code>，<code>MotorDriver-42/Motor-42.PcbDoc</code> 转 KiCad，本页渲染）。红色是改后被删的元件，只画了铜皮外形，没画填充铺铜。</figcaption></figure></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">上游答案</div><h3>改后：左缘变成两个连接器，旁边多出一颗 TL431</h3><div class="text"><p>改后的板子外形、孔位和绝大部分元件都没动。变化集中在左缘：原来 5 脚连接器的位置还是一个 5 脚连接器（这版叫 P1），脚位换成 UART1_RX、UART1_TX、GND、NetP1_4、ADC_ENC。它上方 8.8 mm 处新增了一个 6 脚 SH1.0 连接器 P4，右边是新增的 TL431（U4）和一颗 120 欧电阻 R11。</p>
+<p>TL431 的第 1、2 脚和 R11 的一端接在同一个网络 NetP1_4 上，这个网络同时接到 P1 的第 4 脚。本页没有读原理图，它具体是不是模拟编码器的参考电压，是从名字和接法做的推测，没有证实。</p></div><figure><div class="frame"><a href="img/8d76bd3f/after_front.svg" title="打开原图"><img src="img/8d76bd3f/after_front.svg" alt="**上游改后整板正面**（提交 `8d76bd3f`）。红色是改后新增或重新定义的东西：P1、新的 P4、U4、R11。" loading="lazy"></a></div><figcaption><b>上游改后整板正面</b>（提交 <code>8d76bd3f</code>）。红色是改后新增或重新定义的东西：P1、新的 P4、U4、R11。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">差异</div><h3>左缘放大对比：连接器加了一个，USB 的三个电阻没了</h3><div class="text"><p>下面是同一区域（x 127 到 146 mm，y 93 到 117 mm）的两面叠加对比，拖动滑块看变化。左边（改前）中间一排红色焊盘是旧的 5 脚座和三个小电阻；右边（改后）上面多了一个 6 脚座和 TL431，下面的 5 脚座还在原位，右侧多出几根新走线。</p>
+<p>走线方面，本页用 KiCad 重数的结果是走线 646 → 668 段，过孔 286 → 285 个。</p></div><figure><div class="compare" style="--pos:50%"><img src="img/8d76bd3f/before_zoom.svg" alt="改前"><div class="after"><img src="img/8d76bd3f/after_zoom.svg" alt="改后"></div><div class="bar"></div><span class="tag l">改前</span><span class="tag r">改后</span><input type="range" min="0" max="100" value="50" aria-label="拖动对比" id="cmp1"></div><figcaption><b>左缘放大，正反两面叠加</b>。红色是被删或新增或重新定义的元件，标出位号。两张图裁剪和比例相同。</figcaption></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">差异</div><h3>连接器脚位表：改动只有一个新座，加上一个 5 脚座的脚位重排</h3><div class="text"><p>采集统计里写的“P1 6P→5P、P3 3P→6P、P4 5P→6P”是按位号比的结果。改后新增了一个 6 脚座，原来的几个座在板上的位置都没变，只是位号顺延了（旧 P4 变 P1，旧 P2 变 P3，旧 P3 变 P5，旧 P1 变 P2）。真正的变化只有两处：旧 5 脚座的 5 个脚位重新分配，以及新增的 6 脚座。</p>
+<p>旧 5 脚座的 DM、DP 脚改成 NetP1_4 和 ADC_ENC，并且多了两个接地的外壳固定脚。MCU（U3，LQFP-48）的第 16、17 脚改前没有网络，改后分别接 ADC_ENC 和 MT6816_AUX_CS。</p></div><figure><div class="frame"><a href="img/8d76bd3f/connectors.svg" title="打开原图"><img src="img/8d76bd3f/connectors.svg" alt="**左缘连接器的焊盘网络对照**。红色是旧 5 脚座脚位的重新分配，青色是新增的 6 脚座。" loading="lazy"></a></div><figcaption><b>左缘连接器的焊盘网络对照</b>。红色是旧 5 脚座脚位的重新分配，青色是新增的 6 脚座。</figcaption></figure></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">核对</div><h3>按位号比和按位置比，结果差了一个数量级</h3><div class="text"><p>两种口径的结果放在一起：</p>
+<ul><li>按位号（采集时的 <code>diff.json</code>）：增 P5、U8，删 R18、R19，14 个元件有改动，47 个引脚换网络，15 个元件挪位，焊盘 248 → 255。</li><li>按封装加坐标（本页重算，容差 0.05 mm，同层同封装）：79 个封装里 76 个原地没动；这 76 个里有 14 个位号变了（P1 到 P4、R14 到 R17、U4 到 U7 等），其余 62 个连位号都没变。删掉的是 R11 1.5K、R12 22R、R13 22R，新增的是 6 脚座 P4、TL431 U4、120R 的 R11。改前改后都是 79 个封装。</li><li>能对上的部分：新增的 6 脚座和 TL431，和采集统计里的“增加连接器、增加 U8”方向一致，只是位号不同。</li></ul>
+<p>原因是这次改版在原理图里插入了新元件，位号整体顺延，Altium 把后面的元件都重新编了号。结论是以后做这类题，题面和判分都不能依赖位号，要靠封装、网络和位置；改后文件里的位号只在这一次提交内部有意义。</p>
+<p>两组数字口径不同，各自的算法都没有错，只是按位号的那组不适合用来描述“改了什么”。</p></div></div></li><li class="step"><div class="num">07</div><div class="main"><div class="label">结论</div><h3>适合做难题：改动牵动连接器、模拟前端和布局，有上游答案</h3><div class="text"><p>判分可以这样设计，都从最终的 KiCad 文件重新导出后判：</p>
+<ul><li>新 6 脚座的信号（MT6816_AUX_CS、SPI1_MISO、SPI1_MOSI、SPI1_SCK）接到 MCU 上有对应外设功能的引脚，地和 3.3 V 接对。</li><li>模拟输入 ADC_ENC 接到 MCU 的 ADC 通道引脚，参考电路的 TL431 接法正确（阴极、阳极、参考端）。</li><li>旧的 USB 上拉和串联电阻要不要保留，由题面决定；判分只检查题面要求的那些。</li><li>板框、安装孔、其余元件位置不变，DRC 不新增错误，未连接不增加。</li><li>不依赖位号：检查按网络名、封装和相对位置写。</li></ul>
+<p>上游提交里没有需求文字，题面要靠我们根据差异写，写出来的需求需要和上游改后文件逐条对一遍，确认没有漏写或多写。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>同一次改版，用位号比和用位置加封装比，得到的改动规模差了很多。位号一变，所有基于位号的差异统计都会夸大改动，所有基于位号的判分检查都会失效。稚晖君的 Altium 工程里这种“新元件插入导致位号重排”很常见，题包里要为此单独做一步位置匹配。</p>
+<p>同一个项目族里还有 879f203f，两道题的训练测试划分要放在同一侧。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/peng_zhihui_20261112/revisions_export/Dummy-Robot__8d76bd3f/diff.json（按位号的差异统计）</span><span>data/peng_zhihui_20261112/revisions/Dummy-Robot__8d76bd3f/{before,after}（Altium 原工程，本页转 KiCad 后重算）</span><span>data/answer_mining_20261107/candidates.jsonl（候选总表，提交、父提交、文件计数）</span><span><a href="https://github.com/peng-zhihui/Dummy-Robot/commit/8d76bd3f48c03384b9107e9b84e15c8f5a5a01f3">https://github.com/peng-zhihui/Dummy-Robot/commit/8d76bd3f48c03384b9107e9b84e15c8f5a5a01f3</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="peak-4.html"><span class="eyebrow">上一个</span><span>Peak 充电电路的电源路径</span></a><a href="31d91345.html"><span class="eyebrow">下一个</span><span>HoloCubic 为 Steam 外壳改板</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

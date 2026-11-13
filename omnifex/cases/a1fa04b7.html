@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ElectronBot 多余的 VBUS_IN 走线 · 稚晖君 ElectronBot（peng-zhihui/ElectronBot）</title>
+<meta name="description" content="issue、维护者确认和修复提交三者对得上。修复只删了走线、过孔和一块铺铜，元件和网表都没变，只有看铜皮才能发现。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>a1fa04b7</span></div>
+  <div class="eyebrow">还没造题的新题源 · 稚晖君 ElectronBot（peng-zhihui/ElectronBot）</div>
+  <h1>ElectronBot SensorBoard：删掉多余的 VBUS_IN 走线</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">低</span><span class="chip good">有上游答案</span><span class="chip good">已在铜皮层核实</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>ElectronBot 的 SensorBoard 上，FPC 连接器的 VBUS_IN 脚旁边有一段多余的走线。issue #28 指出这一点，维护者约 46 分钟后回复“这个是当时替换 USB-HUB 芯片忘了删了，不影响功能，我修复一下”，又过约 5 分钟推送提交 <code>a1fa04b7</code>（说明 Remove redundant VCC_BUS）。issue、确认和修复提交的时间都对得上。</p>
+<p>这个提交在元件、网络和焊盘层面没有任何变化。本页把前后两版转成 KiCad，逐网络比走线、过孔和铺铜，只有 VBUS_IN 一个网络变了：删掉 2 段走线（共 2.55 mm）、1 个过孔、1 块铺铜。被删的东西只接在 VBUS_IN 的主干上，另一端是个空过孔，是一根死头。</p></div>
+</header>
+<div class="figures"><div><span class="v">2</span><span class="k">被删的走线段数（共 2.55 mm，本页重算）</span></div><div><span class="v">1</span><span class="k">被删的过孔，只有这一段走线连着它</span></div><div><span class="v">0</span><span class="k">元件、网络、焊盘的变化（采集统计和本页重算一致）</span></div><div><span class="v">51 分钟</span><span class="k">从 issue 提出到修复提交（2022-03-14 01:46Z 到 02:37Z）</span></div></div>
+<section><h2><span class="no">题</span>题目（草案）</h2><p>低档的修清单题。题面可以直接引用 issue 的描述，不涉及器件选型。</p><div class="ticket"><div class="k">起点</div><div><code>1.Hardware/SensorBoard/SensorBoard.PcbDoc</code> 在父提交 <code>a19c350a</code> 的状态，转成 KiCad 后 36 个封装、372 段走线、110 个过孔。</div><div class="k">需求（草案）</div><div>SensorBoard 上 FPC 座的 VBUS_IN 脚旁有一段多余的走线，是更换 USB-HUB 芯片时遗留的，请检查并删除，不能影响任何功能。</div><div class="k">判分方向</div><div><ul><li>VBUS_IN 网络上不再有死头走线和只连这段走线的过孔。</li><li>其余网络的走线、过孔、铺铜不变，焊盘和网表不变。</li><li>DRC 不新增错误，未连接不增加。</li></ul></div><div class="k">上游答案</div><div>同一提交里的改后 PcbDoc，可作人类参考解。</div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">线索</div><h3>issue #28：FPC 座的 VBUS_IN 脚右侧有一根线，看起来多余</h3><div class="text"><p>issue 的标题是“SensorBoard 上有多余的 VBUS_IN 的一条走线”，2022-03-14 01:46（UTC）由一位复刻者提出，用 Altium 截了三张图。大意是 SensorBoard 上 FPC 座的 VBUS_IN 接脚右侧有一根线，看起来是多余的，请检查。</p>
+<p>维护者 peng-zhihui 在 02:32 回复：“这个是当时替换 USB-HUB 芯片忘了删了，不影响功能，我修复一下”。02:37 推送提交 <code>a1fa04b7</code>，改了 <code>SensorBoard.PcbDoc</code> 和 <code>SensorBoard.PrjPCB</code> 两个文件，issue 已关闭。以上时间和引文是本页用 <code>gh</code> 读原文核对的。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">改前</div><h3>改前：VBUS_IN 的主干上伸出一根短线，通到一个只有它连着的过孔</h3><div class="text"><p>下图是父提交的 PcbDoc 转成 KiCad 后，FPC 座右侧 12 mm × 9 mm 的区域。黄色是 VBUS_IN 网络，其余压暗。粉色圆圈标出被删掉的部分：从主干上一个拐点向右伸出一段 2.16 mm 的横线，再接一段 0.40 mm 的斜线到一个过孔。这个过孔在整个板上只连着这一段走线，另一层没有任何走线和它相连，所以是个死头。</p></div><figure><div class="frame"><a href="img/a1fa04b7/before_zoom_front.svg" title="打开原图"><img src="img/a1fa04b7/before_zoom_front.svg" alt="**改前**（父提交 `a19c350a`，`SensorBoard.PcbDoc` 转 KiCad，本页渲染，顶层）。圆圈内是后来被删的 2 段走线、1 个过孔和 1 块铺铜。" loading="lazy"></a></div><figcaption><b>改前</b>（父提交 <code>a19c350a</code>，<code>SensorBoard.PcbDoc</code> 转 KiCad，本页渲染，顶层）。圆圈内是后来被删的 2 段走线、1 个过孔和 1 块铺铜。</figcaption></figure></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">上游答案</div><h3>改后：这根线和它的过孔都不见了，主干不动</h3><div class="text"><p>改后的板子里，这根短线、那个过孔和过孔上的一小块铺铜都没了，VBUS_IN 的主干和旁边的其他走线原样保留。</p></div><figure><div class="frame"><a href="img/a1fa04b7/after_zoom_front.svg" title="打开原图"><img src="img/a1fa04b7/after_zoom_front.svg" alt="**改后**（提交 `a1fa04b7`）。同一区域同一比例，圆圈内已经空了。" loading="lazy"></a></div><figcaption><b>改后</b>（提交 <code>a1fa04b7</code>）。同一区域同一比例，圆圈内已经空了。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">差异</div><h3>拖动对比，并列出本页重算的差异</h3><div class="text"><p>本页用 KiCad 读前后两版，按网络比较走线、过孔和铺铜，结果如下：</p>
+<ul><li>VBUS_IN：删掉两段顶层走线，(156.934, 108.037) 到 (159.093, 108.037) 长 2.159 mm，(159.093, 108.037) 到 (159.372, 108.317) 长 0.395 mm，线宽都是 0.254 mm，合计 2.554 mm；删掉过孔 (159.372, 108.317)；删掉过孔处约 0.3 mm 见方的一小块铜区域（KiCad 里是一个很小的 zone，采集记录把它算作 1 块铺铜）。VBUS_IN 总走线长度 110.34 → 107.78 mm。</li><li>GND：走线和过孔没有变化，铺铜的填充面积有小的变化（两块大铺铜分别 379.67 → 380.99、371.36 → 371.71 mm²），这应是铺铜重新填充造成的，属于推测。</li><li>其余网络：走线、过孔、铺铜都没变。36 个元件按位置和封装逐个匹配，全部原地没动，值和每个焊盘的网络也没变；总走线 372 → 370 段，总过孔 110 → 109 个。</li></ul>
+<p>数字和采集记录一致（删 2 段、共 2.56 mm、1 个过孔、1 块铺铜）。</p></div><figure><div class="compare" style="--pos:50%"><img src="img/a1fa04b7/before_zoom_front.svg" alt="改前"><div class="after"><img src="img/a1fa04b7/after_zoom_front.svg" alt="改后"></div><div class="bar"></div><span class="tag l">改前</span><span class="tag r">改后</span><input type="range" min="0" max="100" value="50" aria-label="拖动对比" id="cmp1"></div><figcaption><b>同一区域拖动对比</b>。黄色是 VBUS_IN 网络，圆圈是被删部分的位置。</figcaption></figure></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">结论</div><h3>题小但证据链最完整，也说明只比网表看不出走线类修改</h3><div class="text"><p>这是低档题。判分点只有一两个：VBUS_IN 上不再有这根死头和它的过孔，其余东西不动。难点不在改，而在找：agent 要自己从板子上找出哪根线是多余的，题面里只给 issue 的描述。</p>
+<p>对判分器有个提醒。这个提交在元件、网表和焊盘层面没有变化，如果判分只比较网表，“删了”和“没删”会得到同样的结果。判分要看铜皮：走线、过孔、铺铜，按网络比对。</p>
+<p>没有的东西：本页没有让模型试做这道题，不知道 agent 能不能找出这根线。issue 里引用的三张 Altium 截图本页没有转载，图在出处的链接里。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>issue、维护者确认和修复提交三者对得上，并且在铜皮层面核实过，这样的证据链在稚晖君 11 个仓库的 issue 里，只有这一条能找到对得上的修复提交。题很小，但很适合验证“按网络比对铜皮”这类判分能不能工作。</p>
+<p>也说明只比网表看不出走线类修改。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/peng_zhihui_20261112/github_meta/hw_issue_review.md（ElectronBot #28 一行）</span><span>data/peng_zhihui_20261112/revisions_export/ElectronBot__a1fa04b7/diff.json（元件、网络、焊盘无变化）</span><span>data/peng_zhihui_20261112/revisions/ElectronBot__a1fa04b7/{before,after}（Altium 原工程，本页转 KiCad 后逐网络重算）</span><span><a href="https://github.com/peng-zhihui/ElectronBot/issues/28">https://github.com/peng-zhihui/ElectronBot/issues/28</a></span><span><a href="https://github.com/peng-zhihui/ElectronBot/commit/a1fa04b7a7b358c586ed190430c46281fbad51cd">https://github.com/peng-zhihui/ElectronBot/commit/a1fa04b7a7b358c586ed190430c46281fbad51cd</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="31d91345.html"><span class="eyebrow">上一个</span><span>HoloCubic 为 Steam 外壳改板</span></a><a href="hdmi-pi-ylj2000.html"><span class="eyebrow">下一个</span><span>HDMI-PI ylj2000 原理图与 PCB 不同步</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>
