@@ -1,0 +1,17 @@
+model,task,platform,fixed_n,strict_valid,strict_hits,adapter_valid_extra,adapter_hits_extra
+Qwen3-VL-32B-Instruct,next_click,mobile,31,31,19,0,0
+Qwen3-VL-32B-Instruct,next_click,web,80,80,27,0,0
+Qwen3-VL-32B-Instruct,explicit_query,mobile,21,21,15,0,0
+Qwen3-VL-32B-Instruct,explicit_query,web,76,76,64,0,0
+Qwen3-VL-8B-Instruct,next_click,mobile,31,31,17,0,0
+Qwen3-VL-8B-Instruct,next_click,web,80,53,6,26,3
+Qwen3-VL-8B-Instruct,explicit_query,mobile,21,21,16,0,0
+Qwen3-VL-8B-Instruct,explicit_query,web,76,76,57,0,0
+UI-TARS-1.5-7B,next_click,mobile,31,6,0,0,0
+UI-TARS-1.5-7B,next_click,web,80,6,0,0,0
+UI-TARS-1.5-7B,explicit_query,web,76,2,0,0,0
+LookAgain-8B,next_click,mobile,31,30,13,0,0
+LookAgain-8B,next_click,web,80,79,13,0,0
+LookAgain-8B,explicit_query,mobile,21,21,15,0,0
+LookAgain-8B,explicit_query,web,76,76,61,0,0
+UI-TARS-1.5-7B,explicit_query,mobile,21,0,0,0,0

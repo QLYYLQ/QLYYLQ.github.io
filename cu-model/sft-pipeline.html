@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="CUA SFT 数据管线与扩展调研 · CU Model 研究资料">
+<title>CUA SFT 数据管线与扩展调研 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-10-13 · 数据与训练</div>
+<h1>CUA SFT 数据管线与扩展调研</h1><p class="lead">从公开数据、质检、采集边界和扩展曲线梳理可复用部件，保留原报告引用。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="sources/sft-pipeline.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">没有现成管线，五类已验证部件可以拼出四类训练行</a></li>
+<li><a href="#gui">公开 GUI 标签约两成有错，合格数据要过六道关</a><ul>
+<li><a href="#_2">标签应是可互相替代的区域集合，而不是下一次点击</a></li>
+<li><a href="#labels_onlypredict">因果边界：未来信息只进 labels_only，predict 的推理也不能事后补写</a></li>
+<li><a href="#token">渲染、坐标与 token：训练窗口必须和推理窗口逐字节一致</a></li>
+<li><a href="#_3">推理链：短、结构化、能直接做消融</a></li>
+<li><a href="#judgejudge">负例与 judge：负例用策略自己的错误，judge 不看模型自述</a></li>
+<li><a href="#session">划分与遗忘：按 session 和近重复簇切分，回归门常驻</a></li>
+</ul>
+</li>
+<li><a href="#_4">自研采集器要记下每个观测边界的来龙去脉，而不只是截图</a></li>
+<li><a href="#_5">借鉴清单：十项可以直接改造的做法，六个应避开的陷阱</a></li>
+<li><a href="#_6">扩展曲线都是凹的：先扩页面族和困难分层，最后才扩量</a></li>
+<li><a href="#_7">下一步：分三轮推进，每轮都设退出条件</a></li>
+<li><a href="#_8">结论</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>在本次检索到的 2025–2026 年高可信论文里，<strong>没有找到一篇训练过“在下一屏到达之前预测该看哪些区域”的工作</strong>。所以 Cyrus 下一步的 SFT 数据管线没有现成配方可抄，只能用五类已经验证过的部件拼起来：第一类是逐步展开、按步过滤的动作轨迹 SFT 骨架（ProCUA-SFT、WebSTAR、GUI-Libra）；第二类是 Qwen3-VL 上“定位、核对、重看”的闭环及其 loss mask（LookAgain、VisionThink）；第三类是“只在学生失败且特权信息能恢复正确答案时才使用”的门控（GHD）；第四类是从真实 O_{t+1} 离线提取变化区域的方法（EFR、WMA）；第五类是经过抽检校准的 judge（CUARewardBench、ZeroGUI）。数据要合格，有几条硬要求：标签必须是在冻结预算下、经“只看授权 crop”回放验证过的 OR-of-AND 区域集合，不能用下一次点击代替；未来信息只能进 <code>labels_only</code>；训练时的 renderer、历史窗口和 processor 配置必须与推理时一致；推理链要短；负例要来自策略自己的真实错误；划分按 session 和近重复簇切；全观察回归门要贯穿每一轮。对自研采集器来说，最值钱的不是多存几张截图，而是把每个观测边界的时机和状态完整记下来，包括 settle 策略和是否超时、动作目标在动作前观测上的解析结果、DOM 与像素是否失同步，以及完整的 O_{t+1} 加 DOM/AX。有了这些，任何反事实 crop 的证据效用都能离线重算。扩展方面，所有已发表的扩展曲线都是凹的，增益主要来自新页面族、困难分层和标签精度，同一模板堆量收益有限；失败轨迹，以及在同一 O_{t+1} 上构造的反事实 crop，都能以几乎为零的环境成本扩充 predict 行；视频和 world model 只能当候选生成器，不能当标签。最近的行动建议有两步：先做一轮“冻结加审计”，把 40 条小面板里的 16 次位置错误拆成坐标约定问题和真实空间误差，同时建 100–300 条分层人工金标；再用约 1–3 万条真实分支做第一次 SFT。</p>
+<p><em>阅读约定：标为「</em><em>论文报告</em><em>」的段落只写论文或官方代码中可以核对的事实；标为「</em><em>推断</em><em>」「</em><em>建议</em><em>」的段落是针对本项目的判断。来源第一次出现时注明状态（会议与年份、技术报告或 arXiv 预印本）。项目事实引自 (<span class="unbundled" title="原报告引用；此证据文件未随本站发布">PROJECT_REFERENCE.md</span>)。若 verification.md 修正了其他笔记的数字或归属，本文一律采用修正后的版本。</em></p>
+<h2 id="_1">没有现成管线，五类已验证部件可以拼出四类训练行</h2>
+<p><strong>论文报告</strong>：已发表工作中最接近 <code>&lt;predict&gt;→&lt;check&gt;→&lt;revisit&gt;</code> 的模板是 LookAgain（arXiv 预印本，2026）(<a href="https://arxiv.org/abs/2608.09723">LookAgain</a>)。它同样用 <strong>Qwen3-VL-8B/32B-Instruct 和 [0,1000] 坐标</strong>。定位后，它在框中心画一个红点，并以该点为中心裁一块 512×512 patch 回填给模型。loss mask 的规则如下：如果第一次定位就错了，首轮的思考和定位调用都被 mask；中间轮只 mask 定位调用，思考仍然受监督；最终纠正轮和 confirm 轮全部监督；patch token 始终 mask。约 70k 条 SFT 轨迹里只有约 600 条（约 0.9%）是“目标不存在”样本，做法是用目标旁边同尺寸的 patch 盖住目标。结果上，8B 在 OSWorld-G 从 <strong>51.3 升到 73.0</strong>，ScreenSpot-Pro 从 47.1 升到 60.2；而<strong>不经训练、直接套用同一闭环，成绩反而下降</strong> (<a href="https://www.alphaxiv.org/abs/2608.09723.md">全文</a>)。但 LookAgain 重看的是<strong>当前屏</strong>。本次检索到的 GUI 主动感知工作，包括 GUI-Spotlight（ICML 2026）(<a href="https://icml.cc/virtual/2026/poster/63593">GUI-Spotlight</a>)，以及 LASER、ZoomClick 和 GUI-ARP（三者均为 arXiv 预印本，2025），也都是在已经可见的屏幕上缩放、重定位，没有一篇在 O_{t+1} 出现之前预测它的区域。</p>
+<p>“证据够不够”的标签规则可以借 VisionThink（NeurIPS 2025）(<a href="https://neurips.cc/virtual/2025/poster/118060">VisionThink</a>)。它对每个样本在 temperature 1 下 rollout 8 次：<strong>高、低分辨率都 8/8 正确，才算“低分辨率足够”</strong>；高分辨率的正确次数比低分辨率多 6 次以上，才算“需要高分辨率”；两类各取 10K (<a href="https://arxiv.org/html/2507.13348">arXiv HTML</a>)。把未来观测当特权信号的做法来自 GHD（arXiv 预印本，2026）。它的 teacher 与学生共享参数，但额外看到下一张截图；<strong>只有学生失败、且 teacher 在 1000 网格上 δ=20 以内恢复出示范动作时，才做蒸馏</strong>。在 AndroidWorld 上，Qwen3-VL-8B 的 SFT 为 59.05，GRPO 基线为 61.35，GHD 为 66.47；而且<strong>只给下一屏（66.47）比再加上推理和动作的完整特权信息（64.67）更好</strong> (<a href="https://arxiv.org/abs/2608.06065">GHD</a>)。PI-Distill（ICML 2026）给出了一条一般规律：特权信息让 teacher 与学生之间的初始 KL 越大，最终效果越倾向于下降。不过这一趋势依赖 α，而且只在工具调用任务上测过，没有测 GUI (<a href="https://icml.cc/virtual/2026/poster/62658">PI-Distill</a>)。</p>
+<p>动作轨迹 SFT 的骨架已经相当成熟。ProCUA-SFT（arXiv 预印本，NVIDIA 技术报告，2026）把每条 T 步轨迹展开成 T 个样本，并且<strong>在 SFT 中复现推理时完全相同的窗口</strong>：最近 3 张截图以图像形式保留，更早的步骤转成文本 (<a href="https://arxiv.org/abs/2606.17321">ProCUA-SFT</a>)。WebSTAR（ACL 2026）发现，即使在成功轨迹里，<strong>真正正确的步骤也不到一半</strong>；只保留正确步骤（97K 减到 46K）后，7B 模型的 WebVoyager Pass@1 从 31.9 升到 47.0 (<a href="https://aclanthology.org/2026.acl-long.21/">WebSTAR</a>)。GUI-Libra（arXiv 预印本，2026）用两道过滤：Qwen3-VL-8B 重预测 10 次、准确率低于 0.3 的步骤丢弃；再让 Qwen3-VL-32B 预测一个框，原始点击点必须落在框内。过滤后保留约一半数据，AndroidControl-High 的 Pass@1 提升 4.5 (<a href="https://arxiv.org/abs/2602.22190">GUI-Libra</a>)。从真实 O_t→O_{t+1} 提取变化区域也有现成流程。EFR（arXiv 预印本，2026）的做法是：灰度差分，二值化，按轮廓取框，去掉不超过 2 px 的框和状态栏里的框，外扩 5 px 后合并，最后由 VLM 把每个区域标成“相关”或“噪声”(<a href="https://www.alphaxiv.org/abs/2608.24015.md">EFR</a>)。WMA（ICLR 2025）用匈牙利算法匹配相邻两次观测中的元素，得到新增、删除和更新列表 (<a href="https://proceedings.iclr.cc/paper_files/paper/2025/hash/a00548031e4647b13042c97c922fadf1-Abstract-Conference.html">WMA</a>)。</p>
+<p><strong>推断</strong>：把这些部件组合起来，管线的核心逻辑如下。O_{t+1} 在离线时总是可得，是像 GHD 那样廉价的特权信号，所以 oracle 证据 ROI 可以从 DOM/AX 节点框、EFR 差分框和 WMA 式元素匹配中直接提取。但 PI-Distill 的 KL 警告意味着，学生从 prefix 推不出来的 oracle 区域不应直接当 predict 正例。因此需要一道“可达性门”：只有当某个仅看 prefix 的采样候选与该 oracle 区域重叠，或者 prefix 中已出现该位置的布局证据时，它才进入 predict completion；否则只能用作 revisit 目标或诊断。下表把四类训练行分别对应到论文中最接近的做法。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>训练行</th>
+<th>论文报告的最近做法</th>
+<th>推断：本项目怎样构造与过滤</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>predict</td>
+<td>GHD 的“学生失败且特权信号可恢复”门控；LASER（arXiv 预印本，2025）以“从该 crop 出发 N 次 rollout 的成功比例”作为 crop 效用，配对要求效用差够大且两 crop 的 IoU&lt;0.8 (<a href="https://arxiv.org/html/2509.04243v1">LASER</a>)；UI-TARS（技术报告，2025）的 thought bootstrapping：不给 GT 采样，只保留动作与 GT 一致的思路 (<a href="https://arxiv.org/pdf/2501.12326v1">UI-TARS</a>)</td>
+<td>8B/32B 只看 prefix，各采 K 个 bundle；揭晓 O_{t+1} 后在 <code>labels_only</code> 中按四项验收：对某个 acceptable bundle 的覆盖率、只看 crop 时 K 次回放的效用、预算、精度；多个都合格时取面积最小者；oracle ROI 必须先过可达性门</td>
+</tr>
+<tr>
+<td>sufficient-check + action</td>
+<td>VisionThink 的“两种分辨率都 8/8 正确”规则；LookAgain 的 confirm 轮</td>
+<td>只看授权 crop 时 K/K 次都正确，full-target 对照给出相同结论，且动作落在 crop 内；visibly-absent 占 1–5%，用真实空状态加 CutPaste 构造，并始终与 unknown 样本成对出现</td>
+</tr>
+<tr>
+<td>insufficient-check + revisit</td>
+<td>LASER 从“crop 含 GT 但点错，第二步纠正”的失败中挖出 36K 多步样本；RoTS（ICML 2026）用策略自身错误生成的反思，效果优于人工反思 (<a href="https://icml.cc/virtual/2026/poster/62251">RoTS</a>)；Pixel Reasoner（NeurIPS 2025）先插入错误或过大的裁剪操作，再对它 mask (<a href="https://neurips.cc/virtual/2025/poster/117667">Pixel Reasoner</a>)</td>
+<td>优先用真实的部分覆盖 predict；不够时按观测到的位置偏移分布做平移、缩小，或去掉 bundle 中的一个成员；revisit 目标是补全某个 bundle 所需的最小区域集合；拒绝重复请求，并加防翻转保护</td>
+</tr>
+<tr>
+<td>post-revisit</td>
+<td>Mini-o3（ICLR 2026，据官方仓库）对超出轮次上限的回答做 mask 而不是惩罚 (<a href="https://github.com/Mini-o3/Mini-o3">Mini-o3</a>)；GUI-ARP（arXiv 预印本，2025）的工具调用率在 ScreenSpot-Pro 上从 SFT 后的 29.7% 漂到 GRPO 后的 92.4% (<a href="https://arxiv.org/html/2509.15532v1">GUI-ARP</a>)</td>
+<td>revisit 上限 1–2 次；超上限的链不进 loss（结果未知不等于失败）；每轮监控 revisit 率漂移</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>建议</strong>：每行只监督末尾那段 assistant completion。prompt 中已有的 assistant turn 一律 mask，包括错误的初始 predict，这与 LookAgain mask 错误首轮假设的做法一致。被注入的 crop 像素 token 也始终 mask。行比例方面，论文里没有最优配比，只有锚点：VisionThink 的“足够”与“需要高分辨率”各 10K，Pixel Reasoner 的图像轨迹是不裁剪、裁剪 1 次、裁剪 2 次、继续缩放约 30/20/20/30 (<a href="https://arxiv.org/html/2505.15966">Pixel Reasoner HTML</a>)。因此首轮可以先把 sufficient 与 insufficient 设为约 1:1，第二次 revisit 控制在约两成以内，再按验证集调整。</p>
+<h2 id="gui">公开 GUI 标签约两成有错，合格数据要过六道关</h2>
+<h3 id="_2">标签应是可互相替代的区域集合，而不是下一次点击</h3>
+<p><strong>论文报告</strong>：单一标签的噪声已经被反复量化。OS-Atlas（ICLR 2025）发现 ScreenSpot 约 <strong>11.32%</strong> 的标注有误 (<a href="https://arxiv.org/html/2410.23218">OS-Atlas</a>)。UI-Ins（ICLR 2026）报告现有 grounding 数据中 <strong>23.3%</strong> 的指令有实质缺陷 (<a href="https://arxiv.org/abs/2510.20286">UI-Ins</a>)。GUI-Libra 估计 AndroidControl 的动作类型和坐标约有两成错误。AndroidControl-Curated（arXiv 预印本，2025）给出的分类比例是：真值错误 37.63%、任务不清 24.13%、存在多个有效动作 8.12%；但论文一处说这些问题合计影响“超过 70%”的样本，引言又说“约 30%”，前后不一致 (<a href="https://arxiv.org/abs/2510.18488">AndroidControl-Curated</a>)。Online-Mind2Web（COLM 2025）抽查 650 个 Mind2Web 任务，<strong>47% 无效或真值轨迹已过时</strong> (<a href="https://github.com/OSU-NLP-Group/Online-Mind2Web">Online-Mind2Web</a>)。一项针对失败判定的审计（arXiv 预印本，2026）发现 15.3% 的 FAIL 判错，其中 10.7% 是评估器漏判，包括拒绝了有效的替代解法 (<a href="https://arxiv.org/abs/2607.28367">Mis-Score</a>)。还有一组对照值得注意：Visual CoT（NeurIPS 2024 D&amp;B，较早的基础工作）中，用 GT 框得分 0.752，用模型预测框 0.550，用随机框 0.453，用中心框 0.490 (<a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/0ff38d72a2e0aa6dbe42de83a17b2223-Paper-Datasets_and_Benchmarks_Track.pdf">Visual CoT</a>)。</p>
+<p><strong>推断</strong>：proposal 里的 OR-of-AND <code>acceptable_bundles</code>、“部分覆盖只作诊断”和“recorded click 只是弱代理”与文献完全一致，这里只需补三条操作要求。第一，每个 bundle 要记录来源（DOM/AX、差分框或采样后验证）和 prefix 可预测性，并记录只看 crop 实测的效用。第二，silver 证据永远不会自动升级为 gold。第三，随机框、中心框与预测框的差距在 Visual CoT 中并不大，所以每一项结论都必须在同一 split 上同时报告 center、random、frequency 和 position-copy 对照。</p>
+<h3 id="labels_onlypredict">因果边界：未来信息只进 <code>labels_only</code>，predict 的推理也不能事后补写</h3>
+<p><strong>论文报告</strong>：OpenCUA（NeurIPS 2025）把每个动作配到“鼠标开始移动之前最后一张有明显变化的帧”，并明确指出按点击时间戳对齐会泄露未来信息，因为那时光标可能已经停在目标上 (<a href="https://arxiv.org/html/2508.09123">OpenCUA</a>)。UI-TARS-2（技术报告，2025）报告“给已录制动作事后补写推理”是一次失败的试点，最后改用边做边说的 think-aloud 采集 (<a href="https://arxiv.org/html/2509.02544v2">UI-TARS-2</a>)。Aguvis（ICML 2025）要求生成“避免后见之明的预测式推理”，人工抽检 86.7% 对齐 (<a href="https://arxiv.org/html/2412.04454v1">Aguvis</a>)。EvoCUA（技术报告，ICML 2026 workshop poster）则对已知动作做回溯式的 Hindsight Reasoning Generation (<a href="https://arxiv.org/html/2601.15876v2">EvoCUA</a>)。OS-Genesis（ACL 2025）的反向任务合成 (<a href="https://arxiv.org/html/2412.19723">OS-Genesis</a>) 和 AgentHER（arXiv 预印本，2026）的事后重标 (<a href="https://arxiv.org/abs/2603.21357">AgentHER</a>) 都是在看完整条轨迹之后才写任务。</p>
+<p><strong>推断</strong>：动作行用回溯推理或许还能接受，<strong>predict 行不行</strong>。如果 teacher 看过 O_{t+1} 再写 <code>&lt;think&gt;</code>，推理里就会提到 t+1 才出现的元素，这正是 proposal 禁止的泄露。因此 predict 的推理只能来自仅看 prefix 的采样，按 UI-TARS 的 bootstrapping 方式，只保留 bundle 通过验证的那些。事后写成的任务文本也要逐条检查是否点名了 t+1 才首次出现的实体；命中的行打标签，并排除在 predict 正例之外。causal audit 应对每一行核验三件事：<code>prediction_input</code> 中每个字段的来源时间不晚于 t；推理生成器的输入清单；reference hint 的来源。</p>
+<h3 id="token">渲染、坐标与 token：训练窗口必须和推理窗口逐字节一致</h3>
+<p><strong>论文报告</strong>：ProCUA-SFT 强调 SFT 必须复现推理时的窗口布局。Qwen3-VL Technical Report（技术报告，2025）在 grounding 中采用 [0,1000] 归一化坐标 (<a href="https://arxiv.org/html/2511.21631">Qwen3-VL</a>)。维护者在 issue 中说明：Qwen2.5-VL 用绝对坐标（因子 28），Qwen3-VL 用 0–1000（因子 32） (<a href="https://github.com/QwenLM/Qwen3-VL/issues/1616">Qwen3-VL #1616</a>)。官方 processor 配置是 patch_size 16、merge_size 2，默认 shortest_edge 65,536，longest_edge 16,777,216 (<a href="https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct/blob/main/preprocessor_config.json">preprocessor_config</a>)。坐标读出格式有影响：在一个 COCO 照片 3×3 定位任务上（<strong>不是 GUI 任务</strong>，只能作旁证），Qwen3-VL-4B 用英文格子名答对 68.5%，用 0–999 归一化坐标 59.5%，用像素坐标只有 20.0% (<a href="https://arxiv.org/abs/2609.27408">Readout limit</a>)。裁剪大小也有影响：ZoomClick（arXiv 预印本，2025）中，最小裁剪边从 0 增到 1024，Qwen3-VL-32B 从 65.2 升到 72.3，UI-Venus-7B 却从 65.5 降到 63.3；把上一轮完整图像和点击点一起回灌时，<strong>UI-TARS-1.5-7B</strong> 从 54.1 崩到 19.0 (<a href="https://arxiv.org/abs/2512.05941">ZoomClick</a>)。LASER 也报告 min-pixels 过小时性能急剧下降。</p>
+<p><strong>推断</strong>：以下数字是我按上述配置推算的。resize 之后一个视觉 token 对应 32×32 像素，所以 pilot 每图 50,176–200,704 px 约等于 49–196 个 token。每个 crop 都会被放大到 min_pixels 以上，因此<strong>3 块 crop 的 bundle 不论并集面积多小，至少约 147 个 token</strong>。官方默认 shortest_edge 65,536 与 pilot 的 50,176 不同，所以 processor 配置必须固定，并把哈希写进 <code>run_meta</code>。1920×1080 的帧缩到约 200k px（约 600×336）后，一个 token 在 [0,1000] 坐标中横向约占 53 个单位、纵向约占 100 个单位。也就是说，50–100 个单位的偏移只相当于一个 token 格，16 次 location error 中有相当一部分可能是分辨率造成的，不是布局判断错了。验证分两步：先复核是否有 999 与 1000、绝对与相对坐标的约定错误；再在约 200k、800k、1.6M px 三档 O_t 分辨率上重跑。返回的 crop 要附带它在原图 [0,1000] 坐标中的位置；crop 先补到最小边长，靠近边界时平移而不是缩小；revisit 轮只回传 crop 和坐标，不回灌上一轮的整张图（ZoomClick 的崩溃是在 UI-TARS 上测到的，在 Qwen3-VL 上未经验证）。pilot 中已有两次 32B 长上下文（每请求 5–33 张图）OOM，可见历史窗口的预算本身就是 renderer 合同的一部分 (<span class="unbundled" title="原报告引用；此证据文件未随本站发布">PROJECT_REFERENCE.md</span>)。</p>
+<h3 id="_3">推理链：短、结构化、能直接做消融</h3>
+<p><strong>论文报告</strong>：GUI-Libra 的混合数据 7B 模型在 ScreenSpot-v2 上，<strong>不推理 85.6、推理 81.4</strong>；回答超过 250 token 时下降尤其严重。它的 token 权重是坐标 4、动作 2、推理 1。OpenCUA 中反思式推理 L2 表现最好（18.5），但只用 L2 训练只有 13.1，混合多种格式训练才达到 18.5。ScreenSeekeR（ScreenSpot-Pro 论文，ICLR 2025 workshop）的规划器会写出目标元素、所在区域和邻近元素，去掉邻近元素推断后从 48.1 降到 46.4 (<a href="https://likaixin2000.github.io/papers/ScreenSpot_Pro.pdf">ScreenSpot-Pro</a>)。项目 pilot 中，forced prefix 让两个模型的有用选区各多 1/10 (<span class="unbundled" title="原报告引用；此证据文件未随本站发布">PROJECT_REFERENCE.md</span>)。</p>
+<p><strong>建议</strong>：predict 推理控制在约 100 token 以内，用固定槽位：reference 来源、预期元素、所在容器、锚点邻居。直接输出行与短推理行混合训练，两种模式都要评测。坐标 token 适度加权：GUI-Libra 的 4 倍针对的是点坐标，框坐标可以从 2 倍起步再做消融。</p>
+<h3 id="judgejudge">负例与 judge：负例用策略自己的错误，judge 不看模型自述</h3>
+<p><strong>论文报告</strong>：RoTS 用策略自身错误生成的反思，“Aware.”得分 26.6；改用人工反思只有 17.2。它的 λ_ref=0.1（72 万条普通样本加 8 万条反思样本），最优区间 0.05–0.15，监督的是 ReAct 推理加动作，而不只是动作 token。GUI-Critic-R1（NeurIPS 2025）把负例采样换成随机替换后，critic 准确率降到 50.46 和 50.30，完整模型是 69.20 和 58.77 (<a href="https://neurips.cc/virtual/2025/poster/115566">GUI-Critic-R1</a>)。ZeroGUI（arXiv 预印本，2025）中，judge 不看 agent 回答（加投票）时精度 61.5，看回答（不投票）时 44.3，但两行同时改了两个因素 (<a href="https://arxiv.org/abs/2505.23762">ZeroGUI</a>)。CUARewardBench（arXiv 预印本，2025）把多数投票改为严格一致：<strong>NPV 从 68.5 升到 84.2</strong>，精度 90.1 和召回 59.0 不变，代价是特异度从 93.2 降到 72.2 (<a href="https://arxiv.org/abs/2510.18596">CUARewardBench</a>)。人工一致率的天花板在 85–88%：WebJudge（o4-mini）与人工一致 85.7%，MobileJudgeBench（arXiv 预印本，2026）人工两两一致 88.4% (<a href="https://arxiv.org/abs/2608.11434">MobileJudgeBench</a>)。UI-Genie（NeurIPS 2025）的奖励模型在 0、1、3、5 张历史图下的步级 F1 分别是 61.3、72.4、77.8、79.6 (<a href="https://arxiv.org/html/2505.21496">UI-Genie</a>)。</p>
+<p><strong>建议</strong>：不足行的负例应按 pilot 实测的错误分布来造（16 次位置错误、11 次任务用途错误）。充分性 judge 能看到任务、与模型相同的 prefix、授权 crop 和隐藏的完整目标，但看不到模型自己的“已充分”声明。只有异构 judge 意见一致时才自动接收，其余进入 Undetermined 通道交人工。现有标签是 <code>assistant_review_non_human_gold</code>，所以要先测人机一致率。按我的计算，在约 85% 一致率下，95% 置信区间半宽在 n=50、100、200 时分别约为 ±9.9、±7.0、±4.9 个百分点，因此每个影响决策的分层至少要有 100 条人工样本。</p>
+<h3 id="session">划分与遗忘：按 session 和近重复簇切分，回归门常驻</h3>
+<p><strong>论文报告</strong>：SeeClick（2024 基础工作）发现 AITW 按 episode 划分会泄漏，每条指令平均有约 20 条相似轨迹 (<a href="https://huggingface.co/papers/2401.10935.md">SeeClick</a>)。AndroidControl（NeurIPS 2024 基础工作）指出，分布外泛化需要多 1–2 个数量级的数据 (<a href="https://arxiv.org/html/2406.03679v3">AndroidControl</a>)。NDStudy（ICSE 2020）中，最佳通用阈值的平均 F1 只有 0.24，按应用单独设阈值可达 0.42 (<a href="https://people.ece.ubc.ca/astocco/pubs/2020-Yandrapally-ICSE2020.pdf">NDStudy</a>)。GroundCUA（ICLR 2026）用 pHash 对元素裁剪去重 (<a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/0961fffb7adb81388b9b24ab6a3ff7ab-Paper-Conference.pdf">GroundCUA</a>)。遗忘方面，ProCUA-SFT 报告在 AgentNet 上 SFT 一个 epoch 后，OSWorld 从 26.3% 掉到 8–10%。UI-MOPD（arXiv 预印本，2026）中，只用桌面数据 SFT 时 OSWorld 从 33.9 升到 35.8，MobileWorld 却从 <strong>7.7% 掉到 0</strong> (<a href="https://arxiv.org/abs/2607.04425">UI-MOPD</a>)。STEVE（arXiv 预印本，2025）中，SFT 后小元素 grounding 从 67.3 降到 61.2，而 KTO 在 WinAgentArena 上得 14.2，SFT 只有 7.1 (<a href="https://arxiv.org/abs/2503.12532">STEVE</a>)。其他相关做法：OpenCUA 混入 30–60% 通用数据；EvoCUA 给 thinking 模型混入非 thinking 格式的通用数据后，ScreenSpot-Pro 从 57.10 降到 49.76；GuirlVG（arXiv 预印本，2025）默认 LoRA r=64、α=128 并冻结视觉塔 (<a href="https://huggingface.co/papers/2508.04389.md">GuirlVG</a>)；LoRA 引入的“入侵维度”会在连续微调中累积（NeurIPS 2025） (<a href="https://neurips.cc/virtual/2025/poster/115207">LoRA vs Full FT</a>)。</p>
+<p><strong>推断</strong>：changed-instance same-layout 分层恰好是最容易跨 split 泄漏的数据。近重复簇应同时用结构键（URL 模板加 DOM 标签路径哈希）和视觉键（pHash/SSIM）计算，阈值按站点或应用单独校准，整簇只放进同一个 split。Qwen3-VL-Instruct 不是 thinking 模型，所以混入的通用数据也要用非 thinking 格式。每个阶段之后都要过全观察回归门，其中包括小元素 grounding，并且每个阶段都保持 web 与 mobile 的平衡。</p>
+<h2 id="_4">自研采集器要记下每个观测边界的来龙去脉，而不只是截图</h2>
+<p><strong>论文报告</strong>：“下一观测”在不同框架里含义并不相同。BrowserGym（TMLR 2025）是 Cyrus 所用 OpenHands WebArena 轨迹的底座。它每步先 sleep 0.5 s，再调用一次 cookies 来冲刷回调，然后对每个 frame 等待 domcontentloaded（3 s 超时），并不等 networkidle。之后依次抽取 DOM、AXTree，最后才截图，三者不是原子操作 (<a href="https://github.com/ServiceNow/BrowserGym/blob/main/browsergym/core/src/browsergym/core/env.py">BrowserGym env.py</a>)。它默认 multiaction=True，OpenHands 也显式打开了这一项 (<a href="https://github.com/All-Hands-AI/OpenHands/blob/0.30.0/openhands/agenthub/browsing_agent/browsing_agent.py">OpenHands browsing_agent.py</a>)，所以一步可能包含多个动作，却只有一个观测。<code>click('bid')</code> 在执行时才对实时 DOM 解析，Playwright 还会自动滚动到目标 (<a href="https://github.com/ServiceNow/BrowserGym/blob/main/browsergym/core/src/browsergym/core/action/utils.py">BrowserGym action utils</a>; <a href="https://mlanthology.org/tmlr/2025/dechezelles2025tmlr-browsergym">BrowserGym</a>)。AndroidWorld（ICLR 2025）判定稳定的条件是 UI 元素快照连续 3 次相同，每次间隔 0.5 s，6 s 超时；超时后也照常返回。它在执行索引动作前还会重新抓一次状态 (<a href="https://github.com/google-research/android_world/blob/main/android_world/env/interface.py">AndroidWorld</a>)。WebArena 和 OSWorld 的 sleep_after_execution 默认都是 0.0 (<a href="https://github.com/web-arena-x/webarena/blob/main/run.py">WebArena run.py</a>; <a href="https://github.com/xlang-ai/OSWorld/blob/main/run.py">OSWorld run.py</a>)。人工录制工具存的是动作之前的帧：GUI-Odyssey 让参与者在每步之前手动保存截图 (<a href="https://arxiv.org/html/2406.08451">GUI-Odyssey</a>)，WebLINX 没有说明截图时机 (<a href="https://arxiv.org/html/2402.05930">WebLINX</a>)。AndroidLab（ACL 2025）发现，用 ADB 抓 XML 在动画页面上会失败，于是改用 Accessibility Service 并关闭系统动画 (<a href="https://aclanthology.org/2025.acl-long.107">AndroidLab</a>)。</p>
+<p><strong>推断与建议</strong>：Cyrus 现有的三类来源因此各有一种“相邻”语义。OpenHands 的目标帧是动作后 0.5 s 加 DOMContentLoaded，GUI-Odyssey 是下一步动作前手动保存的截图，WebLINX 则不明。把它们混在同一分层里，会把“布局复用”和“经过的时间”混为一谈。自研采集器应把这件事变成显式字段，每个边界记录三项：<code>archetype</code>（取值为环境动作后，或下一动作前的关键帧）、<code>target_gap_s</code>，以及 settle 轨迹。建议的 settle 策略是：至少等 0.5 s，再等 load 状态，然后要求 DOM/AX 签名和像素哈希同时连续 3 次相同（间隔 0.5 s），最长等 6 s，并记录 <code>fired_by=stable|timeout</code>。超时的行标为 <code>target_unsettled</code>，单独成一层，不参与 predict 正例挖掘。动作目标要在动作前的观测上解析并存档（bid、框、元素文本），同时记录执行时实际命中的元素。DOM 快照之后再截一次图并比对哈希，不一致就标 <code>dom_pixel_desync</code>。隐式滚动和一步多原语也要记录。自研采集默认 multiaction=False；如果保留多动作，就为每个原语都记录边界。最关键的一条是：<strong>把完整 O_{t+1}、DOM/AX/XML、URL（web 再加 HAR）存进 <code>labels_only</code></strong>。这样，任何反事实 crop 的证据效用都能离线重算。动作效用则需要真实分叉，没有分叉就标 <code>not_measured</code>。</p>
+<p><strong>论文报告</strong>：真实分叉很昂贵。Tree Search（TMLR 2025）靠重置环境、重放动作历史来分叉，URL 变化时把之前的历史压缩成一次 goto(url) (<a href="https://mlanthology.org/tmlr/2025/koh2025tmlr-tree/">Tree Search</a>)。Playwright 的 storageState 只包含 cookies、local storage 和 IndexedDB 快照，不包含 DOM、JS 或服务器状态 (<a href="https://playwright.dev/docs/api/class-browsercontext">Playwright</a>)；HAR 回放对 URL、方法和 POST 载荷都严格匹配 (<a href="https://playwright.dev/docs/mock">Playwright mock</a>)。WebArena-Verified 提供版本化的任务和网络轨迹回放 (<a href="https://github.com/ServiceNow/webarena-verified">WebArena-Verified</a>)，OSWorld-Verified 给任务加了 possibility_of_env_change 字段 (<a href="https://xlang.ai/blog/osworld-verified">OSWorld-Verified</a>)。溯源方面，AgentLab 会写出 package_versions.txt 和每步时间戳 (<a href="https://github.com/ServiceNow/AgentLab/blob/main/src/agentlab/experiments/loop.py">AgentLab</a>)。隐私方面，OpenCUA 要求标注者签同意书，用 GPT 给每条数据定 None 到 High 的隐私等级，人工复核后拒收高风险数据 (<a href="https://arxiv.org/html/2508.09123">OpenCUA</a>)。许可方面，WebLINX 是 CC BY-NC-SA 4.0，派生数据必须沿用同样条款 (<a href="https://huggingface.co/datasets/McGill-NLP/WebLINX">WebLINX 数据卡</a>)；AgentNet 是 MIT (<a href="https://huggingface.co/datasets/xlangai/AgentNet">AgentNet 数据卡</a>)。下表是据此推断的最小 schema，分四个物理隔离的存储区。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>存储区</th>
+<th>必须字段（推断）</th>
+<th>主要依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run_meta</code></td>
+<td>processor 配置哈希（patch、merge、min/max pixels）、renderer 版本、浏览器或模拟器版本及依赖包版本、capture_policy、multiaction、tags_to_mark、network_mode（live、self_hosted 或 har_replay）、许可与 ToS、同意书与 PII 等级</td>
+<td>Qwen3-VL 配置；BrowserGym；AgentLab；OpenCUA；WebLINX</td>
+</tr>
+<tr>
+<td><code>prediction_input</code></td>
+<td>任务文本、可见历史帧及其 SHA、O_t、已发出的 A_t（含在动作前观测上解析出的目标）、边界类型；辅助字段轨道还要有在 predict 之前声明的字段</td>
+<td>proposal 白名单；OpenCUA 关键帧规则</td>
+</tr>
+<tr>
+<td><code>labels_only</code></td>
+<td>完整 O_{t+1} 及 DOM/AX/XML/URL/HAR 引用、settle 轨迹与 fired_by、dom_pixel_desync、隐式滚动标记、差分框、带来源的 oracle ROI、acceptable_bundles、layout_equiv_label（silver）</td>
+<td>EFR；WMA；AndroidWorld；BrowserGym</td>
+</tr>
+<tr>
+<td><code>branch</code></td>
+<td>采样得到的 predict、授权像素 mask、返回的 crop 及其坐标、image_grid_thw 与视觉 token 数、时延、check/revisit 结果、lineage id、split_group_id、近重复簇 id</td>
+<td>proposal 预算账本；NDStudy</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="_5">借鉴清单：十项可以直接改造的做法，六个应避开的陷阱</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>借鉴什么</th>
+<th>来源</th>
+<th>在本项目中怎么用（推断）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>步前缀展开，训练窗口与推理一致</td>
+<td>ProCUA-SFT</td>
+<td>每个真实边界派生四类行；current-only 与 warm 用同一 renderer 各渲染一次</td>
+</tr>
+<tr>
+<td>错误首轮 mask，纠正轮全监督</td>
+<td>LookAgain</td>
+<td>错误的 predict 留在上下文中但 mask；监督“判定不足”的 check 与随后的 revisit</td>
+</tr>
+<tr>
+<td>对比式充分性标签</td>
+<td>VisionThink</td>
+<td>只看 crop 与看完整目标各回放 K 次，据此划分 sufficient 与 insufficient</td>
+</tr>
+<tr>
+<td>回放效用加 IoU 去重配对</td>
+<td>LASER</td>
+<td>bundle 效用取只看 crop 时的成功比例；DPO 只用效用差足够大、IoU&lt;0.8、同 prompt 同预算的配对</td>
+</tr>
+<tr>
+<td>特权信号门控</td>
+<td>GHD；PI-Distill</td>
+<td>O_{t+1} 只作 teacher 信号，oracle ROI 先过可达性门</td>
+</tr>
+<tr>
+<td>双模型一致性过滤</td>
+<td>GUI-Libra</td>
+<td>用 8B 的 K 次采样一致性筛选，再让 32B 充当标签核查器</td>
+</tr>
+<tr>
+<td>按行过滤，不按整条轨迹过滤</td>
+<td>WebSTAR；Qwen-UI-Agent（技术报告，2026）报告步级过滤不逊于执行验证器选出的整条轨迹 (<a href="https://arxiv.org/html/2607.28227v1">Qwen-UI-Agent</a>)</td>
+<td>四类行各自过滤；失败轨迹也能贡献 predict 行</td>
+</tr>
+<tr>
+<td>分流通道与最长正确前缀</td>
+<td>BlueLM-GUI（技术报告，2026）的 True / False / Env_ERROR / Undetermined 四通道 (<a href="https://arxiv.org/html/2609.12394v3">BlueLM-GUI</a>)；MAI-UI（技术报告，2025）保留最长正确前缀，judge 更看重截图而不是 agent 自述 (<a href="https://arxiv.org/html/2512.22047v1">MAI-UI</a>)</td>
+<td>环境错误与模型错误分开处理；Undetermined 交人工，并用来校准 judge</td>
+</tr>
+<tr>
+<td>差分框、元素匹配与可达性索引</td>
+<td>EFR；WMA；AppDeltaWorld（arXiv 预印本，2026）按（屏幕簇、动作类型、目标所在的 6×12 网格单元）索引可达的目标屏幕簇 (<a href="https://www.alphaxiv.org/abs/2608.05891.md">AppDeltaWorld</a>)</td>
+<td>生成 oracle 候选，并建立一条非生成式的“会出现在哪里”召回基线</td>
+</tr>
+<tr>
+<td>策略自身负例，超轮次 mask</td>
+<td>RoTS；Mini-o3</td>
+<td>不足行按真实偏移分布构造；超过 revisit 上限的链不进 loss</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>应避开的六个陷阱</strong>（每条先给论文报告，再给推断）。第一，事后补写推理。UI-TARS-2 已报告这是一次失败的试点；对 predict 行来说，它还直接构成泄露。第二，居中裁剪。UI-AGILE（arXiv 预印本，2025）指出居中的 crop 会让模型学到“看图像中心”的捷径，因此改用包含目标的随机窗口 (<a href="https://www.alphaxiv.org/abs/2507.22025.md">UI-AGILE</a>)；本项目的 oracle crop 和退化负例都应随机化位置。第三，未经训练就上闭环，LookAgain 已证明这样会变差。第四，在 revisit 轮回灌整张旧图，ZoomClick 中 UI-TARS-1.5-7B 因此从 54.1 降到 19.0。第五，照搬探索管线的默认过滤。Explorer（Findings ACL 2025）删掉了滚动超过 2 次的轨迹 (<a href="https://aclanthology.org/2025.findings-acl.326.pdf">Explorer</a>)，多数管线也回避登录和验证码，这会删掉本项目需要的 scroll、modal 和 keyboard 分层。第六，直接混入规模大但格式不匹配的人工语料（如 ProCUA 报告的 AgentNet 负迁移），或者让 judge 读模型自己的声明（如 ZeroGUI）。</p>
+<h2 id="_6">扩展曲线都是凹的：先扩页面族和困难分层，最后才扩量</h2>
+<p><strong>论文报告</strong>：单一来源的数据很早就会饱和。UGround（ICLR 2025 Oral）在约 10 万张截图之后收益开始递减 (<a href="https://arxiv.org/html/2410.05243">UGround</a>)。ScaleCUA（ICLR 2026 Oral）的曲线呈对数型，超过 75% 数据后多数指标饱和 (<a href="https://arxiv.org/html/2509.15221">ScaleCUA</a>)。InSTA v1（arXiv 预印本；v1 为 ICLR 2025 DATA-FM workshop spotlight）中，人工动作从 32 个增加到 256 个时，合成数据带来的增益从 <strong>+89.5% 缩到 +12.1%</strong> (<a href="https://arxiv.org/html/2502.06776v1">InSTA v1</a>)。EvoCUA 的拒绝采样微调在 2 万、22.6 万、100 万样本时，分别只带来 +2.61、+6.79、+8.12 个百分点。没有饱和的例子都靠多样性：Jedi（NeurIPS 2025 D&amp;B）混合多种数据类型，到 400 万条仍在上升，而单一类型扩展时结果会波动 (<a href="https://arxiv.org/html/2505.13227">Jedi</a>)；gWorld（ICML 2026）在 3.7 万到 24 万样本之间呈幂律，平均 R² 为 0.948 (<a href="https://icml.cc/virtual/2026/poster/63186">gWorld</a>)。多样化的维度也有讲究。ProCUA 按应用组合做多样化得 30.9，不做多样化 27.3，按动作集做多样化只有 24.9。HATS（CVPR 2026）只用 1,000 条专挑“难动作”的轨迹，就让 InternVL2-4B 在 AndroidWorld 上从 OS-Genesis 数据的 11.30 提到 22.60 (<a href="https://arxiv.org/html/2603.12138v1">HATS</a>)。Phi-Ground（技术报告，2025）把点击中心重采样成均匀分布后，ScreenSpot-Pro 从 31.5 升到 33.1；再混入 30% 未重采样的数据，又跌回 31.5 (<a href="https://arxiv.org/html/2507.23779">Phi-Ground</a>)。质量同样比数量重要。SE-GUI（NeurIPS 2025）从约 30 万条数据中只精选出 3,018 条，ScreenSpot-Pro 从 27.1/31.3 升到 35.8/40.0 (<a href="https://arxiv.org/html/2505.12370">SE-GUI</a>)。UI-Venus（技术报告，2025）估计约 40% 的开源 grounding 数据有问题，清洗后从约 62.7 万条减到约 10.7 万条 (<a href="https://arxiv.org/pdf/2508.10833v2">UI-Venus</a>)。</p>
+<p>成本主要由产出率决定。Fara-7B（arXiv 预印本，Microsoft，2025）每条轨迹的求解加验证成本为 $0.59（o4-mini）到 $1.08（o3），共产出 145,603 条 (<a href="https://arxiv.org/html/2511.19663v1">Fara-7B</a>)。Go-Browse（ICLR 2026）每条成功轨迹约 $0.10，同时还产出 17,245 条失败轨迹、157,123 个失败步骤 (<a href="https://arxiv.org/html/2506.03533">Go-Browse</a>)。AgentSynth（ICLR 2026）每条 $0.60 (<a href="https://arxiv.org/abs/2506.14205">AgentSynth</a>)。AutoWebWorld（arXiv 预印本，2026）用有限状态机生成可验证的网站，每条约 $0.04 (<a href="https://arxiv.org/abs/2602.14296">AutoWebWorld</a>)。另一项工作（arXiv 预印本，2026）先验证、修复合成网站再用于训练，把可行任务率从 48.6% 提到 94.8% (<a href="https://arxiv.org/abs/2608.21898">Verified Synthetic Web Environments</a>)。训练成本方面，WebSTAR 用同一份数据训练 32B 约需 1,024 GPU 小时，训练 7B 约需 256 GPU 小时。视频来源有好有坏。TongUI（AAAI-26）的视频标签让 UI-TARS-1.5-7B 在 OSWorld 上从 27.3 降到 23.8 (<a href="https://ojs.aaai.org/index.php/AAAI/article/view/38229">TongUI</a>)。Watch &amp; Learn（CVPR 2026）用 48 个 worker 在 3.5 天里自动采集 60 万以上 Playwright 转移，训练出准确率 91.7% 的 IDM (<a href="https://arxiv.org/html/2510.04673">Watch &amp; Learn</a>)。VideoAgentTrek（ICLR 2026）的按键召回率只有 0.08 (<a href="https://arxiv.org/html/2510.19488">VideoAgentTrek</a>)。world model 方面，gWorld 32B 的指令准确率为 79.6，Qwen-Image-Edit 只有 13.4，后者的输出相似度高度跟随输入相似度（ρ=0.74），复制倾向明显；gWorld 本身假设单帧马尔可夫状态，没有工作记忆 (<a href="https://arxiv.org/html/2602.01576v1">gWorld HTML</a>)。MobileDreamer 是用纯文本 Qwen3-8B 预测元素草图，元素召回只有 0.71 (<a href="https://arxiv.org/abs/2601.04035">MobileDreamer</a>)。</p>
+<p><strong>推断与建议</strong>：对本项目最有用的扩展杠杆有三个。第一，predict 标签只需要真实的 O_{t+1}，不需要任务成功，所以失败轨迹照样能产出 predict 行，计数应按 transition 而不是按轨迹。第二，在同一 O_{t+1} 上构造反事实 crop，可以离线扩充 <code>acceptable_bundles</code> 和不足行，环境成本接近零；但必须按 transition 归一化权重，否则容易的转移会被过度加权。第三，合成或自托管环境能给出精确的 oracle 标签，以及可控的 changed-instance 和空结果状态；但布局多样性受生成器限制，只能当补充。投入顺序建议是：先扩页面族、站点与平台；再扩困难分层，即 position-copy、center、frequency 基线失败或 base 模型偏移大的转移（对应 HATS 的思路）；然后扩 ROI 的位置分布（对应 Phi-Ground）；最后才是同一模板内的数量。视频只作为桌面和移动端布局复用的 silver 广度来源，不要从中挖 keyboard 或 drag 分层。Code2World、gWorld、Qwen-Image-Edit 这条支线只能用来生成“仅看 prefix”的候选或负例，候选必须在真实 O_{t+1} 揭晓后验证，绝不能直接当标签。规模上，已发表的 7–8B/32B agent SFT 大多用 1–5 万条轨迹（约 4–30 万步）。第一次 SFT 用 1–3 万条真实分支、派生 4–12 万行，正好落在同类模型早期增益明显的区间。</p>
+<h2 id="_7">下一步：分三轮推进，每轮都设退出条件</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>轮次</th>
+<th>自研采集器与数据（建议）</th>
+<th>训练与评测（建议）</th>
+<th>退出条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第 0 轮：冻结与审计</td>
+<td>固定 settle 策略和 capture_policy 字段；完整 O_{t+1} 加 DOM/AX 存入 <code>labels_only</code>；建立 processor 账本；补齐溯源与许可字段；按 session 加近重复簇切分 train、calibration、test</td>
+<td>复核 16 次位置错误是否有坐标约定问题；在三档 O_t 分辨率上扫描；在 10 个 seed 上补跑 warm 与 current-only；跑通一次受限链路；建 100–300 条分层人工金标</td>
+<td>causal audit 全部通过；各分层的人机一致率可以报告；位置错误已拆成约定、分辨率和空间三类</td>
+</tr>
+<tr>
+<td>第 1 轮：首次 SFT</td>
+<td>在自托管、可重置的站点上生成模板化的 changed-instance 任务（WebArena-Verified 式）；仿照 Go-Browse 回到已发现的 URL，获得 exact revisit；用真实站点补充自然的 same-layout 数据；用模拟器补充 mobile；保留 scroll、modal、keyboard 和空结果分层</td>
+<td>8B/32B 在 direct 与 forced 两种条件下各采 K 个 bundle，离线验收；1–3 万条分支，派生 4–12 万行；LoRA 冻结视觉塔；混入 30–60% 格式匹配的通用数据；过全观察回归门</td>
+<td>在同一 controller、同一预算、held-out session 上，有用选区和受限链路结果都有提升；全观察集（含小元素 grounding）不退化</td>
+</tr>
+<tr>
+<td>第 2 轮及以后：拒绝采样 SFT</td>
+<td>用当前 checkpoint 重新采样；把 pass@K 预算向边界样本倾斜；Undetermined 通道交人工复核</td>
+<td>做 2–3 轮 rejection-SFT；效用差稳定后才做 DPO；修正坐标约定后坐标错误仍占主导，才考虑 region head</td>
+<td>每轮增益趋平即停；UI-Genie 的最大增益出现在第 1 轮 (<a href="https://arxiv.org/html/2505.21496">UI-Genie</a>)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>8B 还是 32B</strong>：pilot 中，32B forced 的有用选区为 6/10，reference 判断 10/10，略好于 8B forced 的 5/10 和 7/10；但 32B 也出现过两次长上下文 OOM (<span class="unbundled" title="原报告引用；此证据文件未随本站发布">PROJECT_REFERENCE.md</span>)。<strong>论文报告</strong>：WebSTAR 用同一份数据训练，32B 在 WebVoyager 上得 53.5，7B 得 47.0，32B 的训练算力约为 4 倍；改用蒸馏出来的 StepRM 代替 o4-mini 做过滤时，7B 从 38.4 降到 35.4，32B 基本不变（45.4 对 45.7）(<a href="https://aclanthology.org/2026.acl-long.21/">WebSTAR</a>)。这说明 32B 更能容忍廉价 judge 的噪声，但只是单一数据点。<strong>推断</strong>：第一轮以 8B 为主训练对象，便于快速迭代；32B 用作标签核查器和对照，与 GUI-Libra 的做法一致。等第 1 轮的数据规模确定后，再决定是否训练 32B。</p>
+<h2 id="_8">结论</h2>
+<p>这次调研改变的核心判断是：瓶颈不在模型能不能学会输出框，而在“什么才算合格的 predict 标签”。文献里的部件已经足够拼出管线，但每个部件解决的都是当前屏上的问题。本项目独有的难点，是把 O_{t+1} 这个廉价的特权信号变成学生在 t 时刻真正可达的监督。为此，把 GHD、VisionThink 和 UI-TARS 的思路迁移到“未来屏”时，必须新增三样东西：可达性门、只看 crop 的回放效用、只看 prefix 生成的推理。没有这三样，SFT 学到的会是事后诸葛亮式的区域，而不是可以执行的预分配。</p>
+<p>另一个推论是，采集器的价值大部分在离线。只要完整保存 O_{t+1}、结构树和 settle 轨迹，同一条转移就能反复生成新的 bundle、负例和对照，数据增长可以主要靠离线计算，而不必依赖新的采集。第 0 轮最该先回答的问题是：16 次位置错误里，有多少只是一个 token 格的分辨率误差。如果占多数，第一次 SFT 之前更该调整的是 renderer 和 crop 合同，而不是数据量。</p></main>
+<aside class="source-note">来源：<code>CUA SFT 数据管线与扩展调研.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

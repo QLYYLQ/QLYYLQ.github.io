@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="数据构建可能性指南 · 精简版 · CU Model 研究资料">
+<title>数据构建可能性指南 · 精简版 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-10-27 · 数据与训练</div>
+<h1>数据构建可能性指南 · 精简版</h1><p class="lead">五族数据、采集顺序、导出修补、成本和 latent action 的实际收益。后续修正见采集审查。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="data-construction.html">数据构建可能性指南</a> · <a href="sources/data-construction-brief.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">结论</a></li>
+<li><a href="#1">1. 要什么数据</a></li>
+<li><a href="#2">2. 一轮怎么采</a></li>
+<li><a href="#3">3. 成本和扩量</a></li>
+<li><a href="#4-latent-action">4. Latent action</a></li>
+<li><a href="#5">5. 开工清单</a></li>
+<li><a href="#6">6. 需要你定的事</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>2026-10-27。完整版是同目录的《数据构建可能性指南》，这里只留结论、做法和要你定的事，每节末尾注明完整版的对应章节，术语见完整版附 A。依据是 spectragent main（<code>380060f</code>）的 runbook、<code>lookahead/README.md</code>、<code>configs/lookahead/</code>、导出和 lookahead 的代码、轮次记录（<code>.agents/skills/af-project-history/references/lookahead-rounds.md</code>），之前的四份报告，以及 LAR 原文（arXiv 2605.18597v3）。脚本在 <code>数据构建可能性指南_notes/</code>（下称 <code>_notes/</code>）。</p>
+<p><em>标注：</em><em>论文报告</em><em>是论文里能核对的；</em><em>项目数据</em><em>是仓库文档、配置、代码或你实跑里的数；</em><em>本文实测</em><em>是这次我自己跑出来的；</em><em>推断</em><em>是由证据推出的；</em><em>直觉</em><em>是没有直接证据的判断；</em><em>建议</em><em>是具体做法。</em></p>
+<h2 id="_1">结论</h2>
+<ol>
+<li><strong>一轮怎么采已经定了，下一轮在当前 main 上、换快网络重录。</strong> 照 runbook 的“配置指南 101”和 <code>configs/lookahead/</code> 跑。10 月 25 日原始录制全删了，10 月 24–25 日的改动也改了 teacher 的提示词（<strong>项目数据</strong>）。导出有四个坑，靠改导出配置和一个后处理脚本解决，脚本已经写好。</li>
+<li><strong>数据分五族，计数单位不同</strong>：A 录制轨迹按保留轨迹和监督步，B、C 分叉按可用决定（judge 判为合理、且执行符合意图），D 前瞻观察按 transition，E 人工按条、留出评测按站点和任务（<strong>推断</strong>）。</li>
+<li><strong>扩量卡在任务和站点上。</strong> 推荐档要 ≥6,000 个任务、≥100 个站点（数据量估算的<strong>直觉</strong>），上一轮是 15 个任务、5 个站点。自己写的任务文件能被框架列出（<strong>本文实测</strong>，没有真录），模板任务和“variants 变成新 live 任务”都能接进录制。</li>
+<li><strong>分叉不适合凑 SFT 的量。</strong> 每次决定的 token 和录制的一步差不多（约 1.4–1.6 万），10 月 24 日那轮按意图执行的同任务分叉只占 30%，换任务 50%；折到每个可用决定，换任务分叉约为录制的 1.8 倍，同任务约 2.5 倍（<strong>推断</strong>）。分叉只做只有它能做的：同一状态多个决定、换任务、反事实对。</li>
+<li><strong>LAR 论文存在，NeurIPS 2026 录用没查到。</strong> arXiv 2605.18597，ICLR 2026 MemAgents workshop 的 poster。latent action 是高频 n-gram 片段加新词表符号，用 KL 蒸馏学；输入都是文本或 HTML，Mind2Web 上 Qwen3-8B 的动作 token 只少 2.9%（<strong>论文报告</strong>）。</li>
+<li><strong>照搬到浏览器动作上省得很少。</strong> click 15 个 token 里 9 个是语法，坐标才是决定，压不掉（<strong>本文实测</strong>）。语法和整行宏全换掉，每步省 25–80 ms；少一次 <code>wait()</code> 省 1 秒，少一次模型调用约省 1 秒（<strong>推断</strong>）。</li>
+<li><strong>把 LAR“缩短有效步数”换成缩短调用次数</strong>（我的延伸，<strong>推断</strong>）：给多动作 chunk 打盲操作标签，把能合并的相邻步合成长 chunk，把转移类型做成 <code>&lt;predict&gt;</code> 里的离散 token。先用两个脚本量出比例再定。</li>
+</ol>
+<h2 id="1">1. 要什么数据</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>族</th>
+<th>数据</th>
+<th>训什么</th>
+<th>来源</th>
+<th>计数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>录制轨迹</td>
+<td>策略 SFT 主体</td>
+<td><code>spectragent bench</code> 录制</td>
+<td>保留轨迹、监督步，按步筛</td>
+</tr>
+<tr>
+<td>B</td>
+<td>同任务分叉</td>
+<td>决定稳不稳、偏好对</td>
+<td><code>branch_same_task.yaml</code></td>
+<td>可用决定</td>
+</tr>
+<tr>
+<td>C</td>
+<td>换任务分叉</td>
+<td>任务条件化（设计文档数据④）</td>
+<td><code>variants</code> 加 <code>branch_task_variants.yaml</code></td>
+<td>可用决定</td>
+</tr>
+<tr>
+<td>D</td>
+<td>前瞻 transition</td>
+<td><code>&lt;predict&gt;</code></td>
+<td>录制的帧、DOM/AX、落定记录、动作效果；<code>extract</code></td>
+<td>transition，失败轨迹也算</td>
+</tr>
+<tr>
+<td>E</td>
+<td>人工、留出评测</td>
+<td>校准 judge、金标、泛化</td>
+<td>三类审核队列加 <code>spectragent view</code></td>
+<td>条；站点 × 任务</td>
+</tr>
+</tbody>
+</table></div>
+<p>录制时 <code>browser.frames</code>（每个动作前一帧、观测后约 1 秒一帧）、<code>browser.dom_raw</code> 和 <code>recording</code> 四项都要开着，D 和 latent action 的数据事后补不回来。磁盘约每步 4.5 MB。（完整版第 2 节）</p>
+<h2 id="2">2. 一轮怎么采</h2>
+<p>命令照 <code>lookahead/README.md</code> 的 “A collection round”，完整版第 3.2 节抄了一份带注释的。顺序是：每个站点一个 sweep 录制，一台机器同时最多 3 个站点，每个 sweep 设 <code>--token-limit</code>（按每个任务约 60 万给）；跑 <code>health</code> 写排除文件；<code>variants</code> 写换任务的变体；跑三组分叉；<code>extract</code>、<code>stability</code>、<code>judge-forks</code>、<code>gold-queue</code> 建审核队列；<code>spectragent view</code> 标注；最后导出。录完一定翻截图，健康检查认不出风控拦截页。</p>
+<p>导出的四个坑（<strong>项目数据</strong>，读了导出代码和 runbook）：</p>
+<ol>
+<li>发布配置的 <code>exclude_restoration_diverged: true</code> 和 <code>max_document_misses: 0</code> 多半会把分叉整条排除。<strong>建议</strong>导出时放开，再用 <code>_notes/export_postprocess.py</code> 只留 judge 两个回答都是 yes 的分叉。</li>
+<li>导出器不读健康检查的排除文件，坏录制会进训练集。同一个脚本的 <code>--exclusions</code> 把它们丢掉。</li>
+<li><code>split.by: site</code> 按完整主机名切，variants 任务从子域名深链接出发，同一个站会跨进 train 和 validation。<strong>建议</strong>用 <code>split.by: task</code>，跨站泛化交给留出站点；留出站点用 <code>exclude_sites</code> 写注册域名，按后缀匹配，能盖住子域名。</li>
+<li>整条打包在外部做（<code>export_postprocess.py --pack</code>）。按每条 20 步、13 个监督步估，训练 token 约为按步展开的 1/7，29 步时约 1/10（<strong>推断</strong>）。</li>
+</ol>
+<p>这个脚本在 fixture 演练的真实导出上跑通了，排除名单和 judge 结果是我手写的（<strong>本文实测</strong>）。下一轮顺手比：<code>pace: recorded_timeline</code> 对 <code>recorded_llm_latency</code>（看各站点可评判比例）；<code>wait_actions: drop_when_capped</code> 配真的改写模型。（完整版第 3 节）</p>
+<h2 id="3">3. 成本和扩量</h2>
+<p>10 月 24 日那轮（<strong>项目数据</strong>）：15 个任务，330 个分叉，可评判 229（69%），只补站点规则重跑后 246（75%）；共 1,168 万 token。媒体区域规则让腾讯视频的可评判分叉从 0 到 40/70。同任务分叉上，规则和 judge 只一致 58%，judge 要先拿人工审核核对。</p>
+<p>三档折成采集资源（<strong>推断</strong>；要录的步 = 保留轨迹 × 录制系数 1.3 × 20 步，每步 1.4 万 token、16.7 秒、4.5 MB，每台机器 3 个站点全天跑；耗时和磁盘用的是中位数，实际会更多）：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th></th>
+<th>最低档</th>
+<th>推荐档</th>
+<th>扩展档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保留轨迹 / 要录的步</td>
+<td>1 万 / 26 万</td>
+<td>3 万 / 78 万</td>
+<td>10 万+ / 260 万</td>
+</tr>
+<tr>
+<td>teacher 输入 token</td>
+<td>约 36 亿</td>
+<td>约 109 亿</td>
+<td>约 364 亿</td>
+</tr>
+<tr>
+<td>worker 时 / 机器日</td>
+<td>1,200 / 17</td>
+<td>3,600 / 50</td>
+<td>12,000 / 170</td>
+</tr>
+<tr>
+<td>磁盘</td>
+<td>1.2 TB</td>
+<td>3.5 TB</td>
+<td>12 TB</td>
+</tr>
+</tbody>
+</table></div>
+<p>步数是最大的变数：上一轮 L1 任务每条约 28 步，首轮约 29 步。任务都这么长的话，要录的步、worker 时、机器日和磁盘都要乘约 1.45（<strong>推断</strong>）。表里只算了录制，不含分叉、评判和推理输出。</p>
+<p>任务来源按成本排：现成基准（<code>lexbench_browser</code>、<code>online_mind2web</code>、<code>browsecomp</code>，评测要用的写进去污染名单）；每站模板任务（必填 <code>task_id</code>、<code>task_text</code>、<code>start_url</code>，放在单独的数据根下，每个站点一个 split，录制时用 <code>--subset</code> 选）；<code>variants_to_tasks.py</code> 把 variants 变成从检查点 URL 出发的 live 任务，单独成一个 split；最后才是 Go-Browse 式的探索生成。站点分两类（<strong>建议</strong>）：广度站只录制，往 100 个以上扩；深度站录制加分叉，挑可评判比例高的页面族（门槛比如 ≥60%，<strong>直觉</strong>）。保留滚动、弹窗、键盘、拖动分层和多动作步。</p>
+<p>节奏：试点重录 15 个任务加 5 个新站点，量每步 token、每条步数、步通过率、teacher 成功率；录到 1 万条保留轨迹训六次看学习曲线；还在涨再扩到 3 万。（完整版第 4、5 节）</p>
+<h2 id="4-latent-action">4. Latent action</h2>
+<p>LAR 的问题（<strong>论文报告</strong>加我的判断）：没有在原格式上同预算微调的对照；单次运行，表格之间有对不上的数；换太多片段会突然崩，没给阈值。</p>
+<p>浏览器动作实测（<strong>本文实测</strong>，Qwen BPE）：click 15（参数 6），type 19，scroll 7，hotkey 8，drag 29，wait 4。同一个点击，Qwen 的 computer_use 工具调用约 34，UI-TARS 15，紧凑写法 10。只换语法时，thought 60 token 的一步输出少 12–17%；thought 实际多长还没量。</p>
+<p>四件事，按先后（<strong>推断</strong>、<strong>直觉</strong>）：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th></th>
+<th>做什么</th>
+<th>用到的数据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 审计</td>
+<td>在导出上跑 <code>action_token_audit.py</code>，量 thought、语法、参数各占多少；宏符号省不到 20% 就不改词表</td>
+<td>导出的 <code>train.jsonl</code></td>
+</tr>
+<tr>
+<td>② 盲操作标签</td>
+<td>多动作 chunk 里，后面的动作对着的屏幕变没变：动作前那一帧和 O_t 在动作点周围是否一致、有没有导航或滚动、命中元素是否相同</td>
+<td>动作前帧、动作效果、DOM</td>
+</tr>
+<tr>
+<td>③ 合并步</td>
+<td>把能合并的相邻步合成一个更长的 chunk（离线合并，或分叉时用 <code>prompt_contribution</code> hook 让 teacher 自己多发），和②一起用</td>
+<td>同上，加改写模型</td>
+</tr>
+<tr>
+<td>④ 转移类型 token</td>
+<td>跳页、原地更新、弹窗、滚动露出等做成离散 token 并进 <code>&lt;predict&gt;</code>，P1 里做有无对照</td>
+<td>设计文档数据②</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>chunk_candidates.py</code> 在 <code>steps.jsonl</code> 上做②③里不用看图的那部分，报的是上限；像素和 DOM 核对还没写。推理端不用训练就能做的：约束解码的 jump-forward 把确定的语法一次填上，同时保证动作能解析。（完整版第 6 节）</p>
+<h2 id="5">5. 开工清单</h2>
+<ol>
+<li>准备机器、快网络，固定宿主外观；在新网络上先录一两个任务，看截断时主文档没加载完的采集是否接近 0。第一批任务：上一轮的 15 个 L1 任务直接用 LexBench，5 个新站点各写 10 个模板任务（每站一个 split），<code>--list</code> 核对。</li>
+<li>录制，跑 <code>health</code>，翻截图。</li>
+<li>跑 <code>variants</code> 和三组分叉，同一批分叉上比两种 <code>pace</code>。</li>
+<li>建审核队列：稳定性队列默认 60 条；分叉判定先标 51 条左右；金标 <code>--n 100</code>，先标 calibration 那一半。分叉判定标完先算人和 judge 的一致率，再决定能不能用 judge 筛分叉。</li>
+<li>导出三份，每份只改一个变量；对要用的那份跑 <code>export_postprocess.py</code>，再跑审计脚本和 <code>chunk_candidates.py</code>。</li>
+<li>用试点的四个数更新数据量估算，再定录多少；把 variants 变成下一轮的 live 任务。</li>
+</ol>
+<p>（完整版第 7 节）</p>
+<h2 id="6">6. 需要你定的事</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>决定</th>
+<th>我的建议</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务生成器先做哪种</td>
+<td>每站模板任务，加 variants 变 live 任务</td>
+<td>成本最低，格式已实测能加载</td>
+</tr>
+<tr>
+<td>站点怎么分工</td>
+<td>广度站只录制，深度站才分叉</td>
+<td>分叉恢复率靠站点规则，每个新站补规则成本高</td>
+</tr>
+<tr>
+<td>分叉怎么导出</td>
+<td>放开两项筛选，外部按 judge 筛</td>
+<td>发布配置多半整条排除分叉</td>
+</tr>
+<tr>
+<td>验证集怎么切</td>
+<td><code>split.by: task</code>，跨站看留出站点</td>
+<td>按主机名切会让深链接任务跨进两边</td>
+</tr>
+<tr>
+<td>latent action 先做哪项</td>
+<td>①审计和②盲操作标签，再决定③合并步</td>
+<td>都不花新采集，先量比例</td>
+</tr>
+<tr>
+<td>金标谁来标</td>
+<td>还没定</td>
+<td>标注流程要完整走一遍</td>
+</tr>
+<tr>
+<td>下一轮 teacher 走哪条 API 路由</td>
+<td>还没定（runbook）</td>
+<td>影响限流和复现</td>
+</tr>
+</tbody>
+</table></div></main>
+<aside class="source-note">来源：<code>数据构建可能性指南_精简版.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

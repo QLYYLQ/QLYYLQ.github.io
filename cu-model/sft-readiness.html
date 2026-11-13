@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="SFT 就绪复盘 · CU Model 研究资料">
+<title>SFT 就绪复盘 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-09-27 · 早期协议与记录</div>
+<h1>SFT 就绪复盘</h1><p class="lead">现有数据与训练门槛的历史复盘。后续决定见最新路线。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="sources/sft-readiness.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">决策结论</a></li>
+<li><a href="#1">1. 前期研究建立了什么</a></li>
+<li><a href="#2-session-layout-predict">2. 早期 session layout predict 主张的验证账本</a></li>
+<li><a href="#3">3. 不同数据视图不能按总行数相加</a></li>
+<li><a href="#4">4. 工程、基座和语义审计给出的共同诊断</a></li>
+<li><a href="#5-framework">5. 已有 framework 下的监督目标</a></li>
+<li><a href="#6">6. 训练与评测怎样和产数并行</a></li>
+<li><a href="#_2">复核入口</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>日期：2026-09-27<br>
+读者：项目 owner，以及准备下一轮数据、SFT 和评测的研究与工程人员<br>
+范围：汇总 Stage 1、Phase 1b、Phase 1c 和 2026-09-25 全量语义审计；本报告没有启动模型、连接 worker 或提交作业</p>
+<h2 id="_1">决策结论</h2>
+<p>现有数据已经足够做 SFT 工程 smoke，而且这一步已经完成：28 条 assistant-supported completion 在真实 Qwen3-VL-8B processor 上通过 completion-only mask，随后完成 28 个 optimizer step、双 causal 检查、冻结参数核验、adapter 保存和 fresh reload。这个结果证明训练链路能正确运行。</p>
+<p>当前落盘数据还不够判断方法收益，也不够直接支撑面向 web、mobile、desktop 的泛化结论。28 条是来自 12 个 transition、10 个 session 的分支级 train completion，其中 12 条 predict、12 条 visible-check、4 条 missing-revisit；它们来自小规模、刻意分层的审查，只有 634 个 completion token。现有 adapter 也没有在冻结的 base/adapter 同协议评测中被加载，<code>adapter_inference_smoke</code> 仍为空。因此，不能把 loss 变化或 adapter 成功保存写成行为已经学会。</p>
+<p>用户已经有设计好的 CU/BU agent framework，并可配合 WAL judge 或低成本视觉 judge，在真实 benchmark 运行中批量构建这类数据。这是用户提供的执行前提；本轮没有审查 framework 接口或 judge 准确率。建议直接开展规模化 silver 数据生成，不把旧池接纳率、逐例人工审查或先跑完方法收益验证作为产数前置条件。现有 28/205/83 和全量审计用于定义 schema、抽样层与已知错误，不代表未来数据容量。</p>
+<p>对 session layout predict 本身，深核验后的判断是“有局部可测信号，方法收益尚未建立”。当前屏复用属于合法研究目标，已有 layout pair 和 14-case 结果支持继续训练与评测；早期用数据集重复率证明高频发生的论据不成立，111-transition 结果也没有显示更早历史带来净收益。full/oracle/model-crop 与 base/SFT 对照仍应用于定位瓶颈，但可与批量产数并行，不是产数前置条件。</p>
+<h2 id="1">1. 前期研究建立了什么</h2>
+<p>项目已把研究目标收敛为一条可观测行为链：</p>
+<pre><code class="language-text">已见历史 + 当前屏 + 已发 action/list
+    -&gt; &lt;predict&gt; 下一屏需要观察的区域
+    -&gt; 环境只返回获准的新像素
+    -&gt; &lt;check&gt; 证据充分则继续行动
+               证据不足则 &lt;revisit&gt; 后再行动
+</code></pre>
+<p>预测发生时，下一屏像素、DOM、URL、未来动作、答案和目标派生描述都不可见；这些信息只可用于离线标签和评分。<code>current-only</code> 已包含当前屏与刚发动作，<code>warm</code> 只增加更早历史，所以 warm 没有领先不能否定 session 内布局复用。完整契约见 <a href="phase1-protocol.html">Phase 1 protocol</a> 和 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">研究审阅</span>。</p>
+<p>前期资料还纠正了几类容易混淆的代理：layout 相似不等于空间坐标可复用，next-click bbox 不等于决策所需证据，strict JSON 或 exact alias 不等于语义能力，局部像素面积减少也不等于视觉 token 或时延已经下降。Stage 1 因此同时保留 current-only/warm、固定中心、动作位置复制、随机、完整目标图和受限观察链等对照，而没有用一个命中率代表整体能力。</p>
+<p>组件调研核查了 GUI-Eyes、UI-Zoomer、FocusUI、AQuaUI、GUI-Actor 和 LASER。可立即借用的是观察动作与坐标回投、evidence-to-patch 标签、check 风险和“模型自产候选后用下游结果判优”的数据思路。位置保持、稀疏视觉和专用坐标 head 仍是后续组件实验，不能替代前置预测，也没有在本项目中形成模型结果。详见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">组件调研</span>。</p>
+<h2 id="2-session-layout-predict">2. 早期 session layout predict 主张的验证账本</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>需要核查的判断或路线</th>
+<th>当前证据</th>
+<th>结论与最小验证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mobile3M 约 68% 重复访问、ProCUA 约 64% 含环，说明任务 session 内“同布局新内容”高频</td>
+<td><a href="https://arxiv.org/html/2409.14818v2">Mobile3M</a> 是按 app 构建的 BFS/random-walk 图并做近重复节点剪枝；<a href="https://arxiv.org/html/2606.17321v1">ProCUA</a> 的 cycle 是 visual-state graph 回路，含 backtracking/recovery。两者都没有给出本项目所需频率</td>
+<td>撤销这个频率证明。后续只按真实任务 session 统计 query A→B、changed-instance 和可复用布局的漏斗</td>
+</tr>
+<tr>
+<td>URL/任务模板近似 layout 真值，现成 embedding 普遍不适用</td>
+<td>相同 URL 可有 modal、滚动、空结果等变化；WebArena 的 <a href="https://arxiv.org/html/2307.13854v4">241 templates</a> 是 task intent 模板。<a href="https://arxiv.org/html/2511.19380v1">UISearch</a> 只给金融 UI pair cosine 分布，没有本项目 hard-pair PR，也不能由 cosine 范围窄推出 DINO 等排序失效</td>
+<td>URL、结构和 embedding 都只作候选信号。在独立审过的 hard pairs 上比较 precision/recall、排序与拒答，不预设单一路线胜出</td>
+</tr>
+<tr>
+<td>原 attention pilot 与 hidden-state probe 是否验证了预观测信号</td>
+<td>两者都没有运行。目标可见后的 attention 方案不能测提前预测；只读合法 prefix 的 hidden-state probe 即使成功，也只说明相关信息可读。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">研究审阅</span>已把它们降为可选诊断</td>
+<td>不补做为造数前置门。若以后运行，只读预测时刻的合法 prefix，并与行为指标分开解释</td>
+</tr>
+<tr>
+<td>更早同 session 历史应提高下一屏选区</td>
+<td>全请求分母上，8B warm/current-only 为 19/111 对 21/111，32B 为 16/111 对 19/111；严格 matched 与 earlier-reference 子集的 bootstrap 区间也都跨 0。<a href="stage1-report.html">Stage 1 报告</a></td>
+<td>当前没有更早历史净收益证据。<code>current-only</code> 已含当前屏和已发动作，因此该结果不否定当前布局复用；需在 session-clean changed-instance 数据上重测</td>
+</tr>
+<tr>
+<td>自动 layout 信号足以直接扩训练集</td>
+<td>现有 240 pair 的 assistant review 为 spatial yes 118、partial 20、no 102。8B 接纳的 134 对中为 118/14/2，32B 接纳的 149 对中为 117/16/16。几何分数对 review yes/no 的 AUC 为 web 0.977、mobile 0.926，但 cohort 由几何等规则构造，review 非 human-gold。本次只做交叉复算，没有新增视觉审查。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">交叉复算</span></td>
+<td>这说明简化几何在本样本有信号，也显示 VLM 接纳会混入不可直接复用页面。尚未验证自动标签精度、召回和规模收益；用持续分层抽查估计质量与偏差，不要求逐例审核</td>
+</tr>
+<tr>
+<td>自然计划已经带来可用的局部观察收益</td>
+<td>14 case 上，32B plan 的初次中心命中为 current/warm 10/23、12/23，direct 均为 2/23；四条件 strict 最终字段仍都是 3/24。事后 assistant response review 的 clean-supported 为 plan 5/14、7/14，direct 3/14、5/14，属于小样本后验信号。<a href="base-diagnostics.html">基座诊断</a>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">语义账本</span></td>
+<td>计划改变了几何并出现描述性 response 信号，还没有统一字段或任务收益。优先做同例 full-target、oracle evidence crop、模型自选 crop 对照</td>
+</tr>
+<tr>
+<td>局部观察已经更省 token 或时间</td>
+<td>旧 HF 实现中，多轮链平均 13.23/30.63 秒，单次 full-target 为 2.23/3.86 秒，约慢 5.9/7.9 倍；当时也没有视觉 token 节省。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">功能链账本</span></td>
+<td>当前实现的效率结论是负面，不是未测；它不代表带缓存、区域合并或稀疏编码的上限。后续在固定任务与预算下重新实测</td>
+</tr>
+<tr>
+<td>SFT 训练与现代组件的效果</td>
+<td>28 row 只关闭 mask、causal、optimizer、保存/reload 工程门。hidden head、PosPad 等编码层位置保持和稀疏视觉均未在本项目实现；相关论文多在看到当前图后选择或压缩区域。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">实机报告</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">组件调研</span></td>
+<td>现有结果不能回答方法收益，也不必在造数前实现所有组件。bottleneck 与 base/SFT 对照和批量产数并行，用结果调整监督和后端优先级</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3">3. 不同数据视图不能按总行数相加</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>数据视图</th>
+<th style="text-align: right;">当前规模</th>
+<th>已确认用途</th>
+<th>主要限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 冻结评测</td>
+<td style="text-align: right;">111 个 target transition，80 web、31 mobile；另有 240 个 layout pair</td>
+<td>零训练预测、几何、layout 与 check/revisit 诊断</td>
+<td>是评测 cohort，不是 SFT 行数；next-click 和 action bbox 都是代理标签</td>
+</tr>
+<tr>
+<td>旧 SFT 原型</td>
+<td style="text-align: right;">111 个全 train 候选，94 web、17 mobile，展开 333 条三分支记录；32B-layout-approved 视图为 101 transitions、303 条，94 web、7 mobile</td>
+<td>格式和分支协议 bootstrap</td>
+<td>与冻结 eval 恰好同为 111，但两池只重叠 54 个 sample ID；三分支含反事实 predict，不能做 all-assistant loss</td>
+</tr>
+<tr>
+<td>已审 completion-only</td>
+<td style="text-align: right;">28 条，来自 12 transitions、10 sessions，全部为 train；12 predict、12 visible、4 missing</td>
+<td>已完成真实 processor 和 28-step 工程 fit</td>
+<td>11/12 transitions 与冻结 eval 重叠，10/10 sessions 都出现在 eval；非 human-gold，覆盖很窄</td>
+</tr>
+<tr>
+<td>三个新来源质量视图</td>
+<td style="text-align: right;">205 条、70 sessions，split 为 169/8/28；137 条有位置标签，train 中 121 条</td>
+<td>真实任务轨迹、位置弱监督和后续审查入口</td>
+<td>train 含 8 条已审 perception、3 条已审 trajectory、158 条未审；36 条 held-out 全部未审</td>
+</tr>
+<tr>
+<td>search A→B v2</td>
+<td style="text-align: right;">83 条、63 sessions、54 个 query pair，split 为 70/7/6；其中 75 条未出现在旧池</td>
+<td>最贴近同 session 新实例的 evidence 标注入口</td>
+<td>全部无空间标签；机械隔离后的 strict train 仅 45 条、40 sessions、17 query pairs，仍未获语义批准</td>
+</tr>
+<tr>
+<td>Phase 1c evidence</td>
+<td style="text-align: right;">14 case、14 sessions，train/calibration/test 为 8/3/3</td>
+<td>字段、区域、absence 和 check/revisit 的冻结诊断</td>
+<td>3 个 calibration 和 3 个 test session 均与 SFT 训练 session 不交叉；8 个 train 中有 1 个 Hilton/web33 交叉；全部无 next-action label</td>
+</tr>
+<tr>
+<td>全量 rollout 语义账本</td>
+<td style="text-align: right;">4,555/4,555 条 raw，去重后 4,039/4,039 个语义单元</td>
+<td>筛选 train 侧失败、格式错误、wrong-instance 和错误停止候选</td>
+<td>含历史协议、重复输出和同 case 多条件；它是输出审计，不是 4,039 个独立训练样本</td>
+</tr>
+</tbody>
+</table></div>
+<p>205 与 83 是不同视图，尚未做跨视图去重；28 又是旧池的已审分支。4,555 条 raw 还包含重复和历史输出。将这些数字直接求和会同时重复计算样本、混合监督单位，并把未审候选写成已接纳数据。</p>
+<p>A→B 的 83 条来自两个已下载来源的全量扫描，不是少量抽样：OpenHands 808 个 record 扫出 43 条，GUI-Odyssey 8,334 个 episode 扫出 40 条。但“全量”只覆盖这两个来源。OpenHands 43 条由 OpenStreetMap 33、GitLab 8、Magento admin 1、Reddit 1 组成，browser storefront shopping 为 0；GUI-Odyssey 40 条由 Ebay 32、Play Store 7、Shazam 1 组成，却只有 11 个 unique query pair。完整漏斗见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">A→B 挖掘报告</span>。</p>
+<p>现有 A→B 只显式看图复核了 6 条，其中 4 条 changed-instance 正例、1 条 recovery、1 条 empty retry；其余 77 条未审。Phase 1c 的 14 case 中虽有 12 条来自这 83 条，但后续只补了字段/evidence 标签，不能反向升级为 12 条 layout positive。另有自动门未接纳的 171 条 review/reject 可按失败类型抽样复核，它们只供离线失败审查，旧 v1 的 target-informed <code>prediction_input</code> 不得用于模型。三个新来源的 205 条也只经过 18 条、16 sessions 的独立视觉抽审，并未穷尽底层数据。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">A→B 视觉复核</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">新来源视觉复核</span></p>
+<p>这些数描述当前落盘快照的覆盖偏差，不是未来产数上限。browser storefront shopping 为 0、AgentNet 只有 6 个 session，说明 framework 批量运行时要显式安排 browser shopping、desktop、mobile、地图和其他任务层，而无需先穷尽旧下载或评估采集难度。judge 可以规模化产生 silver；保留小份按任务、状态和来源分层的独立抽查，用来校准标签语义和失效类型。assistant 或模型 judge 仍是 non-human-gold。</p>
+<p>Phase 1 的 base 结果发生在这次 28-row 训练之前，所以历史零训练结论没有被训练污染；原 eval111 的 split 本来就是 train/calibration/test 87/6/18，也从未作为纯 held-out。未来加载 adapter 时，eval111 中有 14 条来自上述 10 个训练 session，按 session 排除后剩 97 条，可作旧 action-proxy 回放；这 97 条仍含原 train 73 条，也尚未排除近重复和模板关系，不能自动升级成严格 held-out。Phase 1c 的 6 个 calibration/test case 可做 session-disjoint 的 tiny 诊断；更大的方法结论需要新建 session-clean held-out。</p>
+<h2 id="4">4. 工程、基座和语义审计给出的共同诊断</h2>
+<p>14-case 诊断每个条件有 24 个需要新观察确认的字段，其中 1 个真实不存在、没有 bbox，所以几何命中分母是 23；完整图两种 history 条件合计为 48 个字段。它们不是 23 或 48 个独立任务，response-level 则每条件为 14 条回答。</p>
+<p>Phase 1c 已关闭主要工程门。8B 完成 28 条真实 mask、28 个 optimizer step 和 adapter save/reload；8B/32B vLLM vision 已跑通单图、多图、长生成与真实 crop/check/revisit，32B persistent core 完成 183 次调用，其中 13 条是九图 revisit。它们证明运行时和训练器可执行，不能说明 adapter 有能力收益。此前 9 月 23 日“尚无真实 optimizer step 或 vLLM vision”的状态已经过时，当前证据见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">Phase 1c 实机报告</span>。</p>
+<p>基座诊断把问题拆成计划、空间映射和局部像素使用三层。32B 在冻结 14 case 上的自然计划和初次几何明显强于 direct 路线，但四个条件的最终 required-new strict 都是 3/24；8B 四条件都是 0/24。严格分又混入字段容器和 alias 问题，不能直接解释成视觉读错。最新独立 assistant QA 在完整目标图上复核了这 14 case：每个模型的 48 个 required-new 字段核心语义均为 48/48 supported；8B 若要求完整 annotation value 为 47/48。两模型 response-level 均为 26/28 supported，而不是整题全对。这仍是 non-human-gold 小样本。</p>
+<p>14-case 完整图上的较好表现没有修复受限观察链。8B 的 v2 restricted 90 条输出中，只有 4 条整份回答同时满足指定辅助字段、合法可见证据和决定。32B 的 56 个最终条件中，20 条同时有正确事实、合法可见证据且无实质额外错误；另有 1 条值正确但证据不足。两套 rubric 和汇总层级不同，不能据此做 8B/32B accuracy 排名。共同暴露的训练目标是：把计划映射到足够的区域，只用获准像素识别正确实例，并判断何时证据已经充分。详见 <a href="semantic-audit.html">全量语义审计</a>。</p>
+<h2 id="5-framework">5. 已有 framework 下的监督目标</h2>
+<p>在用户提供的 framework 和低成本 judge 前提下，可以直接随真实 benchmark 运行批量生成 silver supervision。当前研究重点是把监督定义清楚：</p>
+<ol>
+<li>每个样本从真实 benchmark 轨迹取得，先冻结模型在预测时合法可见的任务、历史观察、当前屏和已发 action/list。环境返回新观察的边界决定 <code>&lt;predict&gt;</code> 插入位置，不靠动作名猜测。</li>
+<li>对 target 离线记录 exact revisit、same template、<code>spatial_reusable=yes|partial|no</code>，以及内容变化、modal、滚动、键盘、错误页和 terminal absence。模板相同与坐标可复用保持分列。</li>
+<li>另标任务所需字段、正确实例、prefix 已知信息、必须从新屏确认的信息及 evidence region。layout similarity、next-click bbox 和任务证据充分性是不同标签，不能互相自动替代。</li>
+<li>从真实证据构造 <code>&lt;check&gt;/&lt;revisit&gt;</code> 监督，覆盖证据充分、缺关键字段和意外状态，并保留模型自产的 wrong-instance、错区、false-sufficient、无益补看和有效恢复。</li>
+<li>WAL judge 或视觉 judge 可以批量产生 silver，无需把逐例人工批准设为产数前置。每条保存 judge 版本、输入边界、判据或分数（若有）和 provenance；另取小份跨任务、状态、平台的独立样本，检查标签语义、偏差和失效类型。</li>
+<li>SFT 只监督合法 completion。反事实 predict 和 earlier assistant context 保持零 loss；future target、DOM、答案、教师区域和未来动作只进入 <code>labels_only</code>，不注入 predictor prefix。benchmark train 与 held-out 按 task/session 和近重复簇隔离，并在产数前冻结评测侧。</li>
+</ol>
+<p>现有 28/205/83、4,555 条 raw 审计和 14 case 可作为 schema 回归、错误 taxonomy 与抽查种子。它们不限制 framework 的生成规模，也不要求先被逐条清洗完。browser shopping、desktop、mobile、地图，以及 current-as-reference、older-reference、empty/modal/state-change 可直接作为批量采样分层。</p>
+<h2 id="6">6. 训练与评测怎样和产数并行</h2>
+<p>批量产数无需等待方法验证完成；下列对照用于判断训练学到了什么，并及时修正监督：</p>
+<ul>
+<li>对 base 与各 SFT checkpoint 固定 prompt、renderer、controller、schema、像素预算和 session split，做同例比较。旧 28-row adapter 只补评测接线和退化检查；训练重叠、session 排除后的旧 97 条回放、6 个 Phase 1c session-disjoint case 与新 benchmark held-out 分开报告。</li>
+<li>同例保留 full-target、独立审过的 oracle evidence crop 和模型自选 crop。oracle 与模型 crop 使用相同 renderer 和局部预算，full-target 单列为完整观察对照；逐字段区分选区错误、crop 不可读、实例错误、错误停止和 scorer coverage。</li>
+<li>保留 current-only/warm、固定中心、动作位置复制和随机基线；计划路线增加调用时，还要报告视觉 token、输出 token、revisit 次数和时延。</li>
+<li>主要行为指标包括格式有效率、evidence coverage、合法证据支持的字段正确性、false-sufficient、无益 revisit、补看恢复和任务下一步结果。<code>supported + plausible</code> 不写成 accuracy。</li>
+<li>另设完整观察的 CU/BU 回归集，检查训练是否损伤原有 grounding 和任务行为。主 held-out 由 framework 产数时按 task/session 冻结；14-case 继续作为小规模诊断，不反复调参后包装成泛化结果。</li>
+<li>按 judge 版本和数据分层持续抽查 silver 的 precision、主要分歧与系统性偏差。抽查发现问题时版本化修订标签规则，不覆盖旧数据和既有结果。</li>
+</ul>
+<p>直接依托已有 framework 随 benchmark 批量产数，同时推进小份独立标签抽查、三方观测对照和分阶段 SFT。这里不设固定样本上限，也不要求逐例人工审批；重点是监督接口和学习效果，每轮训练仍需绑定数据与 judge 版本，并在 session-clean held-out 和 CU/BU 回归上报告结果。</p>
+<h2 id="_2">复核入口</h2>
+<ul>
+<li><span class="unbundled" title="原报告引用；此证据文件未随本站发布">本报告事实核查与读者测试</span></li>
+<li><a href="stage1-report.html">第一阶段综合报告</a></li>
+<li><span class="unbundled" title="原报告引用；此证据文件未随本站发布">Phase 1b 数据扩展</span></li>
+<li><span class="unbundled" title="原报告引用；此证据文件未随本站发布">Phase 1c evidence 数据</span></li>
+<li><span class="unbundled" title="原报告引用；此证据文件未随本站发布">各工作线综合</span></li>
+<li><a href="semantic-audit.html">全量 rollout 语义审计</a></li>
+</ul></main>
+<aside class="source-note">来源：<code>docs/PROJECT_REVIEW_SFT_READINESS_20260927.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

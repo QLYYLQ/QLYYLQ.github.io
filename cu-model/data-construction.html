@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="数据构建可能性指南 · CU Model 研究资料">
+<title>数据构建可能性指南 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-10-27 · 数据与训练</div>
+<h1>数据构建可能性指南</h1><p class="lead">从录制、分叉、审核到导出的完整做法和依据，包含成本测算与四类导出问题。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="data-construction-brief.html">数据构建可能性指南 · 精简版</a> · <a href="sources/data-construction.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">结论</a></li>
+<li><a href="#1">1. 总图：数据从哪来，变成什么</a></li>
+<li><a href="#2">2. 要什么数据</a><ul>
+<li><a href="#21">2.1 清单</a></li>
+<li><a href="#22">2.2 每族怎么筛</a></li>
+<li><a href="#23">2.3 录制时就要存下的东西</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 一轮怎么采</a><ul>
+<li><a href="#31">3.1 开跑前</a></li>
+<li><a href="#32">3.2 命令</a></li>
+<li><a href="#33">3.3 跑完先看什么</a></li>
+<li><a href="#34">3.4 下一轮顺手要比的</a></li>
+<li><a href="#35">3.5 导出的四个坑</a></li>
+</ul>
+</li>
+<li><a href="#4">4. 产出和成本</a><ul>
+<li><a href="#41">4.1 一轮的实测数</a></li>
+<li><a href="#42">4.2 每个可用决定花多少</a></li>
+<li><a href="#43">4.3 墙钟和磁盘</a></li>
+<li><a href="#44">4.4 三档的采集量</a></li>
+</ul>
+</li>
+<li><a href="#5">5. 怎么扩</a><ul>
+<li><a href="#51">5.1 先扩任务和站点</a></li>
+<li><a href="#52">5.2 任务从哪来</a></li>
+<li><a href="#53">5.3 站点：广度和深度分开</a></li>
+<li><a href="#54">5.4 难度分层</a></li>
+<li><a href="#55">5.5 节奏</a></li>
+</ul>
+</li>
+<li><a href="#6-latent-actionlar">6. Latent action：LAR 能借什么</a><ul>
+<li><a href="#61">6.1 论文核对</a></li>
+<li><a href="#62-token">6.2 浏览器动作的 token 实测</a></li>
+<li><a href="#63">6.3 “可预见”在哪里成立</a></li>
+<li><a href="#64">6.4 可以做的四件事，按建议的先后</a></li>
+<li><a href="#65">6.5 各阶段放什么</a></li>
+<li><a href="#66">6.6 没展开的两条</a></li>
+</ul>
+</li>
+<li><a href="#7">7. 开工清单</a></li>
+<li><a href="#8">8. 猜测汇总</a></li>
+<li><a href="#9">9. 还不确定的</a></li>
+<li><a href="#a">附 A 术语</a></li>
+<li><a href="#b-_notes">附 B _notes/ 里的文件</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>2026-10-27。这份指南回答三个问题：要采哪些数据，在 spectragent 里一轮怎么采，怎么扩到全量 SFT 需要的量；另外评估 LAR（Latent Action Reparameterization）的思路能不能用在浏览器动作上。第 7 节是开工清单，照着做就能开始下一轮。</p>
+<p>依据：GitHub <code>QLYYLQ/spectragent</code> 的 main（<code>380060f</code>，10 月 27 日拉取）里的 <code>docs/data_flywheel_runbook.md</code>（下称 runbook）、<code>lookahead/README.md</code>、<code>configs/lookahead/</code>、导出和 lookahead 的代码，以及项目历史 <code>.agents/skills/af-project-history/references/lookahead-rounds.md</code>（下称轮次记录）；之前的四份报告，简称原报告（《CUA SFT 数据管线与扩展调研》）、设计文档（《前瞻观察能力的训练管线与数据设计》）、采集评估（《spectragent 采集框架用于前瞻观察训练的评估》）、数据量估算（《全量 SFT 数据量估算》）；LAR 原文（arXiv 2605.18597v3）。脚本和示例在同目录的 <code>数据构建可能性指南_notes/</code>（下称 <code>_notes/</code>，文件列表见附 B）。不熟的词见附 A。</p>
+<p><em>标注沿用前几份报告：</em><em>论文报告</em><em>是论文或官方文档里能核对的；</em><em>项目数据</em><em>是仓库文档、配置、代码、轮次记录或你实跑里的数，我读代码得出的结论也归这一类；</em><em>本文实测</em><em>是这次我自己跑出来的（分词计数、任务加载、脚本在 fixture 演练产出上的试跑），只说明跑过的那部分；</em><em>推断</em><em>是由证据算出或推出的；</em><em>直觉</em><em>是没有直接证据的判断，附当时的想法；</em><em>建议</em><em>是具体做法。</em></p>
+<h2 id="_1">结论</h2>
+<ol>
+<li><strong>一轮怎么采的流程已经定了，下一轮在当前 main 上重录。</strong> runbook 的“配置指南 101”和 <code>configs/lookahead/</code> 就是 10 月 24 日那轮实际跑的配置，命令在 <code>lookahead/README.md</code>（<strong>项目数据</strong>）。10 月 25 日所有原始录制和分叉都删了；10 月 24–25 日的三处改动（一步里有动作失败就停下，<code>send_keys</code> 执行浏览器自己的快捷键，页面没加载完时明确告诉 teacher）都改了 teacher 的提示词，旧录制本来也不能再按源历史分叉。所以下一轮换快网络、在当前 main 上重录。几项已合并的设置还没在一整轮上验证，这一轮顺手比（第 3.4 节）；导出有四个坑，靠改导出配置和一个后处理脚本解决（第 3.5 节）。</li>
+<li><strong>数据分五族（A–E），计数单位各不相同。</strong> A 录制轨迹按保留轨迹和监督步算；B 同任务分叉和 C 换任务分叉按可用决定算（judge 判为合理、且执行效果符合意图的决定）；D 前瞻观察按 transition 算，失败轨迹里的也能用；E 人工标注按条算，留出评测按站点和任务算。混在一起按“条”数，量会算错（<strong>推断</strong>，第 2 节）。</li>
+<li><strong>扩量的数据瓶颈在任务和站点。</strong> 数据量估算的推荐档要 ≥6,000 个任务、≥100 个训练站点（那份报告的<strong>直觉</strong>），上一轮是 15 个任务、5 个站点：任务差约 400 倍，站点差约 20 倍。自己写的任务文件能被 <code>spectragent bench --list</code> 原样列出（<strong>本文实测</strong>，没有真录），所以模板任务、以及把 variants 写成从检查点页面出发的新任务，都能接进录制（第 5 节）。吞吐的上限另外算：teacher API 限流、风控、一台机器能同时录几个站点，三样都没在扩量规模上量过。</li>
+<li><strong>分叉不适合拿来凑 SFT 的量。</strong> 分叉的一次决定和录制的一步一样带着全部历史：上一轮录制每步约 1.4 万 token，同任务分叉每个约 1.4 万，换任务约 1.6 万。10 月 24 日那轮，按意图执行的同任务分叉只占全部同任务分叉的 30%，换任务是 50%。折到每个可用决定，换任务分叉约为录制的 1.8 倍，同任务分叉约 2.5 倍（<strong>推断</strong>；分叉一侧算的是下限，录制一侧的 65% 保留率是<strong>直觉</strong>）。分叉的用处是同一状态的多个决定、换任务、不碰 live 站点，只拿来做这几类数据（第 4 节）。你说的视频区域隔离（媒体区域规则）让腾讯视频的分叉从一个都恢复不了变成 40/70 可评判，整轮可评判的比例到 69%，再补站点规则重跑到 75%（<strong>项目数据</strong>）。</li>
+<li><strong>LAR 论文存在，NeurIPS 2026 录用没查到。</strong> 它是 arXiv 2605.18597（v3，2026-09-27），在 ICLR 2026 MemAgents workshop 挂过 poster；PDF 附了 NeurIPS 的 checklist，我推断作者按 NeurIPS 准备过，投没投、录没录都查不到（<strong>推断</strong>）。它的 latent action 是从轨迹里挖出的高频 n-gram 片段，每类片段加一个新词表符号，再用 KL 蒸馏让模型学会；三个基准的输入都是文本或 HTML。唯一的网页基准 Mind2Web 上，Qwen3-8B 的动作 token 只少了 2.9%，Llama-3.1-8B 少了 20.8%（<strong>论文报告</strong>，第 6.1 节）。</li>
+<li><strong>照搬到 click、drag、scroll 上省得很少。</strong> 这些动作能预见的是语法，坐标才是决定，n-gram 压不掉坐标。用 Qwen 的分词表数，一个 UI-TARS click 15 个 token，其中 9 个是语法（<strong>本文实测</strong>）。语法和低熵的整行（scroll、hotkey）都换成宏符号，每步省 6–20 个 token，按 250 tok/s 是 25–80 ms（<strong>推断</strong>，第 6.2 节）。少一次 <code>wait()</code> 就省 1 秒，少一次模型调用约省 1 秒，抵得上十几到几十步的宏符号（<strong>推断</strong>）。</li>
+<li><strong>LAR“缩短有效步数”的思路可以借，换一个单位用。</strong> LAR 的有效步数按动作 token 数算；我把它延伸到模型调用次数，这一步是我的<strong>推断</strong>，论文没有做。浏览器上对应的是多动作 chunk：用录制里每个动作前的帧给 chunk 打“盲操作是否安全”的标签，把能合并的相邻步合成更长的 chunk 当 SFT 目标；转移类型（跳页、原地更新、弹窗、滚动露出）可以做成离散 token，和 <code>&lt;predict&gt;</code> 一起训。这三样都是<strong>推断</strong>和<strong>直觉</strong>，先用 <code>_notes/</code> 的两个脚本在第一次导出和 <code>steps.jsonl</code> 上量出 token 构成和可合并步的比例再定（第 6.4 节）。</li>
+</ol>
+<h2 id="1">1. 总图：数据从哪来，变成什么</h2>
+<pre><code class="language-text">任务来源 ─► 录制（live；teacher = ui_tars + DeepSeek） ─► health 排除 ─► 分叉（离线回放录下的归档）
+基准 / 模板 / variants / 探索       │                                        │
+                                   ▼                                        ▼
+                            A 录制轨迹                           B 同任务分叉   C 换任务分叉
+                                   │                                        │
+                                   ├──► 审核队列：stability / judge-forks / gold-queue ──► E 人工标注
+                                   │
+                                   ├──► export（openai_messages，每步一条，带 weight）
+                                   │        └─► 外部后处理：排除坏录制、按 judge 筛分叉、整条打包、合并步 ──► SFT
+                                   │
+                                   └──► extract（steps.jsonl）──► 外部离线管线 ──► D 前瞻观察行（设计文档数据①②③⑤⑥）
+</code></pre>
+<p>后处理和离线管线都放在 spectragent 外面，这是你 10 月 21 日定的（<strong>项目数据</strong>）。导出代码已经冻结，唯一的例外是 10 月 25 日加的 <code>wait_actions</code>（runbook “导出 SFT 数据”）。</p>
+<h2 id="2">2. 要什么数据</h2>
+<h3 id="21">2.1 清单</h3>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>族</th>
+<th>数据</th>
+<th>训什么</th>
+<th>在 spectragent 里从哪来</th>
+<th>计数单位</th>
+<th>现状</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>录制轨迹</td>
+<td>策略 SFT 的主体</td>
+<td><code>spectragent bench</code> 录制</td>
+<td>保留轨迹、监督步</td>
+<td>能产出、能导出</td>
+</tr>
+<tr>
+<td>B</td>
+<td>同任务分叉</td>
+<td>同一状态的多个决定：多样性、决定稳不稳、偏好对</td>
+<td><code>branch_same_task.yaml</code></td>
+<td>可用决定</td>
+<td>能产出；和导出一起用没在真实数据上验证（第 3.5 节）</td>
+</tr>
+<tr>
+<td>C</td>
+<td>换任务分叉</td>
+<td>同一屏、不同需求：任务条件化（设计文档数据④）</td>
+<td><code>lookahead variants</code> 加 <code>branch_task_variants.yaml</code></td>
+<td>可用决定</td>
+<td>同 B</td>
+</tr>
+<tr>
+<td>D</td>
+<td>前瞻观察 transition</td>
+<td><code>&lt;predict&gt;</code>（设计文档的 P1、P2）</td>
+<td>录制里的帧、DOM/AX、落定记录、动作效果；<code>lookahead extract</code></td>
+<td>transition</td>
+<td>原料已经在录，离线管线没写</td>
+</tr>
+<tr>
+<td>E</td>
+<td>人工标注、留出评测</td>
+<td>校准阈值和 judge、金标（设计文档数据⑧）、测泛化</td>
+<td><code>stability</code>、<code>judge-forks</code>、<code>gold-queue</code> 三类队列，<code>spectragent view</code> 标注</td>
+<td>条；留出站点 × 任务</td>
+<td>队列能建，标注流程没完整走过</td>
+</tr>
+</tbody>
+</table></div>
+<p>另有两类不在 spectragent 里：通用数据，<strong>建议</strong>占整条打包时总训练 token 的约 30%，推荐档约 1 亿 token（数据量估算第 4 节，参照 OpenCUA 的配比）；和 latent action 有关的派生数据，见第 6.4 节。</p>
+<h3 id="22">2.2 每族怎么筛</h3>
+<ul>
+<li><strong>A 录制轨迹</strong>：按步筛，不按整条。teacher 没完成的轨迹也导出，每个样本带 <code>labels.step_status</code> 和判定，训练前再筛（runbook “导出 SFT 数据”）。WebSTAR 的实验里，步级过滤随数据增加一直在涨，轨迹级过滤很早就平了（<strong>论文报告</strong>，见数据量估算第 2 节）。要丢的：健康检查排除的整条录制（导出器不读排除文件，要在外部丢，第 3.5 节）；主文档没加载完的步（<code>exclude_unloaded_steps</code>，默认开）；动作失败的步（<code>step_status: action_failed</code>）；风控拦截页上的步（只能翻截图找）。首轮那个“没聚焦也报输入成功”的 bug，10 月 22 日那轮之前已经修了，没有聚焦的输入框时拒绝输入；修之前的录制也已删除（<strong>项目数据</strong>）。</li>
+<li><strong>B、C 分叉</strong>：只要 <code>judge-forks</code> 判为 <code>judged</code> 的（检查点恢复了、分叉做出了决定），再要 judge 的两个回答都是 yes：<code>reasonable</code>（这一步对它的任务合理）和 <code>executed_as_intended</code>（下一屏显示了想要的效果）。导出时，同一组里检查点动作相同的样本标 <code>duplicate_of</code>，不删（runbook）；做偏好对和多样性统计时要用它。</li>
+<li><strong>D transition</strong>：不要求任务成功，只要求 O_{t+1} 是真实的下一屏、帧已经稳定、证据和任务相关。失败轨迹里的 transition 也能用（原报告“扩展曲线”一节）。</li>
+<li><strong>E 人工</strong>：稳定性审核用来定变化阈值，分叉判定审核用来核对 judge，金标 100 条起，calibration 和 test 各一半（设计文档）。</li>
+</ul>
+<h3 id="23">2.3 录制时就要存下的东西</h3>
+<p>D 和第 6 节的派生数据都靠录制时多存的东西，事后补不回来。下面这些在 <code>configs/lookahead/record_ui_tars_deepseek.yaml</code> 里已经开着，扩量时不要为了省磁盘关掉（<strong>项目数据</strong>，runbook “归档”；<strong>建议</strong>）：</p>
+<ul>
+<li><code>browser.frames</code>：每个动作之前一帧（<code>before_action: true</code>），观测后约 1 秒一帧（<code>after_observation_delay_s: 1.0</code>）。帧让每个动作通常多等约 0.07 秒，agent 看不到这些帧。</li>
+<li><code>browser.dom_raw</code>（DOMSnapshot 加 AX）、<code>browser.network</code>、<code>browser.storage</code>。</li>
+<li><code>recording</code> 四项（metrics、errors、trajectory、observations）全开。<code>recording.metrics</code> 关着时不记动作起止时间，<code>pace: recorded_timeline</code> 会拒绝这样的源。</li>
+<li>每步的 <code>capture_state</code>（落定结果、可见资源加载失败数、前台变化），每个动作的效果（点击点和命中元素、滚动前后、URL 前后、焦点）。</li>
+</ul>
+<p>磁盘按每步约 4.5 MB 算：采集评估里实跑每步 p50 约 3.0 MB，首轮每步多拍约 3 帧，每帧按约 0.5 MB 算（1280×720 的 PNG，<strong>推断</strong>）。</p>
+<h2 id="3">3. 一轮怎么采</h2>
+<h3 id="31">3.1 开跑前</h3>
+<p>照 runbook 的“录制前准备”。下面几条最容易出事（<strong>项目数据</strong>，另有标注的除外）：</p>
+<ul>
+<li>换快网络。上一轮在慢网络上，约三分之二的采集等到了落定，约三分之一被 5 秒上限截断（多数只是 DOM 还在变），约 3% 截断时主文档还没加载完；离线回放瞬间应答，录到的“正在加载”在分叉里永远对不上。换好网络先录一两个任务，用 <code>lookahead extract</code> 写出的 <code>settle</code> 字段看一眼：<code>outcome</code> 是 <code>capped</code> 且 <code>waiting_for</code> 里有 <code>load</code> 的采集，就是截断时主文档还没加载完的，应接近 0（<strong>建议</strong>）。</li>
+<li>一台机器同时最多录 3 个站点。5 个并行时页面下载被饿死，爱奇艺首页停在骨架屏。这是慢网络上量的，快网络上能开几个没量过。</li>
+<li>整轮固定宿主的深色或浅色外观。headless Chrome 的原生滚动条跟随宿主外观，又不被记录，曾让一批分叉作废。runbook 的例子是一直用深色：开跑前 <code>defaults read -g AppleInterfaceStyle</code> 输出 <code>Dark</code>。</li>
+<li><code>max_actions_per_step</code> 在录制、分叉、学生里都是 4。DeepSeek teacher 用 <code>coordinate_space: screenshot_pixels</code>，学生照旧 <code>normalized_1000</code>，导出时换算。</li>
+<li>teacher 的提示词一改就要重录，因为 <code>history_source: source</code> 的分叉要求前缀的提示逐字节相同。下一轮 teacher 走哪条 API 路由，runbook 写着还没定。</li>
+<li><code>spectragent bench</code> 不读 <code>.env</code>，先 <code>set -a; . ./.env; set +a</code>。teacher 和 judge 不是同一家服务时，在 judge 那条命令前单独给 <code>OPENAI_API_KEY</code>。LexBench 等基准数据的位置用 <code>SPECTRAGENT_BENCHMARK_DATA</code> 指定。</li>
+</ul>
+<h3 id="32">3.2 命令</h3>
+<p><code>lookahead/README.md</code> 的 “A collection round” 原样能跑。下面照抄，加了注释、<code>--token-limit</code> 和导出两步。<code>$R</code> 是这一轮的目录，<code>$N</code> 是 <code>_notes/</code> 目录：</p>
+<pre><code class="language-bash">set -a; . ./.env; set +a                  # bench 只读 shell 环境
+R=tmp/lookahead/&lt;轮次名&gt;
+N=$LOCAL_HOME/QLY/report/cu_model/数据构建可能性指南_notes
+mkdir -p $R/{configs,logs,sessions}
+cp configs/lookahead/*.yaml $R/configs/
+sed -i '' &quot;s|tmp/lookahead/round|$R|g&quot; $R/configs/*.yaml   # Linux 的 GNU sed 写 -i，不带 ''
+
+# 1 录制：每个站点一个 sweep，同时最多 3 个站点。下面是上一轮 B 站的三个任务
+uv run spectragent bench --config $R/configs/record_ui_tars_deepseek.yaml \
+  --benchmark lexbench_browser --subset L1 --task-id 6 --task-id 118 --task-id 158 \
+  --no-eval --timeout 1800 --token-limit 1800000 \
+  --session-dir $R/sessions/bilibili &gt; $R/logs/record-bilibili.log 2&gt;&amp;1
+# 2 健康检查：写 exclusions.json。分叉配置的 exclude_runs 和之后的 lookahead 命令都读它，导出不读（见 3.5）
+uv run python -m lookahead health --root $R/record --viewer-root $R --out $R/out/health
+
+# 3 换任务的变体：每条录制取 2 个检查点，每点 2 个新任务
+uv run python -m lookahead variants --root $R/record --viewer-root $R \
+  --exclude-runs $R/out/health/exclusions.json --steps-per-run 2 --per-step 2 \
+  --judge-config $R/configs/judge_deepseek.yaml --out $R/variants/variants.json
+# 4 三组分叉：先 --list 看任务 id。量大时把 id 分成几份，每个进程用 --task-id 传一份、用自己的 --session-dir
+for c in branch_same_task branch_task_variants branch_task_variants_without_source_thoughts; do
+  uv run spectragent bench --config $R/configs/$c.yaml --no-eval --list
+  uv run spectragent bench --config $R/configs/$c.yaml --no-eval --timeout 1500 \
+    --session-dir $R/sessions/$c &gt; $R/logs/$c.log 2&gt;&amp;1
+done
+
+# 5 steps.jsonl 和三类审核队列
+uv run python -m lookahead extract --root $R --viewer-root $R \
+  --exclude-runs $R/out/health/exclusions.json --out $R/out/steps.jsonl
+X=&quot;--viewer-root $R --exclude-runs $R/out/health/exclusions.json --annotations $R/annotations&quot;
+uv run python -m lookahead stability --root $R/record $X --out $R/out/stability \
+  --media-areas configs/replay_rules
+uv run python -m lookahead judge-forks --root $R $X --out $R/out/forks \
+  --judge-config $R/configs/judge_deepseek.yaml
+uv run python -m lookahead gold-queue --root $R/record $X --n 100 --out $R/out/gold
+# 6 标注
+uv run spectragent view --root $R --annotations $R/annotations --annotator &lt;名字&gt; --open
+
+# 7 导出（导出 YAML 见 3.5）和外部后处理
+uv run spectragent export --config $R/configs/export.yaml
+python3 -I $N/export_postprocess.py --export datasets/&lt;名字&gt; --out datasets/&lt;名字&gt;_post \
+  --exclusions $R/out/health/exclusions.json --judgments $R/out/forks/judgments.jsonl   # 整条打包再加 --pack
+</code></pre>
+<p>上一轮各站点的 LexBench L1 任务 id：B 站 6、118、158，IGN 25、125、155，腾讯视频 28、128、263，爱奇艺 18、108、208，同花顺 44、134、233（README）。</p>
+<p><code>--token-limit</code> 是这次 sweep 记下的 token 上限：每跑完一个任务累加一次，累计到了上限就不再开新任务，退出码 4（<strong>项目数据</strong>，<code>spectragent bench --help</code>）。所以一次 sweep 最多超出最后那个任务的量。bench 不会自动跳过已经跑过的任务；要续跑，看 <code>--session-dir</code> 里这次的 session 文件，状态还是 <code>not_started</code> 的任务用 <code>--task-id</code> 再跑（<strong>项目数据</strong>，读了 <code>spectragent/core/benchmark_session.py</code>）。上一轮录制 580 万 token、15 个任务，每个任务约 39 万；上面按每个任务 60 万（留五成余量）乘 3 个任务给了 180 万（<strong>建议</strong>）。分叉的 sweep 也可以加。</p>
+<h3 id="33">3.3 跑完先看什么</h3>
+<ul>
+<li>翻截图。健康检查认不出风控拦截页，携程那轮就是翻截图才发现几乎全是拦截页（<strong>项目数据</strong>）。新站点至少翻每条录制的第一张和最后一张，拦截多的站整站丢掉。也可以让 judge 模型看这两张截图判断是不是拦截页，没试过（<strong>直觉</strong>）。</li>
+<li>各站点可评判分叉的比例。10 月 24 日那轮补规则重跑之前：同花顺 58/68、B 站 52/56、IGN 42/64、腾讯视频 40/70、爱奇艺 37/72（<strong>项目数据</strong>）。哪个站掉下来，就看度量报告里的近邻 miss，补站点规则，只改 <code>site_rules</code>，在同一批录制上重跑分叉对比（runbook “回放与分叉”）。度量报告这样算：建一个目录，<code>traces/record</code> 链到 <code>$R/record</code>，<code>traces/branch</code> 里放分叉 run 的符号链接，再跑 <code>spectragent flywheel report --root &lt;目录&gt; --evidence live --out &lt;输出目录&gt;</code>（runbook “排错”）。</li>
+<li>这一轮的 token 账：录制、同任务分叉、换任务分叉、变体生成、评判各多少。</li>
+</ul>
+<h3 id="34">3.4 下一轮顺手要比的</h3>
+<p>这些设置都已合并，还没在真实的一整轮上验证过（runbook “已知不行与还没验证的”）：</p>
+<ul>
+<li><code>pace: recorded_timeline</code> 对 <code>recorded_llm_latency</code>：在同一批分叉上各跑一遍，比各站点可评判分叉的比例。离线加载快得多，分叉走到检查点时比录制当时早（按站点的中位数 3 到 35 秒），轮播、自动预告、弹窗这些页面计时器处在别的状态，这是剩下的失败的主要来源之一。</li>
+<li>导出的 <code>wait_actions: drop_when_capped</code>，配一个真的改写模型（runbook 的例子是 <code>gpt-4.1-mini</code>）。上一轮约十分之一的步会受影响，只在 fixture 上测过。</li>
+<li><code>send_keys</code> 执行浏览器自己的快捷键以后，teacher 离站卡住是不是变少了。上一轮因为离站丢了 23 个分叉。</li>
+</ul>
+<h3 id="35">3.5 导出的四个坑</h3>
+<p>一轮的 trace 在 <code>$R/record/</code> 和三个分叉目录下（各配置的 <code>trace_dir</code>）。导出 YAML 从发布的 <code>configs/flywheel/export_sft.yaml</code> 复制，其余照旧，改这几处：</p>
+<pre><code class="language-yaml">exporter:
+  - exporter_id: openai_messages
+    # ……其余照发布配置……
+    sources_root: tmp/lookahead/&lt;轮次名&gt;
+    sources: [&quot;record/*&quot;, &quot;branch_same_task/*&quot;, &quot;branch_task_variants/*&quot;,
+              &quot;branch_task_variants_without_source_thoughts/*&quot;]
+    filters:
+      exclude_restoration_diverged: false   # 坑 1
+      max_document_misses: unlimited        # 坑 1
+      exclude_sites: [&lt;留出站点的注册域名&gt;]   # 坑 3
+    split: { by: task, validation_fraction: 0.1, salt: af-split-1 }   # 坑 3
+    decontamination: { against: [&lt;将来评测用的基准&gt;], match: either }
+    output_dir: datasets/&lt;名字&gt;
+</code></pre>
+<p><code>match: either</code> 是说任务 id 相同、或者站点加指令相同，任一条就算撞上评测集（runbook）。</p>
+<p>分叉 run 的源录制也必须在 <code>sources</code> 里，否则分叉会被筛掉；录制 run 自己也会出样本，没有只导出分叉的开关（runbook）。</p>
+<ol>
+<li><strong>分叉多半会被整条排除。</strong> 发布配置的 <code>exclude_restoration_diverged: true</code> 会把任何一步恢复检查判为 <code>warn</code> 或 <code>diverged</code> 的 run 整个排除，而分叉用 <code>verify: warn</code> 跑，前缀里常有没过的步。<code>max_document_misses: 0</code> 还会排除回放里有主文档 miss 的 run：fixture 演练故意做了一个提交 POST 表单的分叉，它就因为一次主文档 miss 被这条排除了（<strong>本文实测</strong>）。这两项和分叉还没在真实数据上一起导出过（runbook）。<strong>建议</strong>导出时设成上面的值，再用 <code>export_postprocess.py --judgments</code> 只留 <code>judge-forks</code> 判为 <code>judged</code>、两个回答都是 yes 的分叉；它拿导出样本的 <code>run_id</code> 去对 <code>judgments.jsonl</code> 的 <code>branch_run_id</code>。这样做是<strong>推断</strong>：分叉样本的目标是检查点上的新决定，前缀里没过的检查只在影响检查点画面时才要紧，而 <code>judge-forks</code> 只评判检查点画面恢复了的分叉。第一次导出时抽几条看检查点画面。</li>
+<li><strong>导出器不读健康检查的排除文件。</strong> 导出 YAML 没有按 run 排除的选项，<code>exclusions.json</code> 只有分叉的任务加载器和 lookahead 的几个命令读（<strong>项目数据</strong>，读了 <code>spectragent/export/settings.py</code> 和 README 的 health 一节）。不处理的话，页面一直没渲染出来的坏录制会进训练集。<code>export_postprocess.py --exclusions</code> 按 run id 把它们丢掉。</li>
+<li><strong>按站点切分用的是完整主机名。</strong> <code>split.by: site</code> 的键是起始 URL 的 hostname，<code>search.bilibili.com</code> 和 <code>www.bilibili.com</code> 是两个键（<strong>项目数据</strong>，读了 <code>spectragent/core/trace/sources.py</code> 的 <code>TaskIdentity.site</code>）。variants 变来的任务从检查点的深链接出发，主机名五花八门，按站点切会让同一个站跨进 train 和 validation。<strong>建议</strong>用 <code>split.by: task</code>，validation 只用来看站内的 loss；跨站泛化交给留出的站点测，它们用 <code>exclude_sites</code> 写注册域名（如 <code>bilibili.com</code>），按后缀匹配，能盖住子域名。</li>
+<li><strong>整条打包要在外部做。</strong> 导出器每步一条记录、带完整前文，之前的助手轮权重 0。推理保留完整历史时，整条打包的训练 token 约为按步展开的 1/7；这是数据量估算第 1 节按每条 20 步、留下 13 个监督步算的<strong>推断</strong>，步数越多差得越大，29 步时约 1/10。<code>export_postprocess.py --pack</code> 对每条 run 的每一段（导出器在不可译的步处把一条 run 断成几段）取最后一个监督步的记录，把监督步的助手轮权重设成 1、其余设成 0；这条记录导出器已经核过长度。分叉每条只有一个样本，打包前后一样。</li>
+</ol>
+<p><code>export_postprocess.py</code> 默认还会丢掉 <code>step_status</code> 不是 <code>ok</code> 的样本。它在 fixture 演练的真实导出上跑通了排除、筛分叉和打包，用的排除名单和 judge 结果是我手写的（<strong>本文实测</strong>）。</p>
+<h2 id="4">4. 产出和成本</h2>
+<h3 id="41">4.1 一轮的实测数</h3>
+<p>10 月 24 日那轮：15 个 LexBench L1 任务，同花顺、爱奇艺、B 站、IGN、腾讯视频各 3 个；teacher 是 <code>deepseek-v4.1-flash-1017</code>，reasoning high（<strong>项目数据</strong>，轮次记录）。“可评判”指分叉的检查点画面恢复了，它的决定才能评判。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分叉</td>
+<td>330：同任务 210、换任务 60、换任务且去掉源思考 60</td>
+</tr>
+<tr>
+<td>可评判</td>
+<td>229/330（69%）；只补站点规则、在同一批录制上重跑后 246/330（75%）</td>
+</tr>
+<tr>
+<td>judge：同任务分叉（229 那次）</td>
+<td>可评判的 137 个里，合理 119，按意图执行 64</td>
+</tr>
+<tr>
+<td>judge：换任务分叉（229 那次）</td>
+<td>可评判的 92 个里，合理 83，按意图执行 60</td>
+</tr>
+<tr>
+<td>规则和 judge 是否一致</td>
+<td>同任务分叉上，两边对“意图是否相同”都下了结论时一致 58%；不一致的里有 39 个是规则判“不同”、judge 判“意图相同”</td>
+</tr>
+<tr>
+<td>token</td>
+<td>共 1,168 万：录制 580 万，同任务分叉 295 万，换任务分叉 197 万，变体生成 6 万，评判 89 万（各项是四舍五入后的数）</td>
+</tr>
+<tr>
+<td>每次决定</td>
+<td>录制每步约 1.4 万输入 token（轮次记录）；同任务分叉每个约 1.4 万（295 万 ÷ 210），换任务约 1.6 万（197 万 ÷ 120）；都带着全部历史</td>
+</tr>
+</tbody>
+</table></div>
+<p>这里的规则是 <code>judge-forks</code> 的规则判定：比较分叉和源 run 在检查点上的动作（点中的元素、输入的文字、下一页的 URL），只在证据强时判“相同”或“不同”；judge 模型另外回答两者是否意图相同（README）。两边一致得少，所以 runbook 说规则只适合预筛。judge 自己也要先拿人工的分叉判定审核核对过，才能用它筛数据（第 7 节第 5 步）。分叉的两个 token 数是 provider 报的总用量除以分叉数，录制的 1.4 万是轮次记录说的输入 token，口径不完全一样；轮次记录自己的说法是两者差不多。</p>
+<p>可评判比例一轮轮涨上来，靠的是回放修复和站点规则：10 月 21 日 51/318（16%），22 日 20%，23 日 24%，冻结后台标签页后 41%，加上媒体区域规则等之后 69%，再补规则到 75%（<strong>项目数据</strong>）。</p>
+<h3 id="42">4.2 每个可用决定花多少</h3>
+<p>可用决定指 <code>judge-forks</code> 判为 <code>judged</code>、<code>reasonable</code> 和 <code>executed_as_intended</code> 都是 yes 的分叉决定。轮次记录分别给了两个回答的数，没给两者同时为 yes 的数，所以下表拿“按意图执行”的数当可用决定数。这个数是上限，每个可用决定的花费因此是下限（<strong>推断</strong>）：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>来源</th>
+<th>可用决定占比</th>
+<th>每个可用决定约多少 token</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同任务分叉</td>
+<td>64/210 = 30%（占可评判的 47%）</td>
+<td>至少约 5.4 万</td>
+</tr>
+<tr>
+<td>换任务分叉</td>
+<td>60/120 = 50%（占可评判的 65%）</td>
+<td>至少约 4.0 万</td>
+</tr>
+<tr>
+<td>录制的步</td>
+<td>约 65%（<strong>直觉</strong>，数据量估算的保留率假设）</td>
+<td>约 2.2 万</td>
+</tr>
+</tbody>
+</table></div>
+<p>算法：分叉的 token，加上评判（89 万 ÷ 229 个可评判分叉，每个约 3,900），换任务再加变体生成的 6 万，除以可用决定数；录制是每步 1.4 万除以 65%。换任务分叉约为录制的 1.8 倍，同任务分叉约 2.5 倍。分叉按意图执行的比例低，一部分是回放环境造成的（页面计时器、离站、加载），不全是 teacher 的问题。</p>
+<p>分叉的价值在别处：同一状态有几个决定，能换任务，能换 teacher，不碰 live 站点，没有风控和限流。B 用来看决定稳不稳、做偏好对，C 用来做任务条件化和前瞻的反事实对（设计文档数据④）。量按这些用途定，不拿来凑 SFT 的条数（<strong>建议</strong>）。做偏好对要注意，上一轮 137 个可评判的同任务分叉里只有 18 个被判不合理，“一好一坏”的对不会多。</p>
+<h3 id="43">4.3 墙钟和磁盘</h3>
+<ul>
+<li>录制每步 p50 16.7 秒，观测的落定等待 p50 756 ms、p95 5,001 ms（采集评估，实跑的 479 个策略步）。</li>
+<li>分叉要按录下的模型等待重放前缀，靠后的检查点单个要近 20 分钟，所以 <code>--timeout 1500</code>（runbook）。分叉省掉的是对 live 站点的访问，墙钟并不省。上一轮同任务分叉开了 8 个进程，两组换任务分叉各 4 个；重页面加 8 路并行时，网络归档 5 秒的写盘预算不够，IGN 有 3 个分叉记录不全（<strong>项目数据</strong>）。</li>
+</ul>
+<h3 id="44">4.4 三档的采集量</h3>
+<p>把数据量估算的三档折成采集资源（<strong>推断</strong>）。要录的步 = 保留轨迹 × 1.3 × 20。保留轨迹是过了轨迹级质检、进入训练的轨迹（那份报告的定义）。1.3 是录制系数，即录下的轨迹数是保留轨迹数的多少倍，也是那份报告的<strong>直觉</strong>，前提是 teacher 在挑过的任务上大多能完成：只留成功轨迹、teacher 成功率又只有一半时要翻倍，按步筛、失败轨迹里的好步也留下时会低一些。20 是那份报告假设的每条步数，取在实跑的 15.5 步和首轮的 29 步之间。65% 的步保留率只影响监督步数，这张表没用到。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th></th>
+<th>最低档</th>
+<th>推荐档</th>
+<th>扩展档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保留轨迹</td>
+<td>约 1 万</td>
+<td>约 3 万</td>
+<td>10 万以上</td>
+</tr>
+<tr>
+<td>要录的步</td>
+<td>26 万</td>
+<td>78 万</td>
+<td>260 万</td>
+</tr>
+<tr>
+<td>teacher 输入 token（每步 1.4 万）</td>
+<td>约 36 亿</td>
+<td>约 109 亿</td>
+<td>约 364 亿</td>
+</tr>
+<tr>
+<td>worker 时（每步 16.7 秒）</td>
+<td>约 1,200</td>
+<td>约 3,600</td>
+<td>约 12,000</td>
+</tr>
+<tr>
+<td>机器日（每台同时 3 个站点，全天跑）</td>
+<td>约 17</td>
+<td>约 50</td>
+<td>约 170</td>
+</tr>
+<tr>
+<td>磁盘（每步 4.5 MB）</td>
+<td>约 1.2 TB</td>
+<td>约 3.5 TB</td>
+<td>约 12 TB</td>
+</tr>
+</tbody>
+</table></div>
+<p>读这张表要注意：</p>
+<ul>
+<li>每步 16.7 秒是中位数，4.5 MB 是中位数 3.0 MB 加上多拍的帧（第 2.3 节）。耗时和磁盘的分布右偏，总量会比表里多。</li>
+<li>只算了录制，不含分叉、评判、变体生成和推理输出的 token，也没折成钱。</li>
+<li>步数是最大的变数。上一轮 LexBench L1 任务每条约 28 步（每个任务约 39 万 token ÷ 每步 1.4 万），首轮（10 月 21 日那轮）约 29 步。任务都这么长的话，要录的步、worker 时、机器日和磁盘都要乘约 1.45，每步 token 按 1.4 万算正好；轨迹真到 20 步，每步 token 会少一些，因为每次决定都带着全部历史（<strong>推断</strong>）。这些 token 大部分是前缀，能命中缓存。</li>
+<li>采集速度的上限可能在 teacher API 的限流、风控和每台机器能并行几个站点，三样都没在扩量的规模上量过（<strong>推断</strong>）。</li>
+</ul>
+<h2 id="5">5. 怎么扩</h2>
+<h3 id="51">5.1 先扩任务和站点</h3>
+<p>原报告的结论：扩展曲线都是凹的，先扩页面族和困难分层，最后才扩同一模板内的量（<strong>论文报告</strong>：UGround、ScaleCUA、InSTA、EvoCUA 的曲线；Jedi 混多种数据到 400 万条还在涨）。数据量估算的推荐档是 ≥6,000 个任务、≥100 个训练站点，每个任务最多保留 5 条，另留 10–20 个站点、每站 20 个以上任务只做测试（<strong>直觉</strong>，那份报告第 6 节）。上一轮是 15 个任务、5 个站点，所以第一件事是任务生成器。</p>
+<h3 id="52">5.2 任务从哪来</h3>
+<p>按成本从低到高排。</p>
+<p><strong>① 现成基准。</strong> spectragent 注册了 <code>lexbench_browser</code>（子集有 L1、L2、L3-api、L3-security、omw、private 等）、<code>online_mind2web</code>（All、Hard）和 <code>browsecomp</code>（<strong>项目数据</strong>，<code>spectragent/core/data_loader/task/</code>）。数据目录不在仓库里，各有多少任务要你那边数。将来要拿来评测的，导出时写进 <code>decontamination.against</code>，否则会漏进训练。</p>
+<p><strong>② 模板任务。</strong> 每个站点写一批模板，填槽位，再让 LLM 改写措辞，比如“在&lt;站点&gt;搜索&lt;关键词&gt;，按&lt;排序&gt;排，告诉我第<n>条的&lt;字段&gt;”。模板按任务类型分：搜索加排序加读取、筛选后比较、详情页取字段、先找 A 再找 B、表单填到提交前、滚动查找、多标签页。用哪个 LLM 写都行，约束照 <code>lookahead variants</code> 给 judge 的那几条：不登录也能答、具体、答案能核对、用站点的语言。任务文件的格式我实测过（<strong>本文实测</strong>）：</p>
+<pre><code class="language-text">&lt;数据根&gt;/browser/lexbench_browser/data_info.json
+    {&quot;split&quot;: {&quot;All&quot;: &quot;generated_v0.jsonl&quot;}}
+&lt;数据根&gt;/browser/lexbench_browser/generated_v0.jsonl，每行一个任务：
+    {&quot;task_id&quot;: &quot;gen-bili-search-0001&quot;, &quot;task_text&quot;: &quot;在哔哩哔哩搜索…&quot;, &quot;start_url&quot;: &quot;https://www.bilibili.com&quot;,
+     &quot;language&quot;: &quot;zh&quot;, &quot;benchmark&quot;: &quot;generated_v0&quot;, &quot;domain&quot;: &quot;video&quot;,
+     &quot;tags&quot;: [&quot;template:search_sort_read&quot;], &quot;metadata&quot;: {&quot;template_id&quot;: &quot;...&quot;, &quot;slots&quot;: {...}}}
+</code></pre>
+<p>必填的是 <code>task_id</code>、<code>task_text</code>、<code>start_url</code>。<code>&lt;数据根&gt;</code> 用一个单独的目录，别放进你存 LexBench 数据的那个目录，否则会盖掉它的 <code>data_info.json</code>。两种接法我都试过，都只验证到 <code>--list</code> 列出任务，没有真录：</p>
+<ul>
+<li>设 <code>SPECTRAGENT_BENCHMARK_DATA=&lt;数据根&gt;</code>，用 <code>--benchmark lexbench_browser --subset All</code>；</li>
+<li>不设环境变量，在录制 YAML 末尾加一个 <code>task_loader</code> 块：<code>benchmark_name: lexbench_browser</code>、<code>subset: All</code>、<code>data_dir: &lt;数据根&gt;/browser/lexbench_browser</code>。</li>
+</ul>
+<p>两种都对整次 sweep 生效，所以生成的任务和 LexBench 的 L1 任务分开跑 sweep。要一个站点一个 sweep，就在 <code>data_info.json</code> 里每个站点写一个 split，比如 <code>{"split": {"bilibili": "gen_bilibili.jsonl", "ign": "gen_ign.jsonl"}}</code>，每个 sweep 用 <code>--subset bilibili</code> 这样选一个（<strong>本文实测</strong>，<code>--list</code> 只列出那个文件里的任务）。loader 读回来时，<code>benchmark</code> 保留文件里写的值（没写时才填 loader 自己的名字），<code>tags</code> 和 <code>metadata</code> 原样保留，<code>www.10jqka.com.cn</code> 这样的裸主机补成了 <code>https://</code>。示例文件在 <code>_notes/task_file_example/</code>。</p>
+<p>模板先让 teacher 在几个任务上试跑，成功率太低或答案没法核对的模板丢掉。Go-Browse 的 FeasibilityChecker 就是这么做的，筛掉 403 个任务，省了约 13% 的步（<strong>论文报告</strong>，原报告 notes）。</p>
+<p><strong>③ 把 variants 变成新的 live 任务。</strong> <code>lookahead variants</code> 让 judge 看着录下的检查点截图，写出同一站点上不同的信息需求（<strong>项目数据</strong>，README）。现在这些任务只用来跑离线分叉，每个分叉一个决定。分叉没法一直走下去：离线回放的应答只来自录下的归档，走到没录过的页面就 miss（<strong>推断</strong>，分叉配置写的是 <code>miss_policy: strict</code>）。把它们写成任务文件，从检查点所在页面的 URL 出发，就能 live 录成完整的新轨迹：</p>
+<pre><code class="language-bash">python3 -I $N/variants_to_tasks.py --variants $R/variants/variants.json \
+  --steps $R/out/steps.jsonl --out &lt;数据根&gt;/browser/lexbench_browser --min-path
+</code></pre>
+<p>它读 variants 文件和 <code>extract</code> 的 <code>steps.jsonl</code>，查出检查点的 URL，写出上面格式的任务文件，并在已有的 <code>data_info.json</code> 里加一个以 benchmark 名命名的 split（默认 <code>gen_variants_v0</code>，录制时用 <code>--subset gen_variants_v0</code>），不动模板任务的 split；<code>--min-path</code> 跳过停在裸首页的检查点（<strong>本文实测</strong>：在 fixture 演练的真实 <code>steps.jsonl</code> 上跑通，variants 文件是我手写的，产物能被 <code>--list</code> 列出）。没把状态写进 URL 的页面（单页应用的面板、POST 提交的搜索）重新打开会是别的样子。录完拿新 run 的第一张截图和源检查点的截图比，差得多的丢掉；可以借 <code>lookahead stability</code> 的 32 像素网格差分来比，现在没有现成命令（<code>spectragent flywheel diagnose</code> 比的是录制和回放，不比两次录制）。</p>
+<p><strong>④ 探索生成。</strong> Go-Browse、Explorer 这类管线：从站点首页开始探索，看着页面提任务，teacher 试做、确认可行后再录。原报告 notes 里的成本：Go-Browse 每条成功轨迹约 0.10 美元，Explorer 约 0.28 美元，InSTA 只有约 5% 的尝试能用（<strong>论文报告</strong>）。这要在 spectragent 外面写，等模板饱和了再上。事后给轨迹补写任务（NNetNav、OS-Genesis 的做法）会把 t+1 之后才出现的实体写进任务，拿来做前瞻数据会泄露，要标出来、分开用（原报告 notes）。</p>
+<p>新站点可以先从 runbook 量过的里面挑：V2EX、21 世纪经济报道、起点、豆瓣读书在 12 站那条链上原路径回放校验全过（那时 pinned 还是每文档一个时钟，换成共享时钟后没重测）；东方财富已经有站点规则，但有滑块验证码（<strong>项目数据</strong>，runbook “各类网站的表现”）。</p>
+<h3 id="53">5.3 站点：广度和深度分开</h3>
+<p>分叉恢复率是靠回放修复和站点规则一轮轮涨上来的（<strong>项目数据</strong>：从不到两成到 75%）。每加一个站点，分叉要恢复就可能要补规则；录制本身不需要规则。所以<strong>建议</strong>把站点分成两类：</p>
+<ul>
+<li>广度站：只录制，产出 A。数量往 100 个以上扩，避开风控重的站。</li>
+<li>深度站：录制加分叉，产出 B、C、D。挑规则已经补齐、可评判比例高的页面类型，比如可评判分叉 ≥60% 才做深度站（<strong>直觉</strong>阈值）。runbook “各类网站的表现”按页面类型给的可评判比例：行情选股近九成（上一轮的行情站只有同花顺），B 站九成以上，IGN 补规则重跑后八成多，腾讯视频近六成，爱奇艺约一半。</li>
+</ul>
+<p>要做分叉的视频站，开跑前确认 <code>media_areas</code> 声明了它的视频页。占满屏幕的自动预告（涂黑超过 75% 时不涂）、shadow root 里 iframe 中的播放器，规则还处理不了（runbook）。</p>
+<h3 id="54">5.4 难度分层</h3>
+<ul>
+<li>保留滚动、弹窗、键盘和拖动这些分层，不要照搬 Explorer 删掉“滚动超过 2 次”的轨迹那种过滤（原报告）。</li>
+<li>多动作步照样保留（<code>max_actions_per_step: 4</code>）。你 10 月 21 日的判断是，只有单动作数据的话，模型会偏向每次只出一个动作。</li>
+<li>难例多采。HATS 只用 1,000 条专挑难动作的轨迹，效果就比 OS-Genesis 的数据好（<strong>论文报告</strong>）。对应到前瞻数据，就是多采两条基线（附 A）预测失败的 transition。</li>
+</ul>
+<h3 id="55">5.5 节奏</h3>
+<ol>
+<li>试点：在当前 main 上重录上一轮的 15 个任务，加 5 个新站点的模板任务，量四个数：每步真实 token（用 Qwen3-VL 的 processor 数）、每条步数、步过滤通过率、teacher 成功率，替换数据量估算里的假设。同时导出一次，跑第 6.4 节的两个脚本。</li>
+<li>录到 1 万条保留轨迹，按数据量估算第 6 节训六次（8B 在 2,500、5,000、1 万的嵌套子集上各一次，30B-A3B 在 5,000、1 万上各一次，8B 的 rank 128 LoRA 在 1 万上一次），看留出站点上的学习曲线。</li>
+<li>8B 从 5,000 到 1 万还明显在涨，就扩到 3 万（那份报告给的<strong>直觉</strong>阈值是涨 3 个百分点以上，且明显大于评测噪声）；涨不动就加站点和难例，不加同类数据。</li>
+</ol>
+<h2 id="6-latent-actionlar">6. Latent action：LAR 能借什么</h2>
+<h3 id="61">6.1 论文核对</h3>
+<p><strong>论文报告</strong>（来源：arXiv HTML 全文、arXiv 摘要页、ICLR 2026 页面）：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>项</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>题目、编号</td>
+<td>Latent Action Reparameterization for Efficient Agent Inference，arXiv 2605.18597，v1 2026-05-18，v3 2026-09-27</td>
+</tr>
+<tr>
+<td>发表情况</td>
+<td>ICLR 2026 Workshop on Memory for LLM-Based Agentic Systems（MemAgents）的 poster。PDF 附了 NeurIPS Paper Checklist</td>
+</tr>
+<tr>
+<td>latent action 是什么</td>
+<td>动作片段在“转移等价”下的等价类，每一类用一个新的词表符号表示；没有编码器、码本或连续的隐空间。按我的理解，转移等价是说两个片段在环境里引起同样的状态转移，就算同一类</td>
+</tr>
+<tr>
+<td>怎么找片段</td>
+<td>在句内挖词级 n-gram：频次 ≥ f_min，下一个词的熵 ≤ H_max，按“频次 ÷（熵 + 1）”排序，和已选片段重叠超过 ρ=0.7 的去掉，取前 K 个。Mind2Web 上另外挖重复的 HTML 标签序列</td>
+</tr>
+<tr>
+<td>超参</td>
+<td>TriviaQA：n 取 3–5，f_min 2000，200–1000 个符号；KodCode：n 取 2–6，f_min 10，约 100 个；Mind2Web：n 取 2–6，f_min 1000，约 100 个；H_max 都是 10</td>
+</tr>
+<tr>
+<td>怎么训</td>
+<td>原轨迹 τ 用最长匹配改写成 τ̂。冻结的原模型读 τ，学生（LoRA r=8，加上新符号的 embedding，约占 0.1% 参数）读 τ̂，在两边文本相同的位置上做 KL 蒸馏，温度 2.0；AdamW，学习率 1e-4，3 个 epoch</td>
+</tr>
+<tr>
+<td>有效步数</td>
+<td>论文的有效决策步数 H_eff 是轨迹里各步动作的 token 数之和，换成新符号后变短</td>
+</tr>
+<tr>
+<td>轨迹从哪来</td>
+<td>各模型自己的 rollout；KodCode 抽了 2 万条。三个基准的输入都是文本或 HTML，没有截图</td>
+</tr>
+<tr>
+<td>结果（表 1）</td>
+<td>Qwen3-8B：TriviaQA 80.09（动作 token −27.1%），KodCode 54.30（−9.2%），Mind2Web 39.84（−2.9%）。Llama-3.1-8B：72.46（−23.3%）、35.10（−9.8%）、28.30（−20.8%），其中 TriviaQA 低于 Vanilla 的 73.63</td>
+</tr>
+<tr>
+<td>效率</td>
+<td>只报了吞吐（表 8），没报墙钟延迟。Qwen 的吞吐在 TriviaQA 上从 127.8 到 150.2 tok/s，KodCode 和 Mind2Web 基本不变</td>
+</tr>
+</tbody>
+</table></div>
+<p>发表情况是这样查的：10 月 27 日用论文标题加 “NeurIPS 2026” 搜索，结果只有 arXiv、ICLR 和第三方页面，没有 neurips.cc 的论文页。附了 checklist 只能说明作者按 NeurIPS 的格式准备过（<strong>推断</strong>）。我们的学生是 Qwen 系，所以下面主要看 Qwen 那一行。</p>
+<p>我读原文时注意到的问题（数字都能在论文里核对，判断是我的）：</p>
+<ul>
+<li>没有“用同样的 LoRA 预算在原格式轨迹上微调”的对照。对照组是没微调的模型，所以分不清提升来自新符号，还是来自在自己的轨迹上多训了一遍。</li>
+<li>都是单次运行，没有误差棒；表格之间有对不上的数：Qwen 的 KodCode 在表 1 是 54.30、在表 7 是 58.28；Mind2Web 的 34.15 在表 1 标 CoT、在表 3 标 ReAct。</li>
+<li>换掉的片段太多时性能会突然崩（原文 5.3 节的“崩溃阈值”），但没给阈值是多少；三个领域合起来训时压缩得更少，Mind2Web 还变差了（附录 A.9）。</li>
+<li>扩展性只在 Qwen3-32B 的 TriviaQA 上测了一次（73.20 到 75.26）。</li>
+<li>没写清 Mind2Web 的动作格式。checklist 里写了代码地址 <code>github.com/EZ-hwh/LAR</code>，我没去核对。</li>
+</ul>
+<h3 id="62-token">6.2 浏览器动作的 token 实测</h3>
+<p><strong>本文实测</strong>：用 Qwen 的 BPE 词表（dashscope 2.0.2 里的 <code>qwen.tiktoken</code>，151,643 个普通 token）数 spectragent 的 UI-TARS 动作行。Qwen2 的技术报告说沿用 Qwen 的分词器；Qwen3-VL 的 <code>tokenizer.json</code> 我没能下载下来逐个核对（huggingface 返回 403）。Qwen 的 BPE 把数字一位切成一个 token，所以 <code>(523, 817)</code> 是 10 个 token。导出的目标轮就是这种写法，fixture 演练的导出里是 <code>Action: click(point='(125, 244)')</code>。脚本是 <code>_notes/action_tokens.py</code> 和 <code>format_tokens.py</code>。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>动作（例子）</th>
+<th>token</th>
+<th>其中参数</th>
+<th>其中语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>click(point='(523, 817)')</code></td>
+<td>15</td>
+<td>6</td>
+<td>9</td>
+</tr>
+<tr>
+<td><code>type(content='贵州茅台', point='(412, 96)')</code></td>
+<td>19</td>
+<td>7</td>
+<td>12</td>
+</tr>
+<tr>
+<td><code>scroll(direction='down')</code></td>
+<td>7</td>
+<td>1</td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>hotkey(key='enter')</code></td>
+<td>8</td>
+<td>1</td>
+<td>7</td>
+</tr>
+<tr>
+<td><code>drag(start_point='(102, 540)', end_point='(688, 540)')</code></td>
+<td>29</td>
+<td>12</td>
+<td>17</td>
+</tr>
+<tr>
+<td><code>wait()</code></td>
+<td>4</td>
+<td>0</td>
+<td>4</td>
+</tr>
+</tbody>
+</table></div>
+<p>每行都算上了 <code>Action:</code> 前缀和换行。同一个点击换三种写法：按 Qwen 的 computer_use 工具调用格式写约 34 个 token（含两个 <code>&lt;tool_call&gt;</code> 标签），UI-TARS 15 个，紧凑写法 <code>click(523,817)</code> 10 个（不带 <code>Action:</code> 前缀，算了换行）。</p>
+<p>把每段连续的语法换成一个新符号、参数照旧，是 n-gram 宏符号在这种格式上大致能做到的程度：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>一步的动作</th>
+<th>原来</th>
+<th>只换语法（参数照旧）</th>
+<th>再把每个坐标换成一个 token</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>click &gt; wait</td>
+<td>19</td>
+<td>9</td>
+<td>5</td>
+</tr>
+<tr>
+<td>scroll × 3</td>
+<td>21</td>
+<td>7</td>
+<td>7</td>
+</tr>
+<tr>
+<td>type &gt; hotkey</td>
+<td>27</td>
+<td>13</td>
+<td>10</td>
+</tr>
+<tr>
+<td>click</td>
+<td>15</td>
+<td>9</td>
+<td>5</td>
+</tr>
+<tr>
+<td>drag</td>
+<td>29</td>
+<td>17</td>
+<td>9</td>
+</tr>
+</tbody>
+</table></div>
+<p>scroll 的方向和 hotkey 的键名熵很低，LAR 的算法会把它们连同语法挖成整行的宏：这样 scroll × 3 能压到 1–3 个 token，type &gt; hotkey 从 13 再降到 11。最后一列相当于给坐标换一套专用词表，LAR 挖片段的做法做不到，列出来只当参照。</p>
+<p>实跑的 479 个策略步里，click &gt; wait 有 93 步，连续 2–4 次 scroll 有 70 步，type &gt; send_keys 有 10 步（<strong>项目数据</strong>，采集评估）。</p>
+<p>省下的部分占一步输出多少，取决于 thought 有多长。下表按“只换语法”算，每步还加了 <code>Thought:</code> 标签和换行的 3 个 token：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>thought 长度</th>
+<th>三种常见步（click &gt; wait、scroll × 3、type &gt; hotkey）的输出少多少</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>45–58%</td>
+</tr>
+<tr>
+<td>30 token</td>
+<td>19–26%</td>
+</tr>
+<tr>
+<td>60 token</td>
+<td>12–17%</td>
+</tr>
+<tr>
+<td>100 token</td>
+<td>8–11%</td>
+</tr>
+<tr>
+<td>150 token</td>
+<td>6–8%</td>
+</tr>
+</tbody>
+</table></div>
+<p>我们数据里的 thought 有多长还没量过，60 是取的中间值，第一次导出后用审计脚本量。单个 click 在 thought 60 token 时只少约 8%。算上整行宏，每步省 6–20 个 token，按 250 tok/s（你给学生定的速度下限）是 25–80 ms，150 tok/s 时乘 1.67（<strong>推断</strong>）。</p>
+<h3 id="63">6.3 “可预见”在哪里成立</h3>
+<p>你说浏览器动作除了快捷键，就是 click、drag、scroll 这些可预见的动作。拆开看（<strong>推断</strong>）：</p>
+<ul>
+<li>语法可预见。选了 click，后面的 <code>(point='(</code> 就是确定的。LAR 能压这部分，约束解码也能压，约束解码还不用训练（第 6.5 节“推理”一行）。</li>
+<li>无参动作可预见。spectragent 的 UI-TARS <code>scroll</code> 只带方向，距离固定 300 像素；<code>wait</code> 固定 1 秒。它们整行就是一个宏。</li>
+<li>坐标不可预见。点哪里、从哪拖到哪，正是这一步的决定，每屏都不同。在 LAR 的算法里，坐标处的下一个 token 熵很高，挖不成片段。要“预见”坐标得看懂画面，这是 grounding 的事，n-gram 压缩帮不上。</li>
+<li>效果可预见。滚动会露出下面 300 像素，点搜索结果会跳页，输入框会出字。这一点和 LAR 关系不大，对我们更有用：它决定一次调用能不能连发几个动作，也是 <code>&lt;predict&gt;</code> 能成立的前提。</li>
+</ul>
+<h3 id="64">6.4 可以做的四件事，按建议的先后</h3>
+<h4 id="1_1">① 先审计导出数据（零成本）</h4>
+<p><code>_notes/action_token_audit.py</code> 读导出的 <code>train.jsonl</code>（按步的或打包后的都行），把目标轮的 token 拆成 thought、动作语法、动作参数和其他（以后的 <code>&lt;predict&gt;</code> 落在这里），统计动词和每步的动作序列，再按 LAR 的算法 1 在 token n-gram 上挖宏符号，报压缩率和每步省多少毫秒。参数默认按 LAR 取 K=100、ρ=0.7；f_min 和 H_max 要按数据量调：LAR 的 H_max=10 是在词级 n-gram 上取的，脚本在 token 级按 bit 算熵，我先给 3（<strong>直觉</strong>）。它只量 token 构成，有多少步能合并要用下面的 <code>chunk_candidates.py</code> 另外量。脚本在一个 3,000 条的合成文件和 fixture 演练的真实导出上都跑通了（<strong>本文实测</strong>；这两份数据只用来测脚本，不当证据）。</p>
+<pre><code class="language-bash">python3 -I $N/action_token_audit.py --data datasets/&lt;名字&gt;_post/train.jsonl \
+  --tokenizer /path/to/Qwen3-VL-8B-Instruct        # 没装 transformers 时：--tiktoken-ranks qwen.tiktoken
+</code></pre>
+<p>怎么用结果（<strong>直觉</strong>阈值）：宏符号每步省下的 token 不到目标轮的 20%，就不改词表。当时的想法：改词表要训新 embedding、要做对照实验，部署端的解析也要改，收益不够大不值得。</p>
+<h4 id="2-chunk">② 盲操作标签：多动作 chunk 里，后面的动作该不该先看一眼</h4>
+<p>一次调用连发几个动作时，后面的动作是对着旧屏幕做的。实跑的 991 个动作里，516 个之后没有紧跟的截图（<strong>项目数据</strong>，采集评估）。现在每个动作之前都有一帧（<code>frame-&lt;cycle&gt;-before-&lt;i&gt;.png</code>），还有每个动作的效果，所以能离线判断第 i 个动作（i&gt;1）执行时屏幕变没变（<strong>推断</strong>的做法）：</p>
+<ul>
+<li>动作点周围（比如 64×64 像素）在动作前那一帧和 O_t 上是否一致，用 stability 的 32 像素网格差分来判；</li>
+<li>前面的动作有没有导航或滚动；</li>
+<li>第 i 个动作命中的元素（role、name）是不是 O_t 的 DOM 在那个点上的元素。</li>
+</ul>
+<p>三样都过，标“盲操作安全”，否则标“该重新看”。先当过滤器，丢掉后面动作盲点出错的 chunk；量够了再当监督信号，教模型什么时候该停下来重新看。spectragent 现在一步里有动作失败就停下，失败的那个动作有记录。</p>
+<p><code>_notes/chunk_candidates.py</code> 先做不用看图的那部分：在 <code>steps.jsonl</code> 上数多动作步占多少，后面的动作里有多少已经能判为“该重新看”（前面导航了、滚动了、整步的 URL 变了、在失败之后被跳过），剩下多少要做像素和 DOM 核对、其中多少有动作前的帧。像素和 DOM 的核对它没做。命令是 <code>python3 -I $N/chunk_candidates.py --steps $R/out/steps.jsonl</code>。</p>
+<h4 id="3-chunk">③ 合并步：把能合并的相邻步合成一个更长的 chunk</h4>
+<p>LAR 缩短的是动作 token 数，这里把同样的想法用在模型调用次数上，是我的延伸（<strong>推断</strong>）。延迟上这项收益最大：少一步，就少一次观测的落定等待（p50 756 ms）、一次 prefill 和这一步 thought 与动作的解码（thought 60 token 时约 0.3 秒）。合起来约 1 秒，是宏符号每步省下的 25–80 ms 的十几到几十倍（<strong>推断</strong>）。</p>
+<p>两种造法：</p>
+<ul>
+<li>离线合并，便宜。相邻两步 t、t+1 同时满足下面几条就合成一步：两步都执行了动作、没出错；第 t+1 步不是结束任务；第 t 步没有 <code>wait()</code>、没有滚动、动作都成功；动作数合计 ≤4；第 t 步前后 URL 不变；O_{t+1} 在约 1 秒内落定（<strong>直觉</strong>阈值）；第 t+1 步要操作的元素在 O_t 上同一位置就能看到（按 DOM/AX 的框或像素区域判）。最后一条最要紧：合并以后两步的动作连着执行，中间不再拍观测（一步之内的动作之间不重新读页面，architecture_design），第 t+1 步的动作只能对着 O_t 做。合成后的训练样本，上下文到 O_t 为止，训练目标是两步的动作，两段 thought 交给改写模型合成一段，比如 runbook 给 <code>drop_when_capped</code> 举例用的 <code>gpt-4.1-mini</code>。做法和导出器的 <code>drop_when_capped</code> 一样（让一步整个消失、改写受影响的 thought、带缓存），只是在外部做。<code>chunk_candidates.py</code> 检查除最后一条以外的所有条件，报每条条件筛掉多少对、通过的对是什么动作组合、按动作数上限贪心合并能少掉多少步。最后一条要看图，所以它报的是上限。在 fixture 演练的录制上，它挑出的是“输入关键词 | 点搜索”这样的对（<strong>本文实测</strong>，只说明脚本能跑）。</li>
+<li>让 teacher 自己出更长的 chunk，要花分叉。分叉配置可以挂 <code>prompt_contribution</code> hook，给检查点那一步的 teacher 加一句提示，比如“能确定的连续动作可以一次发出”，再用 judge 判、看执行结果。hook 已经有了（runbook “teacher 采样”），这种提示没跑过。</li>
+</ul>
+<p>风险是模型学会该看的时候不看。所以合并步要和盲操作标签一起用，合并出来的 chunk 也要过②的检查，单步动作数上限保持 4。你 10 月 21 日的判断（有多动作数据，模型才愿意一次多发）是这一项的前提。</p>
+<h4 id="4-token-predict">④ 转移类型 token：和 <code>&lt;predict&gt;</code> 一起训</h4>
+<p>设计文档的数据②本来就要给转移分类（动作类型、URL 是否变化、变化框、版面聚类）。可以把它压成十来个离散类，比如跳新页、同模板刷新、原地更新、弹窗、下拉展开、滚动露出、焦点进输入框、没变化、加载中，作为 <code>&lt;predict&gt;</code> 的一个字段一起输出（<strong>直觉</strong>）。当时的想法来自 LAWA（arXiv 2608.24882，机器人领域的预印本，我只读了摘要）：它把“未来意图”表示成离散码本里的 latent action，推理时去掉生成未来视频的分支，延迟比对应的 Joint-WAM 变体低 42.9%，性能相当（摘要里的数，<strong>论文报告</strong>）。对我们来说，“下一屏会是哪一类”就是不生成下一屏也能有的那份预期。先用规则分类，规则不够用了，再从帧差分和动作效果上学码本。P1 里做一组有、无这个字段的对照，看它能不能让选区更准。</p>
+<h3 id="65">6.5 各阶段放什么</h3>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>做什么</th>
+<th>数据</th>
+<th>预期收益</th>
+<th>证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>采集和导出</td>
+<td>保留多动作步；<code>drop_when_capped</code> 去掉慢网络上的等待；盲操作标签；合并步</td>
+<td>第 2.3 节存下的帧和效果</td>
+<td>每少一个 <code>wait()</code> 省 1 秒；每少一步省约 1 秒</td>
+<td>等待时长是<strong>项目数据</strong>，其余是<strong>推断</strong></td>
+</tr>
+<tr>
+<td>SFT</td>
+<td>用合并后的长 chunk 当目标；转移类型字段并进 <code>&lt;predict&gt;</code>；宏符号只在审计过线时试，而且要配一组原格式的对照</td>
+<td>导出加外部后处理</td>
+<td>少调用次数；宏符号每步几十毫秒</td>
+<td><strong>推断</strong>、<strong>直觉</strong></td>
+</tr>
+<tr>
+<td>RL（以后）</td>
+<td>每条轨迹调用次数少了，同样的环境时间能多跑几条 rollout</td>
+<td>模型自己的 rollout</td>
+<td>环境步数少了，token 省得不多</td>
+<td><strong>推断</strong>。LAR 说用了 latent action 后 GRPO 更稳，只有一张图、单次运行，算弱证据</td>
+</tr>
+<tr>
+<td>推理</td>
+<td>约束解码的 jump-forward：动词定了，后面确定的语法一次填上，不逐个 token 解码；同时保证动作能解析</td>
+<td>不需要</td>
+<td>每步省十来个 token 的解码；更要紧的是不再有解析失败</td>
+<td>SGLang 团队的博客说，在 JSON 任务上延迟最多降一半（博客里的数，不是论文；llama-7B、A10）；用在我们的短动作行上能省多少没测</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="66">6.6 没展开的两条</h3>
+<ul>
+<li>n-gram 投机解码（prompt lookup）能加速重复出现的语法。我没能打开 vLLM 的文档（抓取被 robots 拒绝），细节没核对。</li>
+<li>从录屏视频学动作，量大但标签粗，适合在预训练阶段扩广度，当 SFT 的金标不合适：Video2GUI（arXiv 2605.14747）用 Gemini 给视频标动作，得到 1,270 万条轨迹，ScreenSpot-Pro 上 Qwen2.5-VL-7B 从 26.8 到 41.9；VideoAgentTrek 的按键召回只有 0.08（<strong>论文报告</strong>）。</li>
+</ul>
+<h2 id="7">7. 开工清单</h2>
+<ol>
+<li>拉 main，按第 3.1 节准备机器、网络和外观。在新网络上先录一两个任务，看 <code>settle</code> 里截断时主文档还没加载完的采集是否接近 0。</li>
+<li>准备第一批任务：上一轮的 15 个 L1 任务直接用 LexBench（id 见第 3.2 节）；再给 5 个新站点各写 10 个模板任务，每个站点一个 split，放在单独的数据根下（第 5.2 节②）。先 <code>--list</code> 核对。</li>
+<li>录制，每个 sweep 设 <code>--token-limit</code>。录完跑 <code>health</code>，翻截图。</li>
+<li>跑 <code>variants</code> 和三组分叉；在同一批分叉上比较 <code>pace: recorded_llm_latency</code> 和 <code>recorded_timeline</code>，看各站点的可评判比例。</li>
+<li>建审核队列。稳定性队列默认 60 条（<code>--queue-size</code>）；分叉判定队列列出全部可评判分叉，先标 51 条左右（首轮你本地 review 视图排的量）；金标 <code>--n 100</code>，先标 calibration 那一半。分叉判定标完，先算人和 judge 的一致率，再决定能不能用 judge 筛分叉。</li>
+<li>导出三份，每份只改一个变量：(a) 发布配置只改 <code>sources_root</code>、<code>sources</code>（加上分叉目录）和 <code>output_dir</code>，看分叉被排除了多少；(b) 按第 3.5 节放开 <code>exclude_restoration_diverged</code> 和 <code>max_document_misses</code>；(c) 在 (b) 上再开 <code>wait_actions: drop_when_capped</code>。拿 (b) 的配置再导出一次，核对逐字节相同。然后对要用的那份跑 <code>export_postprocess.py</code>。</li>
+<li>在后处理过的导出上跑 <code>action_token_audit.py</code>，记下每步 thought、动作语法、参数各多少 token，最常见的动作序列，宏符号能省多少。</li>
+<li>在 <code>steps.jsonl</code> 上跑 <code>chunk_candidates.py</code>，记下多动作步的比例、要做像素核对的动作数、通过的相邻步对、贪心合并能少掉的步数；再从通过的对里抽 50 对人工看，第 t+1 步的目标在 O_t 上看不看得到。</li>
+<li>用试点的四个数（每步 token、每条步数、步通过率、teacher 成功率）更新数据量估算，再定一次录多少。</li>
+<li>跑 <code>variants_to_tasks.py</code>，把这一轮的 variants 变成下一轮的 live 任务；录完拿第一张截图和源检查点比。</li>
+</ol>
+<h2 id="8">8. 猜测汇总</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>判断</th>
+<th>类型</th>
+<th>怎么来的</th>
+<th>怎么验证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分叉每个可用决定约为录制的 1.8–2.5 倍</td>
+<td>推断</td>
+<td>每次决定的 token 相近；可用决定按“按意图执行”的数算（上限），录制保留率按 65% 算（直觉）</td>
+<td>试点量录制步的通过率；在 <code>judgments.jsonl</code> 上数两个回答都是 yes 的分叉</td>
+</tr>
+<tr>
+<td>导出分叉时放开两项筛选，在外部按 judge 筛</td>
+<td>推断</td>
+<td>分叉样本的目标在检查点上，检查点画面 judge 已经核过</td>
+<td>第一次导出时抽查分叉样本的检查点画面</td>
+</tr>
+<tr>
+<td>variants 能变成从检查点 URL 出发的 live 任务</td>
+<td>推断（格式已实测）</td>
+<td>任务文件能被加载；很多页面把状态写在 URL 里</td>
+<td>录完比第一张截图和源检查点</td>
+</tr>
+<tr>
+<td>广度站只录制、深度站才分叉；深度站门槛是可评判 ≥60%</td>
+<td>建议；门槛是直觉</td>
+<td>恢复率靠站点规则，录制不需要规则</td>
+<td>在新站上不补规则跑一次分叉，看可评判比例</td>
+</tr>
+<tr>
+<td><code>--token-limit</code> 按每个任务 60 万给</td>
+<td>建议</td>
+<td>上一轮录制每个任务约 39 万，留五成余量</td>
+<td>看试点的 token 账</td>
+</tr>
+<tr>
+<td>宏符号省不到 20% 就不改词表</td>
+<td>直觉</td>
+<td>改词表的工程和实验成本</td>
+<td>审计脚本</td>
+</tr>
+<tr>
+<td>少一次调用的收益是宏符号每步的十几到几十倍</td>
+<td>推断</td>
+<td>落定 p50 756 ms 加上解码，对比每步省 6–20 个 token</td>
+<td>部署时实测每步墙钟的构成</td>
+</tr>
+<tr>
+<td>LAR 的“缩短有效步数”可以换成缩短调用次数</td>
+<td>推断</td>
+<td>LAR 按 token 算有效步数；浏览器上每次调用的固定开销远大于几个 token</td>
+<td>合并步的对照训练</td>
+</tr>
+<tr>
+<td>盲操作标签能离线算</td>
+<td>推断</td>
+<td>每个动作前有帧，有命中元素和 URL</td>
+<td><code>chunk_candidates.py</code> 加像素核对，抽 50 条人工看</td>
+</tr>
+<tr>
+<td>合并步不会教坏模型；落定阈值取约 1 秒</td>
+<td>直觉</td>
+<td>只合并目标在 O_t 上就看得到的步</td>
+<td>合并前后各训一版，比留出站点的成功率和误点率</td>
+</tr>
+<tr>
+<td>转移类型 token 能帮 <code>&lt;predict&gt;</code></td>
+<td>直觉</td>
+<td>LAWA 在机器人上的结果</td>
+<td>P1 里有、无这个字段的对照</td>
+</tr>
+<tr>
+<td>轨迹更短时每步 token 少于 1.4 万</td>
+<td>推断</td>
+<td>每次决定带着全部历史</td>
+<td>试点量</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 还不确定的</h2>
+<ul>
+<li>吞吐：快网络上一台机器能并行录几个站点，teacher API 在扩量规模下怎么限流，新站点的风控有多重，都没量过（第 3.1、4.4 节）。下一轮 teacher 走哪条 API 路由也还没定。</li>
+<li>judge 可不可靠：规则和 judge 只一致 58%，judge 和人的一致率还没量（第 4.1 节，第 7 节第 5 步）。</li>
+<li>分叉和导出一起用、<code>drop_when_capped</code>、<code>recorded_timeline</code>、两个“没加载完”的筛选（导出的 <code>exclude_unloaded_steps</code> 和分叉的 <code>exclude_unloaded_checkpoints</code>），都只在 fixture 或小样本上测过（第 3.4、3.5 节）。</li>
+<li>标注流程还没完整走过一遍，谁来标金标还没定。</li>
+<li>盲操作标签和合并步的像素、DOM 核对还没写，<code>chunk_candidates.py</code> 给的是上限（第 6.4 节）。</li>
+<li>LAR 的做法在我们的动作格式上能不能保住准确率，没有测，论文自己也缺原格式微调的对照；Qwen3-VL 的分词器我没逐个 token 核对。</li>
+</ul>
+<h2 id="a">附 A 术语</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>词</th>
+<th>意思</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O_t、O_{t+1}</td>
+<td>第 t 步模型看到的截图（观测），和执行完这一步的动作之后的下一张</td>
+</tr>
+<tr>
+<td>transition</td>
+<td>一组（O_t，这一步的动作，O_{t+1}），前瞻观察数据的基本单位</td>
+</tr>
+<tr>
+<td>检查点、分叉</td>
+<td>从一条录下的 run 里选一步当检查点，离线回放前缀、恢复到这一步的画面，让 teacher 在同一屏上重新决定一次；这样的一次重跑叫一个分叉。同任务分叉用原任务，换任务分叉用 <code>variants</code> 写的新任务</td>
+</tr>
+<tr>
+<td>可评判</td>
+<td>分叉的检查点画面恢复成功（恢复器对检查点的校验是 ok），它的决定才能评判</td>
+</tr>
+<tr>
+<td>可用决定</td>
+<td><code>judge-forks</code> 判为 <code>judged</code>，<code>reasonable</code> 和 <code>executed_as_intended</code> 都是 yes 的分叉决定</td>
+</tr>
+<tr>
+<td>源思考</td>
+<td>换任务分叉的历史里带着源 run 当时的 thought；“去掉源思考”是不带它们的对照组</td>
+</tr>
+<tr>
+<td>sweep</td>
+<td>一次 <code>spectragent bench</code> 调用跑的一批任务；录制时一个站点一个 sweep</td>
+</tr>
+<tr>
+<td>worker 时</td>
+<td>一个 sweep 进程跑一小时</td>
+</tr>
+<tr>
+<td>保留轨迹、监督步</td>
+<td>保留轨迹是过了轨迹级质检、进入训练的轨迹；监督步是其中过了步级过滤、算 loss（权重 1）的步（数据量估算的定义）</td>
+</tr>
+<tr>
+<td>段</td>
+<td>导出器在不可译的步处把一条 run 断开，连续可导出的一截叫一段</td>
+</tr>
+<tr>
+<td>落定（settle）、capped</td>
+<td>每次截图前等页面加载完、DOM 安静、视口里有内容，最多等 5 秒；等到了是 settled，到上限还没等到是 capped，<code>waiting_for</code> 写着差哪一样（<code>load</code>、<code>dom</code>、<code>content</code>）</td>
+</tr>
+<tr>
+<td>主文档 miss</td>
+<td>离线回放时，主 frame 的文档请求在录下的归档里找不到应答</td>
+</tr>
+<tr>
+<td>近邻 miss</td>
+<td>离线回放时请求在归档里找不到匹配的应答，度量报告列出最相近的录下请求，用来写站点规则</td>
+</tr>
+<tr>
+<td>度量报告</td>
+<td><code>spectragent flywheel report</code> 算出的报告，含按站点和端点汇总的近邻 miss（第 3.3 节）</td>
+</tr>
+<tr>
+<td>pinned、时钟</td>
+<td><code>replayability: pinned</code> 固定随机种子、时间、时区、语言等，让录制能离线回放；<code>clock: shared</code> 让各标签页共用一个时钟，旧的 <code>per_document</code> 每个文档一个</td>
+</tr>
+<tr>
+<td><code>pace</code></td>
+<td>分叉恢复时重放前缀的节奏：<code>recorded_llm_latency</code> 按录下的模型等待时长走（上一轮用的），<code>recorded_timeline</code> 按录制的整条时间线走</td>
+</tr>
+<tr>
+<td>离站</td>
+<td>teacher 点了广告或跳到别的网站，离开了任务所在的站点</td>
+</tr>
+<tr>
+<td>12 站那条链</td>
+<td>runbook 里更早的一次完整链路：12 个中文站点，脚本化模型，录制加原路径回放</td>
+</tr>
+<tr>
+<td>页面族、页面类型</td>
+<td>同一类模板的页面，比如搜索结果页、详情页、行情页；runbook 按页面类型列了各类站点的表现</td>
+</tr>
+<tr>
+<td>fixture、fixture 演练</td>
+<td>仓库自带的本地测试站点；演练（<code>tests/_helpers/flywheel_rehearsal.py</code>）用脚本化模型在上面跑一遍录制、回放、分叉和导出，不花模型费用</td>
+</tr>
+<tr>
+<td><code>&lt;predict&gt;</code></td>
+<td>设计文档给前瞻观察加的输出段：动作之后，预测下一屏哪里会出现下一步要用的信息</td>
+</tr>
+<tr>
+<td>设计文档数据①–⑧</td>
+<td>① 带完整下一屏的真实 session，② 转移类型与版面聚类，③ teacher 输出与保真度标签，④ 反事实需求对（来自 C），⑤ 不确定与回退样本，⑥ 读取器适配数据，⑦ 全观察回归集（公开基准加自己的），⑧ 人工金标评测子集（在 E 里）。D 指①②③⑤⑥</td>
+</tr>
+<tr>
+<td>P0–P3</td>
+<td>设计文档的训练阶段：P0 定观测合同、做诊断，不训练；P1 训选区（<code>&lt;predict&gt;</code>）；P2 在自己选出的画面上训读取；P3 用模型自己的采样迭代</td>
+</tr>
+<tr>
+<td>两条基线</td>
+<td>设计文档里不用模型的前瞻预测：下一步要用的信息出现在这一步动作的位置附近，或者在屏幕中心</td>
+</tr>
+<tr>
+<td>hotkey、send_keys</td>
+<td>UI-TARS 的 <code>hotkey</code> 动作在 spectragent 里执行为 <code>browser.send_keys</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="b-_notes">附 B <code>_notes/</code> 里的文件</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>export_postprocess.py</code></td>
+<td>第 3.5 节：排除健康检查标出的录制，按 judge 筛分叉，丢掉非 <code>ok</code> 的步，可选整条打包</td>
+</tr>
+<tr>
+<td><code>chunk_candidates.py</code></td>
+<td>第 6.4 节②③：多动作步里的盲操作统计，相邻步可合并的上限</td>
+</tr>
+<tr>
+<td><code>action_token_audit.py</code></td>
+<td>第 6.4 节①：导出数据的 token 构成，以及 LAR 式宏符号能省多少</td>
+</tr>
+<tr>
+<td><code>variants_to_tasks.py</code></td>
+<td>第 5.2 节③：把 variants 变成 live 任务文件</td>
+</tr>
+<tr>
+<td><code>action_tokens.py</code>、<code>format_tokens.py</code></td>
+<td>第 6.2 节的分词计数</td>
+</tr>
+<tr>
+<td><code>task_file_example/</code></td>
+<td>第 5.2 节②：任务文件示例（<code>data_info.json</code> 和三条任务）</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>每个脚本怎么跑、测到什么程度</td>
+</tr>
+</tbody>
+</table></div></main>
+<aside class="source-note">来源：<code>数据构建可能性指南.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

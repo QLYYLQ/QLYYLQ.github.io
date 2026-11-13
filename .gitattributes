@@ -1,0 +1,5 @@
+# Preserve archived evidence bytes and deterministic manifest hashes on checkout.
+cu-model/** -text
+# Original CSVs use CRLF; Markdown snapshots use two-space hard line breaks.
+cu-model/media/**/*.csv whitespace=cr-at-eol
+cu-model/sources/*.md whitespace=-blank-at-eol

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="前瞻观察训练管线 · 精简版 · CU Model 研究资料">
+<title>前瞻观察训练管线 · 精简版 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-10-20 · 数据与训练</div>
+<h1>前瞻观察训练管线 · 精简版</h1><p class="lead">早期方案入口：predict 的监督对象、任务条件化、标签与分阶段训练。当前选择以 11 月路线为准。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="training-design.html">前瞻观察能力的训练管线与数据设计</a> · <a href="sources/training-design-brief.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">结论</a></li>
+<li><a href="#1-predict">1. predict 决定什么</a></li>
+<li><a href="#2">2. 标签从哪来</a></li>
+<li><a href="#3">3. 让选择器真的用上任务</a></li>
+<li><a href="#4">4. 显式还是隐式</a></li>
+<li><a href="#5">5. 训练管线</a></li>
+<li><a href="#6">6. 需要的数据</a></li>
+<li><a href="#7">7. 怎么判断学会了</a></li>
+<li><a href="#8-token">8. token：第一轮基本不省</a></li>
+<li><a href="#9">9. 需要你定的事</a></li>
+<li><a href="#10">10. 还没回答的问题</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>2026-10-20。完整版是同目录的《前瞻观察能力的训练管线与数据设计》，本文只留结论、做法和需要你定的事，每节末尾注明完整版的对应章节。VW 即 VisionWeave；“原报告”“VW 增补”分别指《CUA SFT 数据管线与扩展调研》和《VisionWeave 解读与 CUA SFT 管线增补》。文中的阈值都是<strong>直觉</strong>起点，操作定义在完整版附录 B。</p>
+<p><em>标注沿用完整版：</em><em>论文报告</em><em>是论文里能核对的事实；</em><em>项目数据</em><em>是项目文件里的数；</em><em>推断</em><em>是由证据推出的判断；</em><em>直觉</em><em>是我按训练经验给的判断，附一句当时的想法；</em><em>建议</em><em>是具体做法。</em></p>
+<h2 id="_1">结论</h2>
+<ol>
+<li><strong>用 VW 式自蒸馏给“看哪里”造标签。</strong> 采集时把下一屏 O_{t+1} 完整存下，而“看哪里”又不改变环境，所以每条 transition 上任何选区够不够用，都能离线让看全屏的模型来判。单步上，看哪里就成了有标签的监督学习，第一版不需要强化学习（<strong>推断</strong>）。</li>
+<li><strong>VW 的 router 不看任务，原因在输入。</strong> loss 可以照搬，要改的是选择器的输入：放进任务、历史和刚发的动作。还要配“同一屏、需求不同、该看的地方也不同”的成对数据，否则只看图也能把 loss 降下来（<strong>推断</strong>，第 3 节）。</li>
+<li><strong>predict 决定三件事：缺什么信息、它会出现在下一屏哪里、有多确定。</strong> 按 patch 切块适合当位置单位，但 predict 时下一屏还不存在，“高价值”只能由任务加上已经见过的布局来预测（<strong>推断</strong>）。</li>
+<li><strong>第一轮用短文本请求做主线，同一份标签再训一个打分头做对照</strong>，直接回答“要不要显式 predict”（<strong>建议</strong>）。</li>
+<li><strong>第一轮基本不省 token。</strong> 你已定第一轮每步的视觉 token 不超过现在，所以第一轮要证明的是同样的 token 下需要的地方看得更清；要省 token，得等历史压缩和弹性编码器（第 8 节）。</li>
+</ol>
+<h2 id="1-predict">1. predict 决定什么</h2>
+<ul>
+<li><strong>需求</strong>：下一步决策缺什么信息。比如提交搜索后缺结果列表的标题和价格，点“加入购物车”后缺是否成功的反馈。</li>
+<li><strong>位置</strong>：这个信息会出现在下一屏哪里。来源有四种：历史里见过的同类页面（布局复用），当前屏本身，界面惯例（toast、模态框、下拉、键盘），动作几何（滚动露出的条带）。</li>
+<li><strong>置信</strong>：确定时给紧框，不太确定时给大框，没见过的布局就回退到粗看整屏，把定位交给 check 和补看。</li>
+</ul>
+<p>你说的“归纳和归类”落在前两个因子上：需求可以归类，位置规律可以归纳。模型学到的是跨页面的规律还是每个页面的坐标，要在新页面族上测（第 7 节）。</p>
+<p>按转移类型看（<strong>推断</strong>）：原地更新、同模板刷新（换关键词、翻页）、跳到见过的页型、滚动，位置都能从已见内容推出来，收益主要来自这几类。第一次进入的页型和异步加载，位置难以预测，不能拿紧框当标签。真实数据里各类占多少，由 P0 的实验 D 来量。</p>
+<p>“价值”按保真度定义：看了这块以后，模型的决策和看全屏时有多接近，花了多少 token。文字多的区域、像素变了的区域、下一次点击的位置，都不能直接当高价值区域。<strong>项目数据</strong>：抄动作位置命中证据 0/23。</p>
+<p>（完整版第 4 节）</p>
+<h2 id="2">2. 标签从哪来</h2>
+<p><strong>建议</strong>的保真度探针，对每条 transition 做五步：</p>
+<ol>
+<li>teacher：冻结的基座模型，看 prefix（predict 时能看到的任务、历史、当前屏 O_t 和刚发的动作 A_t）加完整的 O_{t+1}，给出输出。自然任务轨道输出下一步动作；辅助字段轨道在输入里预先声明要读哪个字段，输出字段值。</li>
+<li>候选选区：DOM/AX 节点框、OCR 文本行、相邻帧差分框、前后帧元素匹配、块网格，以及当前模型只看 prefix 采样出的选区。</li>
+<li>打分：每个候选按观测合同渲染成学生画面，比学生和 teacher 的输出。观测合同指学生画面怎么构成：只给选区（crop-only），或粗看整屏加细看选区，由实验 C 定。信息恢复率 r = [KL(∅) − KL(S)] ÷ [KL(∅) − KL(全屏)]，∅ 是同一合同下不给任何细节的画面。r ≥ 0.9 且贪心输出一致，才算够用。自然任务轨道把 KL 换成记录动作的似然，并要求点到的元素一致、状态核对一致。</li>
+<li>出标签：贪心搜出近似最小的够用选区 S<em>；token 不超过 S</em> 1.5 倍的够用组合都收进可接受集合；每块在可接受集合里出现的频率，就是打分头的软标签。</li>
+<li>过可达性门：S<em> 要和某个只看 prefix 的采样选区重叠，或被实验 D 的规则预测器覆盖，才当前瞻正例。过门、过随机选区对照、帧已稳定（看 settle 记录），且可接受集合集中在一处的，给紧框；其余过门的给大框；不过门的标回退，S</em> 留作补看目标。</li>
+</ol>
+<p>依据：</p>
+<ul>
+<li><strong>论文报告</strong>：VW 用冻结的原生模型在全细节输入下给出回答，学生在压缩输入下匹配逐 token 分布，监督在回答端。LBC（CoRL 2019）是“特权 teacher 教只看部分信息的学生”的经典做法。</li>
+<li><strong>论文报告</strong>：PI-Distill 发现，teacher 掌握的信息离学生能推出的越远，效果越差。这是可达性门的理由：学生不可能知道的位置，不该硬教。</li>
+<li><strong>论文报告</strong>：扰动式的重要性估计会混进分布偏移（ROAR），单块遮挡会低估冗余（RISE）。所以用联合搜索，配同 token 数的随机选区对照，读取器训过以后再重算一次标签。</li>
+<li><strong>直觉</strong>：探针的算力大约是普通 SFT 造数的几十倍。想法是每条要对十几到几十个候选各跑一次前向，只有 prefix 的 KV cache 能共享。这个数没实测，先在 100 条上量 GPU 时间再定规模。</li>
+</ul>
+<p>（完整版第 6 节）</p>
+<h2 id="3">3. 让选择器真的用上任务</h2>
+<p><strong>推断</strong>：训练数据里每一屏只配一种需求时，选择器只看图就能把 loss 降下来。旁证（<strong>论文报告</strong>）：VW 的 router 完全不看问题，仍保住了约 98.9% 的原生分数；在 27B 的 ScreenSpotV2 上，直接降采样省 50% 也有 91.04（VW 省 55.1% 是 91.43）。常见 benchmark 本身经得起压缩，任务条件化在上面显不出作用。</p>
+<p><strong>建议</strong>：造反事实需求对。两边不同的必须是输入（改写后的任务，或换一个预声明字段）；输入不变、只换输出里的需求类型，学不到条件化。</p>
+<ul>
+<li>自然对：不同 session、不同任务访问同一模板的屏，用来估计真实数据里“需求不同、该看的地方也不同”有多常见。</li>
+<li>合成对：同一条 transition，让 LLM 只看 prefix 改写任务或换字段，再用探针各算一个 S*。</li>
+<li>两边 S* 的 IoU 低于 0.3 才算有效对比。</li>
+</ul>
+<p><strong>论文报告</strong>：VQA v2 用互补的图对消掉“只看问题”的捷径，在不平衡数据上训的模型换到平衡集，普遍掉 6 到 7 分。LBC 的白盒监督让 teacher 对同一状态的每个指令分支都给动作，导航成功率从 16% 升到 96%，再加 on-policy 是 100%。GUI 上按指令剪 token 的方法表现很差（CDPruner 在 Mind2Web 上从 35.2 掉到 6.8），我的理解是主要因为破坏了空间结构（<strong>推断</strong>），所以选择器要保住全局粗图和位置。</p>
+<p>训练前先量（实验 E）：自然对里有效对比的比例低于 10%，反事实数据少量保留；在 10% 到 30% 之间，先按 predict 训练样本的 20% 投入，看 P1 的条件敏感度再调；高于 30%，先用合成对确认差别来自任务，再按 20% 到 30% 投入。</p>
+<p>（完整版 6.4 节）</p>
+<h2 id="4">4. 显式还是隐式</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>路线</th>
+<th>做法</th>
+<th>定位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文本路线</td>
+<td><code>&lt;predict&gt;</code> 后输出短 JSON，比如 <code>{"needs": "result_list", "regions": [[40, 180, 620, 900]]}</code></td>
+<td>第一轮主线</td>
+</tr>
+<tr>
+<td>打分头路线</td>
+<td><code>&lt;predict&gt;</code> 位置的 hidden state 给下一屏每块打分；key 是已见帧的块和下一屏网格的固定位置编码</td>
+<td>P1 的对照，用同一份标签</td>
+</tr>
+<tr>
+<td>先看后选</td>
+<td>O_{t+1} 到达后，再按任务挑块</td>
+<td>只当对照，量“必须先预测”的代价</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>文本路线：<code>regions</code> 是至多 3 个 <code>[0,1000]</code> xyxy 矩形，都要看；拿不准时输出 <code>"fallback": "coarse_full"</code>，回退粗看整屏；下一步不需要新细节时输出 <code>{"needs": "none"}</code>。它便宜：不改结构，现有 SFT 栈能用，每步决策可读、可审计。loss 只算决策内容，JSON 格式交给约束解码。<strong>项目数据</strong>：旧 adapter 的 NLL 降幅约 65% 来自第一个格式 token，协议标记从 0/213 学到 213/213，和 silver 答案完全一致的仍是 0/213；AGW 的受限观察链 56 个分支全部因 point 格式不合规被挡。</li>
+<li>打分头可能更准。<strong>论文报告</strong>：GUI-Actor 在同一底座、同一份数据上比较，注意力头在 ScreenSpot-Pro 上 40.7，生成坐标 15.6。它原本只能指向已经看到的图像，所以要加下一屏网格这组 key。</li>
+<li>训哪部分（<strong>直觉</strong>）：LLM 全部线性层上 LoRA，rank 约 64，视觉塔冻结。只训 special token 的 embedding 多半不够。想法是：那相当于 prompt tuning，能改变“问什么”，可基座这项能力本来就弱（<strong>项目数据</strong>：8B 自选区域读对 0/48），要改的是 LLM 内部怎么把任务、布局和动作合起来算。<strong>论文报告</strong>：GUI-Actor 冻结底座、只训头时，ScreenSpot-Pro 只有 22.9。同一份数据两种训法各跑一版，就能验证。</li>
+</ul>
+<p>（完整版第 5 节）</p>
+<h2 id="5">5. 训练管线</h2>
+<pre><code class="language-text">P0 定合同、做诊断（不训练）
+   清点数据；实验 B、C 定分辨率和观测合同，同时做 100 条人工金标
+   冻结合同后跑实验 A，再跑 D、E
+P1 训选择器：只训 predict 这一步的输出，标签来自探针
+P2 训读取器：在 P1 选择器自己选的画面上训 check、补看、回答
+P3 迭代：当前模型采样 K 个选区（K = 8 起），探针判，留“够用且最省”的，回到 P1、P2
+</code></pre>
+<ul>
+<li><strong>P0</strong>：先清点哪些 session 存了原始分辨率的下一屏、settle 记录（截图时页面是否已经加载稳定）和 DOM/AX，探针和可达性门离不开这三样。实验 B（三档分辨率，整图或缩略图加 crop，量位置误差和 token）定细看分辨率；实验 C（check 和补看在 crop-only 与缩略图加 crop 下各跑一遍）定观测合同；两个都沿用 VW 增补的设计。实验 A 看探针的 S<em> 和人工金标的证据区域是否重合（S</em> 覆盖证据 80% 以上、一半以上落在证据内）；不过，就退回原报告的 oracle 标签（DOM/AX 框、差分框、元素匹配给出的证据区域），探针只记录、不进训练。实验 D 用只看 prefix 的固定规则，估计 S* 有多少能前瞻。实验 E 见第 3 节。</li>
+<li><strong>P1</strong>：数据是真实 transition、反事实对和回退样本。规模先做 1k、3k、10k 三档学习曲线（<strong>直觉</strong>：本项目连“prefix 能不能预测证据位置”都还没确认，看曲线斜率比直接堆量更有信息）。</li>
+<li><strong>P2</strong>：读取器在选择器自己的选区上训，包括选偏、选漏的情况；选区按 session 交叉拟合生成（用一半数据训出的选择器给另一半选），否则比测试时干净。画面够用就蒸馏 teacher 的回答；不够就判不足并补看；补看也补不齐时，自然任务轨道回退整屏，或让下一步去滚动、翻页，辅助字段轨道答 unknown，都不拿 teacher 的回答当目标，否则是在教“没看到也照答”。选择器和读取器建议共用一个 LoRA（<strong>直觉</strong>：两次调用能共享 prefix 的 KV cache），所以 P2 要按比例回放 predict 样本，出口复测 P1 的选区指标。<strong>论文报告</strong>：VW 不做 Stage 3（在硬选择后的画面上训读取器），27B 的 ScreenSpotV2 只有 66.59，做完是 91.43；DAgger 证明只在专家状态上训的策略，误差随步数平方增长。<strong>项目数据</strong>：项目之前只换观察画面的对照实验 E2 里，8B 看不到证据也给具体值，门控就是要纠正这个。</li>
+<li><strong>P3</strong>：rejection-SFT。你说的“逐步”落在这里：每一轮的标签由上一轮模型自己采样、由全细节 teacher 判，不需要人工。强化学习放到后面。<strong>论文报告</strong>：SFT Memorizes, RL Generalizes 里，从基座直接做强化学习在所有学习率下都失败，要先用 SFT 稳住格式。</li>
+</ul>
+<p>另有两个独立分支：打分头的软混合（P1 里打分头不比文本路线差时再开），以及 VW 原生的弹性编码器（省 token 的前提）。</p>
+<p>（完整版第 7 节）</p>
+<h2 id="6">6. 需要的数据</h2>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>数据</th>
+<th>内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 带完整下一屏的真实 session</td>
+<td>任务、历史、O_t、A_t、原始分辨率的 O_{t+1}、DOM/AX、settle 记录</td>
+<td>自研采集器为主，公开轨迹补页面族</td>
+</tr>
+<tr>
+<td>② 转移类型与版面聚类</td>
+<td>动作类型、URL 是否变化、变化框、版面聚类</td>
+<td>由①自动生成</td>
+</tr>
+<tr>
+<td>③ teacher 输出与保真度标签</td>
+<td>S*、可接受集合、块级软标签、随机选区对照</td>
+<td>由①离线计算，算力最大</td>
+</tr>
+<tr>
+<td>④ 反事实需求对</td>
+<td>同一屏或同模板屏上、输入里的需求不同</td>
+<td>自然对加合成对</td>
+</tr>
+<tr>
+<td>⑤ 不确定与回退样本</td>
+<td>没见过的页型、异步加载、证据不可见、字段不存在</td>
+<td>①里自然出现的为主</td>
+</tr>
+<tr>
+<td>⑥ 读取器适配数据</td>
+<td>选择器自己的选区（交叉拟合）、渲染画面、门控后的目标</td>
+<td>由①③和当前模型生成</td>
+</tr>
+<tr>
+<td>⑦ 全观察回归集</td>
+<td>小目标 grounding、整屏动作任务</td>
+<td>公开 benchmark 加项目自有</td>
+</tr>
+<tr>
+<td>⑧ 人工金标</td>
+<td>100 条起，calibration 和 test 各一半</td>
+<td>人工</td>
+</tr>
+</tbody>
+</table></div>
+<p>①是一切的基础，也是现在的瓶颈。现有能用的只有小样本（14 个 evidence case、111 个 transition、40 行面板），P0 第一步就是清点它们。</p>
+<p>（完整版第 8 节）</p>
+<h2 id="7">7. 怎么判断学会了</h2>
+<ul>
+<li><strong>前瞻选区</strong>：同 token 预算下的选区效用，要高于抄动作位置、屏幕中心、上一步选区和不看任务的选择器，按转移类型分开报。</li>
+<li><strong>任务条件化</strong>：条件敏感度，即同一屏换了需求以后，选区效用的变化相对 oracle 的比例。只看图的选择器这个数是 0，它直接检验你对 VW 的批评。</li>
+<li><strong>归纳而非记忆</strong>：新页面族上相对训练页面族的落差，按转移类型对齐后再比。</li>
+<li><strong>充分性判断</strong>：false-sufficient、无益补看、看不到时恰当弃答的比例。</li>
+<li><strong>端到端</strong>：字段或动作的正确率、视觉 token、时延；对照是整屏，以及直接降采样到同样的 token 数。</li>
+</ul>
+<p>样本小，所有数都报按 session 聚类的 95% bootstrap 置信区间。</p>
+<p>（完整版第 9 节）</p>
+<h2 id="8-token">8. token：第一轮基本不省</h2>
+<p><strong>推断</strong>，按 VW 的结构粗算：粗看的 token 是细看的 1/4，细看占屏幕面积 10%，“原生”按 1920×1080 算。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>设定</th>
+<th style="text-align: right;">当前帧视觉 token</th>
+<th style="text-align: right;">15 步累计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原生分辨率整屏，每步都留</td>
+<td style="text-align: right;">2,025</td>
+<td style="text-align: right;">30,375</td>
+</tr>
+<tr>
+<td>原生分辨率的粗看整屏加细看 10%，历史只留细看部分</td>
+<td style="text-align: right;">658</td>
+<td style="text-align: right;">3,493</td>
+</tr>
+<tr>
+<td>同上，但历史帧仍按现在的低清存</td>
+<td style="text-align: right;">658</td>
+<td style="text-align: right;">3,178</td>
+</tr>
+<tr>
+<td>项目现在（约 18 万像素整屏，每步都留）</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">2,700</td>
+</tr>
+</tbody>
+</table></div>
+<p>同分辨率下比，按需观察能把长 session 压到每步整屏的约 1/9。但项目现在已经靠强降采样把每帧压到约 180 个 token；细看如果用原生分辨率、历史帧照旧，总量反而是现在的 1.2 倍。你已定第一轮每步的视觉 token 不超过现在，所以粗图和细看怎么分由实验 B 在这个预算里定，观测合同由实验 C 定。要注意，现成的 Qwen3-VL 会把每块 crop 放大到 min_pixels 以上，3 块 crop 不论多小至少约 147 个 token（原报告），在 180 的预算里留给粗图的很少，crop 的块数也要算进预算。要省 token，得等历史压缩和弹性编码器。</p>
+<p>（完整版第 2 节）</p>
+<h2 id="9">9. 需要你定的事</h2>
+<p>已定：token 预算口径，每步视觉 token 不超过现在，细看分辨率由实验 B 在这个预算内定（2026-10-20）。</p>
+<p>还没定的：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>决定</th>
+<th>我的建议</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>时间边界</td>
+<td>严格：初次选区只读 prefix，先看后选只做对照</td>
+<td>放宽就不再是前瞻；当对照能量出前瞻的代价</td>
+</tr>
+<tr>
+<td>第一轮 predict 形式</td>
+<td>文本为主，打分头做对照</td>
+<td>文本便宜、可审计；同一份标签就能训头</td>
+</tr>
+<tr>
+<td>训练哪部分</td>
+<td>LoRA（rank 约 64），另跑一版只训 embedding 做对照</td>
+<td>基座这项能力弱，只训 embedding 多半不够</td>
+</tr>
+<tr>
+<td>探针标签何时进训练</td>
+<td>实验 A 通过就在 P1 用</td>
+<td>不通过时退回 oracle 标签</td>
+</tr>
+<tr>
+<td>观测合同</td>
+<td>粗看整屏加细看选区作主假设，由实验 C 定</td>
+<td>360° 视频、机器人等前瞻选择的先例，都留一个低清全局兜底</td>
+</tr>
+</tbody>
+</table></div>
+<p>其余几项（保真度测什么回答、预算单位、选择器和读取器是否共用 LoRA、金标做多少）见完整版第 11 节。</p>
+<h2 id="10">10. 还没回答的问题</h2>
+<ul>
+<li>prefix 到底能预测多少，实验 D 之前不知道。如果多数步骤是没见过的页型，收益会很有限。</li>
+<li>探针的 S* 和人工判断的证据是否一致，实验 A 之前不知道。</li>
+<li>同样的 token 下看得更清，能不能换成任务收益，要靠实验 B 和端到端评测证明。</li>
+<li>单步标签管不到“现在不需要、以后需要”的区域；长程收益只能在多步评测里测。</li>
+<li>没有现成先例：GUI 上没有找到“下一屏到达之前预测其区域”的工作，最接近的先例在机器人和流媒体领域。</li>
+</ul>
+<p>（完整版第 12 节）</p></main>
+<aside class="source-note">来源：<code>前瞻观察能力的训练管线与数据设计_精简版.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CU Model · 前瞻观察与局部观察训练</title>
+<meta name="description" content="CU Model：让 computer-use 模型学会下一屏看哪里。实验结果、23 张研究图、AGW 案例画廊、数据采集审查与局部观察训练路线。">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head>
+<body>
+<a class="skip-link" href="#content">跳到正文</a>
+<div class="wrap research-wrap">
+  <header class="top">
+    <nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><span>CU Model</span></nav>
+    <div class="eyebrow">Computer / Browser Use · 研究记录 2026-09—11</div>
+    <h1>让模型学会下一屏该看哪里</h1>
+    <p class="lead">长程任务里，模型需要记住有用的界面信息，也要知道什么时候再看一眼。CU Model 研究把这种选择观察的能力训进模型：先预测要看的区域，只接收这些区域的像素，证据不足时再补看。</p>
+    <div class="chips"><span class="chip dom">CU Model</span><span class="chip info">最新路线 2026-11-03</span><span class="chip">训练收益待验证</span></div>
+    <nav class="section-nav" aria-label="项目导航"><a href="#results">已得到的结果</a><a href="#route">当前路线</a><a href="#reports">报告与研究线索</a><a href="agw-gallery.html">案例画廊</a></nav>
+  </header>
+
+  <main id="content" style="display:grid;gap:40px">
+    <section aria-labelledby="start-title">
+      <h2 id="start-title"><span class="no">01</span>从哪里开始读</h2>
+      <a class="feature" href="local-observation-brief.html">
+        <div class="txt">
+          <div class="eyebrow">当前方案 · 11 月 3 日更新</div>
+          <div class="project-title">局部观察训练路线</div>
+          <p class="muted">学生模型面向 8B、30B-A3B 档。先完成整屏底座，再训练前瞻区域预测和证据判断；在长程网页任务上，同时比较通过率、视觉 token、调用次数和耗时。</p>
+          <span class="go">先读精简版 →</span>
+        </div>
+        <div class="pic cu-cover" aria-hidden="true">
+          <div class="eyebrow">ACTION → PREDICT → OBSERVE</div>
+          <div class="screen"><span></span><span></span><span></span><span class="roi"></span></div>
+          <div class="caption">下一屏出现前写区域<br>没找到就补看，状态不对就纠正</div>
+        </div>
+      </a>
+      <p class="source-note">最新路线是研究方案。现有结果来自小样本诊断、工程验证与离线审查；长程任务通过率的提升仍需训练和主实验验证。</p>
+    </section>
+
+    <section id="results">
+      <h2><span class="no">02</span>已经得到什么</h2>
+      <div class="figures">
+        <div><div class="v">48<small> / 48</small></div><div class="k">给定连续证据区域时<br>两模型各自读对的配对字段</div></div>
+        <div><div class="v">111</div><div class="k">Phase 1 转移诊断<br>下一点击是代理标签</div></div>
+        <div><div class="v">622<small> / 8,163</small></div><div class="k">采集审查中的监督步 / 录制策略步<br>7.6% 是利用率，不是通过率</div></div>
+        <div><div class="v">23 <small>+ 14</small></div><div class="k">累计报告原始图表<br>及 AGW 逐例审阅案例</div></div>
+      </div>
+
+      <div class="research-summary">
+        <h3>区域选对以后，读取能做对；自主选区还没解决</h3>
+        <p>E2 只替换观察画面，测一次读取，不允许补看。完整目标屏与按标注裁出的连续矩形中，Qwen3-VL-8B 和 32B 都读对 48/48 个字段；在模型自己选出的区域中，8B 两条路线均为 0/48，32B 分别为 9/48 和 4/48。<a href="cumulative-report.html">实验设计、原图与终判口径 →</a></p>
+        <div class="result-chart" role="img" aria-label="E2 的 32B 语义读取结果，每种条件 48 个配对字段：完整屏 48，标注连续矩形 48，先计划再选区 9，直接选区 4。">
+          <div class="eyebrow">E2 · 32B · 读对且有依据的字段 / 48</div>
+          <div class="row"><span>完整目标屏</span><div class="bar"><span style="--value:100%"></span></div><span class="value">48</span></div>
+          <div class="row"><span>标注连续矩形</span><div class="bar"><span style="--value:100%"></span></div><span class="value">48</span></div>
+          <div class="row model"><span>先计划再选区</span><div class="bar"><span style="--value:18.75%"></span></div><span class="value">9</span></div>
+          <div class="row model"><span>直接选区</span><div class="bar"><span style="--value:8.3333%"></span></div><span class="value">4</span></div>
+        </div>
+        <p class="source-note">48 = 24 个需新观察字段 × 2 个历史条件，来自 13 个需新证据的案例，不是 48 个独立任务。语义终判来自 assistant 盲审及复核，不是人工 gold；标注裁剪只测读取上限。</p>
+      </div>
+
+      <div class="pillars">
+        <div><b>位置先验强，历史收益未确立</b><span>复制刚发动作的位置，取最近 8 格，在下一点击代理上命中 56/111。10 月补测中 LookAgain-8B 从仅当前屏的 30/111，降到同任务历史的 19/111、无关历史的 13/111。<a href="local-observation.html">证据与限制</a></span></div>
+        <div><b>工程闭环已经跑通</b><span>8B completion-only SFT 完成 28 个 optimizer step、保存与重新加载，r3 与 r2 逐位复现。配对诊断显示旧 adapter 主要学到格式与模板，尚不能证明任务能力提升。<a href="cumulative-report.html">E1 对照</a></span></div>
+        <div><b>采集瓶颈落在筛选与校准</b><span>8,163 个策略步中，622 步进入监督数据；取步偏早、偏滚动，采用决定均由模型审核，人工标注为 0。全量的真实步通过率仍未知。<a href="collection-audit.html">逐项审查</a></span></div>
+      </div>
+
+      <div class="lesson">
+        <div class="eyebrow">AGW · 离线接口诊断</div>
+        <p>T1 的 28 次解码均完成，原生完整动作契约通过 10/28；T2 strict 主链的 56/56 条因 point 格式失败。探索性适配、读取对照与失败分支都留在 <a href="agw-gallery.html">14 例画廊</a>，<a href="agw-results.html">累计报告</a>解释它们各自能说明什么。</p>
+      </div>
+    </section>
+
+    <section id="route">
+      <h2><span class="no">03</span>当前路线与待验证问题</h2>
+      <ol class="steps">
+        <li class="step"><div class="num">01</div><div class="main"><div class="label">信息边界</div><h3>下一屏还没出现时，先写要看的框</h3><div class="text"><p>输入只有任务、已经看过的历史和刚发出的动作。框内要找什么也一起写明；新布局可以请求整屏。下一屏到达后只返回被选区域，历史保留模型实际看过的图。下一屏像素、DOM 和答案只用于离线标签与评分。</p></div></div></li>
+        <li class="step"><div class="num">02</div><div class="main"><div class="label">训练顺序 · 方案</div><h3>整屏底座 → 前瞻 SFT 与自监督 → 后续 RL</h3><div class="text"><p>冻结的整屏 teacher 用下一屏构建离线区域标签；学生从此前历史预测区域，再学习“找到了、没找到、不对”的判断。网格和裁图对齐视觉 token；格子大小与局部图的送入方式仍需小样本验证。</p></div></div></li>
+        <li class="step"><div class="num">03</div><div class="main"><div class="label">先测再训</div><h3>上下文衰减与局部图可读性</h3><div class="text"><p>计划用 30 条完整轨迹比较全历史、最近 4 张、最近 2 张、仅文字和无历史。另测原尺寸裁图、放大和向外扩框是否保留动作一致性。<a href="context-decay.html">测试清单</a>已整理，本站没有这轮实验已完成的结果。</p></div></div></li>
+        <li class="step"><div class="num">04</div><div class="main"><div class="label">主实验 · 尚待完成</div><h3>在相同预算下比较长程任务表现</h3><div class="text"><p>比较全历史、最近几步、事后压缩历史与前瞻局部观察。路线选定 Odysseys 为主评测、WebChoreArena 为可复现补充，Online-Mind2Web 作短任务对照；采集与评测按站点和任务隔离。latent action 先作为减少调用次数的独立消融。</p></div></div></li>
+      </ol>
+      <p class="source-note">本节依据 <a href="local-observation-brief.html">11 月 3 日精简版</a>与<a href="local-observation.html">完整版</a>。早期文档里的待定项和预算假设保留在原日期下，阅读时以最新路线与后续采集审查为准。</p>
+    </section>
+
+    <section id="reports">
+      <h2><span class="no">04</span>报告与研究线索</h2>
+      <p class="muted">从最新路线往下读，再按需要追到数据管线、累计实验与早期协议。报告、图表和案例均可在本站阅读。</p>
+      <!-- REPORT_LIST_START -->
+<div class="doc-group"><h3>当前路线</h3><ul class="doclist"><li><div class="date">2026-11-03</div><div><a class="t" href="local-observation-brief.html">局部观察训练路线 · 精简版</a><div class="d">先读这一份：predict、局部观察、SFT 与自监督、长程评测，以及已经确定和仍待验证的选择。</div></div></li><li><div class="date">2026-11-03</div><div><a class="t" href="local-observation.html">局部观察训练路线梳理</a><div class="d">最新完整路线。逐项解释现有证据、token 对齐、标签搜索、训练顺序、采集来源和主实验。</div></div></li><li><div class="date">2026-11-03</div><div><a class="t" href="context-decay.html">上下文衰减测试清单</a><div class="d">用同一批完整轨迹比较五种历史设置；列出记录字段、配对分析和长历史补测步骤。尚待执行。</div></div></li><li><div class="date">2026-11-03</div><div><a class="t" href="task-sources.html">采集任务与数据来源核查</a><div class="d">任务、轨迹、截图是否实际发布，以及各来源的采集用法；含 11 月 3 日的决定。</div></div></li><li><div class="date">2026-11-03</div><div><a class="t" href="benchmarks.html">长程网页评测候选</a><div class="d">Odysseys、WebChoreArena、Online-Mind2Web 的任务、步数与评测口径，按原调研日期归档。</div></div></li></ul></div>
+<div class="doc-group"><h3>数据与训练</h3><ul class="doclist"><li><div class="date">2026-10-29</div><div><a class="t" href="collection-audit.html">试验性数据采集审查</a><div class="d">从逐条记录复算 10 月 28 日采集：8,163 个策略步、622 条监督样本，以及取步、人工校准和截图预算问题。</div></div></li><li><div class="date">2026-10-27</div><div><a class="t" href="data-construction-brief.html">数据构建可能性指南 · 精简版</a><div class="d">五族数据、采集顺序、导出修补、成本和 latent action 的实际收益。后续修正见采集审查。</div></div></li><li><div class="date">2026-10-27</div><div><a class="t" href="data-construction.html">数据构建可能性指南</a><div class="d">从录制、分叉、审核到导出的完整做法和依据，包含成本测算与四类导出问题。</div></div></li><li><div class="date">2026-10-23</div><div><a class="t" href="sft-scale.html">全量 SFT 数据量估算</a><div class="d">区分轨迹、监督步和训练 token，列出三档采集规模及假设；不是已采集数量。</div></div></li><li><div class="date">2026-10-22</div><div><a class="t" href="collector.html">spectragent 采集框架评估</a><div class="d">框架能直接提供什么，分叉与回放如何使用，还需要补哪些观测和标注。</div></div></li><li><div class="date">2026-10-20</div><div><a class="t" href="training-design-brief.html">前瞻观察训练管线 · 精简版</a><div class="d">早期方案入口：predict 的监督对象、任务条件化、标签与分阶段训练。当前选择以 11 月路线为准。</div></div></li><li><div class="date">2026-10-20</div><div><a class="t" href="training-design.html">前瞻观察能力的训练管线与数据设计</a><div class="d">完整方法论证：显式与隐式选择器、六类学习目标、数据格式与对照设计。</div></div></li><li><div class="date">2026-10-13</div><div><a class="t" href="visionweave.html">VisionWeave 解读与管线增补</a><div class="d">论文方法与本项目迁移建议分开说明，追踪自蒸馏、区域选择和训练数据的关系。</div></div></li><li><div class="date">2026-10-13</div><div><a class="t" href="sft-pipeline.html">CUA SFT 数据管线与扩展调研</a><div class="d">从公开数据、质检、采集边界和扩展曲线梳理可复用部件，保留原报告引用。</div></div></li></ul></div>
+<div class="doc-group"><h3>实验与复核</h3><ul class="doclist"><li><div class="date">2026-10-06</div><div><a class="t" href="agw-results.html">AGW 数据扩展与下一观测链</a><div class="d">T1 动作提议、T2 受限观察、读取对照与双盲审；原生协议与事后适配结果分别报告。</div></div></li><li><div class="date">2026-10-06</div><div><a class="t" href="agw-tests.html">AGW 复现与测试附录</a><div class="d">实验分母、测试回执和报告阅读检查，配合累计技术报告使用。</div></div></li><li><div class="date">2026-10-03</div><div><a class="t" href="agw-review.html">AGW-35B 核查与部署诊断</a><div class="d">区分 AutoGUIWorld 合成方法、AGW policy checkpoint 与下一屏预测接口。</div></div></li><li><div class="date">2026-09-30</div><div><a class="t" href="cumulative-report.html">下一观测区域预测 · 累计报告</a><div class="d">9 月实验的权威累计入口，含 23 张原图、E1 adapter 对照、E2 画面对照及旧结论修正。</div></div></li></ul></div>
+<div class="doc-group"><h3>早期协议与记录</h3><ul class="doclist"><li><div class="date">2026-09-27</div><div><a class="t" href="sft-readiness.html">SFT 就绪复盘</a><div class="d">现有数据与训练门槛的历史复盘。后续决定见最新路线。</div></div></li><li><div class="date">2026-09-27</div><div><a class="t" href="training-decisions.html">第一版训练方法与决策</a><div class="d">文本 ROI、completion-only SFT 与 S0–S4 的早期设计记录。</div></div></li><li><div class="date">2026-09-25</div><div><a class="t" href="semantic-audit.html">受限观察链语义复核</a><div class="d">修正 strict 解析低分的含义，区分读取、选区、补看和实例识别。</div></div></li><li><div class="date">2026-09-24</div><div><a class="t" href="base-diagnostics.html">基座预测诊断</a><div class="d">冻结提示与协议下的原始诊断；解读应同时看语义复核和累计报告。</div></div></li><li><div class="date">2026-09-23</div><div><a class="t" href="phase1-results.html">Phase 1 结果记录</a><div class="d">111 个 transition 上的零训练评测。旧解释的修正在累计报告附录 A。</div></div></li><li><div class="date">2026-09-23</div><div><a class="t" href="stage1-report.html">Stage 1 早期累计记录</a><div class="d">Phase 1/1b 的原始阶段记录，保留作历史对照。</div></div></li><li><div class="date">2026-09</div><div><a class="t" href="phase1-protocol.html">Phase 1 信息边界与协议</a><div class="d">预测发生前允许看什么、标签如何使用，以及 current-only 与 warm 的区别。</div></div></li></ul></div>
+<!-- REPORT_LIST_END -->
+    </section>
+
+    <section id="evidence">
+      <h2><span class="no">05</span>图表与数据入口</h2>
+      <ul class="doclist">
+        <li><div class="date">2026-10-06</div><div><a class="t" href="agw-gallery.html">AGW 案例画廊 · 14 例</a><div class="d">126 张原始审阅面板：每例的 T1、四条 T2 分支，以及完整屏 / 标注矩形的读取对照。</div></div></li>
+        <li><div class="date">2026-09-30</div><div><a class="t" href="cumulative-report.html">累计报告 · 23 张原图</a><div class="d">零训练选区、基座诊断、工程闭环、语义审计、方法与 E1/E2 对照。</div></div></li>
+        <li><div class="date">2026-10-30</div><div><span class="t">模型与 grounding 对照表</span><div class="d">冻结协议下的原始 CSV；原生 AGW 协议单列，不能与统一协议直接合并分母。</div><div class="data-links"><a href="media/grounding_comparison_20261030/model_comparison.csv">模型对照 CSV</a><a href="media/grounding_comparison_20261030/grounding_by_platform.csv">分平台 CSV</a><a href="media/grounding_comparison_20261030/agw_native_separate.csv">AGW 原生协议 CSV</a></div></div></li>
+      </ul>
+      <p class="source-note">资料来自 CU Model 本地研究归档，更新截至 2026-11-03；外部论文与数据可用性按原调研日期阅读。网页转换保留正文和图表，机器路径泛化，缺失的本地引用明确标记。<a href="manifest.json">文件校验清单</a> · <a href="provenance.json">原始来源校验值</a>。</p>
+    </section>
+  </main>
+  <footer class="site"><a href="../">QLYYLQ</a><a href="../omnifex/">Omnifex</a><a href="agw-gallery.html">CU Model 案例</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="AGW 数据扩展与下一观测链 · CU Model 研究资料">
+<title>AGW 数据扩展与下一观测链 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-10-06 · 实验与复核</div>
+<h1>AGW 数据扩展与下一观测链</h1><p class="lead">T1 动作提议、T2 受限观察、读取对照与双盲审；原生协议与事后适配结果分别报告。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="sources/agw-results.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#1">1. 当前回答</a></li>
+<li><a href="#2">2. 项目目标和既有证据</a><ul>
+<li><a href="#21-phase-1">2.1 Phase 1 建立的基线</a></li>
+<li><a href="#22-phase-1c-14-case-evidence-cohort">2.2 Phase 1c 建立的工程门和 14-case evidence cohort</a></li>
+</ul>
+</li>
+<li><a href="#3-agw-35b-autoguiworld">3. AGW-35B 与 AutoGUIWorld 的关系</a><ul>
+<li><a href="#31-browser">3.1 作者报告与 browser 风险</a></li>
+<li><a href="#32-autoguiworld-qc">3.2 AutoGUIWorld 的生成链和 QC</a></li>
+</ul>
+</li>
+<li><a href="#4">4. 数据和模型能否直接下载</a></li>
+<li><a href="#5-2026-10-03-agw">5. 2026-10-03 的本地 AGW 基线</a><ul>
+<li><a href="#51">5.1 下一观测点和计划</a></li>
+<li><a href="#52">5.2 当前屏原生动作格式</a></li>
+</ul>
+</li>
+<li><a href="#6-t1t2">6. 本次 T1/T2 的冻结设计</a><ul>
+<li><a href="#61-t1">6.1 T1：真实轨迹观察上的自主动作候选</a></li>
+<li><a href="#62-t2">6.2 T2：下一观测受限链</a></li>
+</ul>
+</li>
+<li><a href="#7-npu">7. 新 NPU 作业的执行账本</a></li>
+<li><a href="#8-t1">8. T1 结果</a></li>
+<li><a href="#9-t2">9. T2 结果</a><ul>
+<li><a href="#91-oracle-roi">9.1 完整屏和 oracle ROI 读取对照</a></li>
+</ul>
+</li>
+<li><a href="#10">10. 供用户后续人工复核的逐例图片</a></li>
+<li><a href="#11">11. 本次结束后的决策门</a><ul>
+<li><a href="#111-agw-scaling">11.1 AGW 参与真实数据 scaling</a></li>
+<li><a href="#112-autoguiworld">11.2 AutoGUIWorld 合成方法</a></li>
+</ul>
+</li>
+<li><a href="#12">12. 产物和复核入口</a></li>
+<li><a href="#13">13. 事实核查和无上下文读者测试</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><ul>
+<li>状态：<code>complete</code>。T1、T2 core、双 blind review、56 条读取对照、最终 case gallery 和无上下文读者测试均已完成，HOPE 作业已验证 <code>STOPPED</code> 并释放 16 个 H910C unit。</li>
+<li>读者：项目负责人，以及后续接手 CU/BU 数据扩展、训练和评测的研究与工程人员。</li>
+<li>范围：累计 Phase 1、Phase 1c、AGW-35B 论文与源码核查、2026-10-03 本地部署诊断，以及 2026-10-06 的 T1 自主动作候选和 T2 受限观察链。</li>
+<li>证据边界：论文指标、本地旧 run 和本次新 run 分开报告。strict 原始输出与 post hoc adapter 分开报告。候选动作一致、来源框命中、字段读取和在线任务成功是不同指标。</li>
+</ul>
+<h2 id="1">1. 当前回答</h2>
+<p>用户提出的两个想法都已完成一部分核查，但都没有完成最终方法验证。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>想法</th>
+<th>已完成</th>
+<th>本次补测</th>
+<th>本次结束后仍需完成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>让 AGW 参与真实 observation 驱动的数据 scaling</td>
+<td>已验证模型制品、H910C HF eager 单图与多图解码，并完成当前屏 grounding 和 prefix-only 观察点的离线诊断。旧结果没有通过原生格式门或下一观测门。</td>
+<td>T1 得到 28/28 正常解码，原生完整动作契约 10/28，来源动作类型序列一致 5/28，冻结文本和几何 proxy 全一致 0/28。T2 strict 主链因 point 格式失败为 B 56/56；8 条 adapter-valid final 中双审共同 OK 2、共同 L1 5、未决1，固定 56 agreement view 另含 B48。</td>
+<td>可重置真实 CU/BU executor、环境最终状态、独立 QC、同基座 A/B，以及加入候选数据后的下游训练增益。T1/T2 是离线 replay，不能替代这些步骤。</td>
+</tr>
+<tr>
+<td>复用 AGW 的合成数据方法</td>
+<td>已核对 AutoGUIWorld 论文与固定源码。它从 GUI seed 构造任务和动作计划，再用图像编辑器生成后续截图并逐步 QC；AGW-35B 是由 79,266 条合成 step 样本训练出的 direct-action policy。</td>
+<td>本次 NPU 作业不运行 Image2 或 AutoGUIWorld 合成链，只测 AGW 动作提议与下一观测接口。</td>
+<td>接入可用的文本、视觉和图像编辑 backend，生成 before/action/after，做独立人审或 judge 校准，并在相同训练预算下比较真实数据、AGW 候选、通过 QC 的合成数据及混合数据。</td>
+</tr>
+</tbody>
+</table></div>
+<p>本次 T1/T2 没有通过原生协议门。T1 观察到一批内容上可复核的离线候选，但原生动作契约只有 10/28；T2 strict 主结果为 B56/56。探索性 adapter 路线保留了少量受限观察案例，只能作为接口和错误归因证据。数据飞轮是否有效仍需 T3 的真实环境执行和训练对照；AutoGUIWorld 方法是否能迁移仍需 T4 的合成、QC 和训练对照。</p>
+<h2 id="2">2. 项目目标和既有证据</h2>
+<p>本项目要学习的行为链是：</p>
+<pre><code class="language-text">observed history + issued action
+    -&gt; &lt;predict&gt; 下一屏中需要观察的 evidence region
+    -&gt; restricted next observation
+    -&gt; &lt;check&gt;
+    -&gt; optional &lt;revisit&gt;
+    -&gt; next action
+</code></pre>
+<p>预测发生时，下一屏像素、DOM、URL、未来动作、答案和目标派生描述都不能进入模型输入。下一屏及未来信息只可用于离线标签、裁剪和评分。核心 T2 协议的 <code>current-only</code> 已包含当前屏与刚发动作，<code>warm</code> 只增加更早历史；两者的差值只测更早历史的边际作用。T1 测的是自主提出当前下一动作，为避免把来源动作喂回模型，它有意从输入中移除了当前 <code>issued_action</code>，不能与 T2 的 <code>current-only</code> 输入直接等同。</p>
+<h3 id="21-phase-1">2.1 Phase 1 建立的基线</h3>
+<p>Phase 1 的冻结集含 111 个 transition，其中 web 80、mobile 31。未做本项目训练的 Qwen3-VL-8B-Instruct 和 32B-Instruct 在完整当前屏加明确控件 query 的来源框命中分别为 73/97 和 79/97；在下一屏不可见的 8-cell 预测中，warm 条件分别为 19/111 和 16/111，current-only 分别为 21/111 和 19/111。复制刚发动作位置的简单基线在同 24 例原生焦点诊断中为 10/24，高于 32B 原生焦点的 9/24。</p>
+<p>这些标签主要来自下一点击框和轨迹动作，属于 silver proxy。明确控件定位不能代表下一屏预测，next-click agreement 也不是任务成功率。旧 HF 多轮实现还比一次完整目标屏调用慢约 5.9 倍和 7.9 倍，并未显示 token 或时延收益。</p>
+<h3 id="22-phase-1c-14-case-evidence-cohort">2.2 Phase 1c 建立的工程门和 14-case evidence cohort</h3>
+<p>Phase 1c 冻结了 14 个 case，包含 web 6、mobile 6、desktop 2，split 为 train 8、calibration 3、test 3。每个条件有 24 个需新观察字段，其中 23 个带 evidence bbox；warm 与 current-only 合计为 48 个配对字段单位。完整目标图和 oracle 连续 ROI 下，两模型的核心语义读取均为 48/48 supported。模型自选区域下，8B 的两条路线均为 0/48；32B 的 plan 路线为 9/48，direct 路线为 4/48。审查来自 assistant，样本小且不是 human gold。</p>
+<p>28 条 assistant-supported completion 已在 Qwen3-VL-8B 上完成 completion-only mask、28 个 optimizer step、双 causal 检查、冻结参数核验、adapter 保存和 fresh reload。它们来自 12 个 transition、10 个 session，只有 634 个 completion token。后续冻结诊断没有加载该 adapter，因此这项结果只关闭训练工程门，不证明行为收益或泛化。</p>
+<p>这 14 个 case 的 <code>labels_only.action_supervision_status</code> 都是 <code>unavailable_no_next_action_label</code>。它们适合测 evidence coverage、受限像素读取和 check/revisit，不能测下一动作正确率或环境任务成功。</p>
+<h2 id="3-agw-35b-autoguiworld">3. AGW-35B 与 AutoGUIWorld 的关系</h2>
+<p>用户记忆中的“前置论文方法”是 <a href="https://arxiv.org/html/2610.01215">AutoGUIWorld 论文</a>。AGW-35B 没有另一篇独立的方法论文；它是该论文用合成 step 数据训练出的下游 checkpoint，也不是公开的下一屏图像生成器。模型接收任务、当前截图和近期历史，输出 <code>Action:</code> 描述及 <code>computer_use</code> tool call；外部 executor 执行动作并返回新截图。上游制品入口为 <a href="https://huggingface.co/YangC777/AGW-35B">AGW-35B 模型卡</a>和 <a href="https://github.com/ImYangC7/AutoGUIWorld">AutoGUIWorld 代码仓库</a>。</p>
+<p>模型仓库固定 revision 为 <code>855c909f96f604ff0533a9a8eee23e348c08df93</code>，代码核对 commit 为 <code>7d3a063f3538cb4a6216c7da9dbae320b010ca2d</code>。作者记录的训练集共有 79,266 条 step 样本：Chrome 35,209，Ubuntu 24,250，Windows 14,778，macOS 5,029。训练只监督最后一轮 assistant response；视觉编码器和 aligner 冻结，语言模型 full-tune，共 3 epochs，最大长度 16,384，global batch 512。</p>
+<h3 id="31-browser">3.1 作者报告与 browser 风险</h3>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th style="text-align: right;">分母</th>
+<th style="text-align: right;">基座</th>
+<th style="text-align: right;">AGW-35B</th>
+<th style="text-align: right;">变化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OSWorld</td>
+<td style="text-align: right;">361 tasks</td>
+<td style="text-align: right;">33.0%</td>
+<td style="text-align: right;">40.8%</td>
+<td style="text-align: right;">+7.8 pp</td>
+</tr>
+<tr>
+<td>Windows Agent Arena</td>
+<td style="text-align: right;">154 tasks</td>
+<td style="text-align: right;">19.4%</td>
+<td style="text-align: right;">27.9%</td>
+<td style="text-align: right;">+8.5 pp</td>
+</tr>
+<tr>
+<td>macOSWorld</td>
+<td style="text-align: right;">231 tasks</td>
+<td style="text-align: right;">28.1%</td>
+<td style="text-align: right;">45.0%</td>
+<td style="text-align: right;">+16.9 pp</td>
+</tr>
+<tr>
+<td>ScienceBoard</td>
+<td style="text-align: right;">143 tasks</td>
+<td style="text-align: right;">14.0%</td>
+<td style="text-align: right;">32.2%</td>
+<td style="text-align: right;">+18.2 pp</td>
+</tr>
+<tr>
+<td>ScreenSpot-Pro</td>
+<td style="text-align: right;">1,581 examples</td>
+<td style="text-align: right;">31.7%</td>
+<td style="text-align: right;">57.1%</td>
+<td style="text-align: right;">+25.4 pp</td>
+</tr>
+</tbody>
+</table></div>
+<p>这些是作者报告，本项目尚未同协议复现。四个交互 benchmark 使用不同指标，论文的聚合均值按 benchmark 等权，也没有把各任务分母合并。</p>
+<p>两个 Chrome 分域发生回归：OSWorld Chrome 在 46 个任务上从 39.0% 降到 26.0%，WAA Chrome 在 17 个任务上从 11.2% 降到 0.0%。Chrome 占训练样本 44.4%，较大训练占比没有阻止回归。WAA Edge 同时从 23.1% 升到 30.8%（13 个任务），所以风险需要按浏览器和动作类型分层测量，不能概括成所有 browser 一致退化。</p>
+<h3 id="32-autoguiworld-qc">3.2 AutoGUIWorld 的生成链和 QC</h3>
+<p>AutoGUIWorld 的公开方法按以下顺序生成数据：</p>
+<ol>
+<li>从 OS substrate、外观和初始 GUI state 采样世界描述并渲染 seed screenshot。</li>
+<li>根据 seed 中实际可见的内容生成任务。</li>
+<li>Meta Planner 生成原子动作、预期视觉变化和目标元素。</li>
+<li>Voyager 根据当前干净截图、计划动作和 rollout context 写下一屏渲染提示。</li>
+<li>Image2 编辑当前截图得到下一屏，LocateAnything 等 backend 在 action 前截图上定位指向动作。</li>
+<li>将 task、before、action、after、grounding 和历史展开成 step 训练样本，并做逐步 QC。</li>
+</ol>
+<p>作者用 Gemini VLM 检查目标是否存在、red box 是否命中、action 是否可执行，以及前后截图变化是否符合动作。3,390 个可修复 target box 会重新 grounding 并再次送审。desktop 可评转移中，checker 在 42,526 条里标出 1,293 条不一致，即 3.04%；排除 action 无效、目标不存在和 grounding 错误后，在 39,351 条 active action 中标出 818 条，即 2.08%。这些是该 checker 的检出率，论文没有独立人审来估计漏判或误判，也没有给出对应的 Chrome 审计分母。</p>
+<p>该管线生成的是 action-conditioned visual transition 和 direct-action policy data。action 点位于 action 前截图，本项目需要的 evidence ROI 位于 action 后下一屏，二者必须分字段保存和独立标注。</p>
+<h2 id="4">4. 数据和模型能否直接下载</h2>
+<p>本文中的 <code>$data</code> 固定指 <code>$DATA_ROOT</code>。</p>
+<p>截至本次核查：</p>
+<ul>
+<li>AGW-35B 权重可从<a href="https://huggingface.co/YangC777/AGW-35B">官方模型仓库</a>下载。模型卡标注 Apache-2.0。本地固定 revision 的 16 个 BF16 shard 已于 2026-10-03 完整下载并核验，当前共享路径为 <code>$data/models/AGW-35B</code>。</li>
+<li>AutoGUIWorld 的<a href="https://github.com/ImYangC7/AutoGUIWorld/tree/7d3a063f3538cb4a6216c7da9dbae320b010ca2d">官方代码仓库</a>可下载，但实际文本、视觉、QC 和图像编辑 provider 由外部 adapter 提供。仓库不包含论文同款服务配置。</li>
+<li>原始 79,266 条 AGW 训练 step 及其源轨迹没有随模型仓库或代码仓库发布。代码仓库排除了 <code>data/</code>。截至 2026-10-06，作者官方仓库中的 <a href="https://github.com/ImYangC7/AutoGUIWorld/issues/2">issue #2</a> 仍为 open；该 issue 由 Hugging Face 团队成员发起，询问是否上传数据，作者尚未回复或给出下载入口。这是公开托管状态的证据，不代表作者确认了后续发布决定。目前不能直接下载作者训练集做逐行审计或原样续训。</li>
+<li>2026-10-03 核对时，AutoGUIWorld 仓库根目录没有 <code>LICENSE</code>，README 也没有给代码或生成数据声明许可。模型权重许可不能代替代码和数据许可。</li>
+<li><a href="https://huggingface.co/datasets/xlangai/AgentNet">AgentNet</a> 是论文中的另一组真实 demonstration 对照数据，不是 AutoGUIWorld 的合成源数据；官方 dataset card 标注 MIT。本地已有 <code>$data/data/xlangai/AgentNet</code>，但本报告没有冻结其本地 snapshot revision，不能把它记作 AGW 的 79,266 条训练集。</li>
+</ul>
+<p>用户记得的 HDFS 副本在当前已知位置没有找到。开发机和 worker 已检查 <code>$CHECKPOINT_ROOT/models</code> 及其 <code>qwen</code>、<code>ours</code>、<code>experiments</code> 命名子目录，没有 <code>AGW-35B</code>。本次作业直接读取 DolphinFS 的 <code>$data/models/AGW-35B</code>。如果另有精确 HDFS 路径，应先核对目录和分片再切换，不能凭记忆猜路径。</p>
+<p>本次按用户要求没有重新计算 70.2 GB 权重哈希。runner 绑定 2026-10-03 的 16/16 全量 SHA 回执，同时核对当前 shard 名称和大小，以及 config、chat template、index 等小文件 SHA，并记录 <code>live_weight_sha_recomputed=false</code>。r3 从 DolphinFS 读取模型并在 NPU 0/1 达到 model-ready 的 <code>load_elapsed_s</code> 为 940.912 秒，约 15 分 40.912 秒。该时间是本次共享存储到 HF eager 两设备放置的实测账本，不外推为稳定带宽或其他 worker 的加载时间。</p>
+<h2 id="5-2026-10-03-agw">5. 2026-10-03 的本地 AGW 基线</h2>
+<p>旧 run <code>62628822</code> / app <code>psxg68txrs7fieen</code> 在 CANN 9.1.0、Transformers 5.14.1 上完成 HF eager 两 NPU 加载，重复单图 2/2、七图 1/1 smoke 通过。vLLM 在实际视觉 decode 的必需 Triton kernel 上失败，没有有效模型文本，不能把权重加载当成 vLLM 推理通过。</p>
+<h3 id="51">5.1 下一观测点和计划</h3>
+<p>14 case 的 current-only/warm 两臂共 28 条 direct 请求。原始 strict 点 JSON 为 0/28，23 个带框字段乘两臂得到的 46 个几何单位中命中 0/46。所有 strict 解析失败都带生成的 <code># Step N:</code> 头。</p>
+<p>冻结结果之后才设计的标签盲 wrapper adapter 只移除精确步号头，得到 27/28 可解析和 1/46 evidence-center 命中。它没有改变原始输出，但属于 post hoc 探索性诊断，不能计作原生协议合规。</p>
+<p>28 条 plan 的盲审结果为：说明下一步所需信息 17/28，说明下一屏大致位置 9/28，明确引用合法可见历史 1/28，表达不确定性 17/28，四项同时具备 0/28。11 条输出被截断或结构不完整，其中 8 条达到 192-token 上限。它们只测计划内容覆盖，没有给出完整 check/revisit 或真实任务结果。</p>
+<h3 id="52">5.2 当前屏原生动作格式</h3>
+<p>冻结的 97 条显式目标 grounding 请求全部返回模型输出。主结果如下：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>口径</th>
+<th style="text-align: right;">全部</th>
+<th style="text-align: right;">web</th>
+<th style="text-align: right;">mobile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原生完整 <code>Action:</code> 加 <code>computer_use</code> left-click</td>
+<td style="text-align: right;">25/97</td>
+<td style="text-align: right;">17/76</td>
+<td style="text-align: right;">8/21</td>
+</tr>
+<tr>
+<td>原生点落入 source-derived target box</td>
+<td style="text-align: right;">15/97</td>
+<td style="text-align: right;">9/76</td>
+<td style="text-align: right;">6/21</td>
+</tr>
+</tbody>
+</table></div>
+<p>独立、标签盲的 post hoc grammar adapter 可从 95/97 个输出解析出唯一 left-click 坐标，来源框命中为 62/97，其中 web 47/76、mobile 15/21。原始 serializer 的主要问题是 key 标点损坏。这个诊断说明输出中常有可恢复坐标，却不能把 95/97 或 62/97写成原生可执行率、human-gold grounding 或在线成功率。</p>
+<p>这组旧结果支持继续测有界 adapter 和候选提议，尚不支持把 AGW 设为 browser 主 teacher、唯一 judge 或默认执行策略。</p>
+<h2 id="6-t1t2">6. 本次 T1/T2 的冻结设计</h2>
+<h3 id="61-t1">6.1 T1：真实轨迹观察上的自主动作候选</h3>
+<p>T1 使用同一 14-case cohort，比较 <code>current_only</code> 和 <code>history</code> 两臂，共 28 条请求。当前屏截图来自真实轨迹；记录动作单独保存在 label 文件中，不送给模型。history 最多保留最近 5 个含当前步的截图，并追加最多 5 个更早 action-only 描述。</p>
+<p>T1 prompt 由 AGW 模型卡的紧凑 system contract 加本项目任务指令组成，不声称复现作者未公开的完整 evaluation harness。该测试主动移除了当步已记录动作，目的是让模型自主提出候选；它与 T2 的 prefix-only evidence point 接口是两个不同任务。</p>
+<p>冻结输入 authority 为 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">task_proposal_manifest.json</span>：</p>
+<ul>
+<li>evidence 源文件：<code>$data/cu_model/phase1c/data/evidence_samples.jsonl</code></li>
+<li>evidence SHA-256：<code>32ca544c9edce18eef1b8b39f73fcd931faca77b7ed6a48fdf466548ba1ea8b9</code></li>
+<li>current-only：14 行，SHA-256 <code>259f9eee81d6ec14609239228cbab062e1612057149f5f5825da520f24c84671</code></li>
+<li>history：14 行，SHA-256 <code>6eefde46beddafa64654cc2c9be6758a1cddde64d50c95fe4d053ef64e50559f</code></li>
+<li>离线 labels：14 行，SHA-256 <code>72d79a78becd2b38f7a1eb6522085033a4b0a136c42e3fe20324e00a154fa703</code></li>
+<li>图像 SHA 引用检查：79 次通过</li>
+<li><code>max_model_len=8192</code>，<code>max_new_tokens=256</code></li>
+</ul>
+<p>模型输入排除了 <code>prediction_input.issued_action</code>、原始 <code>action_history</code>、当前帧的 <code>action_after</code>、<code>labels_only</code>、目标像素、目标 DOM/URL、未来动作、答案和目标派生提示。真实 processor 的单图和五图 probe 分别为 536 和 2,467 个输入 token，通过固定预算门。</p>
+<p>T1 固定报告 28/28 注册输出、原生 schema 合法率、动作类型和坐标可执行率，以及按 case 配对的 history 变化。来源动作只是一条非 human-gold 轨迹示范；与它一致不等于动作唯一正确或任务成功。语义合理性需逐例复核，并记录复核者是 assistant、model-assisted 还是用户。</p>
+<h3 id="62-t2">6.2 T2：下一观测受限链</h3>
+<p>T2 固定为：</p>
+<pre><code class="language-text">14 cases x 2 history arms x 2 point methods = 56 final branches
+</code></pre>
+<p>history arms 为 <code>current_only|warm</code>，point methods 为 <code>direct_point|plan_then_point</code>。direct 分支绑定 2026-10-03 的旧 raw direct 输出；plan 分支绑定旧 raw plan 输出，并在本次 run 新执行 28 条 plan-to-point map。旧输出不会被记成本次作业的新结果。</p>
+<p>冻结 authority 为 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">T2 preflight</span>和 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">freeze manifest</span>：</p>
+<ul>
+<li>plan 请求 SHA-256：<code>71f2014a3af5ca9c017d6fa69ce46a64e13affc1003d0aaa97f9711f0cf5b223</code></li>
+<li>direct 请求 SHA-256：<code>d72677a1daf9ac50d9d7c1b04832b54ce74bb773fafd52a2ee929044759b76e6</code></li>
+<li>map 请求：28 行，SHA-256 <code>70309d74a70b24da031554670cdd6bc2774ab96e64bd8213a417a9417e137d99</code></li>
+<li>branch ledger：56 行，SHA-256 <code>aba2d58d8f74bb5f0649a1e2f7411486afc0802c51ee955e9903e63ac2a2256d</code></li>
+<li>prediction 图像引用 192 次，对应 79 张唯一图；target 图像进入 prediction 的次数为 0</li>
+</ul>
+<p>主解析器只接受仅含 <code>point:[int,int]</code> 的 strict JSON。探索性 adapter 只接受精确 <code># Step N:\nPAYLOAD</code>，再把未改动 payload 交给 strict parser。direct 是 prefix 后第一条 assistant response，要求 <code>N=current_step+1</code>；plan-to-point map 是第二条 assistant response，要求 <code>N=current_step+2</code>。步号规则由冻结 prefix lineage 推导，两条路线的结果分开保存。</p>
+<p>合法点映射到 8x8 网格中最近的 8 个 cell。check 只能看到这些真实 crop 及其与 target SHA 绑定的 authorization mask。若模型请求 revisit，最多再开放 8 个此前未授权 cell，累计上限为 16/64。冻结 control 记录含连续 oracle ROI、oracle cell union、完整屏引用、固定中心和 issued-action position；完整屏与 oracle ROI 作为独立 reading controls 执行，不计入 core 56 分支。所有错误、缺失和非法输出继续留在 56 分母中并记为 B。</p>
+<p>最终逐分支需报告 evidence coverage、合法证据支持的字段语义、check/revisit 决策、调用次数、输入/输出 token、视觉 token、时延和授权像素预算。OK/L1/L2/L3 需要绑定准确 request/output SHA 的独立审查；若审查由 assistant 完成，须标为 non-human-gold。由于 cohort 没有 next-action label 或 executor，T2 不评分动作正确率和任务成功。</p>
+<h2 id="7-npu">7. 新 NPU 作业的执行账本</h2>
+<p>用户授权一次新作业。唯一提交为 run <code>62807442</code>、app <code>psxhlfcxrs7fieen</code>、creator <code>luyuquan</code>，配置 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">agw35b_20261006_hf_task_r1.hope</span>，资源为 1 worker、16 个 H910C unit，队列 <code>root.hldy_training_cluster.hadoop-aipnlp.efficient_910c</code>。<code>hope run</code> 退出 0，<code>hopex</code> creator/container identity gate 通过。作业结束后没有自动重提授权。</p>
+<p>共享 run root 为：</p>
+<pre><code class="language-text">$data/cu_model/agw_20261006/run_hf_task_r1/
+</code></pre>
+<p>输出目录已在开发机预建，worker 对 <code>probe/shared_write_r1.txt</code> 的写入通过。运行时为 CANN 9.1.0、torch 2.10.0+cpu、torch-npu 2.10.0.post4、Transformers 5.14.1，16 个 NPU 可见。<code>accelerate==1.10.1</code> 只安装在该 worker 的 <code>/tmp/cu_agw_pydeps</code>，没有修改开发机或镜像基础环境。</p>
+<p>本次同一 worker 上的尝试按时间为：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>evaluator jid</th>
+<th>状态</th>
+<th style="text-align: right;">是否加载权重</th>
+<th style="text-align: right;">是否产生模型输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jmuvk8dszy27</code></td>
+<td>preflight 发现 runner 会在慢共享存储重算 70.2 GB shard SHA，主动停止，rc143</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">否</td>
+</tr>
+<tr>
+<td><code>jmuvkg95u65v</code></td>
+<td>fail closed：旧检查读取不存在的 processor direct attrs；实际像素限额在 <code>size.shortest_edge=100352</code> 和 <code>size.longest_edge=401408</code></td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">否</td>
+</tr>
+<tr>
+<td><code>jmuvklq504y1</code></td>
+<td>修正 runner；model-ready PASS，T1 和 T2 map 均完成 28/28，terminal exit 0</td>
+<td style="text-align: right;">是，NPU 0/1，940.912 秒</td>
+<td style="text-align: right;">T1 28/28；T2 map 28/28</td>
+</tr>
+<tr>
+<td><code>jmuvlt7sgo9h</code></td>
+<td>T2 check r1 在模型加载前失败；<code>/workdir</code> snapshot 缺冻结 branch manifest，错误回执保留</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">否</td>
+</tr>
+<tr>
+<td><code>jmuvlvvgyukt</code></td>
+<td>补齐并核验精确文件后的 T2 check r2，terminal exit 0</td>
+<td style="text-align: right;">是，缓存热后 6.898 秒</td>
+<td style="text-align: right;">check 35/35</td>
+</tr>
+<tr>
+<td><code>jmuvmk34ojd1</code></td>
+<td>T2 revisit r1，terminal exit 0</td>
+<td style="text-align: right;">沿用同一 runtime contract</td>
+<td style="text-align: right;">revisit 9/9</td>
+</tr>
+<tr>
+<td><code>jmuvmr2krp0p</code></td>
+<td>独立 reading controls，terminal exit 0</td>
+<td style="text-align: right;">是，同一 runtime manifest</td>
+<td style="text-align: right;">full-target 28/28；oracle-rect 28/28</td>
+</tr>
+</tbody>
+</table></div>
+<p>当前 runner 为 <code>scripts/agw/t1_run_hf_eager.py</code>，SHA-256 <code>90c21367a2b2c7ae7f38bf91e320546a5d7e5f09c00aab439930e9300e46755a</code>。模型从 <code>$data/models/AGW-35B</code> 加载到 NPU 0/1。T1 输出 root 为 <code>outputs/t1_hf_r3/</code>，T2 map 目标为 <code>outputs/t2/map_r3.jsonl</code>。</p>
+<p>只有满足以下条件才接受本次输出：</p>
+<ol>
+<li><code>model_ready.json</code> 和固定 runtime manifest 存在，实际 checkpoint、worker、processor 和 runner identity 一致。</li>
+<li>T1 的 28/28 request ID 都有注册输出，错误也在固定分母内。</li>
+<li>T2 map 的 28/28 request ID 都有注册输出，check/revisit 保持同一 runtime lineage。</li>
+<li>terminal audit 绑定输入、输出和脚本 SHA；HOPE <code>RUNNING</code> 本身不算模型就绪或解码成功。</li>
+</ol>
+<p>以上四项均已通过。</p>
+<p>NPU 工作完成后，<code>hope stop</code> 退出 0。2026-10-05 19:48:48 UTC 的 fresh status 返回 run <code>62807442</code> / app <code>psxhlfcxrs7fieen</code> 为 <code>STOPPED</code>，queue resource listing 中已无该 app；队列 allocated gcores 从 368 降到 352，remain 从 16 升到 32，与本作业 16 个 unit 的释放一致。本流程没有停止其他作业。权威 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">stop receipt</span> SHA-256 为 <code>8a6ea2ff0eb8fcfa2887b5779c0fc3f9ffc3d2c5a147706c3532e759a37242e4</code>。这是该时间点的终态证据，不替代未来时刻的实时平台查询。</p>
+<h2 id="8-t1">8. T1 结果</h2>
+<p>T1 原始输出 28/28 为 <code>status=ok</code>，SHA-256 为 <code>6024f9fc3432f6466990a87aa77e9b0cc6d20cc642bd061aa4a7a007fd8fe9a5</code>。权威 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">execution receipt</span> SHA-256 为 <code>dc43f7371432a9dc00a2de0ff4f9b34b285ab7775554c10f4f957af51e4b2dbd</code>；它绑定 run/app/worker、model-ready、runtime manifest 和 terminal audit。strict summary 为 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_action_summary.json</span>，SHA-256 <code>3d8292b25b44ce52945a7b7e2f23703abd1d07c9f4158213100b671a22464836</code>；逐行 scorer SHA-256 为 <code>b70d06783ae5e63d89262f45ec1b401196dbd147b3a25de151e684ca8fb6b8d4</code>。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>指标</th>
+<th style="text-align: right;">current-only，分母 14</th>
+<th style="text-align: right;">history，分母 14</th>
+<th style="text-align: right;">配对差异</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>注册输出</td>
+<td style="text-align: right;">14/14</td>
+<td style="text-align: right;">14/14</td>
+<td style="text-align: right;">全 14 case 两臂齐全</td>
+</tr>
+<tr>
+<td>正常解码</td>
+<td style="text-align: right;">14/14</td>
+<td style="text-align: right;">14/14</td>
+<td style="text-align: right;">全 14 case 相同</td>
+</tr>
+<tr>
+<td>原生完整 <code>Action:</code> 加 <code>computer_use</code> 契约</td>
+<td style="text-align: right;">3/14</td>
+<td style="text-align: right;">7/14</td>
+<td style="text-align: right;">history 更好/相同/更差为 5/8/1</td>
+</tr>
+<tr>
+<td>strict 合法的指向动作</td>
+<td style="text-align: right;">2/14</td>
+<td style="text-align: right;">4/14</td>
+<td style="text-align: right;">合计 6/28；未单独冻结配对方向</td>
+</tr>
+<tr>
+<td>来源动作类型序列完全一致</td>
+<td style="text-align: right;">2/14</td>
+<td style="text-align: right;">3/14</td>
+<td style="text-align: right;">history 更好/相同/更差为 1/13/0</td>
+</tr>
+<tr>
+<td>冻结类型、文本和几何 proxy 全一致</td>
+<td style="text-align: right;">0/14</td>
+<td style="text-align: right;">0/14</td>
+<td style="text-align: right;">history 更好/相同/更差为 0/14/0</td>
+</tr>
+<tr>
+<td>blind reviewer A：supported/plausible、partial、unsupported</td>
+<td style="text-align: right;">13/0/1</td>
+<td style="text-align: right;">9/3/2</td>
+<td style="text-align: right;">全部为 22/3/3</td>
+</tr>
+<tr>
+<td>blind reviewer B：supported/plausible、partial、unsupported</td>
+<td style="text-align: right;">12/2/0</td>
+<td style="text-align: right;">8/4/2</td>
+<td style="text-align: right;">全部为 20/6/2</td>
+</tr>
+</tbody>
+</table></div>
+<p>按两臂合并后的 strict 原生契约，desktop 为 4/4，web 为 4/12，mobile 为 2/12。10 个合法输出中的动作类型为 <code>click</code> 3、<code>left_click</code> 3、<code>type</code> 2、<code>key_press</code> 1、<code>terminate</code> 1。冻结来源标签为 6 条 <code>CLICK</code>、3 条 <code>click</code>、5 条 <code>action_list</code>；展开后只有 5/28 个模型输出的动作类型序列完全一致，最终文本和几何 proxy 仍为 0/28。本 cohort 没有预先确认的 scroll 或 drag 分母。</p>
+<p>18 个 strict 失败分为 <code>tool_call_is_not_strict_json</code> 8、<code>invalid_computer_use_arguments</code> 5、<code>trailing_or_malformed_tool_envelope</code> 5。标签盲的 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">post hoc syntax audit</span> 没有应用 repair，也没有恢复额外 tool call，原因是失败横跨空 action、递归或截断结构、来源 schema 拷贝、未解析 placeholder、alias 和非规范 key。探索性结果仍是 10/28，不替换上表的原生格式结果。</p>
+<p>两名 reviewer 都只看到冻结的模型可见输入、截图和 raw 输出，没有看到离线动作标签、target screenshot、strict scorer、gallery、既有结论或对方判断。两者精确类别一致 25/28：共同判为 supported/plausible 20、partial 3、unsupported 2，另有 3 条分歧。对比文件 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_blind_comparison.json</span> SHA-256 为 <code>8f9ee648a6fafb1f1a410e0c28af01902c2ddb0230d94d767097a47d6f5dbbbe</code>。这些是 non-human-gold 的局部动作内容合理性，不是 action accuracy 或任务成功。两位 reviewer 的格式 rubric 不一致，格式只采用预注册 strict scorer 的 10/28。</p>
+<p>T1 说明更早历史在这批 case 上改变了 serializer 合规率，但还没有证明动作语义变好。history 的 strict 合规从 3/14 升到 7/14；两位 reviewer 的 supported/plausible 数反而分别从 13 降到 9、从 12 降到 8，完整来源 proxy 两臂都是 0/14。这个小型、单次解码、assistant-reviewed 结果不足以判断历史有害，至少没有给出历史提高动作语义的证据。desktop 的 4/4 只来自 2 个 case 的两臂，不能外推平台能力。T1 能回答的是 AGW 是否产生可保存、可复核的离线候选；它不能回答候选执行后是否完成任务，也不能用来源动作一致率替代在线成功。</p>
+<h2 id="9-t2">9. T2 结果</h2>
+<p>固定分母和探索性续接的流失关系为：</p>
+<pre><code class="language-text">56 fixed branches
+  -&gt; 35 adapter-valid point branches enter check; 21 blocked
+  -&gt; 9 adapter-valid check branches request revisit; 26 blocked
+  -&gt; 8 adapter-valid final branches; 1 blocked
+  -&gt; blind review: agreed OK 2, agreed L1 5, unresolved L3/L1 1
+
+strict-primary track: B 56/56 throughout
+</code></pre>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th style="text-align: right;">固定分母</th>
+<th style="text-align: right;">strict 原始输出</th>
+<th style="text-align: right;">探索性 adapter</th>
+<th>终态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>plan-to-point map</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">28/28 注册输出；strict point 0/28</td>
+<td style="text-align: right;">exact-header point 8/28</td>
+<td>terminal complete，raw SHA-256 <code>0c9a7669889c4399c9d1b2753d135269ea458d4a53324db4529790689f72e04c</code></td>
+</tr>
+<tr>
+<td>direct point</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">strict point 0/28</td>
+<td style="text-align: right;">exact-header point 27/28</td>
+<td>绑定 2026-10-03 raw direct 输出，不冒充本次新输出</td>
+</tr>
+<tr>
+<td>初次 restricted check</td>
+<td style="text-align: right;">固定 56 ledger；35 个 adapter-valid point 实际进入 check</td>
+<td style="text-align: right;">strict check 0/35</td>
+<td style="text-align: right;">exact-header check 9/35，全部请求一次 revisit</td>
+<td>raw 35/35 <code>status=ok</code>，SHA-256 <code>1e9685d81dcb1c95244006722806d4b7c01148d3b6d25662c35408d6a4f48e7a</code></td>
+</tr>
+<tr>
+<td>revisit</td>
+<td style="text-align: right;">9 个真实、合法 revisit 请求；最终仍以 56 分支报告</td>
+<td style="text-align: right;">strict final 0/9</td>
+<td style="text-align: right;">exact-header final 8/9</td>
+<td>raw 9/9 <code>status=ok</code>，SHA-256 <code>d0ae7f703f8db63a475d65a7a7b8f6cabbe113d52928e391bf7f00374248d7c4</code></td>
+</tr>
+<tr>
+<td>final branch</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">B 56/56</td>
+<td style="text-align: right;">reviewer A：B48、OK2、L1 5、L3 1；reviewer B：B48、OK2、L1 6</td>
+<td>双审 agree 7/8，一条 L3/L1 分歧保留未决</td>
+</tr>
+</tbody>
+</table></div>
+<p>四条件逐项结果：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>条件</th>
+<th style="text-align: right;">分母</th>
+<th style="text-align: right;">strict / adapter point</th>
+<th style="text-align: right;">evidence center hit，初次到最终，分母23</th>
+<th style="text-align: right;">exact/alias 字段匹配，分母24</th>
+<th>strict；exploratory reviewer A / B</th>
+<th>调用、prompt/completion token、累计时延</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>direct + current-only</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0/14 / 13/14</td>
+<td style="text-align: right;">0/23 到 4/23</td>
+<td style="text-align: right;">2/24</td>
+<td>B14；A B9+OK1+L1 3+L3 1 / B B9+OK1+L1 4</td>
+<td>32；49,918/1,907；535.828秒</td>
+</tr>
+<tr>
+<td>direct + warm</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0/14 / 14/14</td>
+<td style="text-align: right;">1/23 到 2/23</td>
+<td style="text-align: right;">1/24</td>
+<td>B14；A/B 均 B12+OK1+L1 1</td>
+<td>30；104,236/1,666；529.809秒</td>
+</tr>
+<tr>
+<td>plan + current-only</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0/14 / 3/14</td>
+<td style="text-align: right;">0/23 到 0/23</td>
+<td style="text-align: right;">0/24</td>
+<td>B14；A/B 均 B13+L1 1</td>
+<td>33；32,850/2,942；755.836秒</td>
+</tr>
+<tr>
+<td>plan + warm</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0/14 / 5/14</td>
+<td style="text-align: right;">1/23 到 1/23</td>
+<td style="text-align: right;">0/24</td>
+<td>B14；A/B 均 B14</td>
+<td>33；101,333/1,818；567.299秒</td>
+</tr>
+</tbody>
+</table></div>
+<p>表中的 exact/alias 字段匹配合计只有 3/96，但它没有检查答案是否由授权像素支持，不能称语义正确。initial/final center hit 和 bbox coverage 都使用 assistant-reviewed evidence box，属于几何 proxy。四条件的初次到最终平均 bbox coverage 依次为 0.50% 到 18.50%、3.85% 到 11.54%、0.50% 到 0.50%、3.85% 到 3.85%。</p>
+<p>固定 56 分支的 machine rows SHA-256 为 <code>29456422bfda8b9584223457913bef61d449514655f964bad5a1c9e4f35b3ef3</code>，summary SHA-256 为 <code>8cfea99800c681a3c3cc06b892cfd62ed0a6c03d038e3fcf7e8433a6619bf018</code>。模型调用、token 和时延账本包含冻结的 direct/plan prefix 调用及本次 map/check/revisit；时延是各调用记录值之和，不是作业墙钟时间。</p>
+<p>探索性 adapter 最后保留的 8 条分支由两名 fresh-context assistant reviewer 根据真实授权 crop、revisit 像素和离线字段独立分类。两者在 7/8 条上一致，其中共同 OK 2、共同 L1 5；<code>p1c-app-instagram-reviewed:current_only:direct_point</code> 上 A 判 L3、B 判 L1。项目没有用多数投票或合成 consensus 消除分歧。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">agreement view</span> 的固定 56 分母为 B48、OK2、L1 5、未决1，SHA-256 <code>c3f3b89b763a47642cc5b5b247baad9dcd694a311ea0c64d34e786b3f0abcbd5</code>。审查来自 assistant，属于 non-human-gold；strict 主结果仍为 B56，不受探索性审查覆盖。</p>
+<p>共同 OK 的准确口径是 8 条 adapter-valid final 中的 2 条。它不能改写成 2/8 或 2/56 的 AGW 下一观测 accuracy：原始 strict 仍是 B56/56，cohort 只有 14 个 assistant-reviewed case，并且没有真实任务执行或成功标签。</p>
+<p>双审逐行 comparison SHA-256 为 <code>5b8270d237e2773757d628443fe5ade47d835cba0fc7359c5e7a199c1a38bc89</code>，summary SHA-256 为 <code>7f21383fc13246799c173bebff66fbedd4131900cf2aaea68d5dec547ee2e687</code>。reviewer A 固定 56 summary 为 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">results_reviewer_A/summary.json</span>，SHA-256 <code>36c16dad4eafd0bbababc446941f04db3656e31f896d36e2fb11d9fa5f57ab48</code>；reviewer B summary 为 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">results_reviewer_B/summary.json</span>，SHA-256 <code>5f229b026d7882f768eb431483623def2ee21c566d98b3cd224e4e6623e84632</code>。</p>
+<p>几何侧的连续 oracle ROI、oracle cell union、固定中心和 issued-action position 已冻结。完整屏与 oracle 连续 ROI 的读取结果如下。</p>
+<h3 id="91-oracle-roi">9.1 完整屏和 oracle ROI 读取对照</h3>
+<p>这组对照与 core 56 分支分开。它固定同一 14 case 的两条历史臂，共 28 条完整目标屏和 28 条 oracle 连续矩形请求；目标像素在 reader 输入中可见，因此只诊断读取端和输出结构，不测 prefix-only 选区。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>条件</th>
+<th style="text-align: right;">请求正常返回</th>
+<th style="text-align: right;">native strict JSON</th>
+<th style="text-align: right;">预注册 step-only adapter</th>
+<th style="text-align: right;">post hoc control-only payload</th>
+<th style="text-align: right;">required-new exact/alias</th>
+<th style="text-align: right;">prompt/completion token</th>
+<th style="text-align: right;">累计时延</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>完整目标屏</td>
+<td style="text-align: right;">28/28</td>
+<td style="text-align: right;">0/28</td>
+<td style="text-align: right;">0/28</td>
+<td style="text-align: right;">3/28</td>
+<td style="text-align: right;">5/48</td>
+<td style="text-align: right;">61,132/3,419</td>
+<td style="text-align: right;">894.035秒</td>
+</tr>
+<tr>
+<td>oracle 连续矩形</td>
+<td style="text-align: right;">28/28</td>
+<td style="text-align: right;">0/28</td>
+<td style="text-align: right;">0/28</td>
+<td style="text-align: right;">2/28</td>
+<td style="text-align: right;">4/48</td>
+<td style="text-align: right;">58,412/3,300</td>
+<td style="text-align: right;">865.076秒</td>
+</tr>
+</tbody>
+</table></div>
+<p>控制输出出现了精确 <code># Step N:</code> 加完整小写 <code>json</code> fence 的重复结构。项目在读取字段标签或做语义评分前冻结了仅供 controls 使用的 full-match 规则：步号必须等于请求推导值，移除 fence 后的原 payload 仍须通过原 strict field schema。56 条中 36 条匹配完整 fence，只有 5 条内部 payload 合法；它没有改 raw、native strict、预注册 step-only 结果、字段值或 core 56 分支。</p>
+<p>因此，完整屏 5/48 与 oracle ROI 4/48 的差 1 个字段不能解释成完整屏读取能力更强，也不能写成 reader accuracy。51/56 请求在该 post hoc control-only 结构诊断下仍被阻断，而且没有独立像素语义审查。标签是 assistant-reviewed exact value 或预声明 alias，也不是 human gold。</p>
+<p>control result <span class="unbundled" title="原报告引用；此证据文件未随本站发布">summary</span> SHA-256 为 <code>d62026f41f8f44f61af4bc3c8ab5c4afde9a42e852d5185cff722242cc3c76db</code>；rows SHA-256 为 <code>45c533d1e998a3a266e8a5383853dcf3b3fdebe84a294a0e8077eafe9a6b89cb</code>。标签盲 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">post hoc audit</span> SHA-256 为 <code>64dd4502377ca8257c7dfab2107ff3f0d474b68b58359420eae92607e6732d87</code>。</p>
+<p>T2 的冻结来源、所有 NPU 输出、review、controls、执行代码和停止回执汇总在 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">FINAL_PROVENANCE.json</span>，SHA-256 <code>24f6d618bf8f6521b30e379f8b0ba55d71a5c80e508cf32b1eca10c2ed52b7d9</code>。最终 <code>py_compile</code>、<code>ruff check</code>、<code>ruff format --check</code> 和 selftest r8 均通过。</p>
+<p>T2 的 strict 主结果已经被 point wrapper 阻断为 B 56/56。探索性链仍按预定顺序解释：先看几何是否覆盖 evidence，再看模型是否只依赖获准像素读出正确实例，最后看它是否正确判断 sufficient/revisit。若 point 不覆盖 evidence，后续失败主要属于选择问题；若 evidence 已完整可见仍读错，属于局部读取或实例识别问题；若值正确但合法像素不支持，则不能算 supported。</p>
+<h2 id="10">10. 供用户后续人工复核的逐例图片</h2>
+<p>本次实验保留了让人可以直接判断的 case 级产物。终态交付包含：</p>
+<ul>
+<li>T1 每个 case 的当前屏、合法历史缩略图、原始模型输出、strict parse、post hoc parse、来源动作和独立 assistant/model-assisted 语义审查。</li>
+<li>T2 每个分支的目标整图，仅供离线审查；初次授权 mask；实际 8-cell crop；revisit 新增 mask 和累计 16-cell crop；evidence 标注；原始 check/revisit 输出；最终错误分类。</li>
+<li>同一 case 并排显示 direct/plan、current-only/warm、模型选区与 oracle/固定中心/issued-action 对照。</li>
+<li>所有图片显示 case ID、branch ID、platform、split、输入和输出 SHA。图注说明颜色代表授权区域或 evidence box，不写成 attention。</li>
+<li>gallery 中同时保留成功、格式失败、几何失败、wrong-instance、false-sufficient、无益 revisit 和不确定案例，不能只挑成功图。</li>
+</ul>
+<p>这些图片用于用户在实验结束后逐例检查。报告冻结时如果只有 assistant 或 model-assisted review，应明确标为 non-human-gold，不能写成用户已经完成复核或 human-gold 标签。</p>
+<p>早期 T1-only gallery 保留不变。最终 gallery generation 为 <code>final-with-controls-r3-v2</code>，包含 T1 14 张、T2 core 56 张和 reading controls 56 张，共 126 张 PNG、67,219,284 bytes。每张图的 SHA、大小和 Pillow decode 均已核验；第一次合并 render 因 namespace join bug fail closed，未写出文件，修复后才生成本版本。</p>
+<p>可从<span class="unbundled" title="原报告引用；此证据文件未随本站发布">最终紧凑索引</span>逐例打开，索引 SHA-256 为 <code>23cbf684779caf26adc177e9af0ef1beacd1b92437caff9b99909cc978e3a79f</code>，本地 manifest SHA-256 为 <code>3b970522a49984c0006aa742ef6749c420c2d3d754b1b77b5492e04b99e6d516</code>。共享 HTML 为 <code>$data/cu_model/agw_20261006/run_hf_task_r1/case_gallery/final-with-controls-r3-v2/index.html</code>，SHA-256 <code>4cf2ed98a7579720e2a16e560f1242b5db1d863bc25e186e95f430b3bc51afc6</code>；共享 manifest SHA-256 为 <code>8a5189d6d7b1d05644e9c62cc39021bc9401fb99df2a42687a27a0b7e32c4355</code>。</p>
+<p>gallery 显示模型可见截图、raw output、strict 与 adapter 分栏、授权 crop/mask、review class 和 control 分支，并保留失败案例。它明确用于 <code>MANUAL REVIEW ONLY</code>；用户尚未完成逐例人工复核，现有 assistant review 仍是 non-human-gold。</p>
+<h2 id="11">11. 本次结束后的决策门</h2>
+<h3 id="111-agw-scaling">11.1 AGW 参与真实数据 scaling</h3>
+<p>继续到 T3 前，需要先修复 serializer 或 prompt，并在新的 held-out 上冻结和通过原生接口门。T3 再在冻结、可重置的真实 CU/BU 环境中执行候选动作，保存真实 observation 和环境最终状态，由独立 QC 决定是否入库。当前拟议的首批只是一项 12-task 工程 smoke，Chrome 6、Ubuntu 6，并覆盖 click、text、scroll、drag；任务尚未冻结或运行，这个规模也不能估计总体能力。Chrome 要单列，并与同基座 Qwen3.5-35B-A3B 使用相同 harness、prompt、processor、decode 和 executor 配对。Qwen3-VL-32B 只能作项目现状参照，不能替代同基座 A/B。</p>
+<p>只有在相同初始化、训练 token 或样本预算、随机种子、去重规则和 session-clean held-out 下，加入 AGW 合格候选的数据相对真实数据基线带来可复现增益，才能说 AGW 数据扩展有效。候选保留率、新任务或状态覆盖、NPU 成本和人工成本需要同时报告。</p>
+<h3 id="112-autoguiworld">11.2 AutoGUIWorld 合成方法</h3>
+<p>T4 需要另接可用的 Image2、planner、视觉和 QC adapter。每个合成 step 保存 seed、task、before、action、after、renderer prompt、provider revision、grounding、judge verdict 和成本。当前拟议的首批是 24 个真实 before/action/after 配对，即 Chrome、Ubuntu乘 click、text、scroll、drag，每格 3 条；单步通过后再测 4 条五步链。样本尚未选定或运行。盲审需覆盖精确文本、数值、无关内容保持、Chrome 动态状态和多步误差累积。</p>
+<p>合成数据训练对照至少包括：真实数据、真实数据加 AGW 候选、真实数据加通过 QC 的合成数据，以及混合条件。AGW 权重不能替代 Image2；AGW 也不应同时提动作、标 evidence、判合格并训练自身而没有独立检查。</p>
+<h2 id="12">12. 产物和复核入口</h2>
+<ul>
+<li>上游论文和本地 AGW 总结：<a href="agw-review.html">AGW-35B 与 AutoGUIWorld 评估</a></li>
+<li>2026-10-03 执行账本：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">reports/agw_20261003/STATUS.md</span></li>
+<li>本次冻结任务定义：<a href="agw-tests.html">AGW 数据扩展测试清单</a></li>
+<li>本次执行账本：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">reports/agw_20261006/STATUS.md</span></li>
+<li>T1 manifest：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">task_proposal_manifest.json</span></li>
+<li>T1 CPU contract receipt：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">cpu_contract_receipt.json</span></li>
+<li>T1/T2 map execution receipt：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">execution_receipt_r3.json</span></li>
+<li>T1 strict 结果：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_action_summary.json</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_action_score_rows.jsonl</span></li>
+<li>T1 标签盲 syntax audit：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_posthoc_syntax_summary.json</span></li>
+<li>T1 双 blind assistant review：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_blind_A_summary.json</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_blind_B_summary.json</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">t1_blind_comparison.json</span></li>
+<li>T1 逐例图索引：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">case_gallery_t1-r3.md</span></li>
+<li>最终 T1/T2/control 图集：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">case_gallery_final-with-controls-r3-v2.md</span></li>
+<li>T2 preflight：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">README.md</span></li>
+<li>T2 core machine score：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">results_r2/summary.json</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">results_r2/rows.jsonl</span></li>
+<li>T2 双审保守视图：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">agreement_view.json</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">comparison/summary.json</span></li>
+<li>T2 读取对照：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">control_results/summary.json</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">controls/posthoc_audit.json</span></li>
+<li>T2 总 provenance：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">FINAL_PROVENANCE.json</span></li>
+<li>提交与 worker preflight：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">submission_r1.json</span>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">worker_preflight_r1.json</span></li>
+<li>作业停止与资源释放：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">stop_verified.json</span></li>
+<li>Phase 1 冻结结果：<a href="phase1-results.html">PHASE1_RESULTS_20260923.md</a></li>
+<li>Phase 1/1b 累计背景：<a href="stage1-report.html">STAGE1_COMPREHENSIVE_20260923.md</a></li>
+<li>Phase 1c 和训练就绪边界：<a href="sft-readiness.html">PROJECT_REVIEW_SFT_READINESS_20260927.md</a></li>
+<li>本报告无上下文读者测试：<span class="unbundled" title="原报告引用；此证据文件未随本站发布">report_fresh_reader_20261006.md</span></li>
+</ul>
+<h2 id="13">13. 事实核查和无上下文读者测试</h2>
+<p>终态数字和 SHA 已逐项回查 execution receipt、T1/T2 scorer、双审 comparison、reading controls、gallery manifest、final provenance 和 stop receipt。本报告的本地 Markdown 链接均存在。</p>
+<p>fresh-context 读者只读取本文，没有打开链接或其他项目文件。它能从报告独立回答预设的八个问题，包括两个想法的验证边界、数据下载状态、模型加载来源、T1/T2 各层分母、reading controls 的解释、gallery 位置和资源释放证据。测试暴露的两个主要阅读成本是 <code>$data</code> 未展开，以及 T2 的 56/35/9/8 分母需要跨段拼接；终稿已补上绝对路径和单行流失图。测试记录 SHA-256 为 <code>76facb335dccc3dedf8caaea2048e36f54fc43f92303f4aeb32050c0c5168879</code>。</p>
+<p>补入上述修正后，第二名独立 fresh-context 读者对终稿的四个定向问题全部通过，未发现新矛盾或实质歧义；<span class="unbundled" title="原报告引用；此证据文件未随本站发布">复测记录</span> SHA-256 为 <code>3d23f93f10de41e23766822a1447394c2aa052b94ba8a9d22d041dc339cc0e5f</code>。</p>
+<p>报告仍不尝试独立列出 16 个 shard 的旧 SHA、完整 reviewer rubric 或未来时刻的平台实时状态；这些材料分别由已链接的制品回执、review 文件和平台查询承担，不影响本文的实验结论。</p></main>
+<aside class="source-note">来源：<code>docs/AGW_DATA_SCALING_RESULTS_20261006.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

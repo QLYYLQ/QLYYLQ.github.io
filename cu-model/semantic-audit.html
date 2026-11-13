@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="受限观察链语义复核 · CU Model 研究资料">
+<title>受限观察链语义复核 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-09-25 · 早期协议与记录</div>
+<h1>受限观察链语义复核</h1><p class="lead">修正 strict 解析低分的含义，区分读取、选区、补看和实例识别。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="sources/semantic-audit.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">结论</a></li>
+<li><a href="#1">1. 本轮怎样避免再次用格式代替语义</a></li>
+<li><a href="#2-query">2. 完整目标图与明确 query：旧低分有多少是接口问题</a><ul>
+<li><a href="#21-8b32b-full-target">2.1 8B/32B full-target</a></li>
+<li><a href="#22-oracle-grounding">2.2 Oracle grounding</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 预测前计划和空间点：计划合理不等于选区充分</a></li>
+<li><a href="#4-restricted-observation">4. Restricted observation：合理不确定不能加回答案</a><ul>
+<li><a href="#41-8b-v2">4.1 8B v2</a></li>
+<li><a href="#42-32b-registered-final-response">4.2 32B registered final response</a></li>
+</ul>
+</li>
+<li><a href="#5-phase-1-next-click">5. Phase 1 行动链：轨迹 next-click 漏掉替代动作，补看决定与选区仍有问题</a></li>
+<li><a href="#6-layout">6. Layout 结果怎样补足行动链</a></li>
+<li><a href="#7-handoff">7. 历史归档怎样解释早期 handoff</a></li>
+<li><a href="#8-handoff">8. 这些 handoff 合在一起改变了什么判断</a></li>
+<li><a href="#9">9. 下一步</a></li>
+<li><a href="#10">10. 限制与当前完成边界</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>日期：2026-09-25<br>
+读者：项目 owner，以及需要决定数据修订、SFT 目标和下一轮评测的研究与工程人员<br>
+状态：全量语义审计已收口。4,555/4,555 条真实 raw 输出都有复核记录，对应 4,039 个去重语义单元，missing、extra、request ID 和 raw hash 问题均为 0。完整目标图、Oracle miss 和 Phase 1 action 材料性升级项的独立 QA 与 root 裁决均已落账。</p>
+<h2 id="_1">结论</h2>
+<p>只看 strict JSON、exact alias、正则字段和记录动作框，会明显低估模型已经表达出的语义。独立 QA 在冻结 14 case 的完整目标图上复核了每个模型 48 个 <code>requires_new_observation</code> 字段：8B 和 32B 的核心实体、状态或数值语义均为 48/48 supported。8B 有一项只写对餐厅实体而没有完整转写地址，按完整 annotation value 计为 47/48。明确 query 的 grounding 也有不少落框 miss 实际点在同一控件或等价入口。自然语言观察计划经常与刚发出的 action 和可见 prefix 相容。旧报告中的若干极低分因此混入了字段容器、别名覆盖、单一轨迹动作和输出坐标接口问题。这是小规模完整图 case study，不能外推成受限观察可靠性或泛化准确率。</p>
+<p>语义复核没有把受限观察链改写成已经可靠。模型常能在 crop 不足时合理选择 revisit 或 abstain，但这只说明它没有编造答案。明确的内容错误包括把第二个商品或地图 marker 当作第一条列表结果，以及把没看见写成页面不存在。未利用 prefix 信息和补看方向持续偏离 search/result/action 所在区域属于任务覆盖或决策/选区问题，应与事实错误分开。8B 的 v2 restricted 90 条输出只有 4 条整份回答同时满足指定 auxiliary 字段、合法可见证据和决定。32B 的 56 个最终条件中有 21 条被归入 <code>correct_facts</code>，其中 20 条同时得到可见证据支持且没有实质额外错误；另 1 条值与离线真值一致，但合法 crop 证据不足。其余分类为 10 条内容或决定错误、13 条合理不确定和 12 条缺失或部分缺失。两套 rubric 和汇总层级不同，这些数不能组成 8B/32B accuracy 排名。</p>
+<p>Phase 1 action QA 同时收紧了过宽的语义改判。133 条材料性升级经独立 QA 和 root 裁决后，最终只有 41 supported、60 plausible；30 条改为实质行动/选区问题，2 条保留未决。相邻控件、空白、重复失败的 Go、无关的 Show My Location 和错误商品/状态解释了多数降级。这个结果同时确认了 strict false negative 和初审过度宽松两种风险。</p>
+<p>现有证据显示基座具备部分计划、grounding 和完整图读取能力。本轮直接观察到的断点集中在“计划映射到授权区域”“只用这些区域识别任务所指实例”“知道何时已有充分证据”三层接口。SFT 工程已经闭环，但本轮复核的基座结果仍未加载 adapter，不能回填训练收益。此前各 handoff 的数据、工程和组件关系见<span class="unbundled" title="原报告引用；此证据文件未随本站发布">各工作线综合</span>。</p>
+<h2 id="1">1. 本轮怎样避免再次用格式代替语义</h2>
+<p>统一复核约定见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">REVIEW_CONTRACT.md</span>。每条输出先回连实际 request，确认该轮允许看到的 task、history/current、restricted canvas 和 prior assistant context，再读 raw 回答。完整 target 只供离线核对，不给预测前断言补证据。</p>
+<p>复核同时保存四组判断：</p>
+<ol>
+<li>回答表达的实体、状态、数值是否正确。</li>
+<li>正确内容是否由该轮合法可见证据支持。</li>
+<li>已见信息是否足以支持当前任务决定。</li>
+<li>act、revisit、abstain 或观察区域是否合理。</li>
+</ol>
+<p>JSON nesting、字段名、tag、大小写和等义状态单独记为格式。遗漏和合理拒答仍保留在全分母覆盖中，不自动算事实错误。点到记录框之外也不会自动判错：同一控件的文字与图标、多个合理商品、等价导航入口和有效的 current-position copy 都要看图处理。反过来，坐标接近不代表语义正确；相邻工具按钮、同名元素和错误商品实例仍需判错。</p>
+<p>全局 coverage 按真实 raw 物理记录计数，重复输出仍保留来源；语义复核单元则合并可证明完全相同的副本。覆盖闭合只说明来源和复核记录齐全。粗区域判断、原图字段核对、action 决策和 layout pair 属于不同证据层，不能汇成一个 accuracy。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>输出族</th>
+<th style="text-align: right;">真实 raw 记录</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 canonical</td>
+<td style="text-align: right;">2,124</td>
+<td>正式 prediction、layout、oracle、action/check/revisit、canvas 与 native-focus</td>
+</tr>
+<tr>
+<td>Phase 1 historical</td>
+<td style="text-align: right;">1,879</td>
+<td>含 480 条 canonical judge 的逐字副本；历史协议和调试输出单列</td>
+</tr>
+<tr>
+<td>Phase 1c 8B</td>
+<td style="text-align: right;">304</td>
+<td>v2、legacy evidence、backend 与 smoke</td>
+</tr>
+<tr>
+<td>Phase 1c 32B</td>
+<td style="text-align: right;">248</td>
+<td>core、full-target、重复 pod 物理来源与辅助 smoke</td>
+</tr>
+<tr>
+<td>合计</td>
+<td style="text-align: right;">4,555</td>
+<td>去重后 4,039 个语义复核单元；另有 1 次调用在模型输出前失败，不进语义分母</td>
+</tr>
+</tbody>
+</table></div>
+<p>来源闭合与逐文件 hash 见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">global coverage audit</span>。</p>
+<p>审查先按分片完成单名初审，再对会改变 headline 的项目加独立 QA。full-target 由一名没有参与该 stage 初审的 assistant 复核 56 个输出和 14 张去重 target；复核者知道模型身份和已有 headline，因此不是盲审。Oracle 在 root 抽查发现问题后，对全部 bbox-miss 升级项回到原图重看。Phase 1 action 的 133 条升级项由另一名 assistant 全量复核，root 再逐项裁决 43 条改类或理由修正并覆盖 5 项 QA 判断。其余分片除非来源报告另有说明，仍是单名复核；4,555 条 raw 并非每条都做了双审。</p>
+<p>新的类别也不等价于一列 accuracy。<code>supported_correct</code> 要求内容和可见证据都成立；<code>plausible_alternative</code> 表示动作或计划与任务相容，但没有在线结果确认；<code>correct_but_unsupported</code> 表示值与离线真值一致，但没有找到合法可见证据；<code>appropriate_uncertainty</code> 不恢复字段答案；<code>substantive_error</code> 可以是事实错、任务逻辑错或明显错区；<code>unresolved_or_missing</code> 保留证据不足和协议无法表达的情况。</p>
+<p>full-target 的核心语义判准另行固定：回答需唯一指认任务所指或 first eligible 实体，且请求的状态、数值没有矛盾。简称、同义表达和同一实例的可见附加属性可以接受；完整地址或标题的覆盖另记 <code>annotation_content_complete</code>。错商品、错价格不接受。这个判准是事后 assistant 复核规则，不是预注册 human-gold scorer。</p>
+<h2 id="2-query">2. 完整目标图与明确 query：旧低分有多少是接口问题</h2>
+<h3 id="21-8b32b-full-target">2.1 8B/32B full-target</h3>
+<p>8B 的 HF full-target 28 条中，25 条整份响应得到图像支持，3 条是 mixed：Fitbit 标题省略可见后缀，Rainbow CSV 两臂分别漏答或误判清楚可见的 Install。正式 backend 配对一共 33 个 request，包括 4 个 sanity、1 个 long decode 和 28 个 full-target；31/33 的内容语义等价，另两对是 Fitbit 标题覆盖差异和 long decode 的内容/截断差异。这组 backend 配对与下表的 vLLM required-new 字段分母分开报告。详情见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">8B backend 语义复核</span>。</p>
+<p>独立 QA 随后统一复核了 14 case、两种 history arm、两模型，共 56 个完整图响应和 112 个字段 claim。每个模型的 <code>requires_new_observation</code> 分母都是 48，8B 与 32B 的核心语义均为 48/48 supported。8B 全部 56 个字段中有 54 个核心语义得到支持；若要求完整转写 annotation value，则为 53/56，required-new 为 47/48。差异来自 restaurant current-only：回答给出了正确的首个实体 <code>Carnegie Mellon Café</code>，但没有完整地址。Rainbow CSV 的 prefix-known action state 一臂未答、一臂把可见 Install 写成不存在，因此 8B response-level 为 26/28。</p>
+<p>32B 为 52/56 字段 supported、26/28 响应 supported。四个未答字段都来自 Rainbow CSV 两臂：完整图已经显示 identity 和 Install，模型仍 abstain。Fitbit 返回的 <code>Pre-Owned</code>、<code>Black</code> 等后缀是同一卡片上的可见属性，没有被改判为错商品。pod1/pod3 的 28 对 raw 完全相同，共享语义判断，但两个物理来源仍保存在账本。逐 claim 依据见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">full-target independent QA</span>。</p>
+<p>同一组 48 个 required-new 字段的口径变化如下。每个模型另有 8 个 prefix-known 字段，所以 all-field 分母是 56；表内没有混用 56。</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>vLLM full-target</th>
+<th style="text-align: right;">raw strict</th>
+<th style="text-align: right;">flat/schema adapter</th>
+<th style="text-align: right;">核心语义支持</th>
+<th style="text-align: right;">完整 annotation value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8B</td>
+<td style="text-align: right;">4/48</td>
+<td style="text-align: right;">35/48</td>
+<td style="text-align: right;">48/48</td>
+<td style="text-align: right;">47/48</td>
+</tr>
+<tr>
+<td>32B</td>
+<td style="text-align: right;">36/48</td>
+<td style="text-align: right;">36/48</td>
+<td style="text-align: right;">48/48</td>
+<td style="text-align: right;">48/48</td>
+</tr>
+</tbody>
+</table></div>
+<p>这张表显示旧 strict 很大程度低估了完整图字段语义。core semantic 与 strict/flat 不是同一判准，不能把差值直接称为新增 accuracy。完整图结果也没有证明 restricted crop、选区 controller 或在线任务已经可靠。</p>
+<h3 id="22-oracle-grounding">2.2 Oracle grounding</h3>
+<p>97 个明确控件 query 的两模型输出全部重新看图。8B 的记录框命中为 73/97，图像复核为 79 supported、5 plausible、13 substantive error；32B 为 79/97，复核后 86 supported、5 plausible、6 error。press-and-hold 按钮、Issues 导航文字和商品卡内部点击解释了一部分 bbox miss；相邻的 Zoom In/Out、Share/Show My Location 和同名但不同用途的按钮仍判错。这个 QA 已对全部 bbox-miss 升级项回看原图，见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">layout/oracle 报告</span>。</p>
+<p>Oracle 给了完整目标图和明确 query。它证明视觉 grounding 和坐标接口有可用基础，不能替代下一屏不可见时的区域预测。</p>
+<h2 id="3">3. 预测前计划和空间点：计划合理不等于选区充分</h2>
+<p>v2 使用项目根据用户描述写出的近似自然提示 <code>phase1c.approximate_natural_observation_plan.v2</code>，不是用户原始 prompt、模型设置和完整会话的复现。8B 的预测前 84 条输出已逐条复核，每个 stage 都是 14 case × warm/current-only 的 28 条。plan 中有 15 supported、8 mixed、4 substantive error、1 unresolved；direct point 为 15 plausible、11 spatial error、2 unresolved；plan-to-point map 为 19 plausible、3 spatial error、6 unresolved。点的判断只使用合法 prefix/current，不用 future target 为点位背书。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">8B pre-observation summary</span></p>
+<p>32B 的 28 个自然计划分为 8 supported、18 plausible、2 mixed；direct point 有 13 个可辩护粗位置和 15 个明显空间错误；map 有 4 个初次 crop 直接支持证据、22 个合理但未必充分的区域和 2 个错误区域。这与正式几何中 plan route 相对 direct 的方向一致，但语义类别不能加到 controller coverage 或 C 字段结果。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">32B 全量报告</span></p>
+<p>两模型 A reviewer 的标签定义没有完全统一。32B 对多种合理方案较常用 <code>plausible</code>，8B rubric 更常把 action-aligned 计划标为 <code>supported</code>，所以 15 对 8 不是能力排序。旧同一 blind-review 流程的 15/28 对 24/28 可继续作为历史辅助，但也只判断已输出计划文本是否合理。可以稳定描述的正例是计划围绕刚发出的搜索、安装、列表或 modal 状态寻找证据；负例则包括忽略 prefix 已显示的安装状态、预期错误商品区域，或加入 prefix 无法支持的 developer/未来事实。</p>
+<h2 id="4-restricted-observation">4. Restricted observation：合理不确定不能加回答案</h2>
+<h3 id="41-8b-v2">4.1 8B v2</h3>
+<p>冻结 14 case 由 8 个 train、3 个 calibration、3 个 test case 组成；本文汇总的是 pooled 14-case case study，不能当成 held-out 泛化结果。C 是预先定义的 auxiliary 字段任务，不等同原 CU/BU 任务所需的全部或唯一证据。query 已经给出的实体、历史中已显示的安装状态，或与预设字段不同但合理的观察计划，可能已经足以服务原任务。下面的字段覆盖只评价 frozen auxiliary contract；本轮没有真实 online action label 或任务 rollout 成功可供对照。</p>
+<p>8B 的 check/revisit 共 90 条，全部查看了实际 canvas。primary 分类为 4 supported、20 appropriate uncertainty、4 correct-but-unsupported、19 missing/unresolved、43 substantive error。43 条中只有 28 条包含字段内容错误，另有 11 条主要是补看点明显选错；因此不能写成 43/90 的事实错误率。</p>
+<p>逐字段 180 项中，16 个字段有合法可见证据支持，6 个值与离线真值一致但可见证据不足，36 个实质错误，82 个合理不确定，40 个缺失。四条完整支持回答来自 VotTak、Tab Size 和一条 Hilton supermarket 链。购物错例反复把第二张卡片当第一张；地图错例把 Costco Drive 或 Walmart Garden Center 当左侧第一条结果；多条 map case 只看见标题栏却输出 <code>not_present</code>。详细逐例和 90-row 账本见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">8B restricted 报告</span>。</p>
+<p>合理 revisit/abstain 的价值在于不编造信息。它不会把 null 恢复成正确字段。Rainbow CSV、Instagram 和 Tab Size 中，prefix-known 字段被一起报 unknown 说明模型没有利用或没有复述 frozen contract 要求的信息；这是一项 auxiliary 覆盖缺口，不应自动扩写成模型整体不理解原任务。</p>
+<h3 id="42-32b-registered-final-response">4.2 32B registered final response</h3>
+<p>32B 按冻结 chooser 选出 56 个 <code>case × arm × method</code> 最终响应。21 条被归入 <code>correct_facts</code>，其中 20 条的核心 required facts 同时有可见证据支持且没有实质额外错误；一条 restaurant 回答与离线真值一致，但合法 cumulative crop 证据不足。20 条按 direct-current、direct-warm、plan-current、plan-warm 分别为 3、5、5、7，每个条件分母都是 14。其余为 10 条内容或决定错误、13 条合理不确定、12 条缺失或部分缺失。12 个 missing 中有 9 个 mixed response：一个字段合理不确定，另一个 prefix-known 或 crop-visible 字段却被漏掉。</p>
+<p>二审还纠正了一项 schema 想当然。memorial warm plan check 的 required identity/status 都有像素支持，输出另写 <code>instance="cell25"</code>。prompt 只要求 instance 是 string/null，没有规定它必须是实体名；canvas 又明确把正确证据标成 cell25，因此这项 metadata 不能作为错误事实扣分。原分片判断和 QA override 都保留在审计轨迹中。</p>
+<p>错误类型与 8B 相似：购物 case 选错第一张商品；地图把 marker 当列表首项；可见地址被截断或拼错；已经看见 terminal <code>No results found</code> 后仍 abstain。四条件各自的 response 分类保存在 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">32B summary</span>。这些是 response-level 语义分类，没有重算统一字段级 accuracy。本轮也没有完成同字段 matched route-effect 对照，因此不能据此宣布 plan route 相对 direct 已有或没有功能优势。</p>
+<h2 id="5-phase-1-next-click">5. Phase 1 行动链：轨迹 next-click 漏掉替代动作，补看决定与选区仍有问题</h2>
+<p>Phase 1 protocol2 的 full-target action、check/revisit 和 canvas 共 688 条已经过逐图初审、材料性升级 QA 和 root 裁决。222 个 full-target 动作最终分为：8B 46 supported、27 plausible、34 substantive error、4 unresolved；32B 50 supported、39 plausible、20 substantive error、2 unresolved。8B raw strict 只有 23 个记录框命中，另有 27 条格式失败；32B strict 命中 46。plausible alternative 没有在线执行，不能与 supported 合并成成功率。</p>
+<p>428 条严格 revisit 中，298 条在证据不足时选择了有用或至少合理的补看；126 条存在决定或选区问题，4 条不可判。问题主要表现为目标控件已经可见却继续补看，或连续向页面下方、灰区或无关表格扫描。这组 strict-revisit 计数没有受 action-upgrade QA 改动。</p>
+<p>133 条材料性升级从初审的 42 supported、91 plausible，经独立 QA 后变为 42 supported、57 plausible、33 substantive error、1 unresolved；root 最终裁决为 41 supported、60 plausible、30 substantive error、2 unresolved，较初审改变 38 条类别。root 保留了可能的 taxonomy/recovery 路径，把任务已完成却没有 stop 槽的两条输出留为 unresolved，并将像素边界意图与 hit test 分开。688 条最终 primary 类别为 103 supported、70 plausible、298 appropriate uncertainty、2 correct-but-unsupported、199 substantive error、16 unresolved。199 个 substantive error 多数是点击、补看决定或选区问题，不能写成 199 个字段事实错误。完整库存、逐条 raw/SHA、初审快照和裁决轨迹见 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">Phase 1 action 最终报告</span>。</p>
+<p>Phase 1 同时暴露上游数据边界。部分 task/prefix 停在语义不相干页面，例如 RSS feed token 对 project access token、Pending reviews 对 Products 表；另有 biography 已成功却仍被协议强制输出下一 click。此类行描述当前行为没有推进任务，不能把原因全归给视觉模型。teacher-forced trajectory、短历史和缺少 stop 动作都可能参与。</p>
+<h2 id="6-layout">6. Layout 结果怎样补足行动链</h2>
+<p>240 个 layout pair 的图像复核把直接空间复用分为 yes 118、partial 20、no 102。原 silver <code>same_layout</code> 中有 16 对不能直接复用，<code>different_layout</code> 中有 21 对反而可以。两模型原来的 195/240、186/240 因而只能称 silver agreement。</p>
+<p>8B 的 240 条 layout 回答为 218 supported、20 plausible、2 error；32B 为 203 supported、20 plausible、17 error。32B 的常见问题是把共同 chrome 当作足够空间复用，忽略 modal、键盘、广告或展开 sidebar。该结果支持把 <code>same_template</code>、<code>spatial_reusable</code> 和 <code>state_change</code> 分开保存。它没有证明旧历史给预测带来净收益，也不能把 layout judge 结论直接作为 SFT 标签。</p>
+<h2 id="7-handoff">7. 历史归档怎样解释早期 handoff</h2>
+<p>历史分片用于诊断旧协议和数据来源，全部排除在 canonical 方法效果之外。769 条 archived predict 输出只做了初始 top-8 区域的粗粒度效用复核：124 条包含主要任务区域，197 条只覆盖部分任务区域，12 条覆盖部分任务状态；另有 203 条主要提供上下文，233 条因任务对齐不清、缺少明显任务证据或空间引用无法还原而未形成任务区域结论。它们混合已废弃 V1、unrelated-history control 和 format calibration，不能作为字段读取、动作成功或历史机制收益。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">first55 prediction</span> 与 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">last56 prediction</span> 保留原始分层。</p>
+<p>368 条历史 grounding/check 输出揭示了更直接的接口错位。115 条 point 与请求明写的 normalized <code>[0,1]</code> 合同冲突，正式 verdict 保留为 unresolved。固定按 Qwen 原生 0..1000 解释的后验视图中，first55 的 60 条有 54 条空间意图相容、6 条仍错；last56 的 55 条为 26 supported、14 plausible、15 error。固定按 target 像素解释时，两半都明显更差且有物理越界。两个视图都不逐行挑较优解释，也没有执行动作；不同 reviewer 的“相容”类别不会合并成新 accuracy。例如 last56 的 raw <code>[48,885]</code> 只有在原生尺度下才落到 Shoes，这提示坐标合同错位，却不能证明动作已执行成功。另有 81 条原文写 <code>decision="act|revisit"</code>、<code>point=null</code> 并给出 cells，decision 全部保持未决；cells 是否有用另行评价，不能替模型补成 act 或 revisit。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">first55 action</span> 与 <span class="unbundled" title="原报告引用；此证据文件未随本站发布">last56 action</span> 给出逐 ID 账本和固定坐标敏感性。</p>
+<p>历史 reference-layout 的 260 条回答中，252 supported、6 plausible、2 substantive error；130 个图片对的直接空间复用分层为 yes 107、partial 3、no 20。这说明旧 annotation 大多能描述模板关系，也保留了滚动、modal 和内容状态造成的空间边界。它用于筛选 reference/SFT 候选，不加入 canonical layout accuracy 或模型效果分母。<span class="unbundled" title="原报告引用；此证据文件未随本站发布">历史 reference-layout 报告</span></p>
+<h2 id="8-handoff">8. 这些 handoff 合在一起改变了什么判断</h2>
+<p>数据审查说明 action bbox 只是 proxy，check/revisit 标签还可能与 task state 冲突；实机工程证明 mask、causal、adapter save/reload 和真实多图 vLLM 链已经可运行；本轮语义复核再把 scorer 混杂和模型实质错误拆开。三条线合并后，旧结果不再适合用一个 strict 数概括：</p>
+<ul>
+<li>完整图读取比 raw strict 显示得强，说明 schema/alias 修订有必要。</li>
+<li>下一观察计划存在可用语义，但 direct/map 中仍有大量错区，说明文本计划与空间 head 是两个训练目标。</li>
+<li>restricted 回答里有不少合理不确定，也有明确的 wrong-instance、list/marker 混淆和 absence 误判，说明 C 不能只靠放宽 scorer 修好。</li>
+<li>Phase 1 轨迹 next-click 会漏掉合理替代动作，同时补看决定和选区问题仍大量存在，说明 action utility 需要多候选或任务结果验证。</li>
+<li>工程闭环没有加载 adapter 到上述诊断，训练方法收益仍未测。</li>
+</ul>
+<h2 id="9">9. 下一步</h2>
+<ol>
+<li>修数据语义。优先处理 task/prefix/target action 不衔接、任务已完成却无 stop、prefix-known 字段被当 unknown、以及“第一条列表结果”与“任意可见 marker/card”混淆。</li>
+<li>固定同例 full-target、审过 evidence region 和模型自选 region 三方对照，逐字段区分选错区域、crop 不可读、错误停止和 scorer coverage。合理 uncertainty 继续占用任务覆盖分母。这项 matched 对照尚未执行。</li>
+<li>先训练 decision evidence 与 check/revisit，再比较文本 ROI、multi-ROI 和固定坐标 head。固定授权像素只改 renderer 的实验与改变选区几何的实验分开。这些方法对照尚未执行。</li>
+<li>显式加载 Phase 1c adapter，在同 prompt、controller、schema 和 held-out split 上做 base/adapter 对照，并保留完整观察 CU/BU 回归。自然计划多一次调用，任何功能收益都要与 token、revisit 和时延一起报告；本轮没有测得 adapter 能力收益。</li>
+</ol>
+<h2 id="10">10. 限制与当前完成边界</h2>
+<ul>
+<li>全部新 review 都是 assistant non-human-gold；对小字、同名入口和替代动作的判断存在主观性。</li>
+<li>14-case 诊断混合 8 train、3 calibration、3 test case；pooled 结果不能写成 held-out 泛化。</li>
+<li><code>supported + plausible</code> 不能写成 accuracy；plausible 没有在线结果。</li>
+<li>response-level、field-level、point-level 和 pair-level 的分母不能相加。</li>
+<li>reviewer 为核对结果看过 full target，因此 post-hoc 解释可能受 outcome knowledge 影响；账本保留了 model-visible 与 reviewer-only 图像边界。</li>
+<li>全局 coverage 已闭合 4,555/4,555 raw 和 4,039/4,039 去重语义单元。Phase 1 action 只有 133 条材料性升级接受独立二审和 root 裁决，其余 555 条仍是单名 assistant 复核；全量覆盖不等于全量双审或 human-gold。</li>
+</ul>
+<p>旧 raw、scorer、aliases 和阶段报告全部保持不变。本报告作为新的语义层，与 <a href="stage1-report.html">Stage 1 综合报告</a>、<span class="unbundled" title="原报告引用；此证据文件未随本站发布">Phase 1c 工程报告</span> 和<a href="base-diagnostics.html">基座诊断报告</a>并列使用。</p></main>
+<aside class="source-note">来源：<code>docs/ROLLOUT_SEMANTIC_AUDIT_20260925.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

@@ -1,0 +1,5 @@
+model,protocol,next_click_n,next_click_strict_valid,next_click_controller_valid,explicit_query_n,explicit_query_strict_valid,explicit_query_controller_valid,cold_strict_valid,unrelated_strict_valid,warm_strict_valid,next_click_strict_bbox_hit,explicit_query_strict_bbox_hit,next_click_adapter_extra_bbox_hit,cold_hit8_fixed_n111,cold_hit16_fixed_n111,unrelated_hit8_fixed_n111,unrelated_hit16_fixed_n111,warm_hit8_fixed_n111,warm_hit16_fixed_n111,layout_silver_agreement_n240,strict_act_by_end_n111,strict_revisit_triggers,explicit_query_adapter_extra_bbox_hit,explicit_query_controller_bbox_hit,next_click_controller_bbox_hit,seed_direct_useful_n10,seed_forced_ref_layout_useful_n10
+Qwen3-VL-8B-Instruct,frozen_phase1_point_json,111,84,110,97,97,97,111,110,111,23,73,3,21,33,17,30,19,29,195,27,104,0,73,26,4,5
+Qwen3-VL-32B-Instruct,frozen_phase1_point_json,111,111,111,97,97,97,101,106,103,46,79,0,19,35,17,39,16,36,186,4,99,0,79,46,5,6
+UI-TARS-1.5-7B,frozen_phase1_point_json,111,12,12,97,2,2,7,0,0,0,0,0,3,3,0,0,0,0,125,0,0,0,0,0,1,2
+LookAgain-8B,frozen_phase1_point_json,111,109,109,97,97,97,111,109,110,26,76,0,30,48,13,21,19,29,187,12,37,0,76,26,3,1

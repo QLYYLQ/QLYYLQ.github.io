@@ -1,0 +1,4 @@
+model,platform,protocol,n,native_contract_valid,native_contract_bbox_hit,posthoc_readable_coordinates,posthoc_bbox_hit_diagnostic_only
+AGW-35B,all,native_Action_computer_use_different_from_point_JSON,97,25,15,95,62
+AGW-35B,web,native_Action_computer_use_different_from_point_JSON,76,17,9,75,47
+AGW-35B,mobile,native_Action_computer_use_different_from_point_JSON,21,8,6,20,15

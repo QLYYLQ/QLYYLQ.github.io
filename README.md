@@ -8,8 +8,27 @@
 - `omnifex/cases/img/`：从原生 KiCad、STEP 等工件渲染的图、交互模型和缩略图。
 - `scripts/build_cases.py`：从 JSON 生成案例详情页、案例索引及项目页案例数。
 - `assets/site.css`：主页、项目索引和案例页共用的样式。
+- `cu-model/`：与 Omnifex 同级的 CU Model 项目页、25 份研究报告、23 张实验图和 14 例 AGW 画廊。
 
-站点没有 npm 依赖或服务端。Python 3 标准库即可构建、检查和预览现有页面；浏览器的 3D 模型使用 `assets/vendor/model-viewer/` 中的固定版本，加载失败时保留静态预览。
+站点没有 npm 依赖或服务端。Python 3 标准库即可构建 Omnifex 案例、检查和预览全站；CU Model 报告转换使用下文固定版本的 Markdown。浏览器的 3D 模型使用 `assets/vendor/model-viewer/` 中的固定版本，加载失败时保留静态预览。
+
+本仓库已独立放在 `~/QLY/code/QLYYLQ.github.io`，拥有自己的 `.git` 和原 GitHub remote，不依赖 Omnifex 工程的目录层级。网页和已收录资料都随仓库保存，预览和发布不需要挂载研究工程。
+
+## 更新 CU Model
+
+`cu-model/reports.json` 登记报告标题、日期和本地来源。`sources/` 保存供网页使用的 Markdown 快照；`media/` 保存原图和对照 CSV；`index.html` 的概述单独维护，报告目录由脚本更新。现有 GitHub Pages 直接提供生成好的 HTML，访客不需要 Markdown 渲染器或 Claude 登录。
+
+首次同步或研究稿有变更时（源目录只读）：
+
+```sh
+uv run scripts/build_cu_model.py --source ~/QLY/report/cu_model
+python3 scripts/check_cu_model.py --source ~/QLY/report/cu_model
+python3 scripts/check_site.py
+```
+
+只改快照或页面模板时，运行 `uv run scripts/build_cu_model.py`。构建脚本用内嵌依赖声明固定 `Markdown==3.7`，由 uv 提供隔离环境；普通检查和预览仍只依赖 Python 标准库。不要直接改生成的报告 HTML。
+
+转换保留研究正文和数值，将个人机器与内部存储位置泛化；源文件原始哈希记录在 `provenance.json`，快照、网页及图表哈希记录在 `manifest.json`。原报告引用但本站未收录的文件会显示为带提示的虚线文字，明细在 `unbundled-references.json`。未复制实验大包、模型、运行凭证、Claude 记忆和远程作业配置。历史报告按原日期保留，最新方案以 2026-11-03 路线为准。
 
 ## 更新 Omnifex 文档
 

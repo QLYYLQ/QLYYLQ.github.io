@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="上下文衰减测试清单 · CU Model 研究资料">
+<title>上下文衰减测试清单 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-11-03 · 当前路线</div>
+<h1>上下文衰减测试清单</h1><p class="lead">用同一批完整轨迹比较五种历史设置；列出记录字段、配对分析和长历史补测步骤。尚待执行。</p>
+<p class="source-note">本页按 11 月 3 日更新的本地研究稿整理；方案、估算和待做实验沿用原文标记。</p><p class="source-note"><a href="sources/context-decay.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">准备</a></li>
+<li><a href="#_2">设置</a></li>
+<li><a href="#_3">判一致的规则</a></li>
+<li><a href="#csv">每次调用记一行（CSV）</a></li>
+<li><a href="#_4">分析</a></li>
+<li><a href="#_5">怎么读结果</a></li>
+<li><a href="#veriweb">更长的历史（VeriWeb 人工演示）</a></li>
+<li><a href="#_6">可选：无关历史</a></li>
+<li><a href="#_7">可选：决定本身有多不稳</a></li>
+<li><a href="#_8">量</a></li>
+<li><a href="#_9">交回</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>2026-11-03。对应《局部观察训练路线梳理》“前瞻训练前先测的三件事”里的上下文衰减那一项，你在自己的实验环境里跑。</p>
+<p>要回答的问题：在我们现有的轨迹长度上（10-28 试采平均 15.6 步，全历史约 1.9 万 token），靠后的步里，给模型全部历史截图是否反而不如只给最近几张。是的话，论文的动机在现有数据上就能立住；不是的话，动机主要靠 Odysseys 这种更长的任务来证明。</p>
+<p><em>标注沿用报告：</em><em>项目数据</em><em>是项目文件里的数，</em><em>推断</em><em>是由证据推出的判断，</em><em>直觉</em><em>是没有直接证据的判断，</em><em>建议</em><em>是具体做法。</em></p>
+<h2 id="_1">准备</h2>
+<ul>
+<li>[ ] 数据：10-28 那轮（<code>cua-collection-20261028</code>）的录制在 spectragent 的运行目录里；逐条记录也在验证包的 <code>records/*.jsonl</code> 里（Mac 上 <code>$LOCAL_HOME/QLY/report/cu_model/数据采集验证报告与详细记录.zip</code>）。</li>
+<li>[ ] 轨迹：用审查第 3.1 节说的那 30 条完整轨迹（约 470 步）。已经抽好的照用，从第一次撞上人机验证那一步起，后面的步都去掉；还没抽的话，从没撞过验证的 476 条里按条随机抽 30 条，记下随机种子。</li>
+<li>[ ] 留出：这 30 条以后不进整屏底座（第一轮用原图做的全量 SFT）的训练集。调提示、解析规则和 judge 用这 30 条以外的几条轨迹，30 条只用来报数。</li>
+<li>[ ] 参考动作：录制模型（<code>deepseek-v4.1-flash-m17</code>）录下的动作当参考，主结果只算可信的步。审查第 3.1 节建议过每步审核（审核模型逐步判通过或不通过），做了的话只用判通过的步；还没做，就用机械筛选：<code>step_status: ok</code>（动作执行成功）、主文档已加载完（导出器 <code>exclude_unloaded_steps</code> 管的那一项）、不在人机验证页上。全部步的结果另报一份。</li>
+<li>[ ] 模型：先用零样本的 Qwen3-VL-8B-Instruct 跑一遍看方向；整屏底座训完后，用同一套脚本再跑一遍，以那次为准。</li>
+<li>[ ] 格式：用 10-28 导出学生样本的那套系统提示和历史写法（验证包第 8 节那首批 46 条学生样本就是这个格式；截图 1280×720 缩到 1280×704，每张 880 个视觉 token）。各设置之间只改“历史里哪些步留截图”，别的都不动。零样本模型先在调提示用的那几条轨迹上跑 20 步，看输出能不能解析；解析率低于九成，就在系统提示里加一个格式示例，所有设置共用这一个提示。</li>
+<li>[ ] 推理：贪心解码；<code>max_model_len</code> 要放得下最长那条的全历史（30 步约 3.6 万 token，<strong>项目数据</strong>，留到 6.4 万）；开前缀缓存。记下被截断的提示数，应当是 0。</li>
+</ul>
+<h2 id="_2">设置</h2>
+<p>每一步在下面五种历史下各出一次动作。历史用录下的前缀（录制模型的截图、thought 和动作），不用被测模型自己跑出来的；当前屏一律给整屏。括号里是 CSV 里 <code>setting</code> 的取值。</p>
+<ul>
+<li>[ ] 全历史（<code>full</code>）：历史里每一步的截图都留。</li>
+<li>[ ] 最近 4 张（<code>recent4</code>）：最近 4 步的截图留着，更早的步只留文字（thought、动作，以及导出格式里原有的 URL 等文字）。</li>
+<li>[ ] 最近 2 张（<code>recent2</code>）：同上，只留 2 张。</li>
+<li>[ ] 只留文字（<code>text_only</code>）：历史里一张截图都不留。</li>
+<li>[ ] 无历史（<code>no_history</code>）：只给任务和当前屏，当下限，看历史到底有没有被用上。</li>
+</ul>
+<h2 id="_3">判一致的规则</h2>
+<p>每个输出和录下的动作比，一致记 1，不一致记 0。先把两边换到同一个坐标系：模型输出的坐标换成原截图 1280×720 上的像素（Qwen3-VL 写的是 0 到 1000 的相对坐标，横坐标乘 1.28、纵坐标乘 0.72；导出格式要是本来就用像素，就不用换）。录制里的元素框是视口像素（DPR 1），本来就在这个坐标系里。</p>
+<ul>
+<li>[ ] 点击：单击、双击、右键要同类；点落在录下动作目标元素的框里就算一致。框来自录制里的 DOM 和无障碍树（AX）信息，几个框重叠时用最小的那个。目标元素没有框的步交给 LLM judge。</li>
+<li>[ ] 输入：输入框是同一个（判法同点击），文字归一化后相同（去首尾空格、统一全半角、不分大小写）。意思相同、写法不同的交给 LLM judge。</li>
+<li>[ ] 滚动：方向相同就算一致，不比滚动量。</li>
+<li>[ ] 按键：同一个键或组合键。先统一写法：审查里回车有 Return、enter、Enter、ENTER 四种写法，全选有 Meta+A、meta+a、Meta+a、ctrl+a；不分大小写，Return 当 Enter，只差 Meta 和 Ctrl 的同名组合（全选、复制、粘贴）算一致。</li>
+<li>[ ] 导航（打开网址、返回、前进、新标签页）：动作类型相同；打开网址时域名和路径相同。</li>
+<li>[ ] 等待：类型相同。</li>
+<li>[ ] 结束和作答：类型相同；答案交给 LLM judge，按任务判是否同样正确。</li>
+<li>[ ] 读值的步：录下的 thought 或答案里写出了从页面上读到的值（数字、名称、日期等），这一步就算读值步。这类步另比被测模型写出的值和录下的是否一致，用 LLM judge。只比动作会偏乐观，这是 10 月 29 日定分辨率时补的一条。</li>
+<li>[ ] 多动作步：主结果比第一个动作；另报全部动作逐个一致的比例。</li>
+<li>[ ] 解析不出的输出算不一致，另记一列。</li>
+<li>[ ] LLM judge：用一个固定的强多模态模型（比如录制模型，或你手上最强的那个），所有设置共用同一个 judge 和提示，judge 看不到是哪种设置出的。给它的输入：任务、动作前的截图（两边的点都画上）、录下的动作和 thought、被测模型的动作和 thought；作答和读值的步再加上两边写出的答案或值。</li>
+</ul>
+<h2 id="csv">每次调用记一行（CSV）</h2>
+<ul>
+<li>[ ] 列：<code>run_id</code>（被测模型和检查点）、<code>trace_id</code>、<code>step_idx</code>（从 1 数）、<code>n_steps</code>（这条轨迹的总步数）、<code>setting</code>、<code>sample_idx</code>（贪心是 0，可选的两次采样是 1 和 2）、<code>ref_action_type</code>、<code>agree_first</code>、<code>agree_all</code>、<code>read_value_agree</code>（不是读值步就留空）、<code>parse_ok</code>、<code>judge_used</code>、<code>step_trusted</code>（是否算进主结果）、<code>n_images</code>、<code>visual_tokens</code>、<code>text_tokens</code>、<code>latency_ms</code>、<code>raw_output</code>。</li>
+</ul>
+<h2 id="_4">分析</h2>
+<ul>
+<li>[ ] 分桶：按步序分成第 1 到 5 步、6 到 10、11 到 15、16 步以后；再按相对位置分前、中、后三段。每桶报每种设置的一致率和步数。</li>
+<li>[ ] 主比较：第 11 步以后的步上，全历史减最近 2 张。辅助比较：同样的步上全历史减最近 4 张，以及后三分之一那一段。</li>
+<li>[ ] 区间：同一批步上配对算差值，按条重抽（bootstrap 至少 1,000 次）给 95% 区间。</li>
+<li>[ ] 另报：每种设置的平均视觉 token 和延迟；全历史和最近 2 张两两之间的动作一致率，看历史多常改变决定。</li>
+<li>[ ] 画图：横轴步序（或相对位置），纵轴一致率，每种设置一条线，带区间。</li>
+</ul>
+<p>能分辨多大的差距（<strong>推断</strong>）：30 条约 470 步，第 11 步以后大概一两百步。设置之间有两成的步改变决定时，配对差值的 95% 区间约是 ±0.1，所以小于 0.1 的差距这次测不出来。</p>
+<h2 id="_5">怎么读结果</h2>
+<ul>
+<li>主比较里全历史更低，差值区间不跨 0：现有长度上已有衰减，可以当论文的动机实验。</li>
+<li>区间跨 0：现有长度上看不出衰减，动机主要靠更长的任务（Odysseys 上各模型平均 42 到 86 步），下面 VeriWeb 那一项就更要做。</li>
+<li>全历史更高，区间不跨 0：现有长度上历史有用、还没衰减，动机同样靠更长的任务。</li>
+<li>无历史和全历史差不多：模型没用上历史，先查提示和格式，不急着下结论。</li>
+</ul>
+<h2 id="veriweb">更长的历史（VeriWeb 人工演示）</h2>
+<p>主结果出来以后做。能不能做，取决于能不能从录屏里切出截图。</p>
+<ul>
+<li>[ ] 数据：HF <code>2077AIDataFoundation/VeriGUI</code>（GitHub <code>VeriGUI-Team/VeriWeb</code>），302 个任务的人工演示，<code>data.json</code> 加录屏，共 86.2 GB。先只下一条。</li>
+<li>[ ] 看 <code>data.json</code> 的动作日志有没有时间戳，能不能按时间从录屏里切出每个动作前的截图。</li>
+<li>[ ] 能切的话，抽 10 到 20 条演示（这些任务以后不进采集），比只留最近 k 张截图，k 取 2、4、8、16、32，看 k 变大一致率升还是降。全历史放不下（平均 272.5 步）。</li>
+<li>[ ] 这里的参考动作是人做的，没有 thought，历史里的文字只有动作日志；点击也没有元素框，一律交给 LLM judge。人的动作里有我们动作空间没有的（比如拖选文字），这类步先剔掉。</li>
+<li>[ ] 长度：截图先缩到 1280×720 左右（每张约 880 个视觉 token），k = 32 时截图约 2.8 万 token，加上两百多步的动作文字，6.4 万的 <code>max_model_len</code> 够用（<strong>推断</strong>）。不缩的话按录屏的分辨率重算。</li>
+</ul>
+<h2 id="_6">可选：无关历史</h2>
+<ul>
+<li>[ ] 在全历史前面插一段别的任务的历史（长度和真实历史相当），看一致率掉多少，对应 phase1 里“带无关历史”那种设置。</li>
+</ul>
+<h2 id="_7">可选：决定本身有多不稳</h2>
+<ul>
+<li>[ ] 全历史设置用温度 0.7 采样两次（<code>setting</code> 记成 <code>full_t07</code>），算两次之间的动作一致率。设置之间的差距如果和它差不多大，多半是采样的随机性。</li>
+</ul>
+<h2 id="_8">量</h2>
+<p>五种设置乘约 470 步，约 2,350 次调用；可选的两次采样再加约 940 次。全历史的提示平均约 1 万 token，最长约 3.6 万，开前缀缓存后 8B 在一张卡上几小时以内能跑完（<strong>推断</strong>）。</p>
+<h2 id="_9">交回</h2>
+<ul>
+<li>[ ] CSV、分析脚本和图，加上随机种子、judge 的模型名和提示、被截断的提示数、加过的格式示例、被测模型的版本或检查点。放到项目文件的 <code>research_reports/局部观察训练路线梳理_notes/</code>（或者直接发我），我写进报告。</li>
+</ul></main>
+<aside class="source-note">来源：<code>局部观察训练路线梳理_notes/上下文衰减测试_todolist.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

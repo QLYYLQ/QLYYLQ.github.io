@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="全量 SFT 数据量估算 · CU Model 研究资料">
+<title>全量 SFT 数据量估算 · CU Model</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css"><link rel="stylesheet" href="cu-model.css">
+</head><body><a class="skip-link" href="#content">跳到正文</a><div class="wrap research-wrap">
+<nav class="crumb" aria-label="面包屑"><a href="../">QLYYLQ</a><span>/</span><a href="./">CU Model</a><span>/</span><span>研究报告</span></nav>
+<header class="top"><div class="eyebrow">2026-10-23 · 数据与训练</div>
+<h1>全量 SFT 数据量估算</h1><p class="lead">区分轨迹、监督步和训练 token，列出三档采集规模及假设；不是已采集数量。</p>
+<p class="source-note">这是按原日期保留的研究记录；后续方法选择以<a href="local-observation-brief.html">11 月 3 日路线</a>为准。</p><p class="source-note"><a href="sources/sft-scale.md" download>下载 Markdown</a></p></header>
+<details class="report-toc"><summary>目录 · 跳转到章节</summary><div class="toc">
+<ul>
+<li><a href="#_1">结论</a></li>
+<li><a href="#1">1. 量怎么数</a></li>
+<li><a href="#2">2. 已发表工作用了多少</a></li>
+<li><a href="#3-30b-a3b">3. 30B-A3B 要不要更多数据</a></li>
+<li><a href="#4">4. 全量微调本身对量的要求</a></li>
+<li><a href="#5">5. 算力、采集和磁盘</a></li>
+<li><a href="#6">6. 推进顺序（建议）</a></li>
+<li><a href="#7">7. 还不确定的</a></li>
+</ul>
+</div>
+</details>
+<main id="content" class="prose"><p>2026-10-23。问题：用 spectragent 录的浏览器轨迹全量微调 Qwen3-VL-30B-A3B（MoE）或 Qwen3-VL-8B（dense），数据量多少合适。“原报告”指《CUA SFT 数据管线与扩展调研》，“设计文档”指《前瞻观察能力的训练管线与数据设计》，“采集评估”指《spectragent 采集框架用于前瞻观察训练的评估》。<code>&lt;predict&gt;</code> 是设计文档里模型每步写下的一段预测：下一步缺什么信息、会出现在下一屏哪里、有多确定。折算脚本在同目录 <code>全量 SFT 数据量估算_notes/tokens.py</code>，改了假设可以重跑。</p>
+<p><em>标注沿用前几份报告：</em><em>论文报告</em><em>是论文或官方文档里能核对的数；</em><em>项目数据</em><em>是项目文件或代码里的数；</em><em>推断</em><em>是由证据算出或推出的判断；</em><em>直觉</em><em>是没有直接证据、按训练经验给的判断，附当时的想法；</em><em>建议</em><em>是具体做法。</em></p>
+<h2 id="_1">结论</h2>
+<p>两个模型按同一张表准备数据：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th></th>
+<th>最低档</th>
+<th>推荐档</th>
+<th>扩展档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>什么时候用</td>
+<td>少于这个量，建议改用 LoRA（<strong>直觉</strong>）</td>
+<td>第一版正式全量</td>
+<td>学习曲线还在涨时再上</td>
+</tr>
+<tr>
+<td>保留轨迹</td>
+<td>约 1 万条</td>
+<td>约 3 万条（2–4 万）</td>
+<td>10 万条以上</td>
+</tr>
+<tr>
+<td>已发表的同量级工作</td>
+<td>Go-Browse、NNetNav、GUI-360、WebSTAR</td>
+<td>OpenCUA、Aguvis 第二阶段</td>
+<td>ProCUA、Fara-7B</td>
+</tr>
+<tr>
+<td>监督步（按每条 20 步、保留 65% 折算）</td>
+<td>约 13 万</td>
+<td>约 39 万</td>
+<td>约 130 万</td>
+</tr>
+<tr>
+<td>不同任务 / 训练站点</td>
+<td>≥2,000 / ≥30</td>
+<td>≥6,000 / ≥100</td>
+<td>随量增加</td>
+</tr>
+<tr>
+<td>监督 token（模型输出，不含通用数据）</td>
+<td>约 2,000 万</td>
+<td>约 6,000 万</td>
+<td>约 2 亿</td>
+</tr>
+<tr>
+<td>每 epoch 训练 token：整条打包 / 按步展开（含通用数据）</td>
+<td>1.1 亿 / 6.2 亿</td>
+<td>3.4 亿 / 18.5 亿</td>
+<td>11 亿 / 62 亿</td>
+</tr>
+<tr>
+<td>要录制（按 1.3 倍，<strong>直觉</strong>）</td>
+<td>1.3 万条、26 万步</td>
+<td>3.9 万条、78 万步</td>
+<td>13 万条、260 万步</td>
+</tr>
+</tbody>
+</table></div>
+<p>表的读法：
+- “保留轨迹”指过了轨迹级质检、进入训练的轨迹；“监督步”指其中过了步级过滤、算 loss 的步。三档按轨迹数和已发表工作对齐，步数和 token 是按第 1 节的假设折出来的。
+- 任务数按每个任务最多保留 5 条倒推，站点数参考第 2 节的 NNetNav（20 个站点）和 AgentTrek（127 个站点），都是<strong>直觉</strong>。测试用的站点另留，不算在内。
+- 通用数据每档另加一份，量按整条打包时训练 token 的 30% 定（推荐档约 1 亿 token）；同一档里两种打包方式加的是同一份，所以按步展开时它的占比低于 30%。
+- 30B-A3B 如果在学习曲线上比 8B 更吃数据（判断方法见第 6 节），每档最多多备 50% 的保留轨迹（推荐档即约 4.5 万条、58.5 万监督步），多出来的全部来自新任务和新站点（<strong>直觉</strong>，第 3 节）。</p>
+<ol>
+<li><strong>30B-A3B 不用按 30B 备数据。</strong> Qwen3-VL 官方报告里两者的 GUI 基线互有高低，相差 3–7 分；一篇 2026 年研究文本模型 SFT 的论文测得，MoE 微调时的表现接近一个小得多的 dense 模型，30B-A3B 约合 8.5B；OpenCUA、Fara1.5、WebSTAR 都拿同一份数据训不同尺寸。几条合起来，两个模型要的数据在同一量级（<strong>推断</strong>，依据是第 3 节的<strong>论文报告</strong>）。</li>
+<li><strong>30B-A3B 更怕数据窄。</strong> MoE 在单一任务上微调容易过拟合，任务种类多时收益更大（<strong>论文报告</strong>），所以给它的额外预算只加新任务和新站点（<strong>直觉</strong>）。训练设置里 MoE 特有的是 router 和学习率起点；router 第一版冻结，这条证据偏弱（<strong>建议</strong>，第 3、4 节）。</li>
+<li><strong>三档按已发表工作的轨迹数定。</strong> 约 1 万条时 7–8B 已有明显提升；主流开源工作在 1–3.5 万条；工业级在 9 万条以上（数字是<strong>论文报告</strong>，分档是<strong>推断</strong>，第 2 节）。原报告建议第一次 SFT 用 1–3 万条，和这里一致。</li>
+<li><strong>只看数据量，全量对 LoRA 的优势不大。</strong> 推荐档的监督输出约 6,000 万 token，和 LoRA 追平全量的公开实验同一量级。上全量的理由是首轮的低分辨率画面、多动作输出和 <code>&lt;predict&gt;</code> 离 Qwen3-VL 原来的习惯很远（<strong>直觉</strong>），而且前瞻观察要分几个阶段训（<strong>推断</strong>，第 4 节）。</li>
+<li><strong>算力花得少，采集花得多。</strong> 推荐档单个模型训 2 个 epoch，整条打包约 30–50 个 H100 GPU 时，一台 8 卡机 3–6 小时；按步展开约 150–260 GPU 时，约 18–32 小时。录 78 万步约 3,600 个 worker 时，32 个 worker 连续跑约 4.7 天，磁盘约 3.5 TB；这些按中位数算，实际更久（<strong>推断</strong>，第 5 节）。</li>
+<li><strong>先跑学习曲线再定量。</strong> 先录到 1 万条保留轨迹，8B 和 30B-A3B 各在几个嵌套子集上训，再加一个 LoRA 对照，都在留出站点上测任务成功率，然后决定扩到 3 万还是先加站点（<strong>建议</strong>，第 6 节）。</li>
+</ol>
+<h2 id="1">1. 量怎么数</h2>
+<p><strong>项目数据</strong>有三个来源：采集评估里的“实跑”（31 条录像，约 9 个任务、2 个站点）；“首轮”，即你 10 月 22 日那页《前瞻数据首轮实跑》（5 个站点、15 个任务，录制时出动作的教师模型是 deepseek-v4.1-flash-1017）；“pilot”，即项目参考文档里离线 pilot 的请求。
+- 实跑共 479 个策略步，平均 15.5 步一条。首轮 440 步，平均约 29 步一条，每步平均 2.08 个动作，65.6% 的步含多个动作。
+- 首轮每步视觉约 180 token。pilot 请求保留完整历史（5–33 张图），没有只留最近 N 张。
+- 首轮有输入 bug：坐标输入在没有输入框获得焦点时也报成功，82 次里 47 次没输进去。修好前这些步和各自的下一步都得丢，440 步里最多丢 94 步。携程三个任务的 90 张截图里有 84 张停在反爬拦截页。
+- 导出器 <code>spectragent/export/openai_messages.py</code> 每步导出一条记录，带完整前文，之前的助手轮权重 0，当前轮权重 1，也就是“按步展开”。它的长度预算按 1280×720 一张图约 1,200 token 算，和首轮的 180 token 对不上（采集评估已指出）。</p>
+<p>同样 1 万条轨迹，打包方式不同，轨迹部分的训练 token 能差 7 倍，所以本文按保留轨迹和监督步定量，token 只用来算算力。另外，我们每步平均 2.08 个动作，按动作数算，监督量约是步数的两倍；已发表工作大多一步一个动作，例如 Fara-7B 每步一次工具调用（<strong>推断</strong>）。</p>
+<p>每条轨迹的 token（<strong>推断</strong>，20 步、65% 步保留）：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>每条 token</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只算监督输出</td>
+<td>约 1,950</td>
+<td>13 个保留步，每步 150</td>
+</tr>
+<tr>
+<td>整条打包</td>
+<td>约 8,000</td>
+<td>一条轨迹一个序列；保留步都算 loss，过滤掉的步留在上下文里、权重 0</td>
+</tr>
+<tr>
+<td>按步展开，完整前文</td>
+<td>约 5.8 万</td>
+<td>每个保留步一个样本，现在的导出器就是这样；是整条打包的 7.3 倍，29 步一条时 10 倍</td>
+</tr>
+<tr>
+<td>按步展开，10 步窗口</td>
+<td>约 4.5 万</td>
+<td>推理只留最近 10 步时用；是整条打包的 5.6 倍</td>
+</tr>
+</tbody>
+</table></div>
+<p>假设的来历：20 步取在 15.5 和 29 之间。65% 的步保留是<strong>直觉</strong>：WebSTAR 表 2 的一组实验里，97K 步过滤后剩 46K（约 47%），GUI-Libra 的过滤留约一半；我们的任务挑过，教师也强，所以取高一些。每步输出 150 token 按“简短 Thought、约 2 个动作、一段 predict”估，不是每步都写 predict 时会更少；GUI-Libra 的 thought 平均每步 210 token，可作上限参考。视觉 180 token 用首轮的数，每步执行反馈约 40 token、system 加任务约 600 token 都是估的。</p>
+<p><strong>建议</strong>：推理保留完整历史时用整条打包。因果注意力下，每一步看到的上下文和按步展开一样，训练 token 少 7 倍。导出器已经支持按轮设权重，在最后一步的记录里把保留步的权重都设成 1 就行。推理只留最近几步时（spectragent 的 memory 默认留 20 条消息，按一步一问一答算约 10 步），训练也要按同样的窗口展开。</p>
+<h2 id="2">2. 已发表工作用了多少</h2>
+<p><strong>论文报告</strong>（细节见原报告和它的 notes）：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>工作</th>
+<th>模型</th>
+<th>SFT 数据</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://arxiv.org/html/2506.03533">Go-Browse</a>（ICLR 2026）</td>
+<td>Qwen2.5-7B-Instruct</td>
+<td>9,504 条成功轨迹，39,339 步</td>
+<td>WebArena 8.3 → 21.7</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2410.02907">NNetNav</a>（预印本）</td>
+<td>Llama-3.1-8B</td>
+<td>10,272 条（20 个站点），约 10 万样本，2 epoch</td>
+<td>WebArena 1.0 → 16.3</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2412.09605">AgentTrek</a>（ICLR 2025）</td>
+<td>7B、32B</td>
+<td>10,398 条（127 个站点）</td>
+<td>未列</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2602.22190v2">GUI-Libra</a>（预印本）</td>
+<td>Qwen2.5-VL 3B/7B</td>
+<td>9K 条过滤成 81K 步，1 epoch</td>
+<td>未列</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2511.04307v1">GUI-360</a>（预印本）</td>
+<td>Qwen2.5-VL-7B</td>
+<td>13,750 条，105,368 步</td>
+<td>纯视觉动作预测 17.5 → 50.1</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2512.10962">WebSTAR</a>（ACL 2026）</td>
+<td>Qwen2.5-VL 7B、32B</td>
+<td>13.3K 条，267K 个打分步，2 epoch</td>
+<td>只留正确步后 WebVoyager 7B 31.9 → 47.0，32B 43.5 → 53.5</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2508.09123v3">OpenCUA</a>（NeurIPS 2025）</td>
+<td>Qwen2-VL-7B、Kimi-VL-A3B（MoE）</td>
+<td>同一份约 2.8 万条，训练数据里 30% 是通用数据</td>
+<td>未列</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2412.04454v1">Aguvis</a> 第二阶段</td>
+<td>7B、72B</td>
+<td>约 3.5 万条</td>
+<td>未列</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2606.17321v1">ProCUA-SFT</a>（NVIDIA 技术报告）</td>
+<td>UI-TARS-7B</td>
+<td>9.3 万条展开成 310 万样本，1 epoch</td>
+<td>OSWorld 26.3 → 45.0</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/html/2511.19663v1">Fara-7B</a>（微软预印本）</td>
+<td>Qwen2.5-VL-7B</td>
+<td>145,603 条，1,010,797 步，180 万样本</td>
+<td>只做 SFT，没有 RL</td>
+</tr>
+<tr>
+<td><a href="https://www.microsoft.com/en-us/research/articles/fara1-5-computer-use-agent">Fara1.5</a>（微软）</td>
+<td>Qwen3.5 4B/9B/27B</td>
+<td>约 200 万样本，三个尺寸用同一份</td>
+<td>Online-Mind2Web 57.3 / 63.4 / 72.3</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/pdf/2606.30616">Agents-A1</a>（预印本，非 GUI）</td>
+<td>Qwen3.5-35B-A3B</td>
+<td>约 10 万条，平均 4.5 万 token，1 epoch，LR 1e-5</td>
+<td>未列</td>
+</tr>
+</tbody>
+</table></div>
+<p>曲线（<strong>论文报告</strong>）：<a href="https://aclanthology.org/2025.findings-acl.326.pdf">Explorer</a> 用 25% 的数据就涨得很快，之后缓慢上升；<a href="https://arxiv.org/html/2601.15876v2">EvoCUA</a> 在 OpenCUA-72B 上做 RFT，数据 2 万、22.6 万、100 万分别带来 +2.61、+6.79、+8.12。WebSTAR 的步级过滤随数据增加一直在涨，轨迹级过滤很早就平了。跨站方面，Go-Browse 在训练用的 WebArena 上是 21.7，换到没见过的 Online-Mind2Web 只有 5.33；NNetNav 往真实站点的训练数据里加入别的域的数据后，13 个站点里 7 个变差。</p>
+<p><strong>推断</strong>：
+- 三档按轨迹数对齐：最低档约 1 万条，对应 Go-Browse、NNetNav、GUI-360、WebSTAR；推荐档约 3 万条，对应 OpenCUA 和 Aguvis 第二阶段；扩展档 10 万条以上，对应 ProCUA、Fara-7B。上表没有少于约 1 万条的数据点。
+- 数据量曲线大多先陡后平，换成更细的过滤还能继续涨（WebSTAR）。
+- Go-Browse、GUI-360、NNetNav 每条只有 4–10 步；WebSTAR 的打分步约 20 步一条，和我们相当，只留正确步后约剩一半。我们每条约 20 步，同样 1 万条有 13 万监督步、约 27 万个动作，所以对前三个工作来说，按轨迹数对齐是偏保守的。
+- 只在少数站点上训，换站点就掉；加进来的数据和目标站点差太远，还会拖累。训练站点要贴近部署时会去的站点，数量上多于 NNetNav 的 20 个，推荐档接近 AgentTrek 的 127 个。</p>
+<h2 id="3-30b-a3b">3. 30B-A3B 要不要更多数据</h2>
+<p><strong>论文报告</strong>：
+- <a href="https://arxiv.org/pdf/2511.21631">Qwen3-VL 技术报告</a>，Instruct 版 30B-A3B 对 8B：ScreenSpot-Pro 60.5 对 54.6，OSWorld-G 61.0 对 58.2，AndroidWorld 54.3 对 47.6，OSWorld 30.3 对 33.9。
+- <a href="https://arxiv.org/html/2609.01244v1">O'Neill 等</a>（2026-09 预印本，文本模型）：放到 dense 的尺寸趋势上，MoE 落在激活参数和总参数的几何平均附近；文中给的 30B-A3B 等效大小中位数约 8.5B（直接按几何平均算约 10B）。
+- 同一份数据训不同尺寸：OpenCUA 训了 Qwen2-VL-7B 和 Kimi-VL-A3B（16B MoE）；Fara1.5 训了 4B/9B/27B；WebSTAR 训了 7B 和 32B，32B 更高（53.5 对 47.0），训练算力约 4 倍（1,024 对 256 A100 时）。这只说明常见做法如此，不证明同一份数据对每个尺寸都最合适。
+- <a href="https://arxiv.org/html/2607.28227v1">Qwen-UI-Agent</a>：27B dense 比 35B-A3B 高（MobileWorld 82.1 对 65.0，WebArena 73.6 对 69.2），训练细节没公开。
+- <a href="https://arxiv.org/html/2305.14705v2">Flan-MoE</a>（ICLR 2024）：MoE 直接在单个任务上微调，不如同算力的 dense，容易过拟合；先做多任务指令微调后收益比 dense 大，任务数越多越好。消融里几种做法各自和基线 37.7 比：冻结 gate 38.0，保留 balance loss 38.3，冻结专家 36.2。
+- <a href="https://arxiv.org/abs/2202.08906">ST-MoE</a>（2022）：稀疏模型在小数据集（CB，250 条）上过拟合，不如 dense；在大数据集（ReCoRD，10 万条以上）上反超。只更新非 MoE 参数和全部更新差不多，只更新 MoE 层会变差；稀疏模型偏好更小的 batch、更高的学习率。
+- <a href="https://arxiv.org/html/2407.01906v2">ESFT</a>（EMNLP 2024，DeepSeek-V2-Lite，16B MoE）：全量微调把专项任务均分从 33.6 拉到 51.0，通用能力从 62.4 掉到 58.8；只训 5–15% 的专家时，通用能力保在 60.6–61.5。</p>
+<p><strong>推断</strong>：两者在 Qwen3-VL 上的 GUI 基线互有高低，OSWorld 上 8B 反而高；Qwen-UI-Agent 里 27B dense 也明显高于 35B-A3B。按总参数看，会高估 MoE。30B-A3B 在 SFT 里大致相当于 8–10B 的 dense，学会同样的事要的数据和 8B 同一量级。它对数据宽度更敏感，同一任务反复录更容易过拟合。全量微调掉通用能力这件事，MoE 和 dense 都有。</p>
+<p><strong>直觉</strong>：30B-A3B 的保留轨迹最好是 8B 的 1–1.5 倍，多出来的全部来自新任务和新站点。当时的想法：128 个专家、每个 token 选 8 个，每个专家平均只看到约 1/16 的 token，分到每个专家的训练信号比 dense 少；但等效 8.5B 的证据说它整体接近 dense，所以最多加到 1.5 倍。验证办法见第 6 节：30B-A3B 也在 5,000 和 1 万条上各训一次，它从 5,000 到 1 万涨得比 8B 多，就说明它更吃数据。</p>
+<h2 id="4">4. 全量微调本身对量的要求</h2>
+<p><strong>论文报告</strong>：
+- <a href="https://arxiv.org/pdf/2402.17193">Zhang 等</a>（ICLR 2024）按样本数分：只有几千条时先用参数高效方法；再多一些用 LoRA；百万级时全量更好。临界点随任务变。
+- O'Neill 等：72 组对比里全量都赢，但差距小，LoRA 中位数能恢复 98%；模型从 0.6B 到 32B，差距从 0.008 缩到 0.003 nats。验证 NLL 大约 2 个 epoch 到最低；Qwen3-8B 全量训到 8 个 epoch 时，IFEval 上的一项指标从 0.73（2 epoch）掉到 0.34。新数据 1 万条比 5,000 条重复两遍好，12 组都是，NLL 平均低约 16%。
+- <a href="https://arxiv.org/html/2405.09673v2">Biderman 等</a>（ICLR 2025）：在一份约 7,300 万 token 的代码指令数据上，r=256 的 LoRA 和全量打平（0.498 对 0.497）；到数十亿 token 的继续预训练，全量才拉开差距；全量忘得更多。
+- <a href="https://thinkingmachines.ai/blog/lora/">LoRA Without Regret</a>（Thinking Machines，2025）：LoRA 容量大于要学的信息量时，效果等于全量；MoE 上 LoRA 要加到专家层。
+- <a href="https://neurips.cc/virtual/2025/poster/115207">Intruder dimensions</a>（NeurIPS 2025）：LoRA 会引入原模型没有的高奇异值方向，连续学多个任务时更容易忘。</p>
+<p><strong>推断</strong>：
+- 拿推荐档比：监督输出约 6,000 万 token，和 Biderman 那份数据（约 7,300 万 token）同一量级；整条打包的训练 token 3.4 亿多出几倍，按步展开的 18.5 亿大多是重复的前文。样本数是 3 万条（整条打包）或 39 万个（按步展开），都没到 Zhang 等说的百万级。只看数据量，全量对 LoRA 的优势不会大。
+- 上全量的理由有两条。一是分布变化大（<strong>直觉</strong>）：首轮每步只有约 180 个视觉 token 的低分辨率画面，又有多动作输出和 <code>&lt;predict&gt;</code> 格式。当时的想法是，常见 GUI 基准（ScreenSpot-Pro、OSWorld）的截图都在 1080p 以上，模型平时看到的视觉 token 远多于 180；要多少数据才能适应，没有公开证据（第 7 节）。二是设计文档把前瞻观察分成 P1（训 predict，决定下一屏看哪里）、P2（在自己选的画面上训读取）、P3（用自己的采样迭代）几个阶段，用 LoRA 的话，intruder 方向会一轮轮叠上去。
+- 最低档的界线是<strong>直觉</strong>：已发表的 7–8B 全量 SFT 从约 1 万条起有明显提升，再少，全量多出的那点收益抵不过遗忘。少于最低档时用 LoRA（rank 64–256，所有线性层，MoE 包括专家层）。</p>
+<p><strong>建议</strong>的训练设置：</p>
+<div class="tablebox" tabindex="0" role="region" aria-label="报告数据表"><table>
+<thead>
+<tr>
+<th>设置</th>
+<th>8B</th>
+<th>30B-A3B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>学习率</td>
+<td>从 1e-5 起，在 5e-6–3e-5 扫</td>
+<td>从 1e-5 和 2e-5 两点起，在 1e-5–3e-5 扫</td>
+</tr>
+<tr>
+<td>epoch</td>
+<td>2；第 2 个 epoch 验证 loss 回升就只训 1 个</td>
+<td>同左</td>
+</tr>
+<tr>
+<td>router</td>
+<td>无</td>
+<td>冻结；要训就保留 balance loss，盯专家负载</td>
+</tr>
+<tr>
+<td>视觉塔</td>
+<td>先冻结 ViT，merger 可训；适应不了低分辨率再解冻</td>
+<td>同左</td>
+</tr>
+<tr>
+<td>通用数据</td>
+<td>固定一份，约占整条打包训练 token 的 30%；其中放一些全分辨率 grounding 数据，防止原有的定位能力退化</td>
+<td>同左</td>
+</tr>
+<tr>
+<td>硬件</td>
+<td>单机 8×80GB，ZeRO-3 或 TP4</td>
+<td>单机 8×80GB，EP8</td>
+</tr>
+</tbody>
+</table></div>
+<p>依据：NVIDIA <a href="https://docs.nvidia.com/nemo/megatron-bridge/0.3.1/apidocs/bridge/bridge.recipes.qwen_vl.qwen3_vl.html">Megatron-Bridge 的 Qwen3-VL 配方</a>是 8B 全量 1e-5、TP4，30B-A3B 全量 2e-5、EP8，都是单机 8 卡；WebSTAR、GUI-Libra 用 1e-5，ProCUA 用 2e-5，Agents-A1 在 35B-A3B 上用 1e-5，ST-MoE 发现稀疏模型偏好更高的学习率。epoch 依据 O'Neill 等，以及 Flan-MoE、ST-MoE 的过拟合结果。router 的证据弱：Flan-MoE 里冻结 gate、保留 balance loss 都只比基线高 0.3–0.6 分；选冻结是因为更简单，<a href="https://qwen.readthedocs.io/en/latest/training/unsloth.html">Qwen 文档</a>里 Unsloth 也默认不训 router。冻结 ViT 参考 WebSTAR。30% 通用数据来自 OpenCUA；ESFT 说明 MoE 全量微调同样会掉通用能力。</p>
+<h2 id="5">5. 算力、采集和磁盘</h2>
+<p><strong>推断</strong>（都没实测）：
+- 下面的 GPU 时都是单个模型训一次。8B 全量按 6 × 80 亿参数 × token、H100 SXM BF16 稠密峰值 989 TFLOPS、MFU 25–40% 算，训 10 亿 token 要 34–54 GPU 时；再给视觉塔和注意力留 20–30% 余量，取 40–70。30B-A3B 每个 token 的计算量约为 8B 的 40%（激活约 3.3B），但 MoE 的通信让 MFU 更低，按同一量级估。
+- 推荐档训 2 个 epoch：整条打包每 epoch 3.4 亿 token，约 30–50 GPU 时；按步展开每 epoch 18.5 亿，约 150–260 GPU 时。第 6 节第 3 步的六次训练合计约 35–65 GPU 时（整条打包）或 200–340 GPU 时（按步展开）；这里通用数据随子集同比例缩放，LoRA 按全量的七成算。
+- 采集：实跑每步录制 p50 16.7 秒，磁盘每步 p50 约 3.0 MB；首轮每步多拍约 3 帧（每个动作前的帧和稳定性检查帧），合计约 4.5 MB（采集评估）。推荐档要录 78 万步，约 3,600 个 worker 时：32 个 worker 连续跑约 4.7 天，64 个约 2.4 天，磁盘约 3.5 TB。这里用的是中位数，均值更长，实际会更久；并行录制还没测过，教师 API 限流和反爬可能才是实际上限。
+- 1.3 倍的录制系数是<strong>直觉</strong>，前提是输入 bug 已修、反爬重的站点已避开、教师在挑过的任务上大多能完成。按首轮的状态不修不避，损耗远大于此：输入 bug 最多丢五分之一的步，携程三个任务几乎全废。教师成功率只有一半时，录制量要翻倍。
+- <code>&lt;predict&gt;</code> 的探针标签（用看全屏的模型逐个判选区够不够用，见设计文档）比造普通 SFT 数据贵几十倍，只给一部分 transition（一条是当前屏、动作和下一屏）打，量按设计文档 P1 的 1k、3k、1 万条 transition 三档学习曲线定。</p>
+<h2 id="6">6. 推进顺序（建议）</h2>
+<ol>
+<li>修好输入 bug 后，用第一批几百条正式录制量四个数：每步真实 token（用 Qwen3-VL 的 processor）、每条步数、步过滤通过率、教师成功率，替换第 1、5 节的假设。首轮 440 步可以先粗量一次。顺手把导出器的图像 token 预算改成实际值，加上整条打包的导出。</li>
+<li>准备至少 6,000 个任务（最好接近 1 万），训练站点 100 个以上，每个任务录到保留 3–5 条为止。另留 10–20 个站点、每站 20 个以上任务，只做测试。</li>
+<li>先录到 1 万条保留轨迹，训六次：8B 在 2,500、5,000、1 万的嵌套子集上各一次；30B-A3B 在 5,000、1 万上各一次；8B 的 rank 128 LoRA 在 1 万上一次。</li>
+<li>看留出站点的任务成功率。先用同一个 checkpoint 换采样种子重测两次，量出评测噪声。8B 从 5,000 到 1 万还涨 3 个百分点以上，且明显大于噪声，就扩到 3 万；涨不动，就先加站点和难例，不加同类数据。30B-A3B 从 5,000 到 1 万涨得比 8B 多，就给它多备到 1.5 倍。LoRA 和全量差不到 1–2 个百分点，说明 1 万条时全量还没拉开，扩量后再比。3 个点和 1–2 个点都是<strong>直觉</strong>阈值。</li>
+</ol>
+<h2 id="7">7. 还不确定的</h2>
+<ul>
+<li>没有找到 8B 和 30B-A3B 在同一份 GUI 数据上全量 SFT 的直接对比。第 3 节的结论是用 Qwen3-VL 基线、文本模型上的 SFT 研究和 OpenCUA 等的做法拼起来的。</li>
+<li>每步 token、每条步数、步通过率、教师成功率都是假设，第 6 节第 1 步可以直接量出来。</li>
+<li>180 token 的低分辨率画面需要多少数据才能适应，没有公开证据。</li>
+<li>目标站点之间的跨站泛化没有公开数据，只能靠留出站点测。</li>
+</ul></main>
+<aside class="source-note">来源：<code>全量 SFT 数据量估算.md</code>。正文保留原研究记录，机器路径已泛化；链接与配图适配本站。标记为虚线的引用未随本站发布。来源及页面校验值见 <a href="manifest.json">manifest</a>。</aside>
+<footer class="site"><a href="./">CU Model</a><a href="./#reports">全部报告</a><a href="../">主页</a><a href="https://github.com/QLYYLQ/QLYYLQ.github.io">本站源码</a></footer>
+</div></body></html>

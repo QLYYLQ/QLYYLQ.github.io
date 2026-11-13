@@ -256,6 +256,9 @@ def main():
     generated_pages(builder)
     page_count = pages_and_links(len(records))
     manifest(args.artifacts)
+    from check_cu_model import check as check_cu_model
+    for error in check_cu_model():
+        fail("cu-model", error)
     if ERRORS:
         for error in ERRORS:
             print("ERROR", error, file=sys.stderr)

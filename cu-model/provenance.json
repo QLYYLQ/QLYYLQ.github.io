@@ -1,0 +1,586 @@
+{
+  "局部观察训练路线梳理_精简版.md": {
+    "original_sha256": "0f43e8fe71b18c1c61d0b5fb452af33c7241753f68ab418ab7cc49a895bee53f",
+    "snapshot_sha256": "0f43e8fe71b18c1c61d0b5fb452af33c7241753f68ab418ab7cc49a895bee53f",
+    "location_redaction": false
+  },
+  "局部观察训练路线梳理.md": {
+    "original_sha256": "5f7523ece9a3c6fcbd5379612369deb1c16980f897b77cef7dca7a590071e33a",
+    "snapshot_sha256": "5f7523ece9a3c6fcbd5379612369deb1c16980f897b77cef7dca7a590071e33a",
+    "location_redaction": false
+  },
+  "局部观察训练路线梳理_notes/上下文衰减测试_todolist.md": {
+    "original_sha256": "71f3114af325db28ac8e8b3e167d5f270a6eebc13c0ef2f7e5a0cfa5d6699657",
+    "snapshot_sha256": "d70709127263cfedb67810524b04e6906c692772652bfa423b3180f3ada8b15c",
+    "location_redaction": true
+  },
+  "局部观察训练路线梳理_notes/collection_task_sources_20261101.md": {
+    "original_sha256": "64d94d5e80e25d473e95be1890f763d9384120c9bc301a1e4018dbefd62864df",
+    "snapshot_sha256": "64d94d5e80e25d473e95be1890f763d9384120c9bc301a1e4018dbefd62864df",
+    "location_redaction": false
+  },
+  "局部观察训练路线梳理_notes/eval_benchmarks_20261031.md": {
+    "original_sha256": "24ecb318af903d9145df5db8a86104bfbde1f5bbe8c1996774df1c2a9b1aa920",
+    "snapshot_sha256": "24ecb318af903d9145df5db8a86104bfbde1f5bbe8c1996774df1c2a9b1aa920",
+    "location_redaction": false
+  },
+  "试验性数据采集审查.md": {
+    "original_sha256": "0c1989567fdadf5a05d4dff8b9089ebe89b7b785396a7f870d48db93ab867bc9",
+    "snapshot_sha256": "0c1989567fdadf5a05d4dff8b9089ebe89b7b785396a7f870d48db93ab867bc9",
+    "location_redaction": false
+  },
+  "数据构建可能性指南_精简版.md": {
+    "original_sha256": "70e5f631bf74543b01ffcb40d84f590125147360666dc56002a4953e4927d10f",
+    "snapshot_sha256": "70e5f631bf74543b01ffcb40d84f590125147360666dc56002a4953e4927d10f",
+    "location_redaction": false
+  },
+  "数据构建可能性指南.md": {
+    "original_sha256": "273391aa869942563ffbca09b81b28aa34cdcb36c48a6ab8b3dbbe5aa78a9450",
+    "snapshot_sha256": "d81905b2243cc16135a74ad4929e9dc5ebf0d8d3fe41e468ca1a5bf2c641932d",
+    "location_redaction": true
+  },
+  "全量 SFT 数据量估算.md": {
+    "original_sha256": "6c2758456345ae058f701e13cf5420de1486c1cd7f79055d91fb7e08d7abe11f",
+    "snapshot_sha256": "6c2758456345ae058f701e13cf5420de1486c1cd7f79055d91fb7e08d7abe11f",
+    "location_redaction": false
+  },
+  "spectragent 采集框架用于前瞻观察训练的评估.md": {
+    "original_sha256": "3b7bbd5cbdcb3160861d29f068df67da74358f5c168996da7ece1fd2881818cd",
+    "snapshot_sha256": "3b7bbd5cbdcb3160861d29f068df67da74358f5c168996da7ece1fd2881818cd",
+    "location_redaction": false
+  },
+  "前瞻观察能力的训练管线与数据设计_精简版.md": {
+    "original_sha256": "858ef22a5b806c0a2910bd337aafd9f3eff89ae17acb1926e521d0d34b1ea1db",
+    "snapshot_sha256": "858ef22a5b806c0a2910bd337aafd9f3eff89ae17acb1926e521d0d34b1ea1db",
+    "location_redaction": false
+  },
+  "前瞻观察能力的训练管线与数据设计.md": {
+    "original_sha256": "25ad627fcca5a01d26b47053c66896835b833f549140d4953e04d9bb4b0443ea",
+    "snapshot_sha256": "25ad627fcca5a01d26b47053c66896835b833f549140d4953e04d9bb4b0443ea",
+    "location_redaction": false
+  },
+  "VisionWeave 解读与 CUA SFT 管线增补.md": {
+    "original_sha256": "b91272b1282e6612cae304a214b100dbd6c56487a41cacd164f882b2cea9db5c",
+    "snapshot_sha256": "b91272b1282e6612cae304a214b100dbd6c56487a41cacd164f882b2cea9db5c",
+    "location_redaction": false
+  },
+  "CUA SFT 数据管线与扩展调研.md": {
+    "original_sha256": "214329dd37eaf3ed66c31292855f0509739138b61f3160bad50fe89a16931a58",
+    "snapshot_sha256": "214329dd37eaf3ed66c31292855f0509739138b61f3160bad50fe89a16931a58",
+    "location_redaction": false
+  },
+  "docs/AGW_DATA_SCALING_RESULTS_20261006.md": {
+    "original_sha256": "cfcf2711440f9d851155b770e56f17f423d9e28623c33f844cc57d0d6b4f30bd",
+    "snapshot_sha256": "c9244da6fe71d313c54c9785e9b0766d90906f9a6b9572d52142a63662fa20b9",
+    "location_redaction": true
+  },
+  "docs/AGW_DATA_SCALING_TEST_ADDENDUM_20261006.md": {
+    "original_sha256": "62f524df618e5b342743ffdecae5d7a296ac68b18b9b459f5ee781e1458857a3",
+    "snapshot_sha256": "62f524df618e5b342743ffdecae5d7a296ac68b18b9b459f5ee781e1458857a3",
+    "location_redaction": false
+  },
+  "docs/AGW_35B_REVIEW_20261003.md": {
+    "original_sha256": "8ba7bfa496309ff872df9313a3beae873338203d0edfc793d15f9be14c8ec40b",
+    "snapshot_sha256": "f2f95751fa5b81dcdb72f432926d5a924d3f96fc06b2694ac9cb9363734cc4bc",
+    "location_redaction": true
+  },
+  "docs/COMPREHENSIVE_REPORT_20260929.md": {
+    "original_sha256": "90ec18c43fd0c8be1033754121cb87d0a825634892715be7eb8ffc9ad119cd39",
+    "snapshot_sha256": "63909143c104446ce311d7950159bf8c98431cc7fd7526b46bac08653451f368",
+    "location_redaction": true
+  },
+  "docs/PROJECT_REVIEW_SFT_READINESS_20260927.md": {
+    "original_sha256": "f48ece743345b24d7d2c5e30392ff3ec98fc0e6a6903827c584c9cd0c1fe5aee",
+    "snapshot_sha256": "f48ece743345b24d7d2c5e30392ff3ec98fc0e6a6903827c584c9cd0c1fe5aee",
+    "location_redaction": false
+  },
+  "docs/SESSION_PREDICTION_TRAINING_DECISIONS_20260927.md": {
+    "original_sha256": "fc56cb5e71ee4c3d92abc514020b8924bc0dd4e136880d5ef9cdbced914ea859",
+    "snapshot_sha256": "fc56cb5e71ee4c3d92abc514020b8924bc0dd4e136880d5ef9cdbced914ea859",
+    "location_redaction": false
+  },
+  "docs/ROLLOUT_SEMANTIC_AUDIT_20260925.md": {
+    "original_sha256": "1507780a02a07bccde5a7853b4d1925fb47a4ad44f701bd7b1a17f207b376b01",
+    "snapshot_sha256": "1507780a02a07bccde5a7853b4d1925fb47a4ad44f701bd7b1a17f207b376b01",
+    "location_redaction": false
+  },
+  "docs/BASEMODEL_PREDICTION_DIAGNOSTICS_20260924.md": {
+    "original_sha256": "09d2f4cea04c112dc83ece3eb009da0897027fa439ae573727057bd98e747165",
+    "snapshot_sha256": "09d2f4cea04c112dc83ece3eb009da0897027fa439ae573727057bd98e747165",
+    "location_redaction": false
+  },
+  "docs/PHASE1_RESULTS_20260923.md": {
+    "original_sha256": "1d2a0a8ea4335541f866c8daf6403a9b23df6d94dd41929367ed90113a03d016",
+    "snapshot_sha256": "1d2a0a8ea4335541f866c8daf6403a9b23df6d94dd41929367ed90113a03d016",
+    "location_redaction": false
+  },
+  "docs/STAGE1_COMPREHENSIVE_20260923.md": {
+    "original_sha256": "53b69b4a2593429ba1c6806003540d6a1ee856660187b3446c01d6b456d59f9b",
+    "snapshot_sha256": "53b69b4a2593429ba1c6806003540d6a1ee856660187b3446c01d6b456d59f9b",
+    "location_redaction": false
+  },
+  "docs/phase1_protocol.md": {
+    "original_sha256": "700db4600fa9d84961bdc6cf18c08cc97e61d7a7b4127e2dd97164f01ac1a2e6",
+    "snapshot_sha256": "700db4600fa9d84961bdc6cf18c08cc97e61d7a7b4127e2dd97164f01ac1a2e6",
+    "location_redaction": false
+  },
+  "reports/figures_20260929/audit/A-01.png": {
+    "original_sha256": "76b8428cb721903a317b5b31bcf262296ef6d4dad6488d6521d25a951af38b2f"
+  },
+  "reports/figures_20260929/audit/A-02.png": {
+    "original_sha256": "0f594ef27affe9121b442140ca52e20811e0a6ab4679a79b604afd0c2d9d9cc5"
+  },
+  "reports/figures_20260929/audit/A-03.png": {
+    "original_sha256": "29fd31b1a2933d8901420b0fd3ff1c8e235d4d699028bdf087980e9607f53e7f"
+  },
+  "reports/figures_20260929/audit/A-04.png": {
+    "original_sha256": "bc3fc060ddc65afa37ab72e51824808c908f7debacb1888a5b6ff66562f04038"
+  },
+  "reports/figures_20260929/diagnostics/D-01.png": {
+    "original_sha256": "6c181303cfb68c8b1cd4a148e424c84f30cb62a960313a7c9686e11ce6ff4b9e"
+  },
+  "reports/figures_20260929/diagnostics/D-02.png": {
+    "original_sha256": "7a11e706c561a291ce17eb64a95bb82379f626be6cf5de14d2e8a674dbdd97af"
+  },
+  "reports/figures_20260929/diagnostics/D-03.png": {
+    "original_sha256": "fcbeaa0f395bd161c68c54b967e60790cfda2ba48e1f8269a970619898cc6dbd"
+  },
+  "reports/figures_20260929/experiments/E-01.png": {
+    "original_sha256": "74570b9dad61a0048a0bfaa2dc6e3c2b2dca42a35224d006d5c1e986ddfae924"
+  },
+  "reports/figures_20260929/experiments/E-02.png": {
+    "original_sha256": "f3f9287bb521b7d18576a00a7433a48484407458d04c5356b34186a0d6c0b15c"
+  },
+  "reports/figures_20260929/experiments/E-03.png": {
+    "original_sha256": "446525d7bfc26fa1da9aacdbe149fb4721393e3c45ce0cfe80c80b8a01627444"
+  },
+  "reports/figures_20260929/experiments/E-04.png": {
+    "original_sha256": "004a098779449be565be172db6fc772eb31fe464ff1fe9515d3bdf555c34a52f"
+  },
+  "reports/figures_20260929/method/M-01.png": {
+    "original_sha256": "818352bb6967c93569351808ced2592a3b01877d437652a7546157c9a27e542f"
+  },
+  "reports/figures_20260929/method/M-02.png": {
+    "original_sha256": "e25e2a919691e3ec4cf9b3423f44703bd1153a7a6ccf1bba3d2c3c6717c7936d"
+  },
+  "reports/figures_20260929/method/M-03.png": {
+    "original_sha256": "6600d86dd6f419e2b4e3b4f09e2f941204fe39ac9e5a476e0f1a57dfcce7fd47"
+  },
+  "reports/figures_20260929/phase1/P1-01.png": {
+    "original_sha256": "4a42a1451686e81f873cd05db6f9066a0f02b6347ea63f798b897de418aadb1a"
+  },
+  "reports/figures_20260929/phase1/P1-02.png": {
+    "original_sha256": "a32f8e2401b6561b3b6690bf7e8a6946945bd63a9264368c17d18101d141ff55"
+  },
+  "reports/figures_20260929/phase1/P1-03.png": {
+    "original_sha256": "bfaa3e99fbf59d7d0bd3543ffff5016e2920623a7c4447e2b23fe955f9c58b0a"
+  },
+  "reports/figures_20260929/phase1/P1-04.png": {
+    "original_sha256": "096f3f3c6737dc2447ed2fb6f7fa285a2270f796db658d0d23c8b3bcc6fdb255"
+  },
+  "reports/figures_20260929/phase1c/C-01.png": {
+    "original_sha256": "55f24229d39c15b91c96a1b72c54d82e8f610d87d0e62ad1aabd80eaba44e70e"
+  },
+  "reports/figures_20260929/phase1c/C-02.png": {
+    "original_sha256": "f2f27c08661f227af9a72d29fbba6c3fa48834d48e624194bc316d74cad23e7a"
+  },
+  "reports/figures_20260929/phase1c/C-03.png": {
+    "original_sha256": "42c32c96aa6f59df50239bb4f0dc5645e256bc954bb174b31f928df8b48cb415"
+  },
+  "reports/figures_20260929/phase1c/C-04.png": {
+    "original_sha256": "8518d4df001e51cec118f10a1e51f9e076ecafc075974e8dc93a0b7f0117b1c9"
+  },
+  "reports/figures_20260929/phase1c/C-05.png": {
+    "original_sha256": "ab4d8a04ac5ca5f25d94b02f1e08198ee3e94dfdd21d2f7a28e5645f13ccbddd"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-instagram-reviewed__control__full_target__current_only.png": {
+    "original_sha256": "54f6e20d4d4b50c7e5f65b35540e038c054f63504d45ee928e1f59ad520d0d8c"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-instagram-reviewed__control__full_target__warm.png": {
+    "original_sha256": "5b028aacf3424acb74df3eb6c93ea9d947bc7c6df66ad416332541d28f647d90"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-instagram-reviewed__control__oracle_rect__current_only.png": {
+    "original_sha256": "98fa4e14aef5e37759a237810078adc56c6499750b69141fbbbcc10d7593d033"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-instagram-reviewed__control__oracle_rect__warm.png": {
+    "original_sha256": "acc18954383b2b97a10ce7a9bee0208416d816ba47d4afb8153fe2682c4de996"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-triller-reviewed__control__full_target__current_only.png": {
+    "original_sha256": "7a90ac22752031ccf4b795a306e40ed44e87d8aa4c12f1120740e5a8a7ebc4a2"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-triller-reviewed__control__full_target__warm.png": {
+    "original_sha256": "8e58dc7e6babad7d529c055e4a4678dfc1939ae454f3d06ee93578252b01cfd1"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-triller-reviewed__control__oracle_rect__current_only.png": {
+    "original_sha256": "a6a0b85108fede3b7e2ecd097817e3f162aedfcdc8ec8a75be78ca700700ae83"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-triller-reviewed__control__oracle_rect__warm.png": {
+    "original_sha256": "b661ebad464342db5de7f26800a661854399bab8bfc8d8b6c1b69fd4ef7da8dc"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-vottak-test__control__full_target__current_only.png": {
+    "original_sha256": "723f518ff21f63a1d9046f2b559db21e8b0c4ca1fe652a0e4fad5bdebe73d6f4"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-vottak-test__control__full_target__warm.png": {
+    "original_sha256": "265bf6ff13220d709981eb7f1e09edbd7d142edb92d58b916c0dcb2fb40bbf31"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-vottak-test__control__oracle_rect__current_only.png": {
+    "original_sha256": "2e42ac27cd19e0a75988af41d7b137e4d22d7993c45a4bb00124607fc33249ce"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-app-vottak-test__control__oracle_rect__warm.png": {
+    "original_sha256": "d60eade6ec5e0f8b886396048ddc8667b7476ef11f3181e868f32010e375ef88"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-rainbow-csv-train__control__full_target__current_only.png": {
+    "original_sha256": "cdb6859e554c814d185dfe707291dc01b338ba76032c35669347f6c485f443e3"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-rainbow-csv-train__control__full_target__warm.png": {
+    "original_sha256": "2bcefd7bae36a8ef1205458eed537551e4121d526c07a96bdfb0a154af0f63fb"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-rainbow-csv-train__control__oracle_rect__current_only.png": {
+    "original_sha256": "d4d916351e3521167bc010fab6e9a7e880dd0346f59e61b9991c9c8712e1b495"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-rainbow-csv-train__control__oracle_rect__warm.png": {
+    "original_sha256": "c79a89839660b4deb3d32451c95d81cd271b754c9434c063f174b309396e0f2c"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-tab-size-train__control__full_target__current_only.png": {
+    "original_sha256": "c7692439fa9d94eb5f52883c7fb1821031cf21f4b178ec9f6ae779a9adbc5361"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-tab-size-train__control__full_target__warm.png": {
+    "original_sha256": "ed7991d8f77c90fc97d7d2f13f0015b3ac30798435ae1d0fcc181382f68d393c"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-tab-size-train__control__oracle_rect__current_only.png": {
+    "original_sha256": "58f627d66da4d2bc341a210c8631204f6f64404ed63a6262c9d83553c3fa4f0c"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-desktop-tab-size-train__control__oracle_rect__warm.png": {
+    "original_sha256": "1fcec8d13dc1b50dca3d9845345f056a38bfc15b7ea6d4acf8d0f3262236a202"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-airports-empty-cal__control__full_target__current_only.png": {
+    "original_sha256": "0d00256cb80638cb0ad94352f77c6157e8532ad8e7ca9f30d81c48361e905dea"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-airports-empty-cal__control__full_target__warm.png": {
+    "original_sha256": "69c492db9e73d6f2e908e9f1ffeaf15d4469bc01d207e2b1ef03fdf635854497"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-airports-empty-cal__control__oracle_rect__current_only.png": {
+    "original_sha256": "730e3dda97ad5a24fbb971b4cbd5887bda0087624f01c62b6143c151d1eb3eca"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-airports-empty-cal__control__oracle_rect__warm.png": {
+    "original_sha256": "81a859d8cd6bface09da087ec73a41f5e72f4f33e696ab015a91ad9bf780c3f9"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-bar-cal__control__full_target__current_only.png": {
+    "original_sha256": "221723392e491a8821eb051e56fe884d776d9462792e532e542ef04543efe9ce"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-bar-cal__control__full_target__warm.png": {
+    "original_sha256": "30bc3c3eb9d7b14f1c34c98c0f958f0c100a737cf7d5edb68f6ec2c82c1fb9b7"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-bar-cal__control__oracle_rect__current_only.png": {
+    "original_sha256": "81813889d6ba984029ab6077c5892d6f7dadcdec0e1219a8a6c6d23ff88026d2"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-bar-cal__control__oracle_rect__warm.png": {
+    "original_sha256": "382050004aa94fd6d3a1e0ac006cfda8f2fc1bb5d20a62b3aaa15eb82cba6018"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-hilton-supermarket__control__full_target__current_only.png": {
+    "original_sha256": "86bc3f524ab90b10ae86fe54ca87db5e443edf29125598940828b7fa6fae2466"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-hilton-supermarket__control__full_target__warm.png": {
+    "original_sha256": "56b09d0d426093ac9cd00c2c136e84e99cb046acba63cd254e9626030fd00f4d"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-hilton-supermarket__control__oracle_rect__current_only.png": {
+    "original_sha256": "fdd721b8e65c68ae807bc667be6e47c87587f1c2bf59b735e435ab064ab904ec"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-hilton-supermarket__control__oracle_rect__warm.png": {
+    "original_sha256": "643b90489ee60bd216572fdd9db957f88103fd99c6d5689625efa6aca0eb5cc4"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-memorial-test__control__full_target__current_only.png": {
+    "original_sha256": "e1c32046642d87ab43d9c9b15a4dd6d28553d1dfd4d99b27cc8c0e9d4f88f816"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-memorial-test__control__full_target__warm.png": {
+    "original_sha256": "f411d7b403d365bd592545e893e9aee34688612c7f48520173b8b36fe3c44a16"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-memorial-test__control__oracle_rect__current_only.png": {
+    "original_sha256": "4478ff72e9624be5b9ff416a4837359c11ba017571039500395b91328f5f1be5"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-memorial-test__control__oracle_rect__warm.png": {
+    "original_sha256": "338e378cce2dd8ab6f837154c4edc75cf7e21b099bc97ff0bbde8a7517ab1564"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-restaurants-cal__control__full_target__current_only.png": {
+    "original_sha256": "20c793ca2b8b055e1d439188ce0ba39078cde0c72649927fda01c1ee82c78bfa"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-restaurants-cal__control__full_target__warm.png": {
+    "original_sha256": "012673dbbaa6f130eaf8d4995d20f747418f0832d723c7345b93c01fa5845181"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-restaurants-cal__control__oracle_rect__current_only.png": {
+    "original_sha256": "60f4be32fdb95c387b9c6eb9d7e61f6b4a918b0087ef412974064e50c60250e8"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-restaurants-cal__control__oracle_rect__warm.png": {
+    "original_sha256": "7f58a7dab2fac4cdad2dd01b4394b9a2d220ce063db354846a67a7c0429c0d1b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-supermarket-test__control__full_target__current_only.png": {
+    "original_sha256": "ce44af89d27b8047c139ffb7c6e3aefdfd1b32775f279731763c5e715ef60c0c"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-supermarket-test__control__full_target__warm.png": {
+    "original_sha256": "2496cb6a7772672bd54637335286210b8bb1eabbc75267a7e9acb09a49dec9d5"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-supermarket-test__control__oracle_rect__current_only.png": {
+    "original_sha256": "d7abadaec3a9c2a34ca851f3f59903620ef112f0d14b9c0f20568fa23c1700b5"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-map-supermarket-test__control__oracle_rect__warm.png": {
+    "original_sha256": "77a44eb9fb2c8454868293c5c339c8fa0974dd24302f730f391b2b43ca3092df"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-reviewed__control__full_target__current_only.png": {
+    "original_sha256": "8941bc12c931e1b14d83527e27c0ca874e18995ce47e937d5c88463feaa43863"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-reviewed__control__full_target__warm.png": {
+    "original_sha256": "655ef60d820c77b97c2c4bc6bc2cae1acdc45cc76ce2e83c8a07616f73150d8a"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-reviewed__control__oracle_rect__current_only.png": {
+    "original_sha256": "9b057497ce1200c7f3737958efa60aa0757c578d4708d18135413863edfed752"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-reviewed__control__oracle_rect__warm.png": {
+    "original_sha256": "f81e77bd9b0d8cb153c6428c19ee64a7e7e4f1bc83bcf2834cd21eb476b5e8c6"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-train__control__full_target__current_only.png": {
+    "original_sha256": "edf001f4f9a85591bf94f23a85137abbc6919f5ed834b32e605d7d92855d8e1b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-train__control__full_target__warm.png": {
+    "original_sha256": "29a06887335cdc9d126cbe5b1f1d56663038c136e1329e4f378ee059dd7802d2"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-train__control__oracle_rect__current_only.png": {
+    "original_sha256": "7214de974a5967aec2f79e602116a9df507d3049376fb6738a6fcf8585fab1fb"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-chocolate-train__control__oracle_rect__warm.png": {
+    "original_sha256": "5b92afea20b60dd905fbe778bb778a4200c3ebc83debae9b5e6a59a229e341b0"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-fitbit-train__control__full_target__current_only.png": {
+    "original_sha256": "ad3010c83901cde7337cb0f814aa17f6c984ed1683372c6812f9f992403d9c46"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-fitbit-train__control__full_target__warm.png": {
+    "original_sha256": "c64f64e254f278260c8c9cb0bc22120935d04313269cffdb26815a3928c2c8da"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-fitbit-train__control__oracle_rect__current_only.png": {
+    "original_sha256": "e554aace983e0baa24d2a8f0605a4f5adffb3aa0bf3fb66a7eb71cb30770e804"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/reading_controls/p1c-shop-fitbit-train__control__oracle_rect__warm.png": {
+    "original_sha256": "7ca6fca0379690fe11b71d406ed3bb30391106828935b83e5785c7f1a54d3455"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-app-instagram-reviewed.png": {
+    "original_sha256": "13458fed1b848689f3c2594257e82ec0f5f88043e0e66444baca7e7c83b1f266"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-app-triller-reviewed.png": {
+    "original_sha256": "1764fb8b7379f74436172015f69686edd37f4be0586cb982b0ec26f336310ddb"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-app-vottak-test.png": {
+    "original_sha256": "69d465b19263e7e520f15b9100142ebc4fc5fd4e2130fd4c655e55ac694f741b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-desktop-rainbow-csv-train.png": {
+    "original_sha256": "b459eae14172cfae94ae43d887d5c7206598900aee98755bac519b6ee32fc130"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-desktop-tab-size-train.png": {
+    "original_sha256": "9d411e8f2a4cf624e80432aa0447b894808873f676ff025df02c0afb027a83bc"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-map-airports-empty-cal.png": {
+    "original_sha256": "b3cf026b380a1557950dbf2db8d4a0e87bebbe44290bade533c28eb3160194c7"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-map-bar-cal.png": {
+    "original_sha256": "a51f32432c6f4c17b63bc469af5399aa8d9a623366063a78d951c71d6af28b25"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-map-hilton-supermarket.png": {
+    "original_sha256": "52fddc510ae3929e6c7b28e410cb32735a845b6ea556f1e3708e34a75c0ffaca"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-map-memorial-test.png": {
+    "original_sha256": "194f2c82502b36dfb74091e7593653c9822061ad494de5b86a3f87787c686abd"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-map-restaurants-cal.png": {
+    "original_sha256": "a81ace45e9dd34d152595ae38183e7a728c75b5aee33128b6f990a37a6837776"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-map-supermarket-test.png": {
+    "original_sha256": "6e4d962f87771610b6a66cb397522c989b7bab8239c5e94508dda69587a64e23"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-shop-chocolate-reviewed.png": {
+    "original_sha256": "f691145da620850c6e060954bb091f6f721d89ceca22f36fafa6e8cbde35e026"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-shop-chocolate-train.png": {
+    "original_sha256": "785eaf68abd749bb83d07720077e001240f58b0c40e1711bb5a3ec075208502f"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t1_cases/p1c-shop-fitbit-train.png": {
+    "original_sha256": "1b89511d444de9d224a4dfa6ae3b97f71be1b8aa3455f3427b41af140220d9a6"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-instagram-reviewed__direct_point__current_only.png": {
+    "original_sha256": "7bff9a8bab72fa57000218e9ef332878689ae43c294da7598f888f37d5bf1514"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-instagram-reviewed__direct_point__warm.png": {
+    "original_sha256": "bb1b4e84f8c7aa66a43b5b9260d8c1de27c679021680ad026734eabfe21d488a"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-instagram-reviewed__plan_then_point__current_only.png": {
+    "original_sha256": "781823c0c0c7b53338cae9bd257eaf929a883f7a0e359a4da317c0c9da06e694"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-instagram-reviewed__plan_then_point__warm.png": {
+    "original_sha256": "4a739f86c1cb8f4166d4a7cd73fa06746cb4afb89d8655ef8ce7f1bddae3e292"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-triller-reviewed__direct_point__current_only.png": {
+    "original_sha256": "96a432874c49129f20ac7fc38f02f1434cdcd0ae5afb9b745ebb39709c85b005"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-triller-reviewed__direct_point__warm.png": {
+    "original_sha256": "e6d3637b6676ee011d1f6b33f15924a51915f646c7a40e1caf15b6e794aa234f"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-triller-reviewed__plan_then_point__current_only.png": {
+    "original_sha256": "b47e3c94987bcd88f0a1ece6be5e3f9ac0073aadaf0e190180607e3682f4b6b3"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-triller-reviewed__plan_then_point__warm.png": {
+    "original_sha256": "39e6cd57e5f4961a796d423fc61aa210f28f3407633c7775923f0551ebfc8129"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-vottak-test__direct_point__current_only.png": {
+    "original_sha256": "9200f228bfa784f6199b03828fa603d0ac3a749181f9a2985b04ee4535fc9992"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-vottak-test__direct_point__warm.png": {
+    "original_sha256": "da6b0a7eba5a4c07ab0a373d1c9de3579f1da13fd0d0db5b291e439e353a699f"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-vottak-test__plan_then_point__current_only.png": {
+    "original_sha256": "1313e22c8afcf1c932f9149185b38e040e1ab8ab8618d79093645b253c8251c5"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-app-vottak-test__plan_then_point__warm.png": {
+    "original_sha256": "afa1177407196d5342411a2d3479ce7b91d71937e268cb507b060fa340a99a3f"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-rainbow-csv-train__direct_point__current_only.png": {
+    "original_sha256": "c0d12c9b20063e32caeaa1e4536bc5249acd0918dc0e0c72edb788dd10c36e23"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-rainbow-csv-train__direct_point__warm.png": {
+    "original_sha256": "99107fb9837dccce456c2cbd6e47f3f8dceab232b6f2df8d2659924317add1ab"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-rainbow-csv-train__plan_then_point__current_only.png": {
+    "original_sha256": "27970dd49987f43e83705edf1f6b20f147f8fd7f6ac9855bc0efa485efc9d6b9"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-rainbow-csv-train__plan_then_point__warm.png": {
+    "original_sha256": "1a6b9ff9ee4f38b8492875a0a5211120e1873d724c93f961df474317e211dc83"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-tab-size-train__direct_point__current_only.png": {
+    "original_sha256": "abfe4ad394cb78c32aa273fb161cbf60319f4527dcc62e55b19a2e1f55a49f7b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-tab-size-train__direct_point__warm.png": {
+    "original_sha256": "27e5da41c7702ed37d72aa64592d2da9c97f5bcc385dc953b2019f23f27c2c2f"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-tab-size-train__plan_then_point__current_only.png": {
+    "original_sha256": "7905d9a512df8a54319cc147a148a4f331df904816b5d666b68ac6e681875500"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-desktop-tab-size-train__plan_then_point__warm.png": {
+    "original_sha256": "a82fc9baec9759dfdb248168fb66e16cd04c5b9691432a1d27a619227a9c9042"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-airports-empty-cal__direct_point__current_only.png": {
+    "original_sha256": "f5b84c24333fec4adfee0c55df90ffd336a254246cad51dc6659796b5fc2a6b1"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-airports-empty-cal__direct_point__warm.png": {
+    "original_sha256": "d384771b3e0a36f5770eabf6a3c526bbfa3becdd99602ad30ecfea2bd4e67b73"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-airports-empty-cal__plan_then_point__current_only.png": {
+    "original_sha256": "8aae1bfb737da80a00ea112368c91fe6649130afbb6575719caa64fd848d01e9"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-airports-empty-cal__plan_then_point__warm.png": {
+    "original_sha256": "456fd51c6c8c180c7dd95e5bdc781c14b4b0724095c2bdad54437c07efd2ff09"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-bar-cal__direct_point__current_only.png": {
+    "original_sha256": "1803df1d337150956819fee65a1078f1fb9a2bb3b445c92d59df66612f6fbae5"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-bar-cal__direct_point__warm.png": {
+    "original_sha256": "4467b1e1081900a805b0bac72559625553355a363657eedca2fbc3c4541445e6"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-bar-cal__plan_then_point__current_only.png": {
+    "original_sha256": "c1bab83e53b57ff250dfd5597ecf56de14e32501d784a2837b13f37e61977b08"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-bar-cal__plan_then_point__warm.png": {
+    "original_sha256": "594ce66429593c6a7d108494a143981431e78d1e36062a960a046edeb13a4ad9"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-hilton-supermarket__direct_point__current_only.png": {
+    "original_sha256": "3260b1bbfcf71911ecbada8301457e3dd18f07a65494261ccf7db9a9442b2cad"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-hilton-supermarket__direct_point__warm.png": {
+    "original_sha256": "2fec98a6ce9728def4a3b27a3773085080d43008c7c5dd6099af378bcfe18fe7"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-hilton-supermarket__plan_then_point__current_only.png": {
+    "original_sha256": "0a84e008d9077d4ec368bc0f803e98ff6d44bab8b4ed6a4d5a804814abb0eec4"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-hilton-supermarket__plan_then_point__warm.png": {
+    "original_sha256": "849564d8c54a4051c184615b24dd266e16314ca67861de911eee1cd3cc62e195"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-memorial-test__direct_point__current_only.png": {
+    "original_sha256": "0fda57a1b7d44624803a8e3a7af8250918b1d04095d9207830bf2e79c4122cc9"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-memorial-test__direct_point__warm.png": {
+    "original_sha256": "fe6f7432509d33c4a614ee66fd2c221f8be6b93e76290f934ca24ee97e139718"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-memorial-test__plan_then_point__current_only.png": {
+    "original_sha256": "3c9dc36dd88b6feabb9323b364c4c50ebbde6def3006efb84bd3c8176d2cd97b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-memorial-test__plan_then_point__warm.png": {
+    "original_sha256": "4cec126452cdc8c04e5c5ba1fec6c48c746e91ee3066dbb31cf6312ef467d5d5"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-restaurants-cal__direct_point__current_only.png": {
+    "original_sha256": "4e62f93c6ef86cd9172f4b1c63db335b14488a5eaa35a35dafca5f7849995405"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-restaurants-cal__direct_point__warm.png": {
+    "original_sha256": "3dae69b546b707283f81f0018d4edf4477d0b558d2b2103cb53cc30db68c2c8b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-restaurants-cal__plan_then_point__current_only.png": {
+    "original_sha256": "559a625a3a2e01e8b1aff9cb558da3d032df2bad42476fd5695aa7b25986707c"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-restaurants-cal__plan_then_point__warm.png": {
+    "original_sha256": "d8c64b70ef57bddf1363395706da44b09ca947867f133dda89d8c19c31bc4a34"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-supermarket-test__direct_point__current_only.png": {
+    "original_sha256": "42bbe65fe5b7c72047f22cbe9c52ac13f58e94243483fdc0b7495cc0eb36c390"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-supermarket-test__direct_point__warm.png": {
+    "original_sha256": "52ec2a4943bc0775ed4e6264a8ad2e36bd5e395f98f434b6c481f13aa8a6675b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-supermarket-test__plan_then_point__current_only.png": {
+    "original_sha256": "48c6a9d204367a2ff694a5c7f9d4a84c1b91c3b902900c4d0aeb31fb6196030a"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-map-supermarket-test__plan_then_point__warm.png": {
+    "original_sha256": "e6b39ce718014b9ace13c54fb357d0d81dd4ae25026ac708c1af1a7b9bfe59c9"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-reviewed__direct_point__current_only.png": {
+    "original_sha256": "a4be0859f9121fbe9191d32cfc8566042122efae5b7d76bd30cc663f431f5624"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-reviewed__direct_point__warm.png": {
+    "original_sha256": "a67ebb66fbd46cd3fd1bf4ac6317a880a8fe8515cffdd8ba867b12f4d7299303"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-reviewed__plan_then_point__current_only.png": {
+    "original_sha256": "9d6712e153c8850cd8ea8a3c3d93e1beb9bdb1af89d44ceccaec624cba25d1a8"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-reviewed__plan_then_point__warm.png": {
+    "original_sha256": "ef2e247c18139295f884bbfb8224b5ed5d3f69eefdeedd934464afd1aff04755"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-train__direct_point__current_only.png": {
+    "original_sha256": "e5cb6d91dbfd9a2d7ac79597c2d017eef5fec45be1f85b13efd456f6a3b59f43"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-train__direct_point__warm.png": {
+    "original_sha256": "7e51df174e4c109fb6e11ef4ac3b09f8064d3b5fb6fa26842f2fad3ac555fb1b"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-train__plan_then_point__current_only.png": {
+    "original_sha256": "99938d1653d67a3f2b9c196c7c916a8cb559f9d17a92f06ce8918c319af6babe"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-chocolate-train__plan_then_point__warm.png": {
+    "original_sha256": "c6702039094f38598f713fdef453a068624bb80f6ffb626068a4da3b02ce5028"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-fitbit-train__direct_point__current_only.png": {
+    "original_sha256": "3713ac1ca527e813c60164726b251afc086c77412140d3bf5c9e253024b7fe7e"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-fitbit-train__direct_point__warm.png": {
+    "original_sha256": "d8e508527fd10d9ea19258a65cdb355b569be4d3d8a67eadecfd46ed17efbb2e"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-fitbit-train__plan_then_point__current_only.png": {
+    "original_sha256": "f64f9ee0777d741f0b7d68d43157a3b0690dde5da4dc3916aee5da2244b0a98c"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/t2_branches/p1c-shop-fitbit-train__plan_then_point__warm.png": {
+    "original_sha256": "b8b0347c360faf2e947dde381c97230b94245663cdb5db8c29f1775d6933ce35"
+  },
+  "grounding_comparison_20261030/agw_native_separate.csv": {
+    "original_sha256": "18351f4a035c5284a0013598712ce0e6b0fa4f9aee7f23224d0dc9b93ad26aac"
+  },
+  "grounding_comparison_20261030/grounding_by_platform.csv": {
+    "original_sha256": "9d9600a0a7a3a8e14ad0244988c5fb99054c49f890cd8e424ca5f54f6e61e07b"
+  },
+  "grounding_comparison_20261030/model_comparison.csv": {
+    "original_sha256": "e66564a513fa0f0855932a12e3d8339f35167bfa524d648cac5cc7bf6910315a"
+  },
+  "reports/agw_20261006/case_gallery/final-with-controls-r3-v2/index.html": {
+    "original_sha256": "4cf2ed98a7579720e2a16e560f1242b5db1d863bc25e186e95f430b3bc51afc6"
+  }
+}
