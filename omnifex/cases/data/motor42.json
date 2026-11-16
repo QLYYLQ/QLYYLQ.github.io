@@ -1,0 +1,220 @@
+{
+  "id": "motor42",
+  "group": "hard",
+  "order": 4,
+  "project": "稚晖君 Dummy 机械臂 · Motor-42（peng-zhihui/Dummy-Robot）",
+  "short": "Motor-42 加双编码器：675 步没改一个硬件文件",
+  "title": "Motor-42 外部编码器接口：3 小时 14 分、675 步，模型交了一份计划",
+  "description": "模型做了大量 TL431 仿真和基线检查，交卷时 30 个硬件文件与输入逐字节相同；22 次写文件全在 _scratch。压缩循环和运行器入口问题把一次可做的题拖成了“只交计划”。",
+  "domain": [
+    "PCB"
+  ],
+  "level": "难",
+  "verdict": [
+    {
+      "label": "未交付",
+      "tone": "bad"
+    },
+    {
+      "label": "0 分",
+      "tone": "bad"
+    },
+    {
+      "label": "runner 5 类问题",
+      "tone": "warn"
+    }
+  ],
+  "summary": [
+    "题面要求在 5 页原理图、4 层 PCB 上新增外部 SPI 编码器接口，把 P4 改成串口加模拟编码器，加 TL431 2.5 V 参考，移除 USB 支路，并保持原电源、两路电机驱动、CAN、板载 MT6816 和安装关系。判分 27 项，critical 失败即 0。",
+    "模型跑了 3 小时 14 分、675 步、1299 次工具调用，做了 720 个 TL431 波形和大量基线 ERC/DRC；但交卷的 30 个硬件文件与输入逐字节相同，唯一新增的 `hardware/Motor-42.kicad_prl` 是 kicad-cli 自己写的项目状态文件。22 次 `write`/`edit` 全部落在 `_scratch/`。",
+    "这不是权限或判分链吞了改动：`hardware/` 可写（`.kicad_prl` 反过来证明），判分链 `snapshot_submission()` 只跳过 `_runtime`，不还原、不筛选。真正的问题是模型把交付一直留到“下一步”，加上运行器的 5 类执行入口问题放大了空转。",
+    "v3.1 重判仍是 0，但只是把 P17/P20 从失败改成没跑、P18 字段改名；P04/P05/P06/P07/P08/P14/S02/P18 仍失败。题包本身可解：独立 150 Ω 完整替代解过全部必过项（790fb4 记 100；连续分 89.59），330 Ω 0 分，16 Ω 只失败 P20（0.07318 W > 0.063 W）。"
+  ],
+  "numbers": [
+    {
+      "v": "675",
+      "k": "模型步数（step_finish）"
+    },
+    {
+      "v": "1299",
+      "k": "工具调用"
+    },
+    {
+      "v": "0",
+      "k": "对 hardware/ 的写操作"
+    },
+    {
+      "v": "22",
+      "k": "write/edit 次数，全在 _scratch"
+    },
+    {
+      "v": "115",
+      "k": "压缩续跑"
+    },
+    {
+      "v": "8",
+      "of": "27",
+      "k": "v3.1 重判仍失败的实质检查"
+    }
+  ],
+  "task": {
+    "heading": "题目",
+    "intro": [
+      "Motor-42 是 Dummy 机械臂里的四层电机驱动板：STM32F103CBT6、板载 MT6816 编码器、两路电机驱动、电源、CAN、串口和 SWD 都已就位。",
+      "题面要求在现有工程上扩展外部编码器接口，并保留原功能和安装关系；判分 27 项，critical 失败即 0。"
+    ],
+    "rows": [
+      [
+        "要改",
+        [
+          "新增 6 针 SH1.0-6P SPI 接口：PA7 独立片选、PB4 MISO、PB5 MOSI、PB3 SCK、GND、3.3 V",
+          "P4 从 USB 改成 UART 加模拟编码器：1=RX/PB7、2=TX/PB6、3=GND、4=约 2.5 V 参考、5=PA6；移除 USB D+/D− 和 22 Ω/1.5 kΩ 支路",
+          "TL431I 2.5 V 参考：3.3 V±5%、0–1 mA、2.40–2.60 V，限流电阻自选，最不利工况阴极电流 ≥1 mA 且 ≤100 mA",
+          "同步原理图、PCB、网络和实际铜线；不能只改网络标签代替布线"
+        ]
+      ],
+      [
+        "保护",
+        [
+          "四层叠层、板框、安装孔、原电源/两路驱动/CAN/MT6816/按键/晶振/SWD 不变",
+          "只允许删除旧 USB 三个电阻；新增器件不能共用实体焊盘，不能缩小焊盘或改封装逃避间距",
+          "保留 4 mil 线宽/间距和 Ctrl 铜字；不降低 DRC 规则或新增忽略项"
+        ]
+      ],
+      [
+        "交付",
+        [
+          "hardware/ 下可打开的 KiCad 原理图、PCB、项目配置；多页层次完整",
+          "短说明：新增器件、参考输出最不利供电/负载计算、原功能保护检查"
+        ]
+      ]
+    ]
+  },
+  "steps": [
+    {
+      "label": "题面",
+      "title": "5 页原理图、4 层 PCB，27 项检查",
+      "text": [
+        "起点是 Motor-42 的原生 KiCad 工程，改前网络和板框已核过。要改的不只是加一个连接器：新 SPI 接口、P4 改串口/模拟编码器、TL431 参考、USB 退役四条线要一起落到原理图、PCB 和 BOM。",
+        "判分覆盖接口针序、独立片选、P4 新针序、TL431 直流/动态、USB 移除、连接器几何、ERC、安装几何和铜线连通；critical 失败即 0。"
+      ]
+    },
+    {
+      "label": "试做",
+      "title": "3 小时 14 分、675 步，交卷时 30 个硬件文件一个没改",
+      "text": [
+        "被审 run `20261116T003919_motor42_d3867739` 从 00:39 跑到 03:53，正常退出并判分。题包输入 30 个原生文件与交卷 `hardware/` 一一对应，SHA256 全部相同；唯一新增是 kicad-cli 在 00:52:40 写出的 `.kicad_prl`。",
+        "全轨迹 1299 次工具调用里，对 `hardware/` 的写操作只有一次 `cp` 备份（方向是 hardware→backup）；22 次 `write`/`edit` 全在 `_scratch/`。末次交接摘要自己也写：`No hardware edits have been made`。"
+      ],
+      "figures": [
+        {
+          "src": "img/motor42/files.svg",
+          "caption": "**30 个原生文件与交卷逐字节相同**。左边是题包输入，右边是交卷 `hardware/`；30/30 的 SHA256 一致，唯一新增是 kicad-cli 自动写的 `.kicad_prl`，不是模型交付。"
+        }
+      ]
+    },
+    {
+      "label": "轨迹",
+      "title": "模型在做什么：720 个 TL431 波形，22 次写全在 _scratch",
+      "text": [
+        "模型不是没干活：它跑了 720 个 TL431 `.dat` 波形，反复读 4600 行原理图，做基线 ERC/DRC 和 PCB 盘点；但这些都是分析脚本和仿真，真正落到交付文件的写操作是 0。",
+        "时间分布也很均匀：第一个三分之一有 159 次原理图命令、74 次仿真；最后一个三分之一仍有 141 次原理图命令、94 次仿真、19 次 PCB 命令。它一直在“准备改”，没有进入“改”。"
+      ],
+      "figures": [
+        {
+          "src": "img/motor42/run.svg",
+          "caption": "**1299 次工具调用与这次运行的体量**。bash 占 93%，read/write/edit 合计不到 6%；720 个 TL431 波形、115 次压缩、675 步，最后交了一份 10,088 字符的计划。"
+        }
+      ]
+    },
+    {
+      "label": "压缩",
+      "title": "115 次压缩续跑，最后一份 10,088 字符的计划",
+      "text": [
+        "675 步里有 115 条 synthetic `compaction_continue` 和 101 条 `## Objective` 交接式摘要，平均每 6 步压缩一次。末次压缩 `finish=length`、`output=0`、`reasoning=16384`，摘要输出为空，外壳仍发“继续”。",
+        "随后模型用一份 10,088 字符的 `## Objective / Work state / Next steps` 计划收尾，`finish=stop`，没有工具调用。控制器按 returncode 0 + stop + 无 error 记 `solver_complete=true`——分数没有错（checker 照样 0），但状态没有区分“正常完成”和“没有交付变化”。"
+      ]
+    },
+    {
+      "label": "运行器",
+      "title": "5 类执行入口问题，放大了这次失败",
+      "text": [
+        "诊断把 runner 的问题和模型失败分开。下面 5 项都能在隔离环境复现或由轨迹直接证明；它们不是这次 0 分的借口，但会让下一次试做继续空转。"
+      ],
+      "checks": [
+        {
+          "id": "E1",
+          "what": "zsh here-doc 被沙箱挡",
+          "status": "fail",
+          "status_label": "待修",
+          "note": "29 次；根因是 zsh 用 `TMPPREFIX=/tmp/zsh`，不认 `TMPDIR`。加 `TMPPREFIX` 或固定 bash 可解。"
+        },
+        {
+          "id": "E2",
+          "what": "PATH 里的 python3 是坏 xcrun shim；kicad-cli 不在 PATH",
+          "status": "fail",
+          "status_label": "待修",
+          "note": "31 次 / 8 次；`/usr/bin/python3` 在沙箱里打不开 libxcrun。"
+        },
+        {
+          "id": "E3",
+          "what": "没有 kiutils/sexpdata/skidl",
+          "status": "fail",
+          "status_label": "待修",
+          "note": "Motor-42 是 7 次完成试做里唯一必须手改 `.kicad_sch` 的题。"
+        },
+        {
+          "id": "E4",
+          "what": "没有步数/压缩预算",
+          "status": "fail",
+          "status_label": "待修",
+          "note": "675 步、115 次压缩、3h14m、76.5 MB 请求体、186.8 分钟模型时间。"
+        },
+        {
+          "id": "E5",
+          "what": "空压缩和无交付变化仍记 solver_complete",
+          "status": "fail",
+          "status_label": "待修",
+          "note": "末次 `output=0 && finish=length` 被接受；收尾无交付哈希变化却记正常完成。"
+        },
+        {
+          "id": "P",
+          "what": "题包本身可解",
+          "status": "pass",
+          "note": "150 Ω 完整替代过全部必过项（790fb4 100；连续分 89.59）；330 Ω 0；16 Ω 只失败 P20。"
+        }
+      ]
+    },
+    {
+      "label": "重判",
+      "title": "v3.1 仍是 0，但只是把“没跑”和“失败”分开了",
+      "text": [
+        "v3.1 重判直接指向同一份未改提交，`input_binding all_equal=true`，`old_artifacts_modified=false`。协议差异只有三处：P17/P20 从失败改成没跑、P18 字段改名。P04/P05/P06/P07/P08/P14/S02/P18 仍失败，所以还是 0。",
+        "这不是新协议更严，而是原来把“没跑”误标成“失败”的修正。题包没问题：150 Ω 完整替代解过全部必过项，16 Ω 只失败 P20，330 Ω 因直流不足 0 分。"
+      ]
+    },
+    {
+      "label": "结论",
+      "title": "模型失败，但不是难度实测",
+      "text": [
+        "这次 0 分是模型没交付，不是题包、判分器或权限误拒；旧 0 保留为 `incomplete_submission`，不追溯改分。",
+        "但 3h14m、675 步、115 次压缩的循环和 5 类 runner 问题让这次不能当“题目太难/模型不会”的难度信号。建议修 E1–E5 后同题包重跑一次；若 150 步内仍无硬件写操作，再讨论拆题。"
+      ]
+    }
+  ],
+  "lesson": [
+    "模型失败和 runner 失败要分开记账：硬件文件逐字节没变证明“没交付”，但 675 步和 115 次压缩证明这次运行不是一个干净的难度样本。",
+    "题包可解不等于这次通过；150 Ω 替代解 100 分只校准了题包，不能拿它替代模型成绩。旧 0 保留，新 run 另存。"
+  ],
+  "sources": [
+    "data/continuation_20261115/trials_review/motor42_first/DIAGNOSIS_20261117.md",
+    "data/continuation_20261115/trials_review/motor42_first/README.md",
+    "data/continuation_20261115/trials/20261116T003919_motor42_d3867739/status.json",
+    "data/continuation_20261115/trials/20261116T003919_motor42_d3867739/grade.json",
+    "data/continuation_20261115/trials/20261116T003919_motor42_d3867739/events.jsonl",
+    "data/peng_tasks_20261113/motor42_encoder/task.md",
+    "data/continuation_20261115/trials_review/motor42_first/protocol_review/README.md",
+    "https://github.com/peng-zhihui/Dummy-Robot"
+  ],
+  "thumb": "img/motor42/files.svg"
+}

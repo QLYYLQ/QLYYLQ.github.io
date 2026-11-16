@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+<rect width="960" height="540" fill="#0c1411"/>
+<style>text{font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB",sans-serif}</style>
+<text x="40" y="52" font-size="28" font-weight="700" fill="#f0ece4">1299 次工具调用，硬件写操作 0 次</text>
+<text x="40" y="82" font-size="16" fill="#9fb3a8">Motor-42 首次试做 · 675 步 · 3 小时 14 分 · 模型 sankuai-native/deepseek-v4.1-flash-m17</text>
+<rect x="40" y="112" width="520" height="330" rx="8" fill="#10201a" stroke="#2a4a3c"/>
+<text x="64" y="146" font-size="18" font-weight="600" fill="#f0ece4">工具调用构成</text>
+<rect x="64.00" y="190" width="448.59" height="34" fill="#e6ad6a" opacity="0.9"/>
+<rect x="512.59" y="190" width="18.11" height="34" fill="#5ff2ff" opacity="0.9"/>
+<rect x="530.70" y="190" width="5.54" height="34" fill="#ff3d6e" opacity="0.9"/>
+<rect x="536.24" y="190" width="4.06" height="34" fill="#9fb3a8" opacity="0.9"/>
+<rect x="540.30" y="190" width="2.59" height="34" fill="#ff3d6e" opacity="0.9"/>
+<rect x="542.89" y="190" width="1.11" height="34" fill="#8f7ad6" opacity="0.9"/>
+<rect x="64" y="190" width="480" height="34" fill="none" stroke="#2a4a3c"/>
+<rect x="64" y="250" width="12" height="12" fill="#e6ad6a"/>
+<text x="84" y="262" font-size="15" fill="#f0ece4">bash</text>
+<text x="184" y="262" font-size="15" fill="#9fb3a8" text-anchor="end">1214</text>
+<rect x="229" y="250" width="12" height="12" fill="#5ff2ff"/>
+<text x="249" y="262" font-size="15" fill="#f0ece4">read</text>
+<text x="349" y="262" font-size="15" fill="#9fb3a8" text-anchor="end">49</text>
+<rect x="394" y="250" width="12" height="12" fill="#ff3d6e"/>
+<text x="414" y="262" font-size="15" fill="#f0ece4">write</text>
+<text x="514" y="262" font-size="15" fill="#9fb3a8" text-anchor="end">15</text>
+<rect x="64" y="284" width="12" height="12" fill="#9fb3a8"/>
+<text x="84" y="296" font-size="15" fill="#f0ece4">todowrite</text>
+<text x="184" y="296" font-size="15" fill="#9fb3a8" text-anchor="end">11</text>
+<rect x="229" y="284" width="12" height="12" fill="#ff3d6e"/>
+<text x="249" y="296" font-size="15" fill="#f0ece4">edit</text>
+<text x="349" y="296" font-size="15" fill="#9fb3a8" text-anchor="end">7</text>
+<rect x="394" y="284" width="12" height="12" fill="#8f7ad6"/>
+<text x="414" y="296" font-size="15" fill="#f0ece4">grep</text>
+<text x="514" y="296" font-size="15" fill="#9fb3a8" text-anchor="end">3</text>
+<text x="64" y="352" font-size="15" fill="#9fb3a8">bash 占 93%；read/write/edit 合计不到 6%。</text>
+<rect x="64" y="372" width="472" height="40" rx="6" fill="#2a1016" stroke="#ff3d6e"/>
+<text x="80" y="397" font-size="16" fill="#ff3d6e">hardware/ 写操作 = 0</text>
+<text x="300" y="397" font-size="14" fill="#9fb3a8">22 次 write/edit 全在 _scratch/</text>
+<rect x="600" y="112" width="320" height="330" rx="8" fill="#10201a" stroke="#2a4a3c"/>
+<text x="624" y="146" font-size="18" font-weight="600" fill="#f0ece4">这次运行的实际体量</text>
+<text x="624" y="188" font-size="28" font-weight="700" fill="#5ff2ff">675</text>
+<text x="624" y="205" font-size="13" fill="#9fb3a8">步</text>
+<text x="624" y="240" font-size="28" font-weight="700" fill="#e6ad6a">115</text>
+<text x="624" y="257" font-size="13" fill="#9fb3a8">次压缩续跑</text>
+<text x="624" y="292" font-size="28" font-weight="700" fill="#7ee2a8">720</text>
+<text x="624" y="309" font-size="13" fill="#9fb3a8">个 TL431 .dat</text>
+<text x="624" y="344" font-size="28" font-weight="700" fill="#ff3d6e">10,088</text>
+<text x="624" y="361" font-size="13" fill="#9fb3a8">字符的收尾计划</text>
+<text x="624" y="396" font-size="28" font-weight="700" fill="#f0ece4">3h14m</text>
+<text x="624" y="413" font-size="13" fill="#9fb3a8">总耗时</text>
+</svg>
