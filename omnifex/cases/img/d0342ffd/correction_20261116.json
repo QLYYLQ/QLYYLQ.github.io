@@ -1,0 +1,33 @@
+{
+  "case": "d0342ffd",
+  "date": "2026-11-16",
+  "status": "rejected_task_premise",
+  "before_commit": "9d55c3d92513a2eac7a669415431826d9bea9f5b",
+  "after_commit": "d0342ffdda801099dd1683ea8d178e8059af8484",
+  "fixed_screw_volume_mm3": [
+    {
+      "pair": 1,
+      "before_base": 2.206860176,
+      "after_base": 2.206860175
+    },
+    {
+      "pair": 2,
+      "before_base": 1.826137901,
+      "after_base": 1.826137901
+    }
+  ],
+  "old_empty_boolean_refuted": true,
+  "comparison_scenarios": 32,
+  "model_trials": 0,
+  "boundary": "Nominal shaft/bore overlap is not by itself a manufacturing defect; exact historical thread-fit specification remains unverified.",
+  "superseded_claims": [
+    "The two specified overlaps disappeared",
+    "Six vanished pairs are confirmed",
+    "The measurements support the proposed local repair task"
+  ],
+  "historical_evidence": "evidence.json",
+  "source_records": [
+    "data/continuation_20261115/batch_b/hackberry/boolean_witnesses.json",
+    "data/continuation_20261115/batch_b/hackberry/fastener_evidence.json"
+  ]
+}

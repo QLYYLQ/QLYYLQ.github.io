@@ -10,6 +10,7 @@ import html
 import json
 import pathlib
 import re
+from urllib.parse import urlsplit
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CASES = ROOT / "omnifex" / "cases"
@@ -19,7 +20,7 @@ GROUPS = [
     ("grader", "判分本身会出错", "A 批 15 道里有 10 道的检查要修。误判有两个方向：太严会拒掉合理解，太松会放过错误解。题面本身也会写错。"),
     ("hard", "模型真做不到的", "修好检查后仍失败的几道里，最典型的三类：整板布线、板与外壳的空间关系、缩板。"),
     ("round2", "第二轮的新问题", "11-12 第二轮试做里最能说明问题的几道：检查全过但审计推翻、检查误判却另有真错、复核员判错、工作区泄题。"),
-    ("source", "还没造题的新题源", "来自稚晖君仓库和专有格式重筛，都还没加工成题。这里写的是它们为什么值得做。"),
+    ("source", "题源、加工与核验", "来自稚晖君仓库和专有格式重筛，逐例区分材料核实、题包加工、开发试做和构题撤回。"),
 ]
 TONES = {"good", "bad", "warn", "info"}
 
@@ -84,7 +85,22 @@ def inline(s):
     s = html.escape(s, quote=False)
     s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", s)
-    s = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+|[^)\s]+\.html[^)\s]*)\)", r'<a href="\2">\1</a>', s)
+    def link(match):
+        target = html.unescape(match[2])
+        if "\\" in target or any(ord(c) < 32 or ord(c) == 127 for c in target):
+            return match[0]
+        try:
+            parts = urlsplit(target)
+        except ValueError:
+            return match[0]
+        remote = parts.scheme in ("http", "https") and bool(parts.netloc) and parts.username is None
+        relative = (not parts.scheme and not parts.netloc and not target.startswith("/")
+                    and ":" not in target.split("/", 1)[0]
+                    and parts.path.endswith((".html", ".json")))
+        if not (remote or relative):
+            return match[0]
+        return '<a href="%s">%s</a>' % (html.escape(target, quote=True), match[1])
+    s = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+|[^)\s]+\.(?:html|json)[^)\s]*)\)", link, s)
     return s
 
 

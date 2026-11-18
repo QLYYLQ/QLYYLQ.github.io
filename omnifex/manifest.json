@@ -3,9 +3,9 @@
     "page": "progress.html",
     "source": "omnifex_progress.html",
     "claude_artifact": "https://claude.ai/artifact/6NvXrEkq11p1oacy3Dvrmq",
-    "source_sha256": "4228095f4c4a11ec4b4a50a450ec67ab6eb20b73beaceeac091e340cf7fc8990",
-    "page_sha256": "9d0a88e66faaedf9b3f703ebe1d3f499d0cf13266c4b41e683a41a703f4de191",
-    "bytes": 86831
+    "source_sha256": "4893a532f691be90f1fbedcd8d2c03ba1c4ceb2c358cea40ded577a24c258759",
+    "page_sha256": "20ffcac176edaef4bc1894b9a3b9385f6d3e3b3a69785cf80bde695b447bea75",
+    "bytes": 96500
   },
   {
     "page": "task-sources.html",

@@ -227,7 +227,7 @@
       "title": "同网焊盘重叠不是 DRC 违规，这个封装又没有 courtyard",
       "text": [
         "DRC 里的间距检查只管不同网络之间的铜离得够不够远，同一个网络的两块铜叠在一起，规则认为是连通，不算错。元件有没有撞在一起，则靠 courtyard（元件占位框，一圈比焊盘略大的虚拟边界）重叠检查，但 HackRF 用的 0402 封装 GSG-0402 根本没有 courtyard，工程规则里 `missing_courtyard`（缺 courtyard）还被设成了忽略。所以 K8 通过得毫不奇怪。",
-        "审计给出的补法是新增两条检查，以改前板为基线：一条按焊盘外包加余量合成 courtyard，做元件碰撞；一条要求新增或移动封装的焊盘和别的元件焊盘保持最小间距，同网也算。项目的交接记录里把这条通用检查记作候选 G3（焊盘和 courtyard 几何不重叠），还没做。"
+        "审计给出的补法是新增两条检查，以改前板为基线：一条按焊盘外包加余量合成 courtyard，做元件碰撞；一条要求新增或移动封装的焊盘和别的元件焊盘保持最小间距，同网也算。项目的交接记录里把这条通用检查记作候选 G3（焊盘和 courtyard 几何不重叠），审计当时还没做；11-16 后已补，见本页最后一步。"
       ]
     },
     {
@@ -236,6 +236,13 @@
       "text": [
         "审计另记了几条 minor：U5、U7 的去耦电容离引脚 1.65 mm 与 2.03 mm，之间没有同层走线，只靠过孔经内层 VAA 铺铜连通；PCB 被 KiCad 10 存成新格式而原理图仍是旧格式，处于半迁移状态；VDD 接的是可关断的 VAA，而固件先拉高 VCTL 后开 VAA，上电阶段不满足手册的 VCTL 不高于 VDD，审计说上游同样这样接，所以只记 minor。",
         "这道题按审计结论计为未通过。待补的检查有两条：焊盘和本体不重叠（G3），以及去耦电容的距离和连接路径。"
+      ]
+    },
+    {
+      "label": "2026-11-16 接续",
+      "title": "本轮补齐真实焊盘相交检查",
+      "text": [
+        "通用检查G3按真实焊盘几何算，已有缺陷与新增/扩大相交分开；11-16 起先作诊断，11-17 起焊盘相交（G3a）升为必需，courtyard 余量仍只作诊断，不等同实体碰撞。本题按原有可投产要求补了必需K12：上游0对相交、旧Sonnet交付13对，新检查能拒绝该交付。参考与不同布局派生正例经过校准；这不是重写历史试做成绩。"
       ]
     }
   ],
@@ -249,6 +256,7 @@
     "C/585e69a5/trials/sonnet_report.json",
     "C/585e69a5/trials/sonnet_common.json",
     "C/585e69a5/task.md",
-    "https://github.com/greatscottgadgets/hackrf/commit/585e69a5d06ffdf2077f33d62991dfa6523dcd12"
+    "https://github.com/greatscottgadgets/hackrf/commit/585e69a5d06ffdf2077f33d62991dfa6523dcd12",
+    "data/continuation_20261115/pcb/README.md、pcb_review/README.md、A_BATCH_FIX_20261117.md"
   ]
 }

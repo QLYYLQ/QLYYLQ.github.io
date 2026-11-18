@@ -139,7 +139,7 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
 <div class="wrap">
 
 <header>
-  <div class="eyebrow">2026-11-12 · 截至 23:35 · 接续 11-10 版</div>
+  <div class="eyebrow">2026-11-12 原稿 · 2026-11-18 更正与补记 · 接续 11-10 版</div>
   <h1>硬件设计基准进展</h1>
   <p class="lead">这个基准仿照 SWE-bench：从开源硬件仓库的真实修订里取“改前状态 + 需求 + 上游答案”，让 agent 在原生 KiCad/CAD 文件上完成需求，再用自动检查判分。榜单先做两条：全能力榜（agent 自己决定用不用 GUI）和不用 GUI 的榜，共用同一批题。</p>
   <p>11-10 之后的进展，一句话：<b>A 批又试做了 30 道，Sonnet 最终只过 5 道，难题 2/21；检查的主要漏洞从“判错”转到了“没查能不能装出来、用不用得了”；题源补上了耦合题和稚晖君的 Altium 工程。</b></p>
@@ -149,10 +149,49 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
     <li><span class="tag">通用检查</span><span>新增两条 critical 检查 G1、G2：不许为了过 DRC 缩封装、删禁布区或调低规则严重度。15 份解里有 4 份 G1 不过、4 份 G2 不过。试做时提示里没有这条规则，所以不追溯；追溯的话成绩是 6/15。</span></li>
     <li><span class="tag">耦合题源</span><span>Fusion、SolidWorks、Inventor 文件转成 STEP 后重筛 245 条候选，能用 38 条，其中板壳或机构耦合（L2）19 条。之前 A 批里真正“改板逼着改壳”的只有个位数。</span></li>
     <li><span class="tag">稚晖君</span><span>11 个仓库全部采集。Altium 转 KiCad 的链路验证通过：29 个工程的焊盘、网络和位置与 Altium 自己的导出全部一致；8 块自带 Gerber 的板铜皮和钻孔也对上了。</span></li>
-    <li><span class="tag">两处坑</span><span>Fusion 的 .f3z 转换几乎全部残缺（只导出了归档里的一个子设计），11-12 修好，正在重转。本机磁盘紧张，项目已迁到外置 SSD。</span></li>
+    <li><span class="tag">两处坑</span><span>Fusion 的 .f3z 转换几乎全部残缺（只导出了归档里的一个子设计），11-12 修好并重转；转换已在 11-18 前结束，终态见上面的更正节。本机磁盘紧张，项目已迁到外置 SSD。</span></li>
   </ul>
   <p class="muted">逐条筛选的数据见 <a href="https://claude.ai/artifact/Se9eiXtNoqCRYCxi1icNhf">题源筛选看板</a>。本页每个数字都有出处，汇总在 <span class="mono">data/answer_mining_20261107/progress_digest_20261112.md</span> 和 <span class="mono">data/peng_zhihui_20261112/README.md</span>。</p>
 </header>
+
+<section id="update-20261118">
+  <h2><span class="no">更正</span>11-18 更正与补记</h2>
+  <div class="note alert"><p>本节记录 11-16 至 11-18 对下文旧说法的更正，和之后的开发试做与收尾状态。下文 11-12 的正文保留原日期，已被更正的几处就地标了“已更正”。这里的试做是开发期试做，不是正式榜；22 个展示案例是讲解材料，不等于 22 道验收题。</p></div>
+
+  <h3>四处更正</h3>
+  <div class="tablebox"><table><thead><tr><th>项目</th><th>原说法</th><th>现在</th><th>依据</th></tr></thead><tbody>
+    <tr><td>HACKberry</td><td class="wide">变化件里确认 6 对交集归零，包括底座与两颗螺钉的 2.207、1.826 mm³ 重叠，可做“消除干涉”题。</td><td class="wide">固定同一份螺钉，前后底座的交集不变（2.206860、1.826138 mm³）；旧的空结果被内部见证点反证。交叠在螺杆与预孔，可能是名义咬合，不能当缺陷。构题前提不成立，候选关闭，没有模型试做。</td><td class="mono">data/continuation_20261115/batch_b/hackberry/README.md、boolean_witnesses.json</td></tr>
+    <tr><td>Peak #4</td><td class="wide">U6 是电池座，电池和稳压器接在同一个 VBAT 节点。</td><td class="wide">U6（DET402）是蜂鸣器。电池是两个无位号焊盘，正极接 VBAT_IN。Q1 之后的 VBAT 接稳压器 U1、R2/R4 测量分压和蜂鸣器 U6 的正极。</td><td class="mono">peng_tasks_20261113/peak_power_path/evidence/battery_pads.json；对输入原理图重导网表</td></tr>
+    <tr><td>HackRF 585e69a5</td><td class="wide">仓库把 courtyard 重叠设成了忽略。</td><td class="wide">被忽略的是 missing_courtyard（缺 courtyard），courtyards_overlap 仍是 error；新增的 GSG-0402 本来就没有 courtyard，所以查不到。后来补了必需检查 K12：上游改后 0 对焊盘相交，旧 Sonnet 交付 13 对，能拒绝。</td><td class="mono">answer_mining_20261107/construct/585e69a5/trials/sonnet_audit.json；continuation_20261115/pcb/hackrf_sonnet_full.json</td></tr>
+    <tr><td>Flipper 3e9a8a34</td><td class="wide">线走不到另一侧的 SMA 座，C10 应要求线端离 SMA 孔轴不超过 3 mm。</td><td class="wide">旧题没有要求线连到 SMA 孔，只要求落在导轨的固定结构里。这条补法是新增需求，不能追溯成旧题的必过项。旧成绩不改。</td><td class="mono">continuation_20261113/audit_assembly_checks.md</td></tr>
+  </tbody></table></div>
+
+  <h3 id="development-runs-20261118">开发试做：7 次，逐次记录</h3>
+  <p>截至 2026-11-16 19:34 完成的 7 次真实开发试做（不含预检、启动失败和构造校准）。全部用同一个模型配置 <span class="mono">sankuai-native/deepseek-v4.1-flash-m17</span>、不用 CUA，每题只跑了一次。这是 DeepSeek 的开发期结果，不能和上文 Sonnet、Opus 的 A 批成绩混算；题目、版本和契约不同，所以不给合计通过率；新版本也不增加项目族。5 次独立审计支持通过，1 次（Motor-42）没有改硬件文件，1 次（ElectronBot 旧版）输入与工具语义未定。</p>
+  <div class="tablebox"><table><thead><tr><th>题目/版本</th><th>自动分</th><th>步数</th><th>独立审计与范围</th><th>run</th></tr></thead><tbody>
+    <tr><td>Jubilee +1 mm</td><td>100</td><td>40</td><td class="wide">审计接受，限于公开的局部几何范围。</td><td class="mono">20261115T224729_jubilee_47ee47e4</td></tr>
+    <tr><td>Voron 前侧 A</td><td>100</td><td>64</td><td class="wide">审计接受，限于公开的单件名义几何。</td><td class="mono">20261115T232437_voron_009a1656</td></tr>
+    <tr><td>ST-Link</td><td>93.53</td><td>106</td><td class="wide">审计保留 93.53；不外推为整板验收；另有 12 条丝印裁剪警告未计分。</td><td class="mono">20261115T224729_stlink_b7dd2797</td></tr>
+    <tr><td>ElectronBot 旧版</td><td>0</td><td>176</td><td class="wide">输入和工具语义未定，保留自动 0，不算已验证的模型失败。</td><td class="mono">20261115T223139_electronbot_a0f909a3</td></tr>
+    <tr><td>Motor-42 首次</td><td>0</td><td>675</td><td class="wide">正常结束但原硬件文件没有改，是未完成的提交。<a href="https://qlyylq.github.io/omnifex/cases/motor42.html">案例</a></td><td class="mono">20261116T003919_motor42_d3867739</td></tr>
+    <tr><td>ElectronBot v1.2</td><td>100</td><td>72</td><td class="wide">审计支持；新输入和契约，仍属同一项目族。只证明局部支路清理，不等于整板制造验收。</td><td class="mono">20261116T170714_electronbot_v12_f1beb825</td></tr>
+    <tr><td>Flipper v3.1.1</td><td>100</td><td>126</td><td class="wide">审计支持，见下。</td><td class="mono">20261116T183018_flipper_v3_cc4202cd</td></tr>
+  </tbody></table></div>
+  <p class="muted">逐次的终态、成绩和审计文件哈希：<span class="mono">data/continuation_20261115/trial_results_20261116.json</span>。11-17 之后还有 Motor-42 重跑等记录，不在这 7 次里，本页没有收。</p>
+
+  <h3>Flipper：旧题 v2、3.1.1 审计和 3.1.2 工具版分开</h3>
+  <ul>
+    <li><b>旧题 v2</b>：Sonnet 的历史成绩和审计不改；SMA 端点要求已按上表撤回。</li>
+    <li><b>3.1.1 的一次试做</b>：按公开的 build.py 与 placement.json 契约交卷，独立审计在隔离环境里重建源码，减料范围、四孔完整穿线、插合路径和 0.81/1.13 mm 两种线径通过。模型两次遇到公开的 bbox/inter 工具缺陷，在自己的草稿里绕过，没有改公开材料。附带的 15 实体整装配 STEP 的完整解析等价没有证明，不据此倒算模型失败。</li>
+    <li><b>3.1.2</b>：只把公开 bbox 的坐标读取改为 CornerMin/CornerMax，15 个真实 helper 样本通过。没有 3.1.2 的模型试做，那次 100 分属于带缺陷的 3.1.1。</li>
+  </ul>
+  <p class="muted">证据：<span class="mono">data/continuation_20261115/trials_review/flipper_v3_first/README.md</span>；<span class="mono">data/continuation_20261116/flipper_public_helper_patch/README.md</span>。</p>
+
+  <h3>三项未完成</h3>
+  <div class="note alert"><h3>Fusion 题源转换：转换已结束，收尾没完成（11-18）</h3><p>174 个 F3Z 归档都已导出，或确认无法导出（这个口径与 11-12 的 236 个文件不同，没有逐条对账）。严格核验后：verified 124，brep_review_required 47，缺云版本回执 1，归档本身被截断无法恢复 1，导出后未做 OCP 验证 1。只有 124 个几何可直接用；47 个可读但 BRepCheck 不通过，每个只有 1 到 3 个实体、最多 14 个面无效，要几何复核后才能用。48 个候选的最后一次重筛（11-17 15:37）里 21 个几何完整、可进语义复核，其余卡在转换、BRep 或缺改前文件，这次重筛没有包含最后一次 LH Stinger 重试。两个收尾任务（云版本回执恢复、BRep 原生诊断）都没有完成任何工作就退出了，原因是回执恢复在启动校验时发现依赖文件被改动而中止。依据 <span class="mono">data/continuation_20261118/fusion_closure/REPORT.md</span>。</p></div>
+  <div class="note alert"><h3>Peak 参考方案：未完成（11-17 状态）</h3><p>自制的 TPS2116 参考方案在干净副本上通过本地判分器（40 项、19 场瞬态全过，82.432），合法替代方案通过，故障版被拒。但独立复核还没开始，题包 validated=false、ready_for_model_trial=false，模型试做 0 次。4 个 USB 低阻失电角靠一条新增的规则放行，其中“1 µs 以下功率曲线仍单调”是假设；冷启动、充电完整过程、实际启动、声压、板温和实物通电都没验证。原始导入连通性一致不替代这些。依据 <span class="mono">data/peng_tasks_20261113/peak_power_path/status.json</span>。</p></div>
+  <div class="note alert"><h3>HoloCubic 联合变体：未完成（11-17 状态）</h3><p>已有：静态参考 1276 对配合检查通过，电气参考子集通过，CAD 合约 v3 签字了两处允许改动。卡住的：中壳 701.424 mm³ 的接收腔没写进合约、没签字，新的中壳全差运算出现 OCC 布尔错误；交付的 mask-first 保护门尚不支持；六阶段 M3、替代解和故障样本没跑。ready=false，formal_validated=false，模型试做 0 次。原来的固定壳体题仍搁置。依据 <span class="mono">data/peng_tasks_20261113/holocubic_steam/variant_joint/status.json</span>。</p></div>
+</section>
 
 <section aria-label="关键数字">
   <div class="figures">
@@ -162,7 +201,7 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
     <div class="fig"><span class="k">试点试做</span><span class="v">11<small>/19</small></span><span class="n">Sonnet；Opus 难题 11/11</span></div>
     <div class="fig"><span class="k">专有格式重筛</span><span class="v">38<small>/245</small></span><span class="n">能用；其中耦合题 19</span></div>
     <div class="fig"><span class="k">稚晖君 Altium 工程</span><span class="v">29<small>/29</small></span><span class="n">KiCad 导入与 Altium 导出一致</span></div>
-    <div class="fig"><span class="k">Fusion .f3z 重转</span><span class="v">88<small>/236</small></span><span class="n">已处理（成功 69，失败 19），23:12 重启后续跑</span></div>
+    <div class="fig"><span class="k">Fusion .f3z 重转（11-12 当时）</span><span class="v">88<small>/236</small></span><span class="n">当时已处理；终态为 174 个归档中 124 严格通过，见 11-18 更正节</span></div>
   </div>
 </section>
 
@@ -276,7 +315,7 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
     <article class="case">
       <div class="top"><span class="id">Peak #4</span><span class="ttl">稚晖君 Peak：充电电路的电源路径设计失误</span></div>
       <div class="tags"><span class="pill plain">PCB</span><span class="pill warn">维护者承认，仓库未修</span><span class="pill plain">上游无答案</span></div>
-      <p>有人指出：充电芯片的输出同时给电池充电和给系统供电，外部供电时没有切断电池和负载，会干扰充电判断，电池充不满。稚晖君在评论里回复“这里确实是一个设计失误，感谢指出”。评论建议 U1 第 3 脚改接 VCC_SYS、去掉 Q4 和 R7、CHG_DET 上拉从 10k 改 1k，但位号和网络名不能直接套到仓库文件：仓库的 Q4 是背光开关，R7 是 Q2 栅极的 20k 下拉，没有 VCC_SYS 网络；CHG_DET 的 10k 上拉实际是 R11。采集记录中唯一一次改 PcbDoc（5daf5a7）早于这个 issue，未找到对应修复提交。</p>
+      <p>有人指出：充电芯片的输出同时给电池充电和给系统供电，外部供电时没有切断电池和负载，会干扰充电判断，电池充不满。稚晖君在评论里回复“这里确实是一个设计失误，感谢指出”。评论建议 U1 第 3 脚改接 VCC_SYS、去掉 Q4 和 R7、CHG_DET 上拉从 10k 改 1k，但位号和网络名不能直接套到仓库文件：仓库的 Q4 是背光开关，R7 是 Q2 栅极的 20k 下拉，没有 VCC_SYS 网络；CHG_DET 的 10k 上拉实际是 R11。采集记录中唯一一次改 PcbDoc（5daf5a7）早于这个 issue，未找到对应修复提交。已更正：U6 是蜂鸣器，不是电池座；电池是两个无位号焊盘，正极接 VBAT_IN，Q1 之后的 VBAT 接稳压器、测量分压和蜂鸣器。参考方案尚未完成验收，见上面“三项未完成”。</p>
       <p class="why"><b>看点</b>　适合做“改电源路径”的半成品题，但要先按仓库文件重写需求、核对评论电路图的版本。上游没有答案，参考解要我们自己做，评论里的方案不能原样使用。源文件是 Altium，转 KiCad 已验证。</p>
       <span class="src">data/peng_zhihui_20261112/github_meta/hw_issue_review.md · github.com/peng-zhihui/Peak/issues/4 · <a href="https://qlyylq.github.io/omnifex/cases/peak-4.html">案例中的网表核对与电源路径图</a></span>
     </article>
@@ -293,7 +332,7 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
       <div class="top"><span class="id">31d91345</span><span class="ttl">HoloCubic：为装进 Steam 版外壳改板</span></div>
       <div class="tags"><span class="pill plain">PCB 受外壳约束</span><span class="pill warn">板壳联动线索</span><span class="pill good">有上游答案</span></div>
       <p>两块板一起改。主板的 FFC 连接器 CON1 换成 8P 弹簧触点座 J1，扩展板改用对应触点；原来的 TF 卡座仍在，改名为 J2 并挪了约 1.5 mm，各脚网络未变。新 J1 的 8 个信号与旧 CON1 一一对应，只是脚序重排。新增 D2–D4，C7 从 0.1 µF 改成 1 µF，D1 移了 7 mm。以上按案例页的封装、位置和焊盘网络复核；旧统计把前后不同器件的 J1 当成同一个，才出现“TF 卡座被替换、8 脚全部重新定义”的说法。C7 的改法和 HoloCubic #13 的建议一致。</p>
-      <p class="why"><b>看点</b>　一个外壳需求牵动了连接方式、板外形和布局，是板壳联动题的好素材。仓库里有 Bilibili、Ironman、Metal、Naive 几版外壳模型，哪一版对应 Steam-Case 还没核实。</p>
+      <p class="why"><b>看点</b>　一个外壳需求牵动了连接方式、板外形和布局，是板壳联动题的好素材。后续已取得对应的 Steam 源模型：它在板改版前后是同一个文件，498ca238 实际是删除而不是更新它。有了源模型不等于能装配，联合变体的状态见上面“三项未完成”。（已更正）</p>
       <span class="src">data/peng_zhihui_20261112/revisions_export/HoloCubic__31d91345/diff.json（按位号统计） · <a href="https://qlyylq.github.io/omnifex/cases/31d91345.html">案例中的卡座与 8P 信号对照</a></span>
     </article>
 
@@ -323,10 +362,10 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
 
     <article class="case">
       <div class="top"><span class="id">d0342ffd</span><span class="ttl">HACKberry 义手：“fix some interference”</span></div>
-      <div class="tags"><span class="pill plain">CAD（STEP 装配）</span><span class="pill plain">难</span><span class="pill plain">专有格式重筛</span></div>
-      <p>本次重新配对右手 STEP，两版各 254 个实体，按位置、尺寸或体积差阈值筛出 31 个变化候选；MJ074N 组件内 6 个实体沿 z 移动约 1.5 mm，另有 10 个实体沿 y 移动 −0.3 mm。旧重筛的“48 个变化、约 7 个手指或传动件”与本次口径不同。变化件及邻居中确认 6 对交集归零，包括手掌底座与两颗螺钉的 2.207、1.826 mm³ 重叠。前后各有一对布尔运算超时，已单独记为出错。</p>
-      <p class="why"><b>看点</b>　可以做指定局部的“消除装配干涉”题，并用零件、安装位置和功能约束防止删件取巧。改后仍有重叠，允许的装配配合和运动范围尚未核实，不能把局部修复当作整机无干涉。尚未造题。</p>
-      <span class="src">data/step_rescreen_20261112/merged.json（旧重筛） · data/website_cases_20261113/d0342ffd/（本次重算） · <a href="https://qlyylq.github.io/omnifex/cases/d0342ffd.html">前后 3D 与局部干涉图</a></span>
+      <div class="tags"><span class="pill plain">CAD（STEP 装配）</span><span class="pill warn">原构题已关闭</span><span class="pill plain">专有格式重筛</span></div>
+      <p>本次重新配对右手 STEP，两版各 254 个实体，按位置、尺寸或体积差阈值筛出 31 个变化候选；MJ074N 组件内 6 个实体沿 z 移动约 1.5 mm，另有 10 个实体沿 y 移动 −0.3 mm。旧重筛的“48 个变化、约 7 个手指或传动件”与本次口径不同。旧页面曾写“确认 6 对交集归零”，该结论已撤回：固定同一份螺钉比较，前后底座与两颗螺钉的 2.207、1.826 mm³ 重叠都还在，旧的空结果被内部见证点反证（已更正）。</p>
+      <p class="why"><b>看点</b>　交叠在螺杆与预孔，可能是名义的紧固咬合，缺同一历史版本的配合规范，不能当缺陷，也不能说制造配合已合格。原拟的“消除装配干涉”题前提不成立（rejected_task_premise），候选关闭，没有模型试做。这个案例留作反证：出题前要核几何算子的结果。</p>
+      <span class="src">data/step_rescreen_20261112/merged.json（旧重筛） · data/website_cases_20261113/d0342ffd/（本次重算） · data/continuation_20261115/batch_b/hackberry/（11-15 反证） · <a href="https://qlyylq.github.io/omnifex/cases/d0342ffd.html">更正后的核查案例</a></span>
     </article>
   </div>
 
@@ -338,7 +377,7 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
       <div class="top"><span class="id">585e69a5</span><span class="ttl">HackRF One：把停产的射频开关换成 SKY13453（带固件隐形条件）</span></div>
       <div class="tags"><span class="pill plain">PCB</span><span class="pill plain">难</span><span class="pill bad">检查 10/10 过，审计推翻</span></div>
       <p>电气部分基本做对了，10 条检查全过。Opus 审计发现新加的 0402 分压电阻有三对（R301/R401、R303/R403、R306/R406）共用一个焊盘，本体重叠约 0.2×0.2 mm，板子装不出来；另有 12 处不同元件的焊盘互相重叠，R406 压在屏蔽框焊盘上。</p>
-      <p class="why"><b>看点</b>　重叠的焊盘在同一网络上不触发间距错误，仓库又把 courtyard 重叠设成了忽略，DRC 看不见。需要一条不看工程规则设置、按几何算的通用检查（候选 G3）。</p>
+      <p class="why"><b>看点</b>　已更正：被忽略的是 missing_courtyard，不是 courtyard 重叠；新增的 GSG-0402 没有 courtyard，同网焊盘重叠又不算间距错误，DRC 看不见。需要一条按几何算焊盘的检查：通用 G3 已补（11-17 起焊盘相交为必需），本题另加必需的 K12，能拒绝这份 13 对相交的交付。这不改历史成绩。</p>
       <span class="src">C/585e69a5/trials/sonnet_audit.json</span>
     </article>
 
@@ -369,8 +408,8 @@ dl.paths dd { margin: 0; font-family: var(--font-data); font-size: 0.82rem; over
     <article class="case">
       <div class="top"><span class="id">3e9a8a34</span><span class="ttl">Flipper One：天线导轨消干涉，M.2 模块加 4 个射频座和 4 根天线细线（STEP）</span></div>
       <div class="tags"><span class="pill plain">CAD（STEP）</span><span class="pill plain">难</span><span class="pill bad">检查 23/23 过，审计推翻</span></div>
-      <p>先是检查把它判错了：线径按 4V/A 估算，面积里算上了端面，0.8×6 mm 的线只估出 0.750，正好卡在下限，修好后 23 条必需项全过。Opus 审计推翻，发现 4 个 major：射频座装在 M.2 板朝机身的光板面，离机身只剩 0.2 mm，合上后盖前接不上线；“线槽”是 4 个 Ø1.3 mm 的盲孔，比 0.81 和 1.13 两种线都粗，卡不住线，上游评审正好提过“槽要更窄”；线是 6 mm 的直线短桩，走不到另一侧的 SMA 座；题面要求清理的小于 0.01 mm 宽的碎面一个没清，还新造了一个。消干涉这一条确实做到了。</p>
-      <p class="why"><b>看点</b>　五条检查各漏一处：C7b 两面都认（应只认元件面），C5 只数面数，C6 只限交集上限，C10 只看线端距离，C13 按面积判碎面（这些条状面面积够大，宽度却只有几微米，应按宽度判）。CAD 题要补“装在哪一面、卡不卡得住、走不走得通”这类功能判据。</p>
+      <p>先是检查把它判错了：线径按 4V/A 估算，面积里算上了端面，0.8×6 mm 的线只估出 0.750，正好卡在下限，修好后 23 条必需项全过。Opus 审计推翻，发现 4 个 major：射频座装在 M.2 板朝机身的光板面，离机身只剩 0.2 mm，合上后盖前接不上线；“线槽”是 4 个 Ø1.3 mm 的盲孔，比 0.81 和 1.13 两种线都粗，卡不住线，上游评审正好提过“槽要更窄”；线是 6 mm 的直线短桩（旧审计据此说走不到另一侧的 SMA 座，但旧题没有要求线连到 SMA，这一点已撤回）；题面要求清理的小于 0.01 mm 宽的碎面一个没清，还新造了一个。消干涉这一条确实做到了。</p>
+      <p class="why"><b>看点</b>　五条检查各漏一处：C7b 两面都认（应只认元件面），C5 只数面数，C6 只限交集上限，C10 只看线端距离（审计建议的“线端离 SMA 孔轴不超过 3 mm”已撤回，是新增需求），C13 按面积判碎面（这些条状面面积够大，宽度却只有几微米，应按宽度判）。CAD 题要补“装在哪一面、卡不卡得住”这类功能判据，但只能按题面写明的要求补。新版 v3.1.1 的一次开发试做见上面的更正节。</p>
       <span class="src">C/3e9a8a34/trials/sonnet_audit.json</span>
     </article>
 

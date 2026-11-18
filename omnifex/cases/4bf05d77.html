@@ -15,7 +15,7 @@
 <body>
 <div class="wrap"><header class="top">
   <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>4bf05d77</span></div>
-  <div class="eyebrow">还没造题的新题源 · Miniscope v4 双色版（Aharoni-Lab/Miniscope-v4）</div>
+  <div class="eyebrow">题源、加工与核验 · Miniscope v4 双色版（Aharoni-Lab/Miniscope-v4）</div>
   <h1>Miniscope v4 双色版第 2 版：板子和激发模块一起改</h1>
   <div class="chips"><span class="chip dom">PCB</span><span class="chip dom">CAD</span><span class="chip">难</span><span class="chip info">新题源，尚未造题</span><span class="chip good">上游答案现成</span></div>
   <div class="text" style="display:grid;gap:10px"><p>这条修订来自 Miniscope v4 的双色版（一块板上放蓝、黄两颗 LED，用于双色荧光成像）。第 1 版做出来能用，但维护者在 Readme 里写了三个毛病：LED 没有对准激发模块的中心，板宽和模块宽不一致，胶合很难对准。第 2 版（PR #14）把板外形、LED 位置和固定方式一起改了，同时新增了激发模块 rev2 的机械文件。</p>
@@ -33,7 +33,7 @@
 <p>造题前还缺三件事：一是把 DXF 里的孔位固化成题包里的“模块参数”，并说明对齐方法；二是第 1 版缺旧模块图纸，不能量旧偏差，题面要避免依赖；三是给定位柱找一个比“REF<b> 封装”更合适的表达（上游用了通用的 Pin 封装，位号是 REF</b>，判分时要用坐标而不是位号识别）。判分器没有写，DRC 的白名单也没有建。</p></div></div></li></ol></section>
 <div class="lesson"><div class="eyebrow">看点</div><p>这条修订把“需求在机械一侧、答案在 PCB 上”的结构摆得很清楚：模块孔位和螺钉间距在 DXF 里，板宽、LED 坐标和定位柱位置在 PCB 里，两边用同一个坐标系就能对上。对判分来说，位置能量得出来；麻烦在整个布局会被一起重排，DRC 的违规数也不能直接比。</p></div>
 <section><h3>出处</h3><div class="srcs"><span>上游提交 Aharoni-Lab/Miniscope-v4 4bf05d77（父提交 faf811f4），本页从公开 GitHub 按提交取文件</span><span><a href="https://github.com/Aharoni-Lab/Miniscope-v4/pull/14">https://github.com/Aharoni-Lab/Miniscope-v4/pull/14</a></span><span><a href="https://github.com/Aharoni-Lab/Miniscope-v4/commit/4bf05d777e93b8d15c195e69e8f87d6da7d2061e">https://github.com/Aharoni-Lab/Miniscope-v4/commit/4bf05d777e93b8d15c195e69e8f87d6da7d2061e</a></span><span>上游文件：Miniscope-v4-Dual-LED-ETL-Driver/KiCad/MS_v4_ETL_LED_Driver.kicad_pcb（改前）、MS_v4_ETL_LED_Driver_v2.kicad_pcb（改后）、module_dxf_holes.dxf、MS_v4_2C_V1/Readme.txt、2cFusion.JPG</span><span>data/answer_mining_20261107/candidates.jsonl（候选总表中的 4bf05d77 一行）</span><span>data/answer_mining_20261107/progress_digest_20261112.md（重筛记录原文）</span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
-<nav class="pager"><a href="hdmi-pi-ylj2000.html"><span class="eyebrow">上一个</span><span>HDMI-PI ylj2000 原理图与 PCB 不同步</span></a><a href="d0342ffd.html"><span class="eyebrow">下一个</span><span>HACKberry 义手：修掉局部干涉</span></a></nav>
+<nav class="pager"><a href="hdmi-pi-ylj2000.html"><span class="eyebrow">上一个</span><span>HDMI-PI ylj2000 原理图与 PCB 不同步</span></a><a href="d0342ffd.html"><span class="eyebrow">下一个</span><span>HACKberry：空布尔结果被反证</span></a></nav>
 <footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
 <script>
 document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
