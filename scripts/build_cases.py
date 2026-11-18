@@ -64,6 +64,21 @@ document.querySelectorAll('.mvtabs').forEach(function (tabs) {
 });
 </script>"""
 
+CAMERA_LOCK_JS = """<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('model-viewer[data-lock-camera]').forEach(function (mv) {
+    function apply() {
+      var orbit = mv.getAttribute('camera-orbit');
+      if (orbit) mv.cameraOrbit = orbit;
+      var target = mv.getAttribute('camera-target');
+      if (target) mv.cameraTarget = target;
+    }
+    mv.addEventListener('load', apply);
+    if (mv.loaded) apply();
+  });
+});
+</script>"""
+
 
 def inline(s):
     s = html.escape(s, quote=False)
@@ -126,13 +141,19 @@ def model(m, uid):
                       % ("true" if i == 0 else "false", html.escape(x["src"]), html.escape(x.get("poster", "")),
                          html.escape(inline(x.get("caption", ""))), html.escape(x["label"])))
         tabs = '<div class="mvtabs" data-for="%s">%s</div>' % (uid, "".join(bs))
+    attrs = ""
+    for key, attr in (("orbit", "camera-orbit"), ("target", "camera-target"),
+                      ("fov", "field-of-view"), ("min_orbit", "min-camera-orbit")):
+        if m.get(key):
+            attrs += ' %s="%s"' % (attr, html.escape(m[key]))
+    if m.get("lock_camera"):
+        attrs += ' data-lock-camera="1"'
     return ('<figure>%s<div class="model-frame"><model-viewer id="%s" class="mv" src="%s" poster="%s" camera-controls touch-action="pan-y" '
             'shadow-intensity="0.6" exposure="1.05" environment-image="neutral" interaction-prompt="none" '
             'alt="%s"%s></model-viewer><img class="model-fallback" src="%s" alt="%s" loading="lazy"></div>'
             '<figcaption id="%s-cap">%s</figcaption><p class="model-help">3D 加载前显示静态图。拖动旋转，双指或滚轮缩放。</p></figure>'
             % (tabs, uid, html.escape(first["src"]), html.escape(first.get("poster", "")),
-               html.escape(m.get("alt", "3D 模型")),
-               (' camera-orbit="%s"' % html.escape(m["orbit"])) if m.get("orbit") else "",
+               html.escape(m.get("alt", "3D 模型")), attrs,
                html.escape(first.get("poster", "")), html.escape(first.get("label", "3D 模型") + " · 静态预览"),
                uid, inline(first.get("caption", "") + "（可拖动旋转、滚轮缩放）")))
 
@@ -278,7 +299,9 @@ def build_case(c, prev, nxt):
     parts.append('<nav class="pager">%s</nav>' % "".join(pg))
     parts.append('<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer>')
     has_model = any(s.get("model") for s in c.get("steps", []))
-    body = '<div class="wrap">%s</div>\n%s' % ("\n".join(parts), COMPARE_JS)
+    has_lock = any((s.get("model") or {}).get("lock_camera") for s in c.get("steps", []))
+    scripts = COMPARE_JS + (("\n" + CAMERA_LOCK_JS) if has_lock else "")
+    body = '<div class="wrap">%s</div>\n%s' % ("\n".join(parts), scripts)
     return page("%s · %s" % (c["short"], c["project"]), body, c.get("description", c["short"]), 2,
                 MODEL_VIEWER if has_model else "")
 
