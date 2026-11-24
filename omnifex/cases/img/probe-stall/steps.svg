@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" font-family="JetBrains Mono, Menlo, monospace">
+<rect width="1200" height="520" fill="#0c1411"/>
+<text x="40" y="52" fill="#eceee6" font-size="26" font-weight="500">两道难题各 150 步用完：Glasgow 一半步数在自研布线循环里</text>
+<text x="40" y="92" fill="#8d9891" font-size="15">步数=模型请求次数；两题都是 step_budget_exhausted，不是超时。Glasgow 交付文件改动 0</text>
+<text x="40" y="204" fill="#eceee6" font-size="20">cynthion</text>
+<text x="40" y="228" fill="#8d9891" font-size="14">150 步</text>
+<rect x="200.0" y="170" width="116.5" height="46" fill="#e6ad6a" fill-opacity="0.8"/>
+<text x="258.3" y="200" fill="#0c1411" font-size="15" text-anchor="middle">19</text>
+<rect x="316.5" y="170" width="404.8" height="46" fill="#7fb0dd" fill-opacity="0.8"/>
+<text x="518.9" y="200" fill="#0c1411" font-size="15" text-anchor="middle">66</text>
+<rect x="721.3" y="170" width="159.5" height="46" fill="#ffb000" fill-opacity="0.8"/>
+<text x="801.1" y="200" fill="#0c1411" font-size="15" text-anchor="middle">26</text>
+<rect x="880.8" y="170" width="92.0" height="46" fill="#c2c7c9" fill-opacity="0.8"/>
+<text x="926.8" y="200" fill="#0c1411" font-size="15" text-anchor="middle">15</text>
+<rect x="972.8" y="170" width="67.5" height="46" fill="#6f8f7f" fill-opacity="0.8"/>
+<text x="1006.5" y="200" fill="#0c1411" font-size="15" text-anchor="middle">11</text>
+<rect x="1040.3" y="170" width="61.3" height="46" fill="#ff3d6e" fill-opacity="0.8"/>
+<text x="1070.9" y="200" fill="#0c1411" font-size="15" text-anchor="middle">10</text>
+<rect x="1101.6" y="170" width="18.4" height="46" fill="#4b5a52" fill-opacity="0.8"/>
+<text x="200" y="238" fill="#8d9891" font-size="13">勘察 66 · 布线 19 · 探索 26 · 写/改 15 · 验证 11 · 重试 10</text>
+<text x="40" y="314" fill="#eceee6" font-size="20">Glasgow</text>
+<text x="40" y="338" fill="#8d9891" font-size="14">150 步</text>
+<rect x="200.0" y="280" width="337.3" height="46" fill="#e6ad6a" fill-opacity="0.8"/>
+<text x="368.7" y="310" fill="#0c1411" font-size="15" text-anchor="middle">55</text>
+<rect x="537.3" y="280" width="276.0" height="46" fill="#7fb0dd" fill-opacity="0.8"/>
+<text x="675.3" y="310" fill="#0c1411" font-size="15" text-anchor="middle">45</text>
+<rect x="813.3" y="280" width="73.6" height="46" fill="#ffb000" fill-opacity="0.8"/>
+<text x="850.1" y="310" fill="#0c1411" font-size="15" text-anchor="middle">12</text>
+<rect x="886.9" y="280" width="67.5" height="46" fill="#c2c7c9" fill-opacity="0.8"/>
+<text x="920.7" y="310" fill="#0c1411" font-size="15" text-anchor="middle">11</text>
+<rect x="954.4" y="280" width="98.1" height="46" fill="#6f8f7f" fill-opacity="0.8"/>
+<text x="1003.5" y="310" fill="#0c1411" font-size="15" text-anchor="middle">16</text>
+<rect x="1052.5" y="280" width="55.2" height="46" fill="#ff3d6e" fill-opacity="0.8"/>
+<text x="1080.1" y="310" fill="#0c1411" font-size="15" text-anchor="middle">9</text>
+<rect x="1107.7" y="280" width="12.3" height="46" fill="#4b5a52" fill-opacity="0.8"/>
+<text x="200" y="348" fill="#8d9891" font-size="13">勘察 45 · 布线 55 · 探索 12 · 写/改 11 · 验证 16 · 重试 9</text>
+<rect x="40" y="410" width="16" height="16" fill="#e6ad6a" fill-opacity="0.8"/>
+<text x="64" y="423" fill="#eceee6" font-size="14">布线尝试</text>
+<rect x="146" y="410" width="16" height="16" fill="#7fb0dd" fill-opacity="0.8"/>
+<text x="170" y="423" fill="#eceee6" font-size="14">只读勘察</text>
+<rect x="252" y="410" width="16" height="16" fill="#ffb000" fill-opacity="0.8"/>
+<text x="276" y="423" fill="#eceee6" font-size="14">探索工具/API</text>
+<rect x="414" y="410" width="16" height="16" fill="#c2c7c9" fill-opacity="0.8"/>
+<text x="438" y="423" fill="#eceee6" font-size="14">写代码/改板</text>
+<rect x="548" y="410" width="16" height="16" fill="#6f8f7f" fill-opacity="0.8"/>
+<text x="572" y="423" fill="#eceee6" font-size="14">跑 kicad-cli 验证</text>
+<rect x="794" y="410" width="16" height="16" fill="#ff3d6e" fill-opacity="0.8"/>
+<text x="818" y="423" fill="#eceee6" font-size="14">报错后重试</text>
+<rect x="914" y="410" width="16" height="16" fill="#4b5a52" fill-opacity="0.8"/>
+<text x="938" y="423" fill="#eceee6" font-size="14">读题与材料</text>
+<text x="40" y="456" fill="#8d9891" font-size="14">数据：probe_stall/run1/output/out/stats.json；每步只归一个主类别，映射在 out/scripts/classify_steps.py。</text>
+</svg>

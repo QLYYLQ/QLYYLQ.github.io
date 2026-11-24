@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>moteus c1：参考解 90.51，复核者的对抗样本找出 5 处误判 · moteus-c1（mjbots/moteus）r1.0 → r1.1</title>
+<meta name="description" content="16 条 critical 加 P1–P6 品味项。参考解是上游 r1.1 原板，90.51 分；复核者造的两个对抗样本让旧判分器放过一块线宽违规的板（89.51），这一轮全部改成判挂。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>moteus-c1</span></div>
+  <div class="eyebrow">判分本身会出错 · moteus-c1（mjbots/moteus）r1.0 → r1.1</div>
+  <h1>moteus-c1 出 r1.1：上游原板当参考解只有 90.51，复核者的对抗样本打穿判分器 5 处</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">难</span><span class="chip warn">题包 draft</span><span class="chip info">参考解 90.51</span><span class="chip good">36/36 样本符合预期</span><span class="chip warn">复核者未做增量确认</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>题目：moteus-c1 是 moteus-n1 的小尺寸低功率版，r1.0 样板回来发现五个问题——3.3 V 稳压器 U2 起不来、固件读板版本（PA4）不确定、C7 挡 AUX 排针、R16 焊盘离 XT30 太近、高边 MOSFET 源极回 SHx 的线比栅极细且没有并排走。题面要求出 r1.1，原理图和 PCB 都改，PCB 重新布线。</p>
+<p>参考解就是上游 r1.1 原板（提交 <code>a68ce26</code> 的 <code>hw/c1</code>，不含存档目录），不另做。它拿 90.51 分，不是满分：P2（栅源主体线宽）上游自己用 0.3 mm，0 分；P5（NC 接地改善散热）没做，0 分；P4（U2 电容贴近）OUT 侧比起点远，只拿一半；P1（高边成对程度）三相比值 1.10–1.27，拿 4.008/6。每项扣分都有上游或手册的对照，不是判分器挑刺。</p>
+<p>这一轮最值得看的是复核者造的对抗样本。上一版判分器把一块带“诱饵铺铜岛”的板判过 89.51 分：那条回线有一段 0.2 mm，比栅极线 0.3 mm 细，违反题面写明的线宽要求，但判分器把旁边一小块同网铺铜当成了回线终点。同一轮还找出四处：换层经过通孔焊盘追踪不到、换层面积漏算铺铜、新增元件可以把两个原有网接起来、不装的电容也能凑品味分。</p>
+<p>五个问题改完，全量 36 个样本逐项符合预期：参考解 90.51，独立重布的替代解 91.8，另一份从 r1.0 独立改的替代解 86.01（它的高边区沿用了上游，所以对 C13 没有独立证据），21 个故障样本和 7 个复核探针全部按预期。改由建题 agent 自测，复核者本人还没对这几处做增量确认。</p></div>
+</header>
+<div class="figures"><div><span class="v">16</span><span class="k">critical 检查，C0 到 C15，一项不过就是 0 分</span></div><div><span class="v">90.51</span><span class="k">参考解（上游 r1.1 原板）得分，80 底 + 10.508 品味</span></div><div><span class="v">89.51</span><span class="k">对抗样本在旧判分器下的分数，本该 0 分</span></div><div><span class="v">36<small>/36</small></span><span class="k">本轮样本矩阵符合预期</span></div><div><span class="v">5</span><span class="k">复核者找出的误收/误判处，本轮全部改掉</span></div><div><span class="v">31–51 mm²</span><span class="k">Freerouting 自动布出的三相回路面积，并排比 4–8，挂 C13</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>起点是 moteus-c1 r1.0 定稿时的整库快照，不能联网、没有 git 历史。<code>hw/c1/</code> 是 KiCad 原生工程（KiCad 7 格式，KiCad 10 能直接打开），4 层板；<code>hw/c1/r1.0/</code> 是发板时的存档；<code>fw/</code> 是 STM32G474 固件；<code>hw/n1/</code> 是同系列 n1（Eagle）。</p>
+<p>题包状态：<code>stage=draft</code>，<code>ready_for_model_trial</code> 本轮由自测转 true，复核者未对最后一轮修改做增量确认。模型试做 0 次。</p><div class="ticket"><div class="k">子项 1 · 稳压器</div><div><p>U2（TLV702 系列 3.3 V 固定输出）换到同一系列里结到环境热阻更低的封装；EN 要满足手册：直接接 IN，或经上拉接 IN 且分压后 ≥0.9 V；经电阻接 V+ 一律判挂——上电时 V+ 先起、IN 还是 0 V，EN 的绝对最大值只有 0.3 V。</p>
+<p>料号写在 <code>MPN</code> 字段；封装库 ID 要和原理图对得上。</p></div><div class="k">子项 2 · 板版本</div><div><p>PA4 的板版本分压要让固件稳定读成最低那一档；丝印版本号改成 r1.1；<code>hw/c1/DESIGN.md</code> 要记下本版改了什么（相对起点有新增非空行即可）。</p></div><div class="k">子项 3 · 装配间隙</div><div><p>C7 焊盘到 AUX1、AUX2H1 任一通孔焊盘的边到边距离 ≥0.525 mm；XT30（J1）两个电源脚周围，其他网络的贴片焊盘边到边 ≥0.681 mm。两个数都取自 mjbots 后来的 moteus-r5。</p></div><div class="k">子项 4 · 高边回路</div><div><p>每相从驱动器 SHx 回到高边管源极的走线不比 GHx 到栅极的细，两根并排走，回路面积比 r1.0 同相小。回路面积按两条路径的平面投影算，换层段按“段长 × 层间距”计入；路径可以经过走线、过孔、同网铺铜和焊盘铜。</p>
+<p>“成对”按并排比量：回路面积 ÷（栅极线长 ×（两线最窄线宽之和的一半 + 0.127 mm）），每相都要小于 r1.0 并得最紧的那一相。</p></div><div class="k">保护项 C4</div><div><p>原有元件的连接、值、装配状态、封装不变（为解决上述问题必须改的除外）；新增 DNP 元件不扣分；新增装配元件只允许电容，或接在 U2 EN、PA4 网上；不装的元件用 KiCad 的 DNP 属性标出。</p></div><div class="k">判分口径</div><div><p>16 条 critical 全过才有分，80 分底加 20 分品味项 P1–P6（6/3/2/3/3/3，权重是裁量值待冻结）。DRC 沿用工程现有规则，不要求清掉 r1.0 本来就有的几类报错（Kelvin net-tie 处短路与阻焊桥、两个排针 courtyard 重叠、电源脚缺 PWR_FLAG）。</p></div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">改前</div><h3>r1.0 的五个问题：LDO 起不来、板版本不确定、两颗件挤、高边回路没成对</h3><div class="text"><p>U2 是 TLV702 系列，r1.0 的 EN 接法在上电时序上不成立，3.3 V 轨建立不起来；同时封装散热余量偏小。PA4 的板版本分压在 r1.1 之前让固件读到不确定的档位。C7 和 XT30 的两处间距分别只有 0.3–0.5 mm 和 0.4 mm 量级，焊排针和插电源时余量不够。</p>
+<p>高边这一项是这题的主项：r1.0 里 SHx 回源极的线宽只有栅极的一半左右，两根线也没有并排，回路面积大。mjbots 自己的 r1.1 重布了这一片，所以这题有上游答案。</p>
+<p>DESIGN.md 里还留了两条 “r1.1 MAYBE”，评审结论是两条都做：加栅极保护二极管，低边栅极对功率地的钳位管保留。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">判分</div><h3>16 条 critical 加 P1–P6，参考解是上游原板，不另做</h3><div class="text"><p>C0 输入、C1 原理图与 PCB 一致、C2 DRC、C3 ERC、C4 保护项、C5 LDO 使能、C6 封装、C7 引脚、C8 TVS 型号、C9 栅极直连、C10 PA4、C11 C7 间距、C12 XT30 间距、C13 高边回路、C14 丝印、C15 DESIGN.md。一项不过就是 0 分。</p>
+<p>参考解直接用上游 <code>a68ce26</code>（r1.1）的 <code>hw/c1</code>，不改一个字节。这一步是刻意的：先问“上游为什么这样做”，再判它哪里不完美。它 90.51 分，扣分项逐条都能对到上游做法或器件手册，所以题目的加权项不要求参考解满分。</p>
+<p>这一轮把两处判法改成按功能判：C10 不再匹配关键词，改成“相对起点有新增非空行”；C2 的 Kelvin net-tie 短路按位置判，违规项到最近 Kelvin 件焊盘外框的距离不得超过实测外扩量（三版共 50 处，实测 0）。</p></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">参考解</div><h3>90.51 分的构成：上游自己在 P2、P5 上就是 0 分</h3><div class="text"><p>参考解的品味项：P1 4.008/6（三相并排比 1.22/1.10/1.27）、P2 0/3（栅源主体都用 0.3 mm，优选 0.384）、P3 2/2（无过孔）、P4 1.5/3（IN 侧 0.870 过，OUT 侧 0.601 不过）、P5 0/3（NC 没接地）、P6 3/3（100 kΩ 下拉）。合计 10.508，加 80 底 = 90.51。</p>
+<p>这个结果是可用的：它说明判分器能把“凑巧可用”和“有意为之”分开——参考解功能全对，但线宽、散热、去耦这些没做到的地方照实扣。qly 11-23 看过之后的意思是，上游在我们的判分器里拿不到满分、每个扣分选项都有理由，这本身就说明加权项在起作用。</p>
+<p>替代解 <code>rv_reroute_hs_ref</code> 91.8：复核者用自写成对布线器把三相 GH/SH 铜皮全删后重布，线宽 0.3/0.3、间隙 0.15–0.17，几何和上游不同，P1 拿到 5.3。它是 C13 的独立替代解。另一份 <code>alt_hybrid</code> 86.01 从 r1.0 独立改，但高边区沿用了上游（三相回路面积和并排比与参考解逐位相同），所以对 C13 没有独立证据——这一条写进了样本说明，没有当成独立解。</p></div><figure><div class="frame"><a href="img/moteus-c1/weighted.svg" title="打开原图"><img src="img/moteus-c1/weighted.svg" alt="**参考解的 20 分品味项**。橙/蓝/琥珀是拿到分的项，红色是 0 分：P2 上游自己用 0.3 mm 线宽，P5 NC 没接地。合计 10.508 加 80 底 = 90.51。数据来自 `checks/results_20261123/summary.json` 的 reference 一项。" loading="lazy"></a></div><figcaption><b>参考解的 20 分品味项</b>。橙/蓝/琥珀是拿到分的项，红色是 0 分：P2 上游自己用 0.3 mm 线宽，P5 NC 没接地。合计 10.508 加 80 底 = 90.51。数据来自 <code>checks/results_20261123/summary.json</code> 的 reference 一项。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">复核</div><h3>对抗样本打穿 5 处：诱饵铺铜岛那块板旧判分器判过 89.51</h3><div class="text"><p>复核者造的第一个样本是这样的：参考解上 A 相 SH 回线在 y=89 处打过孔换到 In2，用 0.2 mm 细线走到 X1 相端子通孔焊盘，过孔旁 In2 上放一小块不碰 SH 焊盘的 A 相 OUTX 铺铜当诱饵。DRC 干净。旧判分器把诱饵岛当回线终点，判过 89.51；实际上回线最窄 0.2 &lt; 0.3，违反题面写明的线宽要求。</p>
+<p>同一轮另外四处：</p>
+<ul><li>换层经过通孔焊盘的路径追踪不到，旧版直接记“出错”（整份结果判不了），应该判挂。</li><li>换层面积只算走线、不算铺铜，回线改走别层的铺铜条就能绕过去。</li><li>新增一个装上的元件可以把两个原有网接起来——比如 1 kΩ 跨在 5 V 轨和 V+ 之间，把 51 V 灌进 5 V 轨，C4 不拦。</li><li>P4 的“电容贴近”不排除不装的元件，放一颗 DNP 电容就白拿 1.5 分。</li></ul>
+<p>改法是：回线终点只认源极焊盘（或与之同岛的铺铜）；通孔焊盘按焊盘中心设虚节点，各层都能接；换层段按长度 × 层间距计面积；C4 增加“新增装配件不得跨接改前已有的两个网”；P4 排除 DNP。改完两个对抗样本都挂 C13，C4/P4 的 12 个逻辑探针全部符合预期。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">cf_decoy_island_A</td><td>诱饵铺铜岛 + 0.2 mm 回线（F1、F3）</td><td class="st"><span class="chip info">已修，现判挂</span></td><td>旧判分器 89.51 判过；现挂 C13</td></tr><tr><td class="id">cf_in2_return_no_decoy_A</td><td>回线经 In2 落到通孔焊盘（F2）</td><td class="st"><span class="chip info">已修，现判挂</span></td><td>旧版记出错；现挂 C13</td></tr><tr><td class="id">C4 跨网</td><td>新增 1 kΩ 接在 +5V 与 V+ 之间（F4）</td><td class="st"><span class="chip info">已修</span></td><td>C4/P4 探针 12/12</td></tr><tr><td class="id">P4 DNP</td><td>用不装的电容凑贴近分（F5）</td><td class="st"><span class="chip info">已修</span></td><td>C4/P4 探针 12/12</td></tr></tbody></table></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">探针</div><h3>Freerouting 布不出高边成对走线：三相回路 31–51 mm²，并排比 4–8</h3><div class="text"><p>用 Freerouting 2.5.0 只开放 6 路栅极网和三相 OUTX，跑 8 分钟：剩 2 处未连接、7 类新 DRC 错误（它不管孔间距，还把线布进了 In1 地平面）。</p>
+<p>这一轮判分器能追踪过孔各层节点、认铺铜、换层段计面积之后，这块板也能判了：三相回路面积 31–51 mm²、并排比 4–8，C13 挂。这条样本的用途是说明自动布线做不出这题的高边成对走线，不是模型的成绩。</p>
+<p>另一条探针 <code>rv_narrow_both_015</code> 把三相 GH、SH 都改成 0.15 mm，并排比升到 1.88，C13 挂——这是题面公式写明的已知行为，不是漏洞。</p></div></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">剩余</div><h3>还不能算 validated</h3><div class="text"><ul><li>复核者对 F1–F5 这几处修改没做增量确认；本轮的改由建题 agent 自测，36 个样本逐项一致。</li><li>P1–P6 的权重是建题人按先例提的裁量值，要人工抽查后冻结；冻结前分数只能内部看。</li><li>模型试做 0 次，难度是建题时标的 hard，还没有实测。</li><li>登记表待重建：本题要补 line=hard、domain=pcb；运行器未登记 alias。</li></ul></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>参考解用上游原板是这一轮定下来的做法：先问“上游为什么这样做”，它不完美的地方照实扣分，而不是另造一个满分解。90.51 比 100 更能说明加权项在区分设计品质。</p>
+<p>对抗样本要造在“看起来像合法解法”的方向上：诱饵铺铜岛、通孔焊盘换层、新增一颗跨网电阻，这三个都是合理工程师可能写出来的东西，不是明显的坏样本。</p>
+<p>换层面积和回线终点这类几何判据，一改就要重跑全部样本：这一轮参考解从 90.9 变成 90.51，替代解排序也跟着变。</p>
+<p>自动布线的结果要当成判据的输入去测，不要当成候选解：Freerouting 布出来的板 DRC 都不干净，但正好能测 C13 判不判得出来。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/hard_tasks_20261120/hp_moteus_c1_r11/task.md</span><span>data/hard_tasks_20261120/hp_moteus_c1_r11/BUILD_REPORT.md</span><span>data/hard_tasks_20261120/hp_moteus_c1_r11/checks/results_20261123/summary.json</span><span>data/continuation_20261120/review_hp_moteus_c1_r11/REPORT.md</span><span>data/continuation_20261120/review_hp_moteus_c1_r11/CONFIRM.md</span><span><a href="https://github.com/mjbots/moteus">https://github.com/mjbots/moteus</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="splitflap.html"><span class="eyebrow">上一个</span><span>splitflap：判分器被宿主 KiCad 配置带偏，同一块板 100 变 95</span></a><a href="489f2861.html"><span class="eyebrow">下一个</span><span>Corne v3 升 v4：整板没布通</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

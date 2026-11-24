@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Glasgow revC3 外壳：干涉 0，一处正文数字对不上 · Glasgow 接口板 revC3 外壳（GlasgowEmbedded/glasgow）</title>
+<meta name="description" content="板壳联动的 CAD 参考解。底壳、磁吸盖、带板装配用 Fusion 做，OpenCascade 独立复算：板装得进、USB-C 插得到位、复位键按得到、原有配合不变；第 6 项查出 DESIGN.md 的柄顶直径 2.30 与图纸 2.50 不符。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>glasgow-revc3-case</span></div>
+  <div class="eyebrow">题源、加工与核验 · Glasgow 接口板 revC3 外壳（GlasgowEmbedded/glasgow）</div>
+  <h1>Glasgow revC3 外壳：235 个实体全部有效、干涉 0，独立复核挑出一处正文数字写错</h1>
+  <div class="chips"><span class="chip dom">CAD</span><span class="chip dom">外壳</span><span class="chip">中到难</span><span class="chip good">参考解已交</span><span class="chip good">干涉 0</span><span class="chip good">一处数字已更正</span><span class="chip warn">时间轴待补材复核</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这是板壳联动题的参考解：Glasgow 换到 revC3 板之后，原壳的 USB-C 口、复位键、J4 插针位置都对不上，需要重做底壳和磁吸盖。交付是底壳、盖子、带板装配三份 STEP，加 Fusion 原生 <code>.f3d</code>/<code>.f3z</code>、设计说明和验证记录。</p>
+<p>独立复核用 OpenCascade 从 STEP 重算，不用对方的测量值当输入：235 个实体全部 <code>BRepCheck_Analyzer</code> 有效；233 个板/元件实体分别对底壳和盖子求交，最大交集体积 0；底壳与盖子之间也是 0。</p>
+<p>两个接口按名义几何验证。USB-C 插头含外包沿插入方向扫掠，与两件壳交集体积 0；口内净空 8.50×2.72 mm，插头外包 12.35×6.50、金属端 8.28×2.43×6.75。复位键静止时突出 1.280 mm，按手册最大行程 0.300 mm 按满后仍突出 0.980 mm，Ø2.1917 的压杆从外到端面都不碰壳。</p>
+<p>第 6 项查出处，发现一处对不上：<code>DESIGN.md</code> 写柄顶直径 2.30±0.15，图纸 OCR 是 2.50±0.15；模型实际按 2.50 建（<code>reset_channel_d=2.70</code> 按 2.50 算），所以是正文笔误，已更正。时间轴 26/62 项这一条这一轮没核：复核材料只给了 STEP/STL，而交付目录里本来就有 <code>.f3d</code>/<code>.f3z</code>（<code>VERIFY.md</code> 第 46–48 行记了本机回读 26/62），补进复核材料就能核，不是查不了。</p>
+<p>第 7 项按要求只报数、不判定：底壳 USB 开口边到内壁 0.100、到底面 0.175，底壳 SW1 槽侧壁 0.180，盖子 J4 槽前壁到外表面 0.2025。这几个值是否可打印、要不要加厚，留给 qly 定。</p></div>
+</header>
+<div class="figures"><div><span class="v">235</span><span class="k">装配实体数，全部 BRepCheck 有效</span></div><div><span class="v">0</span><span class="k">板/元件与底壳、盖子的最大交集体积（233 对）</span></div><div><span class="v">6228.733 / 7286.434</span><span class="k">底壳、盖子体积 mm³（BRepGProp 1e-6）</span></div><div><span class="v">1.280 → 0.980</span><span class="k">复位键静止突出 vs 满行程后突出 mm</span></div><div><span class="v">0.2025</span><span class="k">盖子 J4 槽前壁到外表面，最薄处 mm</span></div><div><span class="v">2.30 → 2.50</span><span class="k">柄顶直径：正文笔误 vs 图纸</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>起点是 Glasgow revC3 板（233 个实体）和上游原壳的 Fusion 工程。revC3 把 USB-C、复位键和 J4 插针位置挪了，原壳装不上，要重做底壳和磁吸盖，并保持四个安装孔、四个磁铁凹位、两组排针开口不变。</p>
+<p>这是题源加工阶段的参考解，不是已发布的题包：没有配套判分器，也没有模型试做；它的用途是给板壳联动题量真值、标定可行区间。</p><div class="ticket"><div class="k">交付</div><div><p><code>Glasgow_base_revC3.step</code>（底壳）、<code>Glasgow_magnetic_lid_revC3.step</code>（磁吸盖）、<code>Glasgow_revC3_assembly.step</code>（带板装配，235 个实体）。</p>
+<p>Fusion 原生 <code>Glasgow_base_revC3.f3d</code>、<code>Glasgow_magnetic_lid_revC3.f3z</code>；<code>DESIGN.md</code> 记尺寸出处，<code>VERIFY.md</code> 记验证过程。</p></div><div class="k">验收口径</div><div><p>实体有效、板装得进不干涉、USB-C 插头插得到位、复位键按得到、原有配合不变、数字有出处、新开口附近最薄处只报数不判定。</p>
+<p>不用对方的 <code>DESIGN.md</code>/<code>VERIFY.md</code> 数值当测量输入；只在最后一节把对方说法与实测对照。</p></div><div class="k">坐标系</div><div><p>板到壳按 <code>transform.json</code> 平移 <code>(-50, 120, 0)</code>，三轴旋转 0°。装配 STEP 读回的是已带装配位置的 compound，读回后板包围盒与按 <code>transform.json</code> 平移的结果逐项一致（差 0.0）。</p></div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">复核</div><h3>五项通过：实体、装配、USB-C、复位键、原有配合</h3><div class="text"><p>实体：底壳 1 个 6228.732925 mm³，盖子 1 个 7286.433763 mm³，装配 235 个合计 22820.064241 mm³，全部有效；三份都是 AP214。装配里两个壳体的体积与单独文件一致。</p>
+<p>装配：板/元件 vs 底壳 233 对、vs 盖子 233 对、底壳 vs 盖子 1 对，最大交集体积都是 0（<code>BRepAlgoAPI_Common</code>，fuzzy 1e-5）。对方装配 STEP 里的板：按体积取最大的两个实体当壳体，其余 233 个实体总包围盒和逐实体排序后的包围盒与按 <code>transform.json</code> 自己放的完全一致。</p>
+<p>USB-C：外包 12.35×6.50，金属端 8.28×2.43×6.75；J1 口中心 (Y,Z)=(24.495,3.175)，口内净空 8.50×2.72；扫掠体与两件壳交集体积 0。</p>
+<p>复位键：静止突出 1.280，满行程 0.300 后仍突出 0.980；Ø2.1917 压杆从外到端面，底壳和盖子都不碰。</p>
+<p>原有配合：改变点簇全部落在声明改动区外扩 0.2 mm 内（落在区外 0 块）；四个安装孔中心 (4,4)、(4,45)、(76,4)、(76,45)、Ø3.20，四个磁铁凹位 Ø5.10 深 1.30，排针开口内边 X=37.37/70.63 宽 33.26，外形包围盒，改前改后一致。</p></div><figure><div class="frame"><a href="img/glasgow-revc3-case/checks.svg" title="打开原图"><img src="img/glasgow-revc3-case/checks.svg" alt="**7 项复核结论**。1–5 通过，6 发现一处正文数字对不上并已更正，7 按要求只报数不判定。数据来自 `glasgow_case_verify/run1/output/out/REPORT.md`。" loading="lazy"></a></div><figcaption><b>7 项复核结论</b>。1–5 通过，6 发现一处正文数字对不上并已更正，7 按要求只报数不判定。数据来自 <code>glasgow_case_verify/run1/output/out/REPORT.md</code>。</figcaption></figure><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">1 实体有效</td><td>BRepCheck_Analyzer</td><td class="st"><span class="chip good">通过</span></td><td>235/235</td></tr><tr><td class="id">2 装得进</td><td>233 对求交 + 底壳盖子求交</td><td class="st"><span class="chip good">通过</span></td><td>最大交集体积 0</td></tr><tr><td class="id">3 USB-C</td><td>插头扫掠 + 口内净空</td><td class="st"><span class="chip good">通过</span></td><td>交集体积 0</td></tr><tr><td class="id">4 复位键</td><td>满行程后仍突出</td><td class="st"><span class="chip good">通过</span></td><td>0.980 mm</td></tr><tr><td class="id">5 原有配合</td><td>安装孔/磁铁/排针开口/包围盒</td><td class="st"><span class="chip good">通过</span></td><td>改前改后一致</td></tr><tr><td class="id">6 数字有出处</td><td>逐条复算 + 图纸对照</td><td class="st"><span class="chip info">1 处已更正</span></td><td>1 处对不上，已更正</td></tr><tr><td class="id">7 最薄处</td><td>新开口附近壁厚</td><td class="st"><span class="chip good">只报告</span></td><td>按要求只报数，不判定</td></tr></tbody></table></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">更正</div><h3>柄顶直径：正文 2.30，图纸 2.50，模型按 2.50</h3><div class="text"><p>复核逐条复算 DESIGN.md 的算术：<code>12.35+2×0.10=12.550</code>、<code>6.50+2×0.10=6.700</code> 这些都对得上。对不上的是一处尺寸引用：DESIGN.md 写复位键柄顶直径 2.30±0.15，图纸 OCR 是 2.50±0.15。</p>
+<p>看模型本身：STEP 里锥根 Ø2.500、端面 Ø2.192，<code>reset_channel_d=2.70</code> 是按 2.50 算出来的。所以设计和模型一致，错的是正文那个数。2026-11-24 已把 DESIGN.md 改成 2.50，并在同处注明更正依据。</p>
+<p>另一处是材料问题：DESIGN.md 说底壳时间轴从 22 项改到 26 项、盖子 52 到 62。复核材料里没有原生 <code>.f3d/.f3z</code>，所以这一轮没核；但交付目录里有这两个文件，<code>VERIFY.md</code> 第 46–48 行也记了本机回读 26/62 项，把它们补进复核材料就能复核。这一条记“待补材复核”，不算通过也不算失败。</p></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">薄壁</div><h3>四处薄壁只报数：0.100 到 0.2025 mm</h3><div class="text"><p>第 7 项按要求只报告、不判定，所以这里不写“能不能打印”：</p>
+<ul><li>底壳 USB 开口边到内壁 0.100 mm、到底面/承托面 0.175 mm（这是切口边到相邻面的距离，不是穿透壁厚）。</li><li>底壳 SW1 槽侧壁 0.180 mm（射线法向厚度）。</li><li>盖子 J4 让位槽前壁到外表面 0.2025 mm（X 31.155…31.327，Y=-1.0975，Z 5.42…5.97），槽四周到外表面 0.2025 / 0.2575 mm。</li><li>盖子 USB-C 开口、SW1 按压通道的法向厚度都是 1.200 mm，没有低于 0.8 mm 的。</li></ul>
+<p>这些数要不要动，属于设计取舍：0.100–0.2025 mm 对 FDM 来说很薄，但这套壳本来是给光固化/外协打印准备的，材料里有工艺说明；复核方没有拿到打印参数，所以不判。</p></div></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">差异</div><h3>和对方说法对照：11 条一致，1 条笔误，2 条无法复核</h3><div class="text"><p>一致的：装配 235 个实体全部有效、USB 量规、按钮突出 1.28/0.98、安装孔中心与孔径、磁铁凹位 Ø5.10 深 1.30、排针开口内边与宽度、底壳/盖子包围盒，以及“Fusion 干涉 0 对、插头扫掠 0、压杆 0”这三条结论——方法不同（Fusion 布尔 vs OCP 求交），结论一致。</p>
+<p>待补材复核的：原生 <code>.f3d/.f3z</code> 的时间轴项数（材料没给，文件在交付目录里）、Fusion 用户参数、F3Z 回读；实打印、装配手感、摩擦配合、按键手感不在范围。</p>
+<p>另外记一笔：VERIFY.md 说磁铁凹位和上游 README 的“5 颗磁铁”不一致——模型前后都是 4 个凹位。这不是本次改动引入的，上游原壳就是 4 个；要不要补第 5 个属于题目取舍。</p></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">方法</div><h3>怎么复算的：体积用 BRepGProp，距离量到面</h3><div class="text"><p>体积一律用 <code>BRepGProp.VolumeProperties_s(shape, props, 1e-6, False)</code>，不用 build123d 的 <code>.volume</code>（B 样条面上能差 0.5%）。STEP 用 <code>STEPControl_Reader</code> 读。</p>
+<p>距离比较把对方实体拆成面 compound，用 <code>BRepExtrema_DistShapeShape(vertex, faces_compound)</code> 逐点量到面的距离，不是到实体的有向距离。全部脚本在 <code>out/scripts/</code>，<code>run_all.sh</code> 可从头重跑。</p>
+<p>这一节的用途是说明：复核不是重跑对方的 Fusion 检查，而是换一套几何内核独立算一遍；两套方法结论一致才有意义。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>参考解的正文数字也要核：设计本身对（模型按 2.50 建），但说明书写成 2.30，下游照着做的题面就会错。核数字要回到图纸和模型，不是看说明自洽。</p>
+<p>板壳题的真值要落到可以复算的量：实体有效性、交集体积、扫掠体、满行程后的余量，这些都能用第二套内核重算；不要停在“Fusion 里看过，没干涉”。</p>
+<p>只报不判的项要明确标出来：薄壁 0.100–0.2025 mm 是不是问题，取决于打印工艺，复核不能替设计定。</p>
+<p>原生文件缺失要记成无法复核：时间轴项数没有 <code>.f3d/.f3z</code> 就不能验，写成“通过”会污染后面的可信度。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/continuation_20261120/glasgow_case_codex/out/DESIGN.md</span><span>data/continuation_20261120/glasgow_case_codex/out/VERIFY.md</span><span>data/continuation_20261120/glasgow_case_codex/out/NOTES_20261124.md</span><span>data/continuation_20261120/ds_jobs_20261123/glasgow_case_verify/run1/output/out/REPORT.md</span><span>data/continuation_20261120/ds_jobs_20261123/glasgow_case_verify/run1/output/out/results.json</span><span><a href="https://github.com/GlasgowEmbedded/glasgow">https://github.com/GlasgowEmbedded/glasgow</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="kicad-headless.html"><span class="eyebrow">上一个</span><span>KiCad 不开图形界面：F8、推挤布线、差分对都没有</span></a><a href="process-params.html"><span class="eyebrow">下一个</span><span>工艺参数 113 条：同一参数各家差 10 倍</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KiCad 不开图形界面：F8、推挤布线、差分对都没有 · KiCad 10.0.7 无界面能力核实（工具链调研）</title>
+<meta name="description" content="为了给不用 CUA 的试做环境补能力，把 kicad-cli、IPC API、pcbnew 三条无界面路径逐项核实。结论：DRC/ERC/导出/铺铜重填/文件级读写都能做；从原理图更新 PCB、推挤布线、差分对、等长调谐三路都没有。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>kicad-headless</span></div>
+  <div class="eyebrow">题源、加工与核验 · KiCad 10.0.7 无界面能力核实（工具链调研）</div>
+  <h1>KiCad 10 不开图形界面能做什么：五样辅助工具里两样做不了</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip dom">工具链</span><span class="chip">工具核实</span><span class="chip good">本机实测 + 出处</span><span class="chip good">1 样可行</span><span class="chip warn">2 样部分可行</span><span class="chip bad">2 样做不了</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>背景：不用 CUA 的试做环境只给模型 kicad-cli、KiCad 自带 Python（pcbnew）和 Freerouting。两道难题的探针显示，模型在 pcbnew 的接口细节、看不见板子、没有“从原理图更新 PCB”上各花了几十步，所以计划做五个辅助工具补能力。做之前要先确认这些能力在无界面路径里到底存不存在。</p>
+<p>结论一句话：KiCad 10 的“设计修改”类操作在无界面路径里基本不存在。能自动化的是检查、导出、文件级改写和批量布线往返：DRC/ERC、Gerber/钻孔/STEP/PDF/SVG/3D PNG、网表/BOM、铺铜重填、用 pcbnew 直接读写板子，以及 DSN→Freerouting→SES 的整板布线。不能自动化的是设计推进：从原理图更新 PCB（F8）、交互式推挤/差分对/等长调谐、原理图编辑。</p>
+<p>落到五个辅助工具：<code>drc_diff</code> 可行；<code>board_view</code> 部分可行——3D PNG 能直接出，2D 版图位图没有子命令，只能先出 SVG/PDF 再栅格化；pcbnew 安全封装部分可行——只能包文件级编辑，DRC 必须转 kicad-cli；<code>sync_from_schematic</code> 和交互式布线两样不可行，只能自己写或留给 CUA 榜。</p>
+<p>IPC API 不是替代品：KiCad 10 的 IPC 必须有一个正在运行的 GUI，只覆盖 PCB 编辑器，不能导出，没有原理图 API。它能做的是在开着的 KiCad 里增删改封装/走线/过孔、重填铺铜、保存文档，换不到 F8 和推挤布线。官方文档写的是 headless 支持要到 11。</p>
+<p>这一页只记核实结论，不改任何题包。两样做不了的，出路只有两条：自己实现（网表对比 + 按网表补封装；Freerouting 批量布线 + 单网络布线函数），或者留给 CUA 榜。</p></div>
+</header>
+<div class="figures"><div><span class="v">1<small>/5</small></span><span class="k">可行：drc_diff</span></div><div><span class="v">2<small>/5</small></span><span class="k">部分可行：board_view（3D 可出、2D 要转）、pcbnew 封装</span></div><div><span class="v">2</span><span class="k">不可行：sync_from_schematic、交互式布线</span></div><div><span class="v">0</span><span class="k">三条无界面路径里能做 F8 的</span></div><div><span class="v">段错误</span><span class="k">pcbnew 的 WriteDRCReport 在 10.0 standalone 的实测结果</span></div><div><span class="v">GUI</span><span class="k">IPC API 的前置条件，10 只覆盖 PCB 编辑器</span></div></div>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">方法</div><h3>三条路径逐项对照，能做/不能做都给出处</h3><div class="text"><p>三条无界面路径：<code>kicad-cli</code>（10.0.7，本机实测）、IPC API（<code>KICAD_IPC_API=ON</code> 的 10.0.7，需要 GUI）、<code>pcbnew</code> 脚本（KiCad 自带 Python 3.9.13 里的 10.0.7 绑定）。</p>
+<p>每一项操作分四档记：有（官方接口直接支持）、部分（只在某些子命令/条件下支持）、无（没有该接口）、名义有/实测坏（API 存在但本机或已知 issue 里不可用）。本机跑过的写“本机实测”，联网结论给 URL 和抓到的原文，查不到的写“没查到”。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">能做</div><h3>DRC/ERC、导出、铺铜重填、文件级读写</h3><div class="text"><ul><li><b>DRC / ERC</b>：<code>kicad-cli pcb drc</code>、<code>sch erc</code> 都有；<code>pcb drc</code> 还带 <code>--schematic-parity</code>（原理图与 PCB 一致性）和 <code>--refill-zones</code>，配 <code>--save-board</code> 才把重填结果落盘。</li><li><b>导出</b>：<code>pcb export</code> 出 Gerber/钻孔/STEP/PDF/SVG 等；<code>pcb render</code> 出 3D PNG（本机实测生成成功）。pcbnew 的 <code>PLOT_CONTROLLER</code> 能出 SVG/PDF/Gerber/DXF 和 VRML，没有 STEP。</li><li><b>铺铜与器件</b>：pcbnew 有 <code>ZONE_FILLER</code>、可以增删改封装/走线/过孔；IPC 也有 <code>CreateItems</code>/<code>UpdateItems</code>/<code>DeleteItems</code> 和 <code>RefillZones</code>。</li><li><b>网表与接口文件</b>：<code>sch export netlist</code> 生成网表；pcbnew 有 <code>ExportSpecctraDSN</code>/<code>ImportSpecctraSES</code>，这是接 Freerouting 的路子。</li></ul></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">做不到</div><h3>F8、推挤布线、差分对、等长：三路都没有</h3><div class="text"><p><b>从原理图更新 PCB（F8）</b>：<code>kicad-cli</code> 没有 netlist 更新命令；IPC 10 没有原理图 API；pcbnew 没有 netlist updater 绑定。三路都没有。这解释了 cynthion 探针里模型为什么手搬封装，最后 32 个封装库 ID 和原理图对不上、还漏放 4 颗电阻。</p>
+<p><b>交互式推挤布线（shove/walkaround）</b>：只有 GUI 有。kicad-cli 无、IPC 无、pcbnew 无。这一条最要紧：Glasgow 探针里模型自己写布线器，72 步没收敛，就是因为没有这个能力，而 Freerouting 只能整板或指定网络批量布，不能当交互式布线用。</p>
+<p><b>差分对布线与等长/时域调谐</b>：同样只有 GUI 有，三路都没接口。</p>
+<p><b>另外两处</b>：IPC 的 <code>InjectDrcError</code> 只是注入标记，不是跑 DRC；pcbnew 的 <code>WriteDRCReport</code> 在 10.0 standalone 实测段错误，所以判分器一律走 <code>kicad-cli pcb drc</code>，不要用 pcbnew 跑 DRC。</p></div><figure><div class="frame"><a href="img/kicad-headless/matrix.svg" title="打开原图"><img src="img/kicad-headless/matrix.svg" alt="**13 项操作 × 3 条路径**。绿是有、琥珀是部分、红是名义有但实测坏、深灰是无接口。三行“无”分别是 F8、推挤布线、差分对和等长——也就是 GUI 独占的那几项。数据来自 `kicad_capability` 报告第 0 节速查表。" loading="lazy"></a></div><figcaption><b>13 项操作 × 3 条路径</b>。绿是有、琥珀是部分、红是名义有但实测坏、深灰是无接口。三行“无”分别是 F8、推挤布线、差分对和等长——也就是 GUI 独占的那几项。数据来自 <code>kicad_capability</code> 报告第 0 节速查表。</figcaption></figure><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">F8 更新</td><td>从原理图更新 PCB</td><td class="st"><span class="chip bad">不过</span></td><td>kicad-cli / IPC / pcbnew 都没有</td></tr><tr><td class="id">推挤布线</td><td>shove / walkaround</td><td class="st"><span class="chip bad">不过</span></td><td>仅 GUI</td></tr><tr><td class="id">差分对/等长</td><td>diff pair / length tuning</td><td class="st"><span class="chip bad">不过</span></td><td>仅 GUI</td></tr><tr><td class="id">DRC</td><td>kicad-cli pcb drc</td><td class="st"><span class="chip good">通过</span></td><td>含 parity 与 refill-zones</td></tr><tr><td class="id">3D PNG</td><td>kicad-cli pcb render</td><td class="st"><span class="chip good">通过</span></td><td>本机实测</td></tr><tr><td class="id">pcbnew DRC</td><td>WriteDRCReport</td><td class="st"><span class="chip bad">不过</span></td><td>10.0 standalone 段错误，改用 kicad-cli</td></tr></tbody></table></div></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">影响</div><h3>五个辅助工具：一个可行、两个部分可行、两个做不了</h3><div class="text"><p><code>drc_diff</code>：可行。<code>kicad-cli pcb drc</code> 本机实测正常，5 条故意违规全部报出；<code>--format json</code>、severity、<code>--exit-code-violations</code>、<code>--refill-zones</code>、<code>--save-board</code> 都在 help 里。落地时按“规则类型 + 严重级别 + 位置/对象”归并后 diff，不要按条数比——项目侧实测同一文件 DRC 计数会漂（短路 2–7 条、总数 141 不变）。</p>
+<p><code>board_view</code>：部分可行。<code>kicad-cli pcb render</code> 无 GUI 实测生成 PNG（8907 字节），但它是 3D 光照渲染，不是 2D 版图截图；看层、走线、丝印细节仍要 2D 的 SVG/PDF，而 2D 位图没有子命令，只能 <code>pcb export svg</code> 或 pcbnew 的 <code>PLOT_CONTROLLER</code> 出矢量，再外部栅格化成 PNG——这条转换链报告没测。</p>
+<p>pcbnew 安全封装：部分可行。可包 <code>LoadBoard</code>/<code>SaveBoard</code>、增删改封装/走线/过孔、<code>ZONE_FILLER</code>、<code>PLOT_CONTROLLER</code>、<code>ExportSpecctraDSN</code>/<code>ImportSpecctraSES</code>；接口层要直接拒绝 F8、DRC、布线三类调用，DRC 转 <code>kicad-cli</code>。另有一个时间账：SWIG 绑定自 9.0 弃用、计划 11.0 移除，封装层要能整体换实现——但 IPC 在 10 需要 GUI，当不了无头替代，到 11 才可能。</p>
+<p><code>sync_from_schematic</code>：不可行。要补只能自己写：<code>sch export netlist --format kicadxml</code> 拿网表，再用 pcbnew 读焊盘和网络做对比合并，然后列出差异。它不能等价于 F8（F8 还处理位号、封装库选择、网络类），只能覆盖“补齐缺件、更新连接”；<code>pcb drc --schematic-parity</code> 只报差异、不更新，而且要完整工程和已标注的原理图。</p>
+<p>交互式布线：不可行，Freerouting 也顶不上。它只能整板或按 netclass 批量布，报告没查到“只布某个 net”的选项（<code>--debug.filter_by_net</code> 只限制调试动作）；没有“保留已有走线”的开关（<code>ripup_allowed</code> 默认 true），要保留只能先在 KiCad 里锁定；SES 导回会删掉所有未锁定走线。所以替代方案只能是“整板/按类批量 + 锁定保护”，推挤、差分对、等长仍只能 CUA。</p></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">边界</div><h3>核实的边界</h3><div class="text"><ul><li>本机实测是 macOS 上的 KiCad 10.0.7 release build；Linux 版的行为没有实测，只核对了文档和 issue。评测环境如果换到 Linux，<code>pcb render</code> 要现在目标机冒烟。</li><li>IPC API 的结论基于 10.0 的文档与绑定：必须有运行中的 GUI，且只覆盖 PCB 编辑器，不支持 plotting/export；11 会不会加 headless 和原理图支持，报告没查。</li><li>报告里几处“查不到”的项保留原样，没有补推断：例如官方 CLI/Python 的 netlist 更新方案、IPC 10.0 的专用 DRC 命令。</li><li>这条核实只回答“接口有没有”，不回答“写出来好不好用”；辅助工具的实际收益要等实现之后用同一批探针复测。</li></ul></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>先核实再实现：五个辅助工具里两个根本没有底层接口，如果直接开工，会做到一半才发现要自己重写 KiCad 的 netlist updater。</p>
+<p>IPC 不是万灵药：它只是在开着的 GUI 上开一个口子，能做的事和 pcbnew 高度重叠，换不到 F8 和推挤布线；官方说 headless 要到 11。</p>
+<p>3D 渲染不等于 2D 版图：<code>pcb render</code> 出的是光照图，看层和丝印还得 SVG/PDF，board_view 要做两件事。</p>
+<p>判分器和辅助工具都要避开 pcbnew 跑 DRC：10.0 standalone 的 WriteDRCReport 会段错误，统一走 kicad-cli。</p>
+<p>工具能力要写进题面和榜单：给了 Freerouting 就要说明它不能按单网布、不能保留未锁定走线；给了 sync 工具就要说明它不等价于 F8。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/continuation_20261120/ds_jobs_20261123/kicad_capability/run2/output/out/REPORT.md</span><span>data/continuation_20261120/ds_jobs_20261123/kicad_capability/run2/output/out/facts.json</span><span>data/continuation_20261120/PAUSED.md（第 6、7 行）</span><span><a href="https://docs.kicad.org/">https://docs.kicad.org/</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="d0342ffd.html"><span class="eyebrow">上一个</span><span>HACKberry：空布尔结果被反证</span></a><a href="glasgow-revc3-case.html"><span class="eyebrow">下一个</span><span>Glasgow revC3 外壳：干涉 0，一处正文数字对不上</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

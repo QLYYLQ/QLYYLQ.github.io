@@ -1,0 +1,205 @@
+{
+  "id": "splitflap",
+  "group": "grader",
+  "order": 7,
+  "project": "Split-Flap 显示屏（scottbez1/splitflap）传感器小板",
+  "short": "splitflap：判分器被宿主 KiCad 配置带偏，同一块板 100 变 95",
+  "title": "splitflap 传感器板：判分器吃宿主 KiCad 配置，一块该 100 分的板在空配置环境下掉到 95",
+  "description": "PCB 与 OpenSCAD 联合题。W3 原来会读宿主全局 KiCad 配置：同一块参考解，在正常环境和空 KICAD_CONFIG_HOME 下分数不同。这一轮把配置冻进题包，另加 W5 磁铁孔壁厚品味项，两遍 72 样本逐项一致。",
+  "domain": [
+    "PCB",
+    "CAD"
+  ],
+  "level": "难",
+  "verdict": [
+    {
+      "label": "可试做",
+      "tone": "good"
+    },
+    {
+      "label": "W3 环境已解耦",
+      "tone": "good"
+    },
+    {
+      "label": "72/72 两遍一致",
+      "tone": "good"
+    },
+    {
+      "label": "权重待冻结",
+      "tone": "warn"
+    }
+  ],
+  "summary": [
+    "题目：给 Split-Flap 的传感器小板做一版能同时装 52 片和 40 片转鼓的改版。板子要改（KiCad 原生 `.kicad_pcb`），转鼓侧的三维件要跟着改（OpenSCAD），判分同时读两边。这是少见的 PCB 与 CAD 强耦合题：板上的磁铁孔位置决定转鼓上的磁铁孔，转鼓的孔距又反过来约束板宽。",
+    "这一轮修的是一个环境依赖问题。W3 检查的是丝印到板边的间距和封装库一致性，原来直接用宿主的 KiCad 全局配置。把 `KICAD_CONFIG_HOME` 指向一个空目录再跑，同一块参考解从 100 掉到 95，W3 从通过变成失败：库表不同，`lib_footprint_issues` 就不同。判分器不能依赖跑它的那台机器。",
+    "改法是把 KiCad 10.0 的全局配置（11 个文件，含 `fp-lib-table`、`sym-lib-table`）冻进题包 `checks/kicad_config/`，每轮复制一份到临时目录再设为子进程的 `KICAD_CONFIG_HOME`。不用包内目录本身，是因为 kicad-cli 会回写 `kicad_common.json` 的 `working_dir`。",
+    "同时加了 W5：转鼓上磁铁孔边缘到最近其他孔边缘的最小壁厚，52/40 片取小值，优选 1.2 mm，权重 4。W1–W4 按 16/20 缩放成 4.8/4/4/3.2，品味池仍是 20 分。上游参考解壁厚 1.0907 mm，W5 得 3.636 分，总分 99.64——参考解拿不满，和这道题的其它加权项一样，是照实扣。"
+  ],
+  "numbers": [
+    {
+      "v": "100→95",
+      "k": "同一块参考解，宿主配置正常 vs 空 KICAD_CONFIG_HOME（改前）"
+    },
+    {
+      "v": "72",
+      "of": "72",
+      "k": "两遍矩阵的计分样本，判决与分数逐项相同"
+    },
+    {
+      "v": "1.0907 mm",
+      "k": "上游参考解的磁铁孔最小壁厚"
+    },
+    {
+      "v": "1.2 mm",
+      "k": "W5 优选值，出自上游 flap_hole_separation"
+    },
+    {
+      "v": "99.64",
+      "k": "参考解总分（W5 部分得分）"
+    },
+    {
+      "v": "4.8/4/4/3.2/4",
+      "k": "W1–W5 权重，品味池 20 分"
+    }
+  ],
+  "task": {
+    "heading": "题目",
+    "intro": [
+      "起点是上游提交 `631b3d8` 的原样字节：`3d/` 全部 OpenSCAD、`electronics/sensor_smd/` 的 KiCad 工程、封装库和 LICENSE，共 65 个文件。解题工作区就是这些文件的副本，哈希在 `workspace.json` 里。",
+      "题包状态：`stage=trial_ready`，`ready_for_model_trial=true`。W1–W5 的权重是建题人按先例提的裁量值，人工抽查后冻结；首次探针试做之后再定难度档。"
+    ],
+    "rows": [
+      [
+        "要改什么",
+        [
+          "板子要能装进 52 片和 40 片两种转鼓，两种都要过；转鼓的 OpenSCAD 也要跟着改，磁铁孔、卡舌、轴向间隙都要在两种片数下成立。",
+          "改完的板要能和改完的转鼓装在一起：板上的磁铁孔和转鼓上的磁铁孔同心，不能被壁厚吃掉。"
+        ]
+      ],
+      [
+        "判什么",
+        [
+          "C 类必过：板能读、DRC 不新增、两种转鼓的装配关系成立、OpenSCAD 能渲染、关键尺寸在可行区间内。",
+          "W1–W5 品味项：W3 丝印与库一致性、W5 磁铁孔壁厚，另有 W1/W2/W4 按原设计。权重 4.8/4/4/3.2/4。"
+        ]
+      ],
+      [
+        "已知边界",
+        [
+          "只有磁铁孔、没有磁铁孔的激光版转鼓（`rv_fa_layout_without_magnet`）仍被放过，下一轮再收。",
+          "C5 仍按模块名判，改名的合法做法会被误拒。"
+        ]
+      ]
+    ]
+  },
+  "steps": [
+    {
+      "label": "改前",
+      "title": "同一块参考解，换一个 KICAD_CONFIG_HOME 就从 100 掉到 95",
+      "text": [
+        "W3 原来直接调 `kicad-cli pcb drc`，用的是当前用户 `~/Library/Preferences/kicad` 下的库表。本机正常环境下参考解 W3 通过：`silk_edge_clearance=4`、`lib_footprint_mismatch=3`。把 `KICAD_CONFIG_HOME` 指向一个空目录，同一块板变成 `silk_edge_clearance=4`、`lib_footprint_issues=4`，W3 失败，总分 100 → 95。",
+        "差别在库表：空配置下 kicad-cli 找不到工程自带的封装库，`lib_footprint_issues` 把每一颗找不到库的封装都记一条，判据就从“3 条不匹配”变成“4 类问题”。这不是板的问题，是判分器读了宿主的状态。"
+      ],
+      "figures": [
+        {
+          "src": "img/splitflap/w3_env.svg",
+          "caption": "**同一块参考解，两种环境**。改前：宿主配置正常 100 分，把 `KICAD_CONFIG_HOME` 指向空目录就掉到 95（W3 由 pass 变 fail）。改后：两遍都 100。数据来自 `splitflap_r2/.../REPORT.md` 第 2 节。"
+        }
+      ]
+    },
+    {
+      "label": "修法",
+      "title": "把 KiCad 全局配置冻进题包，每轮复制到临时目录",
+      "text": [
+        "`checks/kicad_config/` 是从 `data/answer_mining_20261107/workdir/kicad_config/` 原样拷来的 KiCad 10.0 全局配置，11 个文件，含 `fp-lib-table`、`sym-lib-table`、`kicad_common.json`。原件没改。",
+        "`check.py` 的 `run_drc` 每轮把它复制到临时目录，把副本设为 `kicad-cli` 子进程的 `KICAD_CONFIG_HOME`。不用包内目录本身，因为 kicad-cli 会回写 `kicad_common.json` 的 `working_dir`；用临时副本，包内字节在两遍矩阵跑完后与拷贝时一致（`matrix_compare.json` 的 `kicad_config.files_identical=true`）。",
+        "验证方法是跑两遍全量矩阵：第一遍正常环境，第二遍把外部 `KICAD_CONFIG_HOME` 指向空目录。73 份报告（72 个计分样本加 1 个已知缺口）的判决、挂的必过项、总分和 W3 警告明细逐项相同，两遍 `all_met` 都是 true。"
+      ]
+    },
+    {
+      "label": "加项",
+      "title": "W5：磁铁孔壁厚 1.2 mm，参考解 1.0907 mm 拿 3.636/4",
+      "text": [
+        "W5 量的是转鼓上磁铁孔边缘到最近其他孔边缘的最小壁厚（不计外缘），52 片和 40 片两种取小值；优选 1.2 mm，credit = clamp(壁厚/1.2, 0, 1)，权重 4。优选值出自上游 `flap_hole_separation`。",
+        "W1–W4 按 16/20 缩放成 4.8/4/4/3.2，品味池仍是 20 分。新增两个回归样本：壁厚 0.6032 mm 的 `w5_web_0p6` 得 98.01（W5 部分得分），1.2403 mm 的 `w5_web_1p2` 得 100（W5 满分）。",
+        "参考解 99.64：它的壁厚 1.0907 mm 比优选值薄，W5 拿 3.636。这个结果保留了下来——参考解不必满分，扣分项要能说清理由。"
+      ],
+      "checks": [
+        {
+          "id": "reference",
+          "what": "上游参考解原样",
+          "status": "pass",
+          "note": "99.64，W5 部分得分"
+        },
+        {
+          "id": "w5_web_1p2",
+          "what": "壁厚 1.2403 mm",
+          "status": "pass",
+          "note": "100，W5 满分"
+        },
+        {
+          "id": "w5_web_0p6",
+          "what": "壁厚 0.6032 mm",
+          "status": "pass",
+          "note": "98.01，W5 部分得分"
+        },
+        {
+          "id": "before",
+          "what": "改前状态",
+          "status": "fail",
+          "note": "0 分，按预期挂必过项"
+        },
+        {
+          "id": "alt_r16_textroute",
+          "what": "文本方式改走线的替代解",
+          "status": "pass",
+          "note": "100"
+        },
+        {
+          "id": "alt_repr_autonet_renamed",
+          "what": "自动网络重命名的替代解",
+          "status": "pass",
+          "note": "99.64"
+        }
+      ],
+      "after_text": [
+        "两遍矩阵的样本明细在 `checks/results_20261123/`（正常环境）和 `checks/results_20261123_emptycfg/`（空配置），逐样本对比在 `out/matrix_compare.json`。"
+      ]
+    },
+    {
+      "label": "回归",
+      "title": "70 个旧样本的判决和挂的必过项与上一轮逐项相同",
+      "text": [
+        "分数变化只来自 W5 和权重缩放：72 个计分样本里，旧样本的判决、挂的必过项、W1–W4 的 fraction 和 W3 警告明细全部相同，变的只是加权项那一栏。",
+        "泄露隔离、`normalize_grade`、C10 单元自测都通过。判分器 sha256 从 `7d757771…` 变成 `21e97b96…`，`status.json` 已同步。"
+      ]
+    },
+    {
+      "label": "剩余",
+      "title": "还没做的",
+      "text": [
+        [
+          "W1–W5 权重是裁量值，要人工抽查后冻结。",
+          "难度暂记 hard，等首次探针试做再定。",
+          "只有磁铁孔、没有磁铁孔的激光版转鼓仍被放过（`rv_fa_layout_without_magnet`），下一轮再收。",
+          "C5 依赖模块名，改名的合法做法会被误拒。",
+          "运行器还没登记 alias；这一轮由 DeepSeek 改、建题侧自测，原复核者没有对 W5 做增量确认。"
+        ]
+      ]
+    }
+  ],
+  "lesson": [
+    "判分器必须自带环境：库表、全局配置、KiCad 版本，任何一项读宿主状态，同一块板换台机器就是另一个分。这次是 100 和 95 的差别，落到排行榜上就是名次。",
+    "冻结配置要复制到临时目录再设环境变量，不能直接指向包内目录——kicad-cli 会回写配置。",
+    "加加权项要重跑全量矩阵并逐项对比：这一轮只变 W5 和权重缩放，70 个旧样本的判决一项没动，才能确认改动是干净的。",
+    "参考解拿不满可以接受：W5 上游 1.0907 mm 比优选 1.2 mm 薄，照实扣 0.364 分，比调低优选值让它满分更诚实。"
+  ],
+  "sources": [
+    "data/hard_tasks_20261120/hp_splitflap_sensor/task.md",
+    "data/hard_tasks_20261120/hp_splitflap_sensor/checks/THRESHOLD_SOURCES.json",
+    "data/continuation_20261120/ds_jobs_20261123/splitflap_r2/run1/output/out/REPORT.md",
+    "data/continuation_20261120/ds_jobs_20261123/splitflap_r2/run1/output/out/matrix_compare.json",
+    "https://github.com/scottbez1/splitflap"
+  ],
+  "thumb": "img/splitflap/w3_env.svg"
+}

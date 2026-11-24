@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" font-family="JetBrains Mono, Menlo, monospace">
+<rect width="1200" height="620" fill="#0c1411"/>
+<text x="40" y="52" fill="#eceee6" font-size="26" font-weight="500">同一项参数，不同来源差 10 倍：题面必须点名一家</text>
+<text x="40" y="92" fill="#8d9891" font-size="15">横轴单位 mm；线是来源给出的区间，点是单值，“≥”是原文没给上限。数据：process_params_20261123/process_params.json</text>
+<line x1="430.0" y1="128" x2="430.0" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="430.0" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.0</text>
+<line x1="503.3" y1="128" x2="503.3" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="503.3" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.1</text>
+<line x1="576.7" y1="128" x2="576.7" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="576.7" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.2</text>
+<line x1="650.0" y1="128" x2="650.0" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="650.0" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.3</text>
+<line x1="723.3" y1="128" x2="723.3" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="723.3" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.4</text>
+<line x1="796.7" y1="128" x2="796.7" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="796.7" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.5</text>
+<line x1="870.0" y1="128" x2="870.0" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="870.0" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.6</text>
+<line x1="943.3" y1="128" x2="943.3" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="943.3" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.7</text>
+<line x1="1016.7" y1="128" x2="1016.7" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="1016.7" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.8</text>
+<line x1="1090.0" y1="128" x2="1090.0" y2="520" stroke="#1e2a24" stroke-width="1"/>
+<text x="1090.0" y="548" fill="#8d9891" font-size="13" text-anchor="middle">0.9</text>
+<text x="40" y="175" fill="#eceee6" font-size="15">FDM 压配（Markforged，按直径）</text>
+<line x1="430.0" y1="170" x2="448.3" y2="170" stroke="#e6ad6a" stroke-width="7" stroke-opacity="0.55" stroke-linecap="round"/>
+<circle cx="430.0" cy="170" r="5" fill="#e6ad6a"/>
+<circle cx="448.3" cy="170" r="5" fill="#e6ad6a"/>
+<text x="460.3" y="175" fill="#8d9891" font-size="13">0–0.025</text>
+<text x="40" y="213" fill="#eceee6" font-size="15">FDM 嵌螺母（Mark3D）</text>
+<line x1="466.7" y1="208" x2="488.7" y2="208" stroke="#e6ad6a" stroke-width="7" stroke-opacity="0.55" stroke-linecap="round"/>
+<circle cx="466.7" cy="208" r="5" fill="#e6ad6a"/>
+<circle cx="488.7" cy="208" r="5" fill="#e6ad6a"/>
+<text x="500.7" y="213" fill="#8d9891" font-size="13">0.05–0.08</text>
+<text x="40" y="251" fill="#eceee6" font-size="15">FDM 配合（Loftsmith）</text>
+<line x1="466.7" y1="246" x2="613.3" y2="246" stroke="#7fb0dd" stroke-width="7" stroke-opacity="0.55" stroke-linecap="round"/>
+<circle cx="466.7" cy="246" r="5" fill="#7fb0dd"/>
+<circle cx="613.3" cy="246" r="5" fill="#7fb0dd"/>
+<text x="625.3" y="251" fill="#8d9891" font-size="13">0.05–0.25</text>
+<text x="40" y="289" fill="#eceee6" font-size="15">FDM 配合（SpeakCAD）</text>
+<line x1="503.3" y1="284" x2="1016.7" y2="284" stroke="#7fb0dd" stroke-width="7" stroke-opacity="0.55" stroke-linecap="round"/>
+<circle cx="503.3" cy="284" r="5" fill="#7fb0dd"/>
+<circle cx="1016.7" cy="284" r="5" fill="#7fb0dd"/>
+<text x="1028.7" y="289" fill="#8d9891" font-size="13">0.1–0.8</text>
+<text x="40" y="327" fill="#eceee6" font-size="15">FDM 移动件（Prusa，未说明单边）</text>
+<line x1="650.0" y1="322" x2="1016.7" y2="322" stroke="#ffb000" stroke-width="5" stroke-dasharray="10 7"/>
+<text x="640.0" y="327" fill="#8d9891" font-size="13" text-anchor="end">≥0.3</text>
+<text x="40" y="365" fill="#eceee6" font-size="15">FDM 固定/活动（嘉立创）</text>
+<circle cx="796.7" cy="360" r="7" fill="#ff3d6e"/>
+<text x="810.7" y="365" fill="#8d9891" font-size="13">0.5</text>
+<text x="40" y="403" fill="#eceee6" font-size="15">MDF 切缝（实测 4 组）</text>
+<line x1="481.3" y1="398" x2="576.7" y2="398" stroke="#7fb0dd" stroke-width="7" stroke-opacity="0.55" stroke-linecap="round"/>
+<circle cx="481.3" cy="398" r="5" fill="#7fb0dd"/>
+<circle cx="576.7" cy="398" r="5" fill="#7fb0dd"/>
+<text x="588.7" y="403" fill="#8d9891" font-size="13">0.07–0.2</text>
+<text x="40" y="441" fill="#eceee6" font-size="15">MDF 切缝（通用表格值）</text>
+<circle cx="547.3" cy="436" r="7" fill="#ffb000"/>
+<text x="561.3" y="441" fill="#8d9891" font-size="13">0.16</text>
+<text x="40" y="479" fill="#eceee6" font-size="15">MDF 木材上限（Ponoko）</text>
+<circle cx="576.7" cy="474" r="7" fill="#ff3d6e"/>
+<text x="590.7" y="479" fill="#8d9891" font-size="13">0.2</text>
+<text x="40" y="542" fill="#8d9891" font-size="14">判分若按“服务商可制造”，FDM 固定装配取嘉立创 0.5 mm；若按“厂商可打印下限”，取 Markforged 0.025 mm。两者差 20 倍。</text>
+</svg>

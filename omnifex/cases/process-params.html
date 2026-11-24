@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>工艺参数 113 条：同一参数各家差 10 倍 · 工艺参数表：FDM / 激光 MDF / 光固化 / 嘉立创打印</title>
+<meta name="description" content="外壳题要声明工艺条件，但网上没有统一值。收了 113 条数据点（逐条对到抓取到的页面正文），结论是 FDM 配合、MDF 切缝、树脂壁厚各家差一个数量级，只能逐题选一家规范写进题面和出处表。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>process-params</span></div>
+  <div class="eyebrow">题源、加工与核验 · 工艺参数表：FDM / 激光 MDF / 光固化 / 嘉立创打印</div>
+  <h1>工艺参数调研：113 条出自公开资料，同一项配合间隙从 0 到 0.8 mm 都有</h1>
+  <div class="chips"><span class="chip dom">外壳</span><span class="chip dom">CAD</span><span class="chip">材料调研</span><span class="chip good">113 条已核原文</span><span class="chip warn">无统一值</span><span class="chip warn">未做实物</span><span class="chip info">可作题面出处</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>外壳、装配、卡扣这类题要声明工艺条件（打印工艺、材料、配合间隙、最小壁厚），否则判分只能靠猜。原计划用实物试打来标定，11-23 改成网上调研替代：收厂商标称、服务商设计规范、教程实测三类数据，每条都附 URL 和抓到的原文。</p>
+<p>共 113 条，覆盖 FDM、3 mm/3.18 mm MDF 激光切、光固化树脂和嘉立创 JLC3DP 的公开规范，另有 PCB 卡槽、自攻螺丝、磁铁压入这些具体场景。全部引文都逐条和实际抓到的页面正文比对过，没有一条是凭记忆写的。</p>
+<p>最重要的结论是“没有统一值”。FDM 固定装配单边间隙：Markforged 压配按直径 0.00–0.05 mm（单边 0–0.025）、Mark3D 嵌螺母 0.05–0.08、Prusa 只说“移动件至少 0.3 mm”且没说明是单边还是直径、嘉立创 FDM 直接给 0.5 mm；教程实测从压配 0.05 到松配 0.8+ 都有。3 mm MDF 激光切缝实测有 0.07/0.12/0.15/0.20 mm 几种，另有 0.16 的通用表格值。</p>
+<p>所以工艺声明题只能逐题选一家规范、写进题面和出处表，不能写“按行业惯例”。选哪一家由出题人定，但要和题面、判分器、参考解一致；同一批题目之间也不要混用。</p>
+<p>这轮只做公开资料调研，没有做任何实物打印或试切；所有数字的适用条件（喷嘴、层高、材料、机器状态）都逐条记在 JSON 的 <code>condition</code> 里，离开条件引用会误导。</p></div>
+</header>
+<div class="figures"><div><span class="v">113</span><span class="k">数据点，逐条对到抓到的页面正文</span></div><div><span class="v">0–0.8 mm</span><span class="k">FDM 配合单边间隙在不同来源里的跨度</span></div><div><span class="v">0.07–0.20</span><span class="k">3 mm MDF 激光切缝实测值（mm）</span></div><div><span class="v">0.45–2.5</span><span class="k">FDM 最小壁厚：厂商可打印下限 vs 服务商规范（mm）</span></div><div><span class="v">0.2–2.0</span><span class="k">光固化最小壁厚：Formlabs 下限 vs 嘉立创分档（mm）</span></div><div><span class="v">≈0.05</span><span class="k">这次调研的 API 费用（美元）</span></div></div>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">为什么</div><h3>外壳题不写工艺条件，判分就只能靠猜</h3><div class="text"><p>板壳联动和外壳题里，配合间隙、最小壁厚、孔收缩这些量直接决定“装得上”还是“装不上”。判分器要么按名义几何判（零间隙也算合格），要么按题面声明的工艺公差判；后者要求题面写清工艺、材料、机器和公差来源。</p>
+<p>原来的计划是实物试打来标定，成本高、周期长。11-23 改成先用公开资料建一张参数表，再在具体题目里选定一家规范，把出处的 URL 和原文一起写进题包的 <code>THRESHOLD_SOURCES.json</code>。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">口径</div><h3>三类来源分开记，单边/直径不混</h3><div class="text"><p>来源分三类：厂商标称（Prusa、Formlabs、Markforged、Bambu）、服务商设计规范（嘉立创 JLC3DP、Protolabs/Hubs、SendCutSend、Ponoko、Sculpteo）、教程与用户实测（Loftsmith、SpeakCAD、MDPI 论文等）。</p>
+<p>同一个数在不同来源里的定义不一样：Markforged 的压配按直径给，教程多按单边给，Prusa 的“至少 0.3 mm”没说单边还是直径。所以 JSON 里每条都带 <code>condition</code>，写明是单边、直径还是总过盈，以及喷嘴、层高、材料。</p>
+<p>这一节的做法和判分器一致：不给“典型值”，给“某一家在某个条件下的值 + 出处”。</p></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">结果</div><h3>FDM 配合 0 到 0.8 mm，MDF 切缝 0.07 到 0.20 mm</h3><div class="text"><p>FDM 配合单边：Markforged 压配 0–0.025（原文按直径 0.00–0.05）、Mark3D 嵌螺母 0.05–0.08、Loftsmith 压配 0.05/滑配 0.15/松配 0.25、SpeakCAD 压配 0.1–0.2/滑配 0.4–0.6/松配 0.8+、嘉立创固定与活动都是 0.5、Prusa 移动件“至少 0.3”。</p>
+<p>FDM 最小壁厚：Prusa 按周长给 0.45/0.9/1.35/1.8（0.4 喷嘴）、Protolabs 与 Hubs 给 0.8、嘉立创按零件尺寸给 1.6/2.0/2.5，承力/卡扣/紧固件建议 &gt;1.5。判分按“服务商可制造”还是“厂商可打印下限”，结论差 3 倍。</p>
+<p>MDF：3 mm 切缝实测 0.07/0.12/0.15/0.20，另有 0.16 的表格值；Ponoko 给木材上限 0.2。3.18 mm 的服务商最小结构尺寸：SendCutSend 最小桥 1.6、孔到边 0.965、最小孔 1.27；Ponoko 特征/间距 1、推荐孔 2。</p>
+<p>光固化：Formlabs Form 4 绝对下限 0.2（supported/unsupported 都是），Hubs 给 supported 0.5/unsupported 1.0，嘉立创按尺寸 0.5–2.0 并明确凸起/定位/卡扣/紧固件推荐 &gt;1.5，Tough 2000 的服务商规范 0.3。配合方面 Formlabs 说两件间距 &lt;0.4 可能熔合，嘉立创说 SLA 固定装配单边 0.2、活动件单边 0.5——定义不同，不能合并。</p></div><figure><div class="frame"><a href="img/process-params/clearance.svg" title="打开原图"><img src="img/process-params/clearance.svg" alt="**同一项参数的取值跨度**。橙是厂商标称，蓝是教程/用户实测，琥珀是“未说明单边”或表格值，红是服务商规范。FDM 固定装配取嘉立创 0.5 mm，或按厂商下限取 Markforged 0.025 mm，差 20 倍。数据来自 `process_params.json` 的逐条 condition。" loading="lazy"></a></div><figcaption><b>同一项参数的取值跨度</b>。橙是厂商标称，蓝是教程/用户实测，琥珀是“未说明单边”或表格值，红是服务商规范。FDM 固定装配取嘉立创 0.5 mm，或按厂商下限取 Markforged 0.025 mm，差 20 倍。数据来自 <code>process_params.json</code> 的逐条 condition。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">怎么用</div><h3>逐题选一家规范，写进题面和出处表</h3><div class="text"><p>做法：每道涉及工艺条件的题，在题面写清“按哪一家的哪个规范、什么材料、什么机器、间隙是多少、单边还是直径”，出处表登记 URL、抓取日期和原文句子；判分器用同一个值，参考解也按它做。</p>
+<p>不要在一批题里混用：同一批题目里 A 题按嘉立创 0.5 mm、B 题按 Prusa 0.45 mm 壁厚，成绩不可比。选哪一家属于出题决策，要记录理由。</p>
+<p>公差这类外部条件要明写进题面，不让模型靠猜；没有声明工艺时，判分按名义几何，零间隙不干涉也算合格。这一条已经在项目规则里。</p></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">边界</div><h3>没做的和不能推的</h3><div class="text"><ul><li>没有实物打印或试切，所有数字都是公开资料，不保证在具体机器上复现。</li><li>树脂自攻螺丝没有通用孔径公式：Formlabs 让按螺丝厂商的 boss 尺寸，可量化的只有“打印螺纹 0.1 mm 偏移、螺纹至少 M6”。</li><li>压配过盈只有教程数据（0.05–0.1，MDF 紧配 0.15–0.2），没找到厂商给的磁铁/销钉过盈数值。</li><li>oshwhub 未访问；调研只用公开网页。</li></ul></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>“按行业惯例”不是一个可判分的说法：同一项配合间隙，厂商标称、服务商规范、教程实测能差 10 倍。题面必须点名一家。</p>
+<p>引用要带条件：单边还是直径、什么喷嘴层高、什么材料，缺一项这个数就不能用。113 条里每条都带 condition 就是为了这个。</p>
+<p>判分口径要跟着工艺声明走：题面声明了工艺就按声明的公差判，没声明就按名义几何判，两种不能混。</p>
+<p>公开资料能替代一部分实物试验，但不能替代全部：真打出来的收缩、翘曲、装配手感，这一轮没有数据。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/process_params_20261123/REPORT.md</span><span>data/process_params_20261123/process_params.json</span><span>data/continuation_20261120/PAUSED.md（第 4 行）</span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="glasgow-revc3-case.html"><span class="eyebrow">上一个</span><span>Glasgow revC3 外壳：干涉 0，一处正文数字对不上</span></a><span></span></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

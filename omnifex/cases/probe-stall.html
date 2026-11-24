@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>两道难题 150 步用完：Glasgow 交付文件 0 改动 · Glasgow / cynthion 难度探针（GlasgowEmbedded、greatscottgadgets）</title>
+<meta name="description" content="两题各跑 150 步（opencode + DeepSeek m17）：Glasgow 一个交付文件都没改，判分读到的还是原板；cynthion 第 73 步才第一次改交付、第 138 步才第一次对改后板跑 DRC。对照 Voron 39 步 100 分。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>probe-stall</span></div>
+  <div class="eyebrow">模型真做不到的 · Glasgow / cynthion 难度探针（GlasgowEmbedded、greatscottgadgets）</div>
+  <h1>Glasgow 和 cynthion 各 150 步：不是被工具卡死，是交付太晚</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip">难</span><span class="chip warn">探针 = 下界</span><span class="chip bad">Glasgow 0 交付</span><span class="chip bad">cynthion 0 分</span><span class="chip info">Voron 39 步满分</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>这是两道难题的步数探针，不是正式试做：opencode + DeepSeek m17，各 150 步预算，两题都跑到 step_budget_exhausted 被控制器收掉，不是超时，模型错误事件 0。</p>
+<p>Glasgow 的结果最刺眼：150 步里交付文件改动 0（<code>delivery_changed: false</code>），判分读到的还是原板，所以 P1a/P1b/P2a/P2b/P3a–P3d 全挂、P4a/P4b 反而因为“原板没动”而通过，最终 0 分。它在 <code>_scratch/</code> 里其实已经把 4 颗 TVS、1 颗 1T45、2 颗 INA233 加进去了，但一次都没写回 <code>glasgow.kicad_pcb</code>。</p>
+<p>cynthion 交了 17 个交付文件，但第 73 步才第一次成功改交付原理图，第 138 步才第一次对改后原生板跑 DRC；到第 150 步，原生板还有重填后 40 个未连接、47 个短路。C1 叠层、C6 封装库 ID、C8 少 4 颗串联电阻这些小项也没做完。</p>
+<p>工具链确实有贡献，但都能绕开，只是绕开很贵：Freerouting 第一次也是唯一一次在 197.7 秒超时（74 处未连、847 条违规），模型随后完全放弃、转向自研布线器；导出板图时 <code>kicad-cli pcb export svg -o</code> 给目录不认，前后 7 步在“怎么看见板子”；pcbnew 的 SWIG 对象生命周期坑反复咬了 6–8 步。</p>
+<p>最大的坑是自选路线：Glasgow 第 79–150 步共 72 步（48%）在写、改、跑自研布线器，中间出现过 <code>routed 57 failed 0</code> 但同一块板 DRC 是 54 个短路，一直没收敛，也从没把最好的 scratch 板先交出去。</p></div>
+</header>
+<div class="figures"><div><span class="v">150<small>/150</small></span><span class="k">两题的步数预算，都用完</span></div><div><span class="v">0</span><span class="k">Glasgow 交付文件改动数（status.json）</span></div><div><span class="v">73</span><span class="k">cynthion 第一次成功改交付文件的步号</span></div><div><span class="v">72</span><span class="k">Glasgow 自研布线循环的步数，占 48%</span></div><div><span class="v">197.7 s</span><span class="k">Freerouting 唯一一次运行，TIMED_OUT</span></div><div><span class="v">39</span><span class="k">Voron 对照：39 步、约 18 分钟、100 分</span></div></div>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">口径</div><h3>按事件流还原每步，每步只归一个主类别</h3><div class="text"><p>数据源是每题的 <code>events.jsonl</code>：一个 <code>step_start</code> 到对应的 <code>step_finish</code> 记 1 步，步数就是模型请求次数。<code>步内</code> 是 <code>step_finish - step_start</code>（含工具执行），<code>实际</code> 把下一次请求前的等待也算进来，所以各阶段相加等于整轮墙钟。</p>
+<p>每步只归一个主类别，映射写在 <code>out/scripts/classify_steps.py</code> 里，是显式步号表，可逐条复核。报错重试只统计“紧接上一步失败做修补/回滚”的步，不把所有改代码都算重试。</p>
+<p>这一轮只做统计和文件核对，没有重跑 DRC、没有重跑判分器；下面引用的 DRC 和判分数字都来自原始事件流和 <code>grade*.json</code>。</p></div></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">cynthion</div><h3>交了 17 个文件，但第 73 步才第一次改交付、第 138 步才第一次验改后板</h3><div class="text"><p>判分 <code>score 0.0</code>，挂 C1（叠层 setup）、C6（封装库 ID）、C7（DRC/zone）、C8（少 4 颗串联电阻），加权项 W4、W5 也挂；C2–C5、C9–C12、W2、W6 通过。36 路 ULPI 串联电阻、5 颗去耦、65 个伪电源球、平面迁移这些都已经判对，所以不是“什么都没做”。</p>
+<p>前 70 步基本都在勘察和试工具：只读勘察 66 步（44%），探索工具/API 26 步（17.3%）。第 71、72 步改交付原理图都因 KeyError 回滚，第 73 步才成功。板级阶段 90–150 共 61 步（40.7%）、实际 54.4 分钟（62.3%），其中真正改原生板只有 124–140 的 17 步。</p>
+<p>到第 140 步，原生板还是“重填后 40 个未连接、47 个短路”；最后 10 步又转去自研布线，没能在预算内收口。</p></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">Glasgow</div><h3>150 步、0 个交付文件改动；P4 通过是因为判分读的还是原板</h3><div class="text"><p><code>status.json</code> 写 <code>delivery_changed: false</code>、<code>delivery_changed_count: 0</code>；<code>_scratch/</code> 下 162 个文件全部被忽略。判分 P1a 报 <code>SP3012-06UTG 阵列 0 颗 != 4</code>，P2a 报 <code>74LVC1T45 16 颗 != 17</code>，P3a 报 <code>INA233 0 颗 != 2</code>——这三项失败首先是“没交”。</p>
+<p>P4a/P4b 通过也是同一个原因：原板本来就 0 未连、<code>clearance 46</code>、<code>hole_clearance 121</code>、三类合计 169，正好在阈值内。所以不能把“P4 通过”读成“它把布线保住了”。</p>
+<p>第 71 步其实已经把 4 颗 TVS、1 颗 1T45、2 颗 INA233 加到 <code>_scratch/stage2.kicad_pcb</code>，第 72 步 DRC 报 57 个未连。之后 79–150 步是 72 步的自研布线循环：<code>routed 57 failed 0</code> 之后 DRC 是 54 个短路、23 处交叉；第 142 步 <code>Found 1 unconnected</code> 但 28 个短路；第 150 步 <code>routed 38 failed 19</code>。它一直在“少未连”和“少短路”之间摆动，没有收敛，也没把最好的 scratch 板写回交付路径。</p></div><figure><div class="frame"><a href="img/probe-stall/steps.svg" title="打开原图"><img src="img/probe-stall/steps.svg" alt="**150 步步数分配**。上：cynthion；下：Glasgow。数字是步数，颜色是主类别；Glasgow 的布线尝试 55 步占 36.7%，其中 79–150 的连续循环 72 步占 48%。数据来自 `stats.json`。" loading="lazy"></a></div><figcaption><b>150 步步数分配</b>。上：cynthion；下：Glasgow。数字是步数，颜色是主类别；Glasgow 的布线尝试 55 步占 36.7%，其中 79–150 的连续循环 72 步占 48%。数据来自 <code>stats.json</code>。</figcaption></figure></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">工具链</div><h3>Freerouting 3 分钟超时、SVG 导出参数坑、pcbnew 对象生命周期</h3><div class="text"><ul><li><b>Freerouting</b>：第 42 步导出 Specctra DSN 成功，第 43 步运行 197.7 秒后 <code>TIMED_OUT</code>，输出 <code>74 unrouted and 847 violations</code>。模型之后既没 <code>ImportSpecctraSES</code>，也没用部分结果，从第 79 步起完全转向自研路由器。</li><li><b>看板子</b>：第 13 步查 <code>rsvg-convert</code>、<code>convert</code>、<code>magick</code>、<code>inkscape</code>，全没有；matplotlib/PIL/cairosvg 也全 no。第 14 步 <code>kicad-cli pcb export svg -o _scratch/svg</code> 报 <code>exit=2</code>——<code>-o</code> 要文件路径不是目录；第 15 步改成 <code>-o _scratch/svg/board.svg</code> 才成功。前后 7 步花在“怎么看见板子”。</li><li><b>pcbnew</b>：第 51 步 <code>for p in f.Pads()</code> 报 <code>SwigPyObject is not iterable</code>，第 53 步 <code>GetTracks()</code> 同样，第 109 步 <code>AttributeError: 'NoneType' object has no attribute 'GetTracks'</code>。第 55 步用“每次重新查 <code>b.GetFootprints()</code>”绕开。这个坑本身 6–8 步，但和第 2 个坑叠加，把改板阶段拖到第 78 步。</li></ul></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">判断</div><h3>300 步：cynthion 不乐观，Glasgow 有机会但 P4 不保证干净</h3><div class="text"><p>cynthion 剩下的都是硬项：叠层 setup、封装库 ID、DRC/zone 清理，还要补 4 颗串联电阻，按前 150 步的节奏不乐观。</p>
+<p>Glasgow 的机会在于它其实已经把器件加进 scratch 板，缺的是“先交出去再优化”的策略；但它 72 步没收敛的布线循环说明，即使交出去，P4 也很难干净。</p>
+<p>两题共同的问题是“最后才写交付”。这个不改，300 步也可能再次 0 交付。对照 Voron 39 步 100 分，只能说明工具链不是完全不能用，不能说明这两道 PCB 题在 150 步内可做；Voron 那题的题面本身也偏直白。</p>
+<p>按这个结论，运行器 v9 的候选改动是：步数用到 50% 和 75% 时提醒交付（只提醒，不替模型拷文件）、放宽 Freerouting 超时、难题 PCB 的步数上限提到 300。这三条当时还没落地。</p></div></div></li><li class="step"><div class="num">06</div><div class="main"><div class="label">边界</div><h3>这是难度下界，不是题目不可解</h3><div class="text"><p>两题都有上游答案（Glasgow revC2、cynthion 的后续提交），也都有重布既有网络的自由；这轮探针没有加“保留原布线”的限制，但模型自己选了保守路线。所以 150 步 0 分只说明这条路径的下界。</p>
+<p>要变成可引用的难度结论，至少要：允许重布的第二轮、逐项判分记录、独立复核，以及和正式试做运行器同一套计分口径。</p></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>先交付再优化：两道题都栽在“最后才写回交付文件”。Glasgow 的 scratch 板已经有正确的器件，判分器看到的却是原板，0 分和它的实际工作量完全脱节。</p>
+<p>工具的坑要量化：Freerouting 197.7 秒超时、SVG 导出 7 步、pcbnew 6–8 步，三项加起来不到 20 步，但把改板阶段推到了第 78 步，间接造成交付太晚。</p>
+<p>对照要选对：Voron 39 步满分说明工具链能用，但那题题面直白；不能用它反推 PCB 难题的难度。</p>
+<p>探针成绩不能进榜：这是 opencode + DeepSeek 的探索性运行，判分器没有盲审，题包也不是 validated。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/continuation_20261120/ds_jobs_20261123/probe_stall/run1/output/out/REPORT.md</span><span>data/continuation_20261120/ds_jobs_20261123/probe_stall/run1/output/out/stats.json</span><span>data/continuation_20261120/PAUSED.md（5b 一行）</span><span><a href="https://github.com/GlasgowEmbedded/glasgow">https://github.com/GlasgowEmbedded/glasgow</a></span><span><a href="https://github.com/greatscottgadgets/cynthion">https://github.com/greatscottgadgets/cynthion</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="motor42.html"><span class="eyebrow">上一个</span><span>Motor-42 加双编码器：675 步没改一个硬件文件</span></a><a href="585e69a5.html"><span class="eyebrow">下一个</span><span>HackRF 换射频开关：焊盘叠在一起</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

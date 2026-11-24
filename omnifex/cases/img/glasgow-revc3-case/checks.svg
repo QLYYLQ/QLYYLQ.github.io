@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340" font-family="JetBrains Mono, Menlo, monospace">
+<rect width="1200" height="340" fill="#0c1411"/>
+<text x="40" y="52" fill="#eceee6" font-size="26" font-weight="500">Glasgow revC3 外壳独立复核：7 项里 5 项通过、1 项已更正、1 项只报告</text>
+<rect x="40" y="140" width="150" height="110" rx="6" fill="#15211b" stroke="#6fbb8e" stroke-width="2"/>
+<text x="115" y="180" fill="#eceee6" font-size="17" text-anchor="middle">1 实体</text>
+<text x="115" y="214" fill="#6fbb8e" font-size="16" text-anchor="middle">235/235</text>
+<rect x="202" y="140" width="150" height="110" rx="6" fill="#15211b" stroke="#6fbb8e" stroke-width="2"/>
+<text x="277" y="180" fill="#eceee6" font-size="17" text-anchor="middle">2 装得进</text>
+<text x="277" y="214" fill="#6fbb8e" font-size="16" text-anchor="middle">干涉 0</text>
+<rect x="363" y="140" width="150" height="110" rx="6" fill="#15211b" stroke="#6fbb8e" stroke-width="2"/>
+<text x="438" y="180" fill="#eceee6" font-size="17" text-anchor="middle">3 USB-C</text>
+<text x="438" y="214" fill="#6fbb8e" font-size="16" text-anchor="middle">扫掠 0</text>
+<rect x="525" y="140" width="150" height="110" rx="6" fill="#15211b" stroke="#6fbb8e" stroke-width="2"/>
+<text x="600" y="180" fill="#eceee6" font-size="17" text-anchor="middle">4 复位键</text>
+<text x="600" y="214" fill="#6fbb8e" font-size="16" text-anchor="middle">余 0.980</text>
+<rect x="687" y="140" width="150" height="110" rx="6" fill="#15211b" stroke="#6fbb8e" stroke-width="2"/>
+<text x="762" y="180" fill="#eceee6" font-size="17" text-anchor="middle">5 原有配合</text>
+<text x="762" y="214" fill="#6fbb8e" font-size="16" text-anchor="middle">区外 0</text>
+<rect x="849" y="140" width="150" height="110" rx="6" fill="#15211b" stroke="#ffb000" stroke-width="2"/>
+<text x="923" y="180" fill="#eceee6" font-size="17" text-anchor="middle">6 出处</text>
+<text x="923" y="214" fill="#ffb000" font-size="16" text-anchor="middle">改 1 处</text>
+<rect x="1010" y="140" width="150" height="110" rx="6" fill="#15211b" stroke="#c2c7c9" stroke-width="2"/>
+<text x="1085" y="180" fill="#eceee6" font-size="17" text-anchor="middle">7 薄壁</text>
+<text x="1085" y="214" fill="#c2c7c9" font-size="16" text-anchor="middle">只报告</text>
+<text x="40" y="292" fill="#8d9891" font-size="14">第 7 项按要求只报数、不判定；薄壁 0.100 / 0.175 / 0.180 / 0.2025 mm。数据：glasgow_case_verify/run1/output/out/REPORT.md</text>
+</svg>

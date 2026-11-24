@@ -1,0 +1,142 @@
+{
+  "id": "probe-stall",
+  "group": "hard",
+  "order": 5,
+  "project": "Glasgow / cynthion 难度探针（GlasgowEmbedded、greatscottgadgets）",
+  "short": "两道难题 150 步用完：Glasgow 交付文件 0 改动",
+  "title": "Glasgow 和 cynthion 各 150 步：不是被工具卡死，是交付太晚",
+  "description": "两题各跑 150 步（opencode + DeepSeek m17）：Glasgow 一个交付文件都没改，判分读到的还是原板；cynthion 第 73 步才第一次改交付、第 138 步才第一次对改后板跑 DRC。对照 Voron 39 步 100 分。",
+  "domain": [
+    "PCB"
+  ],
+  "level": "难",
+  "verdict": [
+    {
+      "label": "探针 = 下界",
+      "tone": "warn"
+    },
+    {
+      "label": "Glasgow 0 交付",
+      "tone": "bad"
+    },
+    {
+      "label": "cynthion 0 分",
+      "tone": "bad"
+    },
+    {
+      "label": "Voron 39 步满分",
+      "tone": "info"
+    }
+  ],
+  "summary": [
+    "这是两道难题的步数探针，不是正式试做：opencode + DeepSeek m17，各 150 步预算，两题都跑到 step_budget_exhausted 被控制器收掉，不是超时，模型错误事件 0。",
+    "Glasgow 的结果最刺眼：150 步里交付文件改动 0（`delivery_changed: false`），判分读到的还是原板，所以 P1a/P1b/P2a/P2b/P3a–P3d 全挂、P4a/P4b 反而因为“原板没动”而通过，最终 0 分。它在 `_scratch/` 里其实已经把 4 颗 TVS、1 颗 1T45、2 颗 INA233 加进去了，但一次都没写回 `glasgow.kicad_pcb`。",
+    "cynthion 交了 17 个交付文件，但第 73 步才第一次成功改交付原理图，第 138 步才第一次对改后原生板跑 DRC；到第 150 步，原生板还有重填后 40 个未连接、47 个短路。C1 叠层、C6 封装库 ID、C8 少 4 颗串联电阻这些小项也没做完。",
+    "工具链确实有贡献，但都能绕开，只是绕开很贵：Freerouting 第一次也是唯一一次在 197.7 秒超时（74 处未连、847 条违规），模型随后完全放弃、转向自研布线器；导出板图时 `kicad-cli pcb export svg -o` 给目录不认，前后 7 步在“怎么看见板子”；pcbnew 的 SWIG 对象生命周期坑反复咬了 6–8 步。",
+    "最大的坑是自选路线：Glasgow 第 79–150 步共 72 步（48%）在写、改、跑自研布线器，中间出现过 `routed 57 failed 0` 但同一块板 DRC 是 54 个短路，一直没收敛，也从没把最好的 scratch 板先交出去。"
+  ],
+  "numbers": [
+    {
+      "v": "150",
+      "of": "150",
+      "k": "两题的步数预算，都用完"
+    },
+    {
+      "v": "0",
+      "k": "Glasgow 交付文件改动数（status.json）"
+    },
+    {
+      "v": "73",
+      "k": "cynthion 第一次成功改交付文件的步号"
+    },
+    {
+      "v": "72",
+      "k": "Glasgow 自研布线循环的步数，占 48%"
+    },
+    {
+      "v": "197.7 s",
+      "k": "Freerouting 唯一一次运行，TIMED_OUT"
+    },
+    {
+      "v": "39",
+      "k": "Voron 对照：39 步、约 18 分钟、100 分"
+    }
+  ],
+  "steps": [
+    {
+      "label": "口径",
+      "title": "按事件流还原每步，每步只归一个主类别",
+      "text": [
+        "数据源是每题的 `events.jsonl`：一个 `step_start` 到对应的 `step_finish` 记 1 步，步数就是模型请求次数。`步内` 是 `step_finish - step_start`（含工具执行），`实际` 把下一次请求前的等待也算进来，所以各阶段相加等于整轮墙钟。",
+        "每步只归一个主类别，映射写在 `out/scripts/classify_steps.py` 里，是显式步号表，可逐条复核。报错重试只统计“紧接上一步失败做修补/回滚”的步，不把所有改代码都算重试。",
+        "这一轮只做统计和文件核对，没有重跑 DRC、没有重跑判分器；下面引用的 DRC 和判分数字都来自原始事件流和 `grade*.json`。"
+      ]
+    },
+    {
+      "label": "cynthion",
+      "title": "交了 17 个文件，但第 73 步才第一次改交付、第 138 步才第一次验改后板",
+      "text": [
+        "判分 `score 0.0`，挂 C1（叠层 setup）、C6（封装库 ID）、C7（DRC/zone）、C8（少 4 颗串联电阻），加权项 W4、W5 也挂；C2–C5、C9–C12、W2、W6 通过。36 路 ULPI 串联电阻、5 颗去耦、65 个伪电源球、平面迁移这些都已经判对，所以不是“什么都没做”。",
+        "前 70 步基本都在勘察和试工具：只读勘察 66 步（44%），探索工具/API 26 步（17.3%）。第 71、72 步改交付原理图都因 KeyError 回滚，第 73 步才成功。板级阶段 90–150 共 61 步（40.7%）、实际 54.4 分钟（62.3%），其中真正改原生板只有 124–140 的 17 步。",
+        "到第 140 步，原生板还是“重填后 40 个未连接、47 个短路”；最后 10 步又转去自研布线，没能在预算内收口。"
+      ]
+    },
+    {
+      "label": "Glasgow",
+      "title": "150 步、0 个交付文件改动；P4 通过是因为判分读的还是原板",
+      "text": [
+        "`status.json` 写 `delivery_changed: false`、`delivery_changed_count: 0`；`_scratch/` 下 162 个文件全部被忽略。判分 P1a 报 `SP3012-06UTG 阵列 0 颗 != 4`，P2a 报 `74LVC1T45 16 颗 != 17`，P3a 报 `INA233 0 颗 != 2`——这三项失败首先是“没交”。",
+        "P4a/P4b 通过也是同一个原因：原板本来就 0 未连、`clearance 46`、`hole_clearance 121`、三类合计 169，正好在阈值内。所以不能把“P4 通过”读成“它把布线保住了”。",
+        "第 71 步其实已经把 4 颗 TVS、1 颗 1T45、2 颗 INA233 加到 `_scratch/stage2.kicad_pcb`，第 72 步 DRC 报 57 个未连。之后 79–150 步是 72 步的自研布线循环：`routed 57 failed 0` 之后 DRC 是 54 个短路、23 处交叉；第 142 步 `Found 1 unconnected` 但 28 个短路；第 150 步 `routed 38 failed 19`。它一直在“少未连”和“少短路”之间摆动，没有收敛，也没把最好的 scratch 板写回交付路径。"
+      ],
+      "figures": [
+        {
+          "src": "img/probe-stall/steps.svg",
+          "caption": "**150 步步数分配**。上：cynthion；下：Glasgow。数字是步数，颜色是主类别；Glasgow 的布线尝试 55 步占 36.7%，其中 79–150 的连续循环 72 步占 48%。数据来自 `stats.json`。"
+        }
+      ]
+    },
+    {
+      "label": "工具链",
+      "title": "Freerouting 3 分钟超时、SVG 导出参数坑、pcbnew 对象生命周期",
+      "text": [
+        [
+          "**Freerouting**：第 42 步导出 Specctra DSN 成功，第 43 步运行 197.7 秒后 `TIMED_OUT`，输出 `74 unrouted and 847 violations`。模型之后既没 `ImportSpecctraSES`，也没用部分结果，从第 79 步起完全转向自研路由器。",
+          "**看板子**：第 13 步查 `rsvg-convert`、`convert`、`magick`、`inkscape`，全没有；matplotlib/PIL/cairosvg 也全 no。第 14 步 `kicad-cli pcb export svg -o _scratch/svg` 报 `exit=2`——`-o` 要文件路径不是目录；第 15 步改成 `-o _scratch/svg/board.svg` 才成功。前后 7 步花在“怎么看见板子”。",
+          "**pcbnew**：第 51 步 `for p in f.Pads()` 报 `SwigPyObject is not iterable`，第 53 步 `GetTracks()` 同样，第 109 步 `AttributeError: 'NoneType' object has no attribute 'GetTracks'`。第 55 步用“每次重新查 `b.GetFootprints()`”绕开。这个坑本身 6–8 步，但和第 2 个坑叠加，把改板阶段拖到第 78 步。"
+        ]
+      ]
+    },
+    {
+      "label": "判断",
+      "title": "300 步：cynthion 不乐观，Glasgow 有机会但 P4 不保证干净",
+      "text": [
+        "cynthion 剩下的都是硬项：叠层 setup、封装库 ID、DRC/zone 清理，还要补 4 颗串联电阻，按前 150 步的节奏不乐观。",
+        "Glasgow 的机会在于它其实已经把器件加进 scratch 板，缺的是“先交出去再优化”的策略；但它 72 步没收敛的布线循环说明，即使交出去，P4 也很难干净。",
+        "两题共同的问题是“最后才写交付”。这个不改，300 步也可能再次 0 交付。对照 Voron 39 步 100 分，只能说明工具链不是完全不能用，不能说明这两道 PCB 题在 150 步内可做；Voron 那题的题面本身也偏直白。",
+        "按这个结论，运行器 v9 的候选改动是：步数用到 50% 和 75% 时提醒交付（只提醒，不替模型拷文件）、放宽 Freerouting 超时、难题 PCB 的步数上限提到 300。这三条当时还没落地。"
+      ]
+    },
+    {
+      "label": "边界",
+      "title": "这是难度下界，不是题目不可解",
+      "text": [
+        "两题都有上游答案（Glasgow revC2、cynthion 的后续提交），也都有重布既有网络的自由；这轮探针没有加“保留原布线”的限制，但模型自己选了保守路线。所以 150 步 0 分只说明这条路径的下界。",
+        "要变成可引用的难度结论，至少要：允许重布的第二轮、逐项判分记录、独立复核，以及和正式试做运行器同一套计分口径。"
+      ]
+    }
+  ],
+  "lesson": [
+    "先交付再优化：两道题都栽在“最后才写回交付文件”。Glasgow 的 scratch 板已经有正确的器件，判分器看到的却是原板，0 分和它的实际工作量完全脱节。",
+    "工具的坑要量化：Freerouting 197.7 秒超时、SVG 导出 7 步、pcbnew 6–8 步，三项加起来不到 20 步，但把改板阶段推到了第 78 步，间接造成交付太晚。",
+    "对照要选对：Voron 39 步满分说明工具链能用，但那题题面直白；不能用它反推 PCB 难题的难度。",
+    "探针成绩不能进榜：这是 opencode + DeepSeek 的探索性运行，判分器没有盲审，题包也不是 validated。"
+  ],
+  "sources": [
+    "data/continuation_20261120/ds_jobs_20261123/probe_stall/run1/output/out/REPORT.md",
+    "data/continuation_20261120/ds_jobs_20261123/probe_stall/run1/output/out/stats.json",
+    "data/continuation_20261120/PAUSED.md（5b 一行）",
+    "https://github.com/GlasgowEmbedded/glasgow",
+    "https://github.com/greatscottgadgets/cynthion"
+  ]
+}

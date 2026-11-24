@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="1200" height="480" font-family="JetBrains Mono, Menlo, monospace">
+<rect width="1200" height="480" fill="#0c1411"/>
+<text x="40" y="52" fill="#eceee6" font-size="26" font-weight="500">同一块参考解，host KiCad 配置一空就从 100 掉到 95</text>
+<text x="40" y="92" fill="#8d9891" font-size="15">W3 检查丝印间距与封装库一致性；改后把 KiCad 10 全局配置冻进题包，每轮复制到临时目录</text>
+<text x="40" y="174" fill="#8d9891" font-size="15">改前</text>
+<text x="92" y="174" fill="#eceee6" font-size="16">宿主正常配置</text>
+<rect x="300" y="150" width="620.0" height="34" fill="#e6ad6a" fill-opacity="0.85"/>
+<text x="934.0" y="174" fill="#eceee6" font-size="18">100</text>
+<text x="40" y="244" fill="#8d9891" font-size="15">改前</text>
+<text x="92" y="244" fill="#eceee6" font-size="16">空 KICAD_CONFIG_HOME</text>
+<rect x="300" y="220" width="589.0" height="34" fill="#ff3d6e" fill-opacity="0.85"/>
+<text x="903.0" y="244" fill="#eceee6" font-size="18">95</text>
+<text x="40" y="314" fill="#8d9891" font-size="15">改后</text>
+<text x="92" y="314" fill="#eceee6" font-size="16">宿主正常配置</text>
+<rect x="300" y="290" width="620.0" height="34" fill="#7fb0dd" fill-opacity="0.85"/>
+<text x="934.0" y="314" fill="#eceee6" font-size="18">100</text>
+<text x="40" y="384" fill="#8d9891" font-size="15">改后</text>
+<text x="92" y="384" fill="#eceee6" font-size="16">空 KICAD_CONFIG_HOME</text>
+<rect x="300" y="360" width="620.0" height="34" fill="#7fb0dd" fill-opacity="0.85"/>
+<text x="934.0" y="384" fill="#eceee6" font-size="18">100</text>
+<line x1="300" y1="134" x2="300" y2="410" stroke="#8d9891" stroke-width="1"/>
+<text x="40" y="460" fill="#8d9891" font-size="14">数据：splitflap_r2/run1/output/out/REPORT.md 第 2 节；改前空配置下 W3 从 pass 变 fail，lib_footprint_issues 记 4 类。</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 590" width="1200" height="590" font-family="JetBrains Mono, Menlo, monospace">
+<rect width="1200" height="590" fill="#0c1411"/>
+<text x="40" y="52" fill="#eceee6" font-size="26" font-weight="500">moteus-c1 参考解（上游 r1.1 原板）的 20 分品味项：10.508</text>
+<text x="40" y="92" fill="#8d9891" font-size="15">满分 6/3/2/3/3/3，80 分底 + 10.508 = 90.51；扣分项都对到上游做法或手册</text>
+<text x="40" y="138" fill="#eceee6" font-size="17">P1 高边成对程度</text>
+<rect x="300" y="120" width="429.00000000000006" height="26" fill="#1b2620"/>
+<rect x="300" y="120" width="286.6" height="26" fill="#e6ad6a" fill-opacity="0.85"/>
+<text x="745.0" y="139" fill="#eceee6" font-size="17">4.008 / 6</text>
+<text x="40" y="200" fill="#eceee6" font-size="17">P2 栅源主体线宽</text>
+<rect x="300" y="182" width="429.00000000000006" height="26" fill="#1b2620"/>
+<text x="745.0" y="201" fill="#eceee6" font-size="17">0 / 3</text>
+<text x="40" y="262" fill="#eceee6" font-size="17">P3 不换层不打过孔</text>
+<rect x="300" y="244" width="429.00000000000006" height="26" fill="#1b2620"/>
+<rect x="300" y="244" width="429.0" height="26" fill="#7fb0dd" fill-opacity="0.85"/>
+<text x="745.0" y="263" fill="#eceee6" font-size="17">2 / 2</text>
+<text x="40" y="324" fill="#eceee6" font-size="17">P4 U2 电容贴近</text>
+<rect x="300" y="306" width="429.00000000000006" height="26" fill="#1b2620"/>
+<rect x="300" y="306" width="214.5" height="26" fill="#ffb000" fill-opacity="0.85"/>
+<text x="745.0" y="325" fill="#eceee6" font-size="17">1.5 / 3</text>
+<text x="40" y="386" fill="#eceee6" font-size="17">P5 NC 接地</text>
+<rect x="300" y="368" width="429.00000000000006" height="26" fill="#1b2620"/>
+<text x="745.0" y="387" fill="#eceee6" font-size="17">0 / 3</text>
+<text x="40" y="448" fill="#eceee6" font-size="17">P6 版本下拉 100k</text>
+<rect x="300" y="430" width="429.00000000000006" height="26" fill="#1b2620"/>
+<rect x="300" y="430" width="429.0" height="26" fill="#7fb0dd" fill-opacity="0.85"/>
+<text x="745.0" y="449" fill="#eceee6" font-size="17">3 / 3</text>
+<text x="40" y="526" fill="#8d9891" font-size="14">数据：checks/results_20261123/summary.json 的 reference 一项。</text>
+<text x="40" y="548" fill="#8d9891" font-size="14">P2、P5 上游自己没做（0.3 mm 线宽、NC 未接地）；P4 OUT 侧 0.601 mm 比 r1.0 的 0.415 mm 远。</text>
+</svg>

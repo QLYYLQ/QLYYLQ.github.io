@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>splitflap：判分器被宿主 KiCad 配置带偏，同一块板 100 变 95 · Split-Flap 显示屏（scottbez1/splitflap）传感器小板</title>
+<meta name="description" content="PCB 与 OpenSCAD 联合题。W3 原来会读宿主全局 KiCad 配置：同一块参考解，在正常环境和空 KICAD_CONFIG_HOME 下分数不同。这一轮把配置冻进题包，另加 W5 磁铁孔壁厚品味项，两遍 72 样本逐项一致。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23173a2d'/%3E%3Cpath d='M6 22h8l4-6h8' stroke='%23e0894c' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='16' r='3' fill='%23e0894c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+</head>
+<body>
+<div class="wrap"><header class="top">
+  <div class="crumb"><a href="../../">QLYYLQ</a><span>/</span><a href="../">omnifex</a><span>/</span><a href="./">案例</a><span>/</span><span>splitflap</span></div>
+  <div class="eyebrow">判分本身会出错 · Split-Flap 显示屏（scottbez1/splitflap）传感器小板</div>
+  <h1>splitflap 传感器板：判分器吃宿主 KiCad 配置，一块该 100 分的板在空配置环境下掉到 95</h1>
+  <div class="chips"><span class="chip dom">PCB</span><span class="chip dom">CAD</span><span class="chip">难</span><span class="chip good">可试做</span><span class="chip good">W3 环境已解耦</span><span class="chip good">72/72 两遍一致</span><span class="chip warn">权重待冻结</span></div>
+  <div class="text" style="display:grid;gap:10px"><p>题目：给 Split-Flap 的传感器小板做一版能同时装 52 片和 40 片转鼓的改版。板子要改（KiCad 原生 <code>.kicad_pcb</code>），转鼓侧的三维件要跟着改（OpenSCAD），判分同时读两边。这是少见的 PCB 与 CAD 强耦合题：板上的磁铁孔位置决定转鼓上的磁铁孔，转鼓的孔距又反过来约束板宽。</p>
+<p>这一轮修的是一个环境依赖问题。W3 检查的是丝印到板边的间距和封装库一致性，原来直接用宿主的 KiCad 全局配置。把 <code>KICAD_CONFIG_HOME</code> 指向一个空目录再跑，同一块参考解从 100 掉到 95，W3 从通过变成失败：库表不同，<code>lib_footprint_issues</code> 就不同。判分器不能依赖跑它的那台机器。</p>
+<p>改法是把 KiCad 10.0 的全局配置（11 个文件，含 <code>fp-lib-table</code>、<code>sym-lib-table</code>）冻进题包 <code>checks/kicad_config/</code>，每轮复制一份到临时目录再设为子进程的 <code>KICAD_CONFIG_HOME</code>。不用包内目录本身，是因为 kicad-cli 会回写 <code>kicad_common.json</code> 的 <code>working_dir</code>。</p>
+<p>同时加了 W5：转鼓上磁铁孔边缘到最近其他孔边缘的最小壁厚，52/40 片取小值，优选 1.2 mm，权重 4。W1–W4 按 16/20 缩放成 4.8/4/4/3.2，品味池仍是 20 分。上游参考解壁厚 1.0907 mm，W5 得 3.636 分，总分 99.64——参考解拿不满，和这道题的其它加权项一样，是照实扣。</p></div>
+</header>
+<div class="figures"><div><span class="v">100→95</span><span class="k">同一块参考解，宿主配置正常 vs 空 KICAD_CONFIG_HOME（改前）</span></div><div><span class="v">72<small>/72</small></span><span class="k">两遍矩阵的计分样本，判决与分数逐项相同</span></div><div><span class="v">1.0907 mm</span><span class="k">上游参考解的磁铁孔最小壁厚</span></div><div><span class="v">1.2 mm</span><span class="k">W5 优选值，出自上游 flap_hole_separation</span></div><div><span class="v">99.64</span><span class="k">参考解总分（W5 部分得分）</span></div><div><span class="v">4.8/4/4/3.2/4</span><span class="k">W1–W5 权重，品味池 20 分</span></div></div>
+<section><h2><span class="no">题</span>题目</h2><p>起点是上游提交 <code>631b3d8</code> 的原样字节：<code>3d/</code> 全部 OpenSCAD、<code>electronics/sensor_smd/</code> 的 KiCad 工程、封装库和 LICENSE，共 65 个文件。解题工作区就是这些文件的副本，哈希在 <code>workspace.json</code> 里。</p>
+<p>题包状态：<code>stage=trial_ready</code>，<code>ready_for_model_trial=true</code>。W1–W5 的权重是建题人按先例提的裁量值，人工抽查后冻结；首次探针试做之后再定难度档。</p><div class="ticket"><div class="k">要改什么</div><div><p>板子要能装进 52 片和 40 片两种转鼓，两种都要过；转鼓的 OpenSCAD 也要跟着改，磁铁孔、卡舌、轴向间隙都要在两种片数下成立。</p>
+<p>改完的板要能和改完的转鼓装在一起：板上的磁铁孔和转鼓上的磁铁孔同心，不能被壁厚吃掉。</p></div><div class="k">判什么</div><div><p>C 类必过：板能读、DRC 不新增、两种转鼓的装配关系成立、OpenSCAD 能渲染、关键尺寸在可行区间内。</p>
+<p>W1–W5 品味项：W3 丝印与库一致性、W5 磁铁孔壁厚，另有 W1/W2/W4 按原设计。权重 4.8/4/4/3.2/4。</p></div><div class="k">已知边界</div><div><p>只有磁铁孔、没有磁铁孔的激光版转鼓（<code>rv_fa_layout_without_magnet</code>）仍被放过，下一轮再收。</p>
+<p>C5 仍按模块名判，改名的合法做法会被误拒。</p></div></div></section>
+<section><h2><span class="no">过程</span>一步一步</h2><ol class="steps"><li class="step"><div class="num">01</div><div class="main"><div class="label">改前</div><h3>同一块参考解，换一个 KICAD_CONFIG_HOME 就从 100 掉到 95</h3><div class="text"><p>W3 原来直接调 <code>kicad-cli pcb drc</code>，用的是当前用户 <code>~/Library/Preferences/kicad</code> 下的库表。本机正常环境下参考解 W3 通过：<code>silk_edge_clearance=4</code>、<code>lib_footprint_mismatch=3</code>。把 <code>KICAD_CONFIG_HOME</code> 指向一个空目录，同一块板变成 <code>silk_edge_clearance=4</code>、<code>lib_footprint_issues=4</code>，W3 失败，总分 100 → 95。</p>
+<p>差别在库表：空配置下 kicad-cli 找不到工程自带的封装库，<code>lib_footprint_issues</code> 把每一颗找不到库的封装都记一条，判据就从“3 条不匹配”变成“4 类问题”。这不是板的问题，是判分器读了宿主的状态。</p></div><figure><div class="frame"><a href="img/splitflap/w3_env.svg" title="打开原图"><img src="img/splitflap/w3_env.svg" alt="**同一块参考解，两种环境**。改前：宿主配置正常 100 分，把 `KICAD_CONFIG_HOME` 指向空目录就掉到 95（W3 由 pass 变 fail）。改后：两遍都 100。数据来自 `splitflap_r2/.../REPORT.md` 第 2 节。" loading="lazy"></a></div><figcaption><b>同一块参考解，两种环境</b>。改前：宿主配置正常 100 分，把 <code>KICAD_CONFIG_HOME</code> 指向空目录就掉到 95（W3 由 pass 变 fail）。改后：两遍都 100。数据来自 <code>splitflap_r2/.../REPORT.md</code> 第 2 节。</figcaption></figure></div></li><li class="step"><div class="num">02</div><div class="main"><div class="label">修法</div><h3>把 KiCad 全局配置冻进题包，每轮复制到临时目录</h3><div class="text"><p><code>checks/kicad_config/</code> 是从 <code>data/answer_mining_20261107/workdir/kicad_config/</code> 原样拷来的 KiCad 10.0 全局配置，11 个文件，含 <code>fp-lib-table</code>、<code>sym-lib-table</code>、<code>kicad_common.json</code>。原件没改。</p>
+<p><code>check.py</code> 的 <code>run_drc</code> 每轮把它复制到临时目录，把副本设为 <code>kicad-cli</code> 子进程的 <code>KICAD_CONFIG_HOME</code>。不用包内目录本身，因为 kicad-cli 会回写 <code>kicad_common.json</code> 的 <code>working_dir</code>；用临时副本，包内字节在两遍矩阵跑完后与拷贝时一致（<code>matrix_compare.json</code> 的 <code>kicad_config.files_identical=true</code>）。</p>
+<p>验证方法是跑两遍全量矩阵：第一遍正常环境，第二遍把外部 <code>KICAD_CONFIG_HOME</code> 指向空目录。73 份报告（72 个计分样本加 1 个已知缺口）的判决、挂的必过项、总分和 W3 警告明细逐项相同，两遍 <code>all_met</code> 都是 true。</p></div></div></li><li class="step"><div class="num">03</div><div class="main"><div class="label">加项</div><h3>W5：磁铁孔壁厚 1.2 mm，参考解 1.0907 mm 拿 3.636/4</h3><div class="text"><p>W5 量的是转鼓上磁铁孔边缘到最近其他孔边缘的最小壁厚（不计外缘），52 片和 40 片两种取小值；优选 1.2 mm，credit = clamp(壁厚/1.2, 0, 1)，权重 4。优选值出自上游 <code>flap_hole_separation</code>。</p>
+<p>W1–W4 按 16/20 缩放成 4.8/4/4/3.2，品味池仍是 20 分。新增两个回归样本：壁厚 0.6032 mm 的 <code>w5_web_0p6</code> 得 98.01（W5 部分得分），1.2403 mm 的 <code>w5_web_1p2</code> 得 100（W5 满分）。</p>
+<p>参考解 99.64：它的壁厚 1.0907 mm 比优选值薄，W5 拿 3.636。这个结果保留了下来——参考解不必满分，扣分项要能说清理由。</p></div><div class="tablebox"><table><thead><tr><th>检查</th><th>查什么</th><th>结果</th><th>说明</th></tr></thead><tbody><tr><td class="id">reference</td><td>上游参考解原样</td><td class="st"><span class="chip good">通过</span></td><td>99.64，W5 部分得分</td></tr><tr><td class="id">w5_web_1p2</td><td>壁厚 1.2403 mm</td><td class="st"><span class="chip good">通过</span></td><td>100，W5 满分</td></tr><tr><td class="id">w5_web_0p6</td><td>壁厚 0.6032 mm</td><td class="st"><span class="chip good">通过</span></td><td>98.01，W5 部分得分</td></tr><tr><td class="id">before</td><td>改前状态</td><td class="st"><span class="chip bad">不过</span></td><td>0 分，按预期挂必过项</td></tr><tr><td class="id">alt_r16_textroute</td><td>文本方式改走线的替代解</td><td class="st"><span class="chip good">通过</span></td><td>100</td></tr><tr><td class="id">alt_repr_autonet_renamed</td><td>自动网络重命名的替代解</td><td class="st"><span class="chip good">通过</span></td><td>99.64</td></tr></tbody></table></div><div class="text"><p>两遍矩阵的样本明细在 <code>checks/results_20261123/</code>（正常环境）和 <code>checks/results_20261123_emptycfg/</code>（空配置），逐样本对比在 <code>out/matrix_compare.json</code>。</p></div></div></li><li class="step"><div class="num">04</div><div class="main"><div class="label">回归</div><h3>70 个旧样本的判决和挂的必过项与上一轮逐项相同</h3><div class="text"><p>分数变化只来自 W5 和权重缩放：72 个计分样本里，旧样本的判决、挂的必过项、W1–W4 的 fraction 和 W3 警告明细全部相同，变的只是加权项那一栏。</p>
+<p>泄露隔离、<code>normalize_grade</code>、C10 单元自测都通过。判分器 sha256 从 <code>7d757771…</code> 变成 <code>21e97b96…</code>，<code>status.json</code> 已同步。</p></div></div></li><li class="step"><div class="num">05</div><div class="main"><div class="label">剩余</div><h3>还没做的</h3><div class="text"><ul><li>W1–W5 权重是裁量值，要人工抽查后冻结。</li><li>难度暂记 hard，等首次探针试做再定。</li><li>只有磁铁孔、没有磁铁孔的激光版转鼓仍被放过（<code>rv_fa_layout_without_magnet</code>），下一轮再收。</li><li>C5 依赖模块名，改名的合法做法会被误拒。</li><li>运行器还没登记 alias；这一轮由 DeepSeek 改、建题侧自测，原复核者没有对 W5 做增量确认。</li></ul></div></div></li></ol></section>
+<div class="lesson"><div class="eyebrow">看点</div><p>判分器必须自带环境：库表、全局配置、KiCad 版本，任何一项读宿主状态，同一块板换台机器就是另一个分。这次是 100 和 95 的差别，落到排行榜上就是名次。</p>
+<p>冻结配置要复制到临时目录再设环境变量，不能直接指向包内目录——kicad-cli 会回写配置。</p>
+<p>加加权项要重跑全量矩阵并逐项对比：这一轮只变 W5 和权重缩放，70 个旧样本的判决一项没动，才能确认改动是干净的。</p>
+<p>参考解拿不满可以接受：W5 上游 1.0907 mm 比优选 1.2 mm 薄，照实扣 0.364 分，比调低优选值让它满分更诚实。</p></div>
+<section><h3>出处</h3><div class="srcs"><span>data/hard_tasks_20261120/hp_splitflap_sensor/task.md</span><span>data/hard_tasks_20261120/hp_splitflap_sensor/checks/THRESHOLD_SOURCES.json</span><span>data/continuation_20261120/ds_jobs_20261123/splitflap_r2/run1/output/out/REPORT.md</span><span>data/continuation_20261120/ds_jobs_20261123/splitflap_r2/run1/output/out/matrix_compare.json</span><span><a href="https://github.com/scottbez1/splitflap">https://github.com/scottbez1/splitflap</a></span></div><p class="muted" style="font-size:.84rem">C/ 指 Omnifex 工程里的 data/answer_mining_20261107/construct/；其余 data/ 路径相对项目根目录，为本地证据索引。原生文件渲染与按证据绘制的示意图在各图注中区分。</p></section>
+<nav class="pager"><a href="ca263473.html"><span class="eyebrow">上一个</span><span>补全 19 英寸机架机箱：切片切在孔轴上</span></a><a href="moteus-c1.html"><span class="eyebrow">下一个</span><span>moteus c1：参考解 90.51，复核者的对抗样本找出 5 处误判</span></a></nav>
+<footer class="site"><a href="./">全部案例</a><a href="../">Omnifex</a><a href="../../">QLYYLQ</a></footer></div>
+<script>
+document.querySelectorAll('.compare input[type=range]').forEach(function (r) {
+  var box = r.closest('.compare');
+  function set() { box.style.setProperty('--pos', r.value + '%'); }
+  r.addEventListener('input', set); set();
+});
+document.querySelectorAll('model-viewer').forEach(function (mv) {
+  mv.addEventListener('load', function () { mv.classList.add('is-loaded'); });
+  mv.addEventListener('error', function () { mv.classList.remove('is-loaded'); });
+});
+document.querySelectorAll('.mvtabs').forEach(function (tabs) {
+  var mv = document.getElementById(tabs.dataset.for);
+  tabs.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.getAttribute('aria-pressed') === 'true') return;
+      tabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      mv.classList.remove('is-loaded');
+      mv.setAttribute('src', b.dataset.src);
+      mv.setAttribute('alt', b.textContent + ' · 3D 模型');
+      var fallback = mv.parentElement.querySelector('.model-fallback');
+      if (b.dataset.poster) {
+        mv.setAttribute('poster', b.dataset.poster);
+        fallback.src = b.dataset.poster;
+        fallback.alt = b.textContent + ' · 静态预览';
+      }
+      var cap = document.getElementById(tabs.dataset.for + '-cap');
+      if (cap) cap.innerHTML = b.dataset.cap + '（可拖动旋转、滚轮缩放）';
+    });
+  });
+});
+</script>
+</body>
+</html>

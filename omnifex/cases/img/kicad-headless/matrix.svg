@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" font-family="JetBrains Mono, Menlo, monospace">
+<rect width="1200" height="760" fill="#0c1411"/>
+<text x="40" y="52" fill="#eceee6" font-size="26" font-weight="500">KiCad 10 三条无界面路径：设计修改类操作基本都不存在</text>
+<text x="40" y="92" fill="#8d9891" font-size="15">kicad-cli / IPC API / pcbnew 逐项实测与文档核对；IPC 需要有一个正在运行的 GUI，且只覆盖 PCB 编辑器</text>
+<text x="540" y="140" fill="#eceee6" font-size="15" text-anchor="middle">kicad-cli 10.0.7</text>
+<text x="760" y="140" fill="#eceee6" font-size="15" text-anchor="middle">IPC API</text>
+<text x="980" y="140" fill="#eceee6" font-size="15" text-anchor="middle">pcbnew 脚本</text>
+<text x="40" y="189" fill="#eceee6" font-size="15">打开/保存 PCB 文件</text>
+<rect x="452" y="171" width="176" height="26" rx="4" fill="#ffb000" fill-opacity="0.9"/>
+<text x="540" y="190" fill="#0c1411" font-size="14" text-anchor="middle">部分</text>
+<rect x="672" y="171" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="760" y="190" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="892" y="171" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="980" y="190" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<text x="40" y="229" fill="#eceee6" font-size="15">从原理图更新 PCB（F8）</text>
+<rect x="452" y="211" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="540" y="230" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="672" y="211" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="230" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="211" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="230" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<text x="40" y="269" fill="#eceee6" font-size="15">原理图 ↔ PCB 一致性检查</text>
+<rect x="452" y="251" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="540" y="270" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="672" y="251" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="270" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="251" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="270" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<text x="40" y="309" fill="#eceee6" font-size="15">运行 DRC</text>
+<rect x="452" y="291" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="540" y="310" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="672" y="291" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="310" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="291" width="176" height="26" rx="4" fill="#c2495f" fill-opacity="0.9"/>
+<text x="980" y="310" fill="#0c1411" font-size="14" text-anchor="middle">实测坏</text>
+<text x="40" y="349" fill="#eceee6" font-size="15">重填铺铜</text>
+<rect x="452" y="331" width="176" height="26" rx="4" fill="#ffb000" fill-opacity="0.9"/>
+<text x="540" y="350" fill="#0c1411" font-size="14" text-anchor="middle">部分</text>
+<rect x="672" y="331" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="760" y="350" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="892" y="331" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="980" y="350" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<text x="40" y="389" fill="#eceee6" font-size="15">增删改封装 / 走线 / 过孔</text>
+<rect x="452" y="371" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="540" y="390" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="672" y="371" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="760" y="390" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="892" y="371" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="980" y="390" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<text x="40" y="429" fill="#eceee6" font-size="15">交互式推挤布线</text>
+<rect x="452" y="411" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="540" y="430" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="672" y="411" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="430" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="411" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="430" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<text x="40" y="469" fill="#eceee6" font-size="15">差分对布线</text>
+<rect x="452" y="451" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="540" y="470" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="672" y="451" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="470" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="451" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="470" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<text x="40" y="509" fill="#eceee6" font-size="15">等长 / 时域调谐</text>
+<rect x="452" y="491" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="540" y="510" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="672" y="491" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="510" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="491" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="510" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<text x="40" y="549" fill="#eceee6" font-size="15">导出 Gerber / STEP / PDF</text>
+<rect x="452" y="531" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="540" y="550" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="672" y="531" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="550" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="531" width="176" height="26" rx="4" fill="#ffb000" fill-opacity="0.9"/>
+<text x="980" y="550" fill="#0c1411" font-size="14" text-anchor="middle">部分</text>
+<text x="40" y="589" fill="#eceee6" font-size="15">导出 3D PNG</text>
+<rect x="452" y="571" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="540" y="590" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="672" y="571" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="590" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="571" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="590" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<text x="40" y="629" fill="#eceee6" font-size="15">生成网表</text>
+<rect x="452" y="611" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="540" y="630" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="672" y="611" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="630" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="611" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="630" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<text x="40" y="669" fill="#eceee6" font-size="15">运行 ERC</text>
+<rect x="452" y="651" width="176" height="26" rx="4" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="540" y="670" fill="#0c1411" font-size="14" text-anchor="middle">有</text>
+<rect x="672" y="651" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="760" y="670" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="892" y="651" width="176" height="26" rx="4" fill="#33413a" fill-opacity="0.5"/>
+<text x="980" y="670" fill="#8d9891" font-size="14" text-anchor="middle">无</text>
+<rect x="40" y="707" width="16" height="16" fill="#6fbb8e" fill-opacity="0.9"/>
+<text x="64" y="720" fill="#eceee6" font-size="14">有</text>
+<rect x="108" y="707" width="16" height="16" fill="#ffb000" fill-opacity="0.9"/>
+<text x="132" y="720" fill="#eceee6" font-size="14">部分</text>
+<rect x="190" y="707" width="16" height="16" fill="#33413a" fill-opacity="0.9"/>
+<text x="214" y="720" fill="#eceee6" font-size="14">无接口</text>
+<rect x="286" y="707" width="16" height="16" fill="#c2495f" fill-opacity="0.9"/>
+<text x="310" y="720" fill="#eceee6" font-size="14">名义有/实测坏</text>
+<text x="40" y="747" fill="#8d9891" font-size="14">数据：kicad_capability/run2/output/out/REPORT.md 第 0 节速查表；本机 KiCad 10.0.7，macOS。</text>
+</svg>
